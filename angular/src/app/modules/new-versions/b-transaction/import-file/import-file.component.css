@@ -1,0 +1,12 @@
+::ng-deep #bTransactionImportFile .mat-form-field-appearance-outline .mat-form-field-infix{
+    padding: 0.5em 0 !important;
+}
+
+#bTransactionImportFile .form-file{
+    padding-top: 10px; 
+    border-top: 1px solid #eee;
+}
+
+#bTransactionImportFile .form-bank-account{
+    display: grid;
+}

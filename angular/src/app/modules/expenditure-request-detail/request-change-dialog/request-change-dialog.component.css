@@ -1,0 +1,17 @@
+.footer-request-change{
+    border-top: 1px solid rgba(0,0,0,.125);
+    background-color: white;
+}
+.status-label{
+    font-size: .8rem;
+    margin-bottom: 0;
+}
+#request-change-dialog > .modal-header{
+    align-items: center;
+}
+#request-change-dialog > .modal-header > h4{
+    margin-bottom: 0;
+}
+::ng-deep #request-change-dialog .mat-tab-body-content {
+    overflow: inherit;
+  }

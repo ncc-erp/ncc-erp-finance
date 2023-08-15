@@ -1,0 +1,37 @@
+<div class="card-header">
+  <h4>Upload file: {{data.nameInvoice}} </h4>
+</div>
+<div class="card-body">
+  <div class="fileUpload col-12 p-0">
+    <label class="btn btn-sm bg-success mb-1" for="slFiles">
+      <i class="fas fa-paperclip"></i> Attach File
+    </label>
+    <input type="file" name="" id="slFiles" style="display: none" (change)="uploadFiles($event)"  multiple/>
+  </div>
+  <div class="tbl-file">
+    <table class=" table table-hover table-triped w-100 mt-2">
+      <thead>
+        <th style="width: 50px;">#</th>
+        <th>File name</th>
+        <th></th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let file of listFiles; let i =index">
+          <td class="text-center" style="width: 50px;">{{i+1}}</td>
+          <td>
+                  {{ file.name }}
+          </td>
+          <td class="text-center" style="vertical-align: middle;">
+            <i
+              class="fa fa-times fa-lg pointer mr-1" (click)="removeFile(file)"></i>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row justify-content-end mt-1">
+  <button class="btn btn-default mr-2" mat-dialog-close>Cancel</button>
+  <button class="btn btn-primary" (click)="saveAndClose()">Save</button>
+</div>

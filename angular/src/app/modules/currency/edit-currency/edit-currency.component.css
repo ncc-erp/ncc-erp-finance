@@ -1,0 +1,6 @@
+/* ::ng-deep .cdk-overlay-container{
+    z-index: 2000 !important;
+} */
+::ng-deep #edit-currency  .mat-form-field-appearance-outline .mat-form-field-infix{
+    padding: 0.5rem 0;
+}

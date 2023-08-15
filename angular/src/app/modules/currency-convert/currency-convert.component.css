@@ -1,0 +1,21 @@
+.col-action{
+    width: 200px;
+}
+.col-date{
+    width: 150px;
+}
+.col-stt{
+    width: 100px;
+}
+.col-money{
+    width: 300px;
+}
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix{
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+}
+.center-y{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}

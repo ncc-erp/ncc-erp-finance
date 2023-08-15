@@ -1,0 +1,50 @@
+<form class="form-horizontal" autocomplete="off" #timesheetForm="ngForm" novalidate>
+    <abp-modal-header  title="{{ 'menu1.export' | translate }}" class="pt-0" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+
+<div class="modal-body" id="export-report">
+
+    <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="">
+            {{ "menu1.fromDate" | translate }}:
+        </label>
+        <div class="col-md-9">
+            <mat-form-field appearance="outline">
+                <input matInput placeholder="From date" [matDatepicker]="pickerFrom" name="startTime"
+                 #startDate="ngModel" [(ngModel)]="fromDate" required>
+                <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+                <mat-datepicker #pickerFrom></mat-datepicker>
+            </mat-form-field>
+            <mat-error class="mt-1" *ngIf="startDate.hasError('required') && startDate.touched"
+                style="font-size: 13px;">
+                This field is required
+            </mat-error>
+        </div>
+    </div>
+
+    <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="">
+            {{ "menu1.toDate" | translate }}:
+        </label>
+        <div class="col-md-9">
+            <mat-form-field appearance="outline">
+                <input placeholder="To date"  matInput [matDatepicker]="pickerEnd" name="endTime"
+                 [(ngModel)]="toDate" required #endDate="ngModel">
+                <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+                <mat-datepicker #pickerEnd></mat-datepicker>
+              </mat-form-field>
+              <mat-error class="mt-1" *ngIf="endDate.hasError('required') && endDate.touched"
+                style="font-size: 13px;">
+                This field is required
+            </mat-error>
+
+        </div>
+    </div>
+</div>
+<div align="end" class="row justify-content-end">
+    <button class="btn btn-default mr-2" mat-dialog-close>{{ "action.cancel" | translate }}</button>
+    <button class="btn btn-primary"
+        [disabled]=" !timesheetForm.valid" (click)="downloadFile()">Export</button>
+</div>
+</form>
+

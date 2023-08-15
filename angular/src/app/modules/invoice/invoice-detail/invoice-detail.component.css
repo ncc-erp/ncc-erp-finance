@@ -1,0 +1,35 @@
+tr,th,td {
+    border: .2px solid rgba(204,204,204,.35);
+}
+::ng-deep #invoice-detail .mat-tab-list .mat-tab-labels .mat-tab-label-active {
+    font-weight: bold;
+}
+.read-mode{
+    border: none !important;
+}
+/* :read-only{
+    background: none;
+} */
+.detail :read-only{
+    background: none;
+
+}
+::ng-deep #invoice-detail .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}
+::ng-deep #invoice-detail .mat-form-field-label-wrapper { top: -1.5em; 
+}
+::ng-deep #invoice-detail .mat-form-field-flex{
+    background: white;
+}
+
+::ng-deep #invoice-detail .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+table{
+    width: 100%;
+}
+.active{
+    font-weight: bold;
+    border-bottom: 2px #3f51b5 solid;
+
+}

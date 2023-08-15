@@ -1,0 +1,105 @@
+<form
+  class="form-horizontal"
+  autocomplete="off"
+  #createTenantForm="ngForm"
+  (ngSubmit)="save()"
+>
+  <abp-modal-header
+    [title]="'m3_child1.createTitle' | translate"
+    (onCloseClick)="bsModalRef.hide()"
+  ></abp-modal-header>
+  <div class="modal-body">
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="tenancyName">
+        {{ "m3_child1.name" | translate }}
+      </label>
+      <div class="col-md-9">
+        <input
+          type="text"
+          class="form-control"
+          name="tenancyName"
+          id="tenancyName"
+          minlength="2"
+          maxlength="64"
+          required
+          [(ngModel)]="currency.name"
+          (ngModelChange)="handleChangeName()"
+          #tenancyNameModel="ngModel"
+          #tenancyNameEl
+        />
+        <abp-validation-summary
+          [control]="tenancyNameModel"
+          [controlEl]="tenancyNameEl"
+        ></abp-validation-summary>
+      </div>
+    </div>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="code">
+        {{ "m3_child1.code" | translate }}
+      </label>
+      <div class="col-md-9">
+        <input
+          type="text"
+          class="form-control"
+          name="code"
+          id="code"
+          minlength="2"
+          maxlength="64"
+          required
+          [(ngModel)]="currency.code"
+          #codeModel="ngModel"
+          #codeEl
+        />
+        <abp-validation-summary
+          [control]="codeModel"
+          [controlEl]="codeEl"
+        ></abp-validation-summary>
+      </div>
+    </div>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="maxITF">
+        {{ "Max Internal transfer fee" | localize }}
+      </label>
+      <div class="col-md-9">
+        <input
+          type="text"
+          mask="separator':''"
+          thousandSeparator=","
+          allowNegativeNumbers="true"
+          class="form-control"
+          name="maxITF"
+          id="maxITF"
+          required
+          [(ngModel)]="currency.maxITF"
+          #maxITFModel="ngModel"
+          #maxITFEl
+        />
+        <abp-validation-summary
+          [control]="maxITFModel"
+          [controlEl]="maxITFEl"
+        ></abp-validation-summary>
+      </div>
+    </div>
+    <div
+      class="form-group row align-items-center"
+      *ngIf="permission.isGranted(Directory_Currency_ChangeDefaultCurrency)"
+    >
+      <label class="col-md-3 col-form-label" for="maxITF">
+        {{ "Tiền tệ chính" | localize }}
+      </label>
+      <div class="col-md-9">
+        <mat-checkbox
+          color="primary"
+          [(ngModel)]="currency.isCurrencyDefault"
+          name="isCurrencyDefault"
+          #isCurrencyDefault="ngModel"
+        ></mat-checkbox>
+      </div>
+    </div>
+  </div>
+  <abp-modal-footer
+    [saveDisabled]="!createTenantForm.form.valid || saving"
+    (onSaveClick)="save()"
+    (onCancelClick)="bsModalRef.hide()"
+  ></abp-modal-footer>
+</form>

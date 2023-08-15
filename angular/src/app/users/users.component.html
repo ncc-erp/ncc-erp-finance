@@ -1,0 +1,149 @@
+<div>
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h1>{{ "Users" | localize }}</h1>
+        </div>
+        <div class="col-6 text-right">
+          <a href="javascript:;" class="btn bg-blue" (click)="createUser()" *ngIf="isShowCreateBtn()">
+            <i class="fa fa-plus-square"></i>
+            {{ "Thêm mới" | localize }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content px-2 filter-user">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="input-group d-flex col-sm-12 col-md-10 col-xl-10">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <button
+                    type="button"
+                    class="btn bg-blue"
+                    (click)="getDataPage(1)"
+                  >
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  class="form-control"
+                  name="keyword"
+                  [placeholder]="'Tìm kiếm theo UserName, FullName, EmailAddress' | localize"
+                  [(ngModel)]="keyword"
+                  (keyup.enter)="getDataPage(1)"
+                />
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-2 col-xl-2 tenants-active">
+              <mat-form-field class="col-12" appearance="outline">
+                <mat-label>Status</mat-label>
+                <mat-select
+                  name="active"
+                  placeholder="Active"
+                  [(ngModel)]="isActive"
+                  (ngModelChange)="selectionActivechange()"
+                >
+                  <mat-option [value]="-1">All</mat-option>
+                  <mat-option [value]="true"> Active </mat-option>
+                  <mat-option [value]="false"> DeActive </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="card-body table-responsive p-4">
+          <table class="table table-hover text-nowrap" [busy]="isTableLoading">
+            <thead class="bg-light">
+              <tr>
+                <th class="col-stt">STT</th>
+                <th class="col-username">{{ "UserName" | localize }}</th>
+                <th class="col-fullname">{{ "FullName" | localize }}</th>
+                <th class="col-email">{{ "EmailAddress" | localize }}</th>
+                <th>Role</th>
+                <th>{{ "IsActive" | localize }}</th>
+                <th style="width: 80px">{{ "Actions" | localize }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let user of users
+                    | paginate
+                      : {
+                          id: 'server',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems
+                        }
+                ;let ind = index"
+              >
+                <td class="text-center">{{ind + 1 + pageSize*(pageNumber - 1)}}</td>
+                <td>{{ user.userName }}</td>
+                <td>{{ user.fullName }}</td>
+                <td>{{ user.emailAddress }}</td>
+                <td>{{ user.roleNames.join(', ')}}</td>
+                <td class="text-center">
+                  <div class="custom-control custom-checkbox">
+                    <input
+                      type="checkbox"
+                      class="custom-control-input"
+                      disabled
+                      [checked]="user.isActive"
+                    />
+                    <label class="custom-control-label"></label>
+                  </div>
+                </td>
+                <td  class="text-center">
+                  <button class="btn" [matMenuTriggerFor]="actionMatmenu" *ngIf="isShowMenuAction()">
+                    <i class="fas fa-bars"></i>
+                  </button>
+                  <mat-menu #actionMatmenu = "matMenu">
+                    <mat-item class="mat-menu-item"  (click)="editUser(user)" *ngIf="isShowEditBtn()">
+                      <i class="fas fa-pencil-alt"></i>
+                      {{ "Edit" | localize }}
+                    </mat-item>
+                    <mat-item class="mat-menu-item" (click)="delete(user)" *ngIf="isShowDeleteBtn()">
+                      <i class="fas fa-trash"></i>
+                    {{ "Delete" | localize }}
+                    </mat-item>
+                    <mat-item class="mat-menu-item" (click)="resetPassword(user)" *ngIf="isShowResetPasswordBtn()">
+                      <i class="fas fa-lock"></i>
+                    {{ "ResetPassword" | localize }}
+                    </mat-item>
+                  </mat-menu>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-light border-top">
+          <div class="row">
+            <div class="col-sm-4 col-12 text-sm-left text-center">
+              <button class="btn btn-secondary" (click)="refresh()">
+                <i class="fas fa-redo-alt"></i>
+              </button>
+            </div>
+            <div class="col-sm-4 col-12 text-center">
+              <p class="mb-0 my-2">Total: {{ totalItems }}</p>
+            </div>
+            <div class="col-sm-4 col-12">
+              <div class="float-sm-right m-auto">
+                <abp-pagination-controls
+                  id="server"
+                  (pageChange)="getDataPage($event)"
+                >
+                </abp-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

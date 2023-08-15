@@ -1,0 +1,328 @@
+<section class="content-header pb-1">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h2>Đối soát</h2>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content px-2" id="finance-review">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="px-4 row py-2">
+          <div class="col-4">
+            <div class="py-2">
+              <h5 class=" font-weight-bold mb-1 d-inline">Thống kê chung:</h5>
+              <div class="mt-1 general">
+                <table class="table text-nowrap mt-2 general-table">
+                  <tr>
+                    <td style="width: 1%; background-color: #f8f9fa;">
+                      <strong> Số dư theo sổ </strong>
+                    </td>
+                    <td class="text-right" [ngClass]="isOver3MDiff ? 'text-danger' : ''">
+                      <strong> {{ total | number:"1.0"}} </strong>VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Số dư theo tài khoản ngân hàng</strong>
+                    </td>
+                    <td class="text-right" [ngClass]="isOver3MDiff ? 'text-danger' : ''">
+                      <strong> {{ totalTransaction |
+                        number : "1.0" }}
+                      </strong>VND
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-8 mt-1">
+            <div class="row justify-content-end mt-1 mr-2" style="height: 50px;">
+              <div class="row">
+                <mat-form-field appearance="outline">
+                  <input matInput [matDatepicker]="picker" [(ngModel)]="toDate" (dateChange)="getStatistics()">
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+                <!-- <button *ngIf="permission.isGranted(Finance_ComparativeStatistic_ExportExcel)"
+                  style="height: fit-content; margin-top: 6px;" class="btn btn-success mx-2" (click)="downloadFile()">
+                  <i class="fas fa-download mr-1"></i> Export
+                </button> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Tài khoản ngân hàng công ty -->
+        <div class="card-body table-responsive px-4 py-2">
+          <div class="d-flex">
+            <h5>Tài khoản ngân hàng công ty</h5>
+            <mat-checkbox class="ml-3" [(ngModel)]="isShowAllBankAccount" (ngModelChange)="showAllChange()" *ngIf="isShowAllCompanyBankAccounts()"> Show All </mat-checkbox>
+          </div>
+          <table
+              style="border-collapse: collapse;" class="table table-hover text-nowrap">
+              <thead class="bg-light">
+                  <tr>
+                      <th style="text-align: center;width: 80px !important;padding: 12px;">{{ 'm4_child1.no' |
+                          translate }}</th>
+                      <th style="text-align: center;">Tên tài khoản / số tài khoản</th>
+                      <th style="text-align: center;">{{ 'm4_child1.currency' | translate }}</th>
+                      <th style="text-align: center;" class="text-center"> Số dư đầu kì</th>
+                      <!-- <th style="text-align: center; max-width: 200px;">{{ 'm4_child1.bank' | translate }}</th> -->
+                      <!-- <th style="text-align: center;">{{ 'm4_child1.account' | translate }}</th> -->
+                      <th style="text-align: center;">Số dư hiện tại</th>
+                      <!-- <th style="text-align: center;">Số dư đầu kì</th> -->
+                      <th style="text-align: center;">IsActive</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr class="elnino" *ngFor="let data of showBankAccounts , let index = index">
+                      <td style="padding: 12px;" class="text-center">{{index + 1 }}
+                      </td>
+                      <td class="hyperlink" (click)="showDetail(data.id)"> {{data.holderName}} <br>{{data.bankNumber}} </td>
+                      <td  [style.color]="_utilities.getColorByCurrency(data.currencyName)"><strong>{{data.currencyName}}</strong> </td>
+                      <td class="text-right">{{data.baseBalance | number:'1.0':'en-US'}}</td>
+                      <!-- <td style="max-width: 200px; white-space: normal;">{{data.bankName}}</td> -->
+                      <!-- <td>{{data.accountName}}</td> -->
+                      <td class="text-right">{{data.amount | number:'1.0':'en-US'}} </td>
+                      <td class="text-center isActive">
+                          <div class="custom-control custom-checkbox">
+                              <input [checked]="data.isActive" type="checkbox" class="custom-control-input" disabled />
+                              <label class="custom-control-label"></label>
+                          </div>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+      </div>
+      <div class="card">
+        <div class="px-4 row py-2">
+            <div class="py-2 row">
+              <div class="col-12">
+              <h5 class=" font-weight-bold mb-1 d-inline">Chi tiết theo sổ:</h5>
+              </div>
+              <div class="col-6">
+                <table class="table text-nowrap mt-2 general-table">
+                  <tr>
+                    <td style="width: 1%; background-color: #f8f9fa;">
+                      <strong> Số dư đầu kỳ VND </strong>
+                    </td>
+                    <td class="text-right">
+                      <strong> {{ (startBalanceVND) | number:"1.0"}} </strong>VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Phát sinh tăng trong kỳ </strong>
+                    </td>
+                    <td class="text-right">
+                      {{ totalVNDIn | number : "1.0" }} VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Phát sinh giảm trong kỳ</strong>
+                    </td>
+                    <td class="text-right">
+                      -{{ totalVNDOut | number : "1.0" }} VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Chuyển đổi USD -> VND </strong>
+                    </td>
+                    <td class="text-right">
+                      {{ exchangeVND | number : "1.0" }} VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Số dư cuối kỳ</strong>
+                    </td>
+                    <td class="text-right">
+                      {{ startBalanceVND + totalVNDIn - totalVNDOut + exchangeVND | number : "1.0" }} VND
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="col-6">
+                <table class="table text-nowrap mt-2 general-table">
+                  <tr>
+                    <td style="width: 1%; background-color: #f8f9fa;">
+                      <strong> Số dư đầu kỳ USD</strong>
+                    </td>
+                    <td class="text-right">
+                      <strong> {{ (startBalanceUSD) | number:"1.0"}} </strong>USD
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Phát sinh tăng trong kỳ </strong>
+                    </td>
+                    <td class="text-right">
+                      {{ totalUSDIn | number : "1.0" }} USD
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Phát sinh giảm trong kỳ</strong>
+                    </td>
+                    <td class="text-right">
+                      -{{ totalUSDOut | number : "1.0" }} USD
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Chuyển đổi USD -> VND </strong>
+                    </td>
+                    <td class="text-right">
+                      -{{ exchangeUSD | number : "1.0" }} USD
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Số dư cuối kỳ</strong>
+                    </td>
+                    <td class="text-right">
+                      {{ startBalanceUSD + totalUSDIn - totalUSDOut - exchangeUSD | number : "1.0" }} USD
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="card">
+        <div class="px-4 row py-2">
+            <div class="py-2 row">
+              <div class="col-12">
+              <h5 class=" font-weight-bold mb-1 d-inline">Chi tiết theo tài khoản ngân hàng:</h5>
+              </div>
+              <div class="col-6">
+                <table class="table text-nowrap mt-2 general-table">
+                  <tr>
+                    <td style="width: 1%; background-color: #f8f9fa;">
+                      <strong> Số dư đầu kỳ VND </strong>
+                    </td>
+                    <td class="text-right">
+                      <strong> {{ (startBalanceVND) | number:"1.0"}} </strong>VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Phát sinh tăng trong kỳ</strong>
+                    </td>
+                    <td class="text-right">
+                      {{ totalVNDInTransaction | number : "1.0" }} VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Phát sinh giảm trong kỳ</strong>
+                    </td>
+                    <td class="text-right">
+                      -{{ totalVNDOutTransaction | number : "1.0" }} VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Chuyển đổi USD -> VND </strong>
+                    </td>
+                    <td class="text-right">
+                      {{ exchangeVND | number : "1.0" }} VND
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Số dư cuối kỳ</strong>
+                    </td>
+                    <td class="text-right">
+                      {{ startBalanceVND + totalVNDInTransaction - totalVNDOutTransaction + exchangeVND | number : "1.0" }}VND
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <div class="col-6">
+                <table class="table text-nowrap mt-2 general-table">
+                  <tr>
+                    <td style="width: 1%; background-color: #f8f9fa;">
+                      <strong> Số dư đầu kỳ USD</strong>
+                    </td>
+                    <td class="text-right">
+                      <strong> {{ (startBalanceUSD) | number:"1.0"}} </strong>USD
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Phát sinh tăng trong kỳ </strong>
+                    </td>
+                    <td class="text-right">
+                      {{ totalUSDInTransaction | number : "1.0" }} USD
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Phát sinh giảm trong kỳ</strong>
+                    </td>
+                    <td class="text-right">
+                      -{{ totalUSDOutTransaction | number : "1.0" }} USD
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Chuyển đổi USD -> VND </strong>
+                    </td>
+                    <td class="text-right">
+                      -{{ exchangeUSD | number : "1.0" }} USD
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="width: 1%;  background-color: #f8f9fa;">
+                      <strong> Số dư cuối kỳ</strong>
+                    </td>
+                    <td class="text-right">
+                      {{ startBalanceUSD + totalUSDInTransaction - totalUSDOutTransaction - exchangeUSD | number : "1.0" }} USD
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="card">
+        <div class="row px-4 py-2">
+          <button class="btn btn-primary" (click)="addExplain()" *ngIf="isShowCreateExplanationBtn()">Thêm giải trình</button>
+        </div>
+        <div *ngIf="reviewExplains.length && isShowExplanationBtn()" class="row px-4 py-2">
+          <table class="table table-bordered">
+            <tr>
+              <th>Ngày tạo</th>
+              <th>Chênh lệch thu VND
+                <div *ngIf="totalDiffIncomeVND">({{totalDiffIncomeVND | formatMoney}})</div>
+              </th>
+              <th>Chênh lệch chi VND
+                <div *ngIf="totalDiffOutcomeVND">({{totalDiffOutcomeVND | formatMoney}})</div>
+              </th>
+              <th>Chênh lệch thu USD
+                <div *ngIf="totalDiffIncomeUSD">({{totalDiffIncomeUSD | formatMoney}})</div>
+              </th>
+              <th>Chênh lệch chi USD
+                <div *ngIf="totalDiffOutcomeUSD">({{totalDiffOutcomeUSD | formatMoney}})</div>
+              </th>
+              <th></th>
+            </tr>
+            <tr *ngFor="let re of reviewExplains">
+              <td class="text-center">{{re.creationTime | date:'short'}}</td>
+              <td class="text-right">{{re.incomingDiffVND | number:'1.0' }} VND</td>
+              <td class="text-right">{{re.outcomingDiffVND | number:'1.0' }} VND</td>
+              <td class="text-right">{{re.incomingDiffUSD | number:'1.0' }} USD</td>
+              <td class="text-right">{{re.outcomingDiffUSD | number:'1.0' }} USD</td>
+              <td><button class="btn btn-primary btn-sm" (click)="showExplain(re)">Chi tiết</button></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>

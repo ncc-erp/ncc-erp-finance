@@ -1,0 +1,250 @@
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <h1>{{'menu2.configuration' | translate}}</h1>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content pl-2 pr-4" [busy]="isLoading">
+    <div class="container-fluid">
+        <div class="d-flex">
+            <div class="card col-6 col-md-6 col-xs-12 mr-2">
+                <div class="card-header">
+                    <div class="row">
+                        <h4 class="center-y mb-0">Komu setting</h4>
+                        <div class="ml-2">
+                            <button *ngIf="isShowEditKomuSettingBtn()" class="btn bg-blue mr-3" (click)=" isEditKomuChanel = !isEditKomuChanel;
+                            notifyToChannel.focus()" [hidden]="isEditKomuChanel">
+                                <i class="fas fa-edit"></i>
+                                {{ 'action.edit' | translate }}
+                            </button>
+                            <button class="btn bg-red mr-3"
+                                (click)="changeNotifyKomuChannel();isEditKomuChanel = !isEditKomuChanel"
+                                [hidden]="!isEditKomuChanel">
+                                {{ 'action.save' | translate }}
+                            </button>
+                            <button class="btn bg-secondary" (click)="isEditKomuChanel= !isEditKomuChanel;
+                            getSetting()" [hidden]="!isEditKomuChanel">
+                                {{ 'action.cancel' | translate }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body row">
+                    <div class="w-100">
+                        <mat-form-field class="w-100">
+                            <input [readonly]="!isEditKomuChanel" class="w-100" type="text" matInput
+                                placeholder="Notify to channel" [(ngModel)]="configuration.notifyToChannel"
+                                #notifyToChannel />
+                        </mat-form-field>
+                    </div>
+                    <div class="mt-3" >
+                        <mat-checkbox [disabled]="!isEditKomuChanel"
+                            [(ngModel)]="isEnableCrawlBTransactionNoti">Gửi noti khi crawl biến động số dư</mat-checkbox>
+                    </div>
+                </div>
+            </div>
+            <div class="card col-6 col-md-6 col-xs-12 ml-2">
+                <div class="card-header">
+                    <div class="row">
+                        <h4 class="center-y mb-0">Secret key</h4>
+                        <div class="ml-2">
+                            <a href="javascript:;" class="btn bg-blue mr-3" *ngIf="isShowEditSecretKeyBtn()"
+                                (click)="isEditSecretKey = !isEditSecretKey; secretKey.focus()"
+                                [hidden]="isEditSecretKey">
+                                <i class="fas fa-edit"></i>
+                                {{ 'action.edit' | translate }}
+                            </a>
+                            <a href="javascript:;" class="btn bg-red mr-3"
+                                (click)="changeFinanceSecretKey();isEditSecretKey =! isEditSecretKey"
+                                [hidden]="!isEditSecretKey">
+                                {{ 'action.save' | translate }}
+                            </a>
+
+                            <a href="javascript:;" class="btn bg-secondary"
+                                (click)="isEditSecretKey =! isEditSecretKey; getSetting()" [hidden]="!isEditSecretKey">
+                                {{ 'action.cancel' | translate }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <mat-form-field class="w-100 ml-1">
+                            <input [readonly]="!isEditSecretKey" class="w-100" type="text" matInput
+                                placeholder="Secret key" [(ngModel)]="configuration.secretKey" #secretKey />
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="card col-6 col-md-6 col-xs-12 mr-2">
+                <div class="card-header">
+                    <div class="row">
+                        <h4 class="center-y mb-0">Google setting</h4>
+                        <div class="ml-2">
+                            <a href="javascript:;" class="btn bg-blue mr-3" *ngIf="isShowEditGoogleSettingBtn()"
+                                (click)="isEditClientId = !isEditClientId ; clientId.focus()" [hidden]="isEditClientId">
+                                <i class="fas fa-edit"></i>
+                                {{ 'action.edit' | translate }}
+                            </a>
+                            <a href="javascript:;" class="btn bg-red mr-3"
+                                (click)="changeClientAppId();isEditClientId =! isEditClientId"
+                                [hidden]="!isEditClientId">
+                                {{ 'action.save' | translate }}
+                            </a>
+                            <a href="javascript:;" class="btn bg-secondary"
+                                (click)="isEditClientId =! isEditClientId; getSetting()" [hidden]="!isEditClientId">
+                                {{ 'action.cancel' | translate }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body row">
+                    <mat-form-field class="w-100 ml-1">
+                        <input [readonly]="!isEditClientId" class="w-100" type="text" matInput
+                            placeholder="Google Client App" [(ngModel)]="configuration.clientAppId" #clientId />
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="card col-6 col-md-6 col-xs-12 ml-2">
+                <div class="card-header">
+                    <div class="row">
+                        <h4 class="center-y mb-0">Link đến request chi đã hoàn thành</h4>
+                        <div class="ml-2">
+                            <a href="javascript:;" class="btn bg-blue mr-3" *ngIf="isShowEditLinkToRequestChiDone()"
+                                (click)="isEditLinkOutComing = !isEditLinkOutComing" [hidden]="isEditLinkOutComing">
+                                <i class="fas fa-edit"></i>
+                                {{ 'action.edit' | translate }}
+                            </a>
+                            <a href="javascript:;" class="btn bg-red mr-3"
+                                (click)="setConfigLinkOutComing();isEditLinkOutComing =! isEditLinkOutComing"
+                                [hidden]="!isEditLinkOutComing">
+                                {{ 'action.save' | translate }}
+                            </a>
+                            <a href="javascript:;" class="btn bg-secondary"
+                                (click)="isEditLinkOutComing =! isEditLinkOutComing; getConfigLinkOutComing()"
+                                [hidden]="!isEditLinkOutComing">
+                                {{ 'action.cancel' | translate }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class=" mt-3" *ngIf="linkOutComing">
+                        <mat-checkbox [disabled]="!isEditLinkOutComing"
+                            [(ngModel)]="linkOutComing.canLinkWithOutComingEnd">Link đến request chi đã hoàn
+                            thành</mat-checkbox>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="d-flex">
+            <div class="card col-6 col-md-6 col-xs-12 mr-2" *ngIf="isViewRequestChiSetting()">
+                <div class="card-header">
+                    <div class="row">
+                        <h4 class="center-y mb-0">Request Chi Setting</h4>
+                        <div class="ml-2">
+                            <button *ngIf="isShowEditRequestChiSettingBtn()" class="btn bg-blue mr-3" (click)=" isEditRequestChiSetting = !isEditRequestChiSetting;
+                            maLoaiChiBangLuong.focus()" [hidden]="isEditRequestChiSetting">
+                                <i class="fas fa-edit"></i>
+                                {{ 'action.edit' | translate }}
+                            </button>
+                            <button class="btn bg-red mr-3"
+                                (click)="updateRequestChiSetting();isEditRequestChiSetting = !isEditRequestChiSetting"
+                                [hidden]="!isEditRequestChiSetting">
+                                {{ 'action.save' | translate }}
+                            </button>
+                            <button class="btn bg-secondary" (click)="isEditRequestChiSetting= !isEditRequestChiSetting;
+                            getRequestChiSetting()" [hidden]="!isEditRequestChiSetting">
+                                {{ 'action.cancel' | translate }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body row">
+                    <div class=" mt-3">
+                        <mat-checkbox [disabled]="!isEditRequestChiSetting"
+                            [(ngModel)]="requestChiSetting.canApplyMutltiCurrencyOutcome">Áp dụng request chi nhiều loại tiền</mat-checkbox>
+                    </div>
+                    <div class="w-100">
+                        <mat-form-field class="w-100">
+                            <div class="d-flex">
+                                <input [readonly]="!isEditRequestChiSetting" class="w-100" type="text" matInput
+                                    placeholder="Mã loại chi bảng lương (HRM bắn sang)" [(ngModel)]="requestChiSetting.maLoaiChiBangLuong"
+                                    #maLoaiChiBangLuong />
+                                <ng-container *ngIf="status == 'Active'">
+                                    <span class="badge badge-pill badge-success"> Active</span>
+                                </ng-container>
+                                <ng-container *ngIf="status == 'Inactive'">
+                                    <span class="badge badge-pill badge-secondary"> Inactive</span>
+                                </ng-container>
+                                <ng-container *ngIf="status == 'Not found'">
+                                    <span class="badge badge-pill badge-danger"> Not found</span>
+                                </ng-container>
+                            </div>
+                        </mat-form-field>
+                    </div>
+
+                </div>
+            </div>
+            <div [ngClass]="isViewRequestChiSetting()==true ? 'ml-2' : ''" class="card col-6 col-md-6 col-xs-12">
+                <div class="card-header">
+                    <div class="row">
+                        <h4 class="center-y mb-0">Cho phép sửa thông tin trong kì cũ</h4>
+                        <div class="ml-2">
+                            <a href="javascript:;" class="btn bg-blue mr-3" *ngIf="isShowEditAllowChangeEntityInPeriodClosedBtn()"
+                                (click)="isEditCoTheSuaThongTinCuaKiCu = !isEditCoTheSuaThongTinCuaKiCu" [hidden]="isEditCoTheSuaThongTinCuaKiCu">
+                                <i class="fas fa-edit"></i>
+                                {{ 'action.edit' | translate }}
+                            </a>
+                            <a href="javascript:;" class="btn bg-red mr-3"
+                                (click)="setAllowChangeEntityInPeriodClosed();isEditCoTheSuaThongTinCuaKiCu =! isEditCoTheSuaThongTinCuaKiCu"
+                                [hidden]="!isEditCoTheSuaThongTinCuaKiCu">
+                                {{ 'action.save' | translate }}
+                            </a>
+                            <a href="javascript:;" class="btn bg-secondary"
+                                (click)="isEditCoTheSuaThongTinCuaKiCu =! isEditCoTheSuaThongTinCuaKiCu; getAllowChangeEntityInPeriodClosed()"
+                                [hidden]="!isEditCoTheSuaThongTinCuaKiCu">
+                                {{ 'action.cancel' | translate }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class=" mt-3" *ngIf="linkOutComing">
+                        <mat-checkbox [disabled]="!isEditCoTheSuaThongTinCuaKiCu"
+                            [(ngModel)]="allowChangeEntityInPeriodClosed">Cho phép sửa thông tin trong kì cũ</mat-checkbox>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex">
+            <div class="card col-6 col-md-6 col-xs-12 mr-2">
+                <div class="card-header">
+                    <div class="row">
+                        <h4 class="center-y mb-0">HRM setting</h4>
+                    </div>
+                </div>
+                <div class="card-body row">
+                    <mat-form-field class="w-100 ml-1">
+                        <input [readonly]="true" class="w-100" type="text" matInput
+                            placeholder="BaseAddress" [(ngModel)]="hrmConfig.baseAddress"  />
+                    </mat-form-field>
+                    <mat-form-field class="w-100 ml-1">
+                        <input [readonly]="true" class="w-100" type="text" matInput
+                            placeholder="SecurityCode" [(ngModel)]="hrmConfig.securityCode"  />
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class=" col-6 col-md-6 col-xs-12 ml-2">
+
+            </div>
+
+        </div>
+    </div>
+</section>

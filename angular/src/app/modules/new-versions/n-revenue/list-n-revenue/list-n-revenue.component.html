@@ -1,0 +1,771 @@
+<section class="content-header list-revenue">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-6">
+        <h2>{{ "Khoản phải thu" | localize }}</h2>
+      </div>
+      <div class="col-6 text-right">
+        <a
+          href="javascript:;"
+          class="btn bg-blue"
+          (click)="createRevenueByAccount()"
+          *ngIf="isShowCreateBtn()"
+        >
+          <i class="fa fa-plus-square"></i>
+          {{ "Thêm mới" | localize }}
+        </a>
+        <button *ngIf="isShowBtnExportReport()" class="btn btn-success mx-2" (click)="ExportReport()">
+          <i class="fas fa-download mr-1"></i> Export
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="content px-2" id="list-n-revenue">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header">
+        <div class="row-group">
+          <div class="col-2 item-group item-group--search input-group">
+            <div class="input-group-prepend">
+            <button type="button" class="btn bg-blue" (click)="getFirstPage()">
+              <i class="fas fa-search"></i>
+            </button>
+          </div>
+            <input
+              type="text"
+              class="form-control"
+              name="keyword"
+              placeholder="Tìm kiếm..."
+              [(ngModel)]="searchText"
+              (keyup.enter)="getFirstPage()"
+            />
+          </div>
+          <div class="col-2 item-group">
+            <mat-form-field class="w-inherit" appearance="outline">
+              <mat-label>{{ "Client" | localize }}</mat-label>
+              <mat-select
+                name="accountName"
+                placeholder="Client"
+                [(ngModel)]="listAccountSelected"
+                disableOptionCentering="true"
+                multiple
+                (selectionChange)="optionClick()"
+                (openedChange)="handleSelectAccountOpenedChange($event)"
+              >
+                <div class="p-2 input-wrapper"
+                style="position: sticky; top: 0;; z-index: 2; background-color: white;">
+                  <input
+                    type="text"
+                    matInput
+                    class="search-input"
+                    placeholder="Search Text"
+                    [(ngModel)]="searchString"
+                    (keydown)="$event.stopPropagation()"
+                    (input)="filterAccount($event.target.value)"
+                  />
+                </div>
+                <div class="select-all" *ngIf="isSelectAllAccount">
+                  <mat-checkbox
+                    class="all-select"
+                    [(ngModel)]="allSelected"
+                    [ngModelOptions]="{ standalone: true }"
+                    (change)="toggleAllSelection()"
+                    >Select All</mat-checkbox
+                  >
+                </div>
+                <mat-option
+                  [value]="account.id"
+                  *ngFor="let account of filteredListAccount"
+                >
+                  {{ account.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col-1 item-group">
+            <mat-form-field class="w-inherit" appearance="outline">
+              <mat-label>{{ "Status" | localize }}</mat-label>
+              <mat-select
+                name="status"
+                placeholder="Status"
+                [(value)]="multiValueStatusFilter"
+                (selectionChange)="onDropdownMultiFilter($event)"
+                disableOptionCentering="true"
+                multiple
+              >
+                <mat-option
+                  [value]="status.value"
+                  *ngFor="let status of listRevenueStatuses"
+                >
+                  {{ status.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col-1 item-group">
+            <mat-form-field class="w-inherit" appearance="outline">
+              <mat-label>{{ "Year" | localize }}</mat-label>
+              <mat-select
+                name="year"
+                placeholder="Year"
+                [(value)]="searchDetail.year"
+                (selectionChange)="handleSelectionChange()"
+              >
+                <mat-option *ngFor="let item of years" [value]="item.value">
+                  {{ item.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col-1 item-group">
+            <mat-form-field class="w-inherit" appearance="outline">
+              <mat-label>{{ "Month" | localize }}</mat-label>
+              <mat-select
+                name="month"
+                placeholder="Month"
+                [(value)]="searchDetail.month"
+                (selectionChange)="handleSelectionChange()"
+              >
+                <mat-option *ngFor="let month of months" [value]="month.value">
+                  {{ month.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col-1 item-group">
+            <mat-form-field class="w-inherit" appearance="outline">
+              <mat-label>{{ "Status trả nợ" | localize }}</mat-label>
+              <mat-select
+                name="statusAccount"
+                placeholder="Status trả nợ"
+                [(value)]="isDoneDebt"
+                (selectionChange)="handleSelectionChange()"
+              >
+                <mat-option
+                  *ngFor="let statusAccount of invoiceStatusAccounts"
+                  [value]="statusAccount.value"
+                >
+                  {{ statusAccount.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col item-group date-selector">
+            <app-date-selector
+              (onDateSelectorChange)="onDateChange($event)"
+              [type]="defaultDateFilterType"
+              [label]="'Hạn thu'"
+            ></app-date-selector>
+          </div>
+        </div>
+      </div>
+
+      <div class="row px-4 pt-2">
+        <div class="col-6">
+          <div>
+            <mat-expansion-panel
+              (opened)="isCollapsed = false"
+              (closed)="isCollapsed = true"
+              #expanPanel
+              hideToggle
+            >
+              <mat-expansion-panel-header>
+                <h5 style="margin: 0">
+                  <strong>Tổng công nợ </strong>
+                  <i class="fas fa-caret-down" *ngIf="!isCollapsed"></i>
+                  <i class="fas fa-caret-up" *ngIf="isCollapsed"></i>
+                </h5>
+              </mat-expansion-panel-header>
+              <table class="tableRevenueDebt">
+                <thead>
+                  <tr class="text-bold">
+                    <td class="px-4 py-2 text-center">Currency</td>
+                    <td class="px-4 py-2 text-center">
+                      {{ "Phải thu" | localize }}
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                      {{ "Đã thu" | localize }}
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                      {{ "Còn lại" | localize }}
+                    </td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of statistics" class="mb-2">
+                    <td class="pl-3 pr-4">
+                      <ng-containter
+                        [style.color]="
+                          _utilities.getColorByCurrency(item.currencyName)
+                        "
+                      >
+                        <strong>{{ item.currencyName }}</strong>
+                      </ng-containter>
+                    </td>
+                    <td class="pl-3 pr-4 text-right">
+                      {{ _utilities.formatMoneyCustom(item.collectionDebt) }}
+                    </td>
+                    <td class="pl-3 pr-4 text-right">
+                      {{ _utilities.formatMoneyCustom(item.paid) }}
+                    </td>
+                    <td class="pl-3 pr-4 text-right">
+                      {{ _utilities.formatMoneyCustom(item.debt) }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </mat-expansion-panel>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body table-responsive p-4">
+        <table
+          style="border-collapse: collapse"
+          class="table table-hover text-nowrap"
+          [busy]="isTableLoading"
+        >
+          <tbody>
+            <ng-container
+              *ngFor="
+                let item of revenueByAccounts
+                  | paginate
+                    : {
+                        id: 'server',
+                        itemsPerPage: pageSize,
+                        currentPage: pageNumber,
+                        totalItems: totalItems
+                      };
+                let index = index
+              "
+            >
+              <tr>
+                <td
+                  style="padding: 12px; width: 15px"
+                  class="text-center"
+                  (click)="item.isExpand = !item.isExpand"
+                >
+                  <button class="btn btn-expand" *ngIf="!item.isExpand">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                  <button class="btn btn-expand" *ngIf="item.isExpand">
+                    <i class="fas fa-chevron-up"></i>
+                  </button>
+                  {{ index + 1 + (pageNumber - 1) * pageSize }}
+                </td>
+                <td>
+                  <div class="row">
+                    <div class="col-md-2">
+                      <a
+                        *ngIf="isShowCreateBtn()"
+                        title="Thêm mới khoản phải thu"
+                        class="btn btn-sm btn-primary"
+                        (click)="createInvoice(item)"
+                      >
+                        <i class="fas fa-plus"></i>
+                      </a>
+                      <label class="ml-1">{{ item.accountName }}</label>
+                    </div>
+                    <div class="col-md-3">
+                      <ng-containter class="d-flex">
+                        <span class="d-block mr-1"
+                          ><strong>Phải thu:</strong></span
+                        >
+                        <ng-containter>
+                          <span
+                            *ngFor="
+                              let collectionDebt of item.totalCollectionDebt
+                            "
+                            class="text-bold d-block"
+                          >
+                            {{
+                              _utilities.formatMoneyCustom(
+                                collectionDebt.totalMoney
+                              )
+                            }}
+                            <ng-containter
+                              [style.color]="
+                                _utilities.getColorByCurrency(
+                                  collectionDebt.currencyName
+                                )
+                              "
+                            >
+                              {{ collectionDebt.currencyName }}
+                            </ng-containter>
+                          </span>
+                        </ng-containter>
+                      </ng-containter>
+                    </div>
+                    <div class="col-md-3">
+                      <ng-containter class="d-flex">
+                        <span class="d-block mr-1"
+                          ><strong>Đã thu: </strong></span
+                        >
+                        <ng-containter>
+                          <span
+                            *ngFor="let paid of item.totalPaid"
+                            class="text-bold d-block"
+                          >
+                            {{ _utilities.formatMoneyCustom(paid.totalMoney) }}
+                            <ng-containter
+                              [style.color]="
+                                _utilities.getColorByCurrency(paid.currencyName)
+                              "
+                            >
+                              {{ paid.currencyName }}
+                            </ng-containter>
+                          </span>
+                        </ng-containter>
+                      </ng-containter>
+                    </div>
+                    <div class="col-md-3">
+                      <ng-containter class="d-flex">
+                        <span class="d-block mr-1"
+                          ><strong>Còn nợ: </strong></span
+                        >
+                        <ng-containter>
+                          <span
+                            *ngFor="let debt of item.totalDebt"
+                            class="text-bold d-block"
+                          >
+                            {{ _utilities.formatMoneyCustom(debt.totalMoney) }}
+                            <ng-containter
+                              [style.color]="
+                                _utilities.getColorByCurrency(debt.currencyName)
+                              "
+                            >
+                              {{ debt.currencyName }}
+                            </ng-containter>
+                          </span>
+                        </ng-containter>
+                      </ng-containter>
+                    </div>
+                    <div class="col-md-1" *ngIf="item.isAllowAutoPaid && isShowAutoPayBtn()">
+                      <button
+                        class="btn btn-primary btn-sm"
+                        (click)="
+                          handleAutoPayDebt(item.accountId, item.accountName)
+                        "
+                      >
+                        Auto trả nợ
+                      </button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="item.isExpand" class="tr-revenue">
+                <td colspan="2">
+                  <table class="table table-striped table-bordered">
+                    <thead>
+                      <th class="t-stt">No</th>
+                      <th class="t-name text-break-word">Tên khoản phải thu</th>
+                      <th class="t-deadline">Hạn thu</th>
+                      <th class="t-invoice-info">Invoice Info</th>
+                      <th class="t-note">Note</th>
+                      <th class="t-status">Trạng thái</th>
+                      <th class="t-incoming-name bg-primary">Ghi nhận thu</th>
+                      <th class="t-money bg-primary">Tiền</th>
+                      <th class="t-creation-time bg-primary">Created At</th>
+                      <th class="t-transaction-info bg-success">
+                        Thông tin giao dịch
+                      </th>
+                    </thead>
+                    <tbody>
+                      <ng-container
+                        *ngFor="let invoice of item.invoices; let idx = index"
+                      >
+                        <tr>
+                          <td
+                            [attr.rowspan]="getRowspan(invoice)"
+                            class="t-stt text-center"
+                          >
+                            {{ idx + 1 }}
+                            <ng-containter *ngIf="!invoice.isEspecial">
+                              <button
+                                matTooltip="Action"
+                                class="menu-action"
+                                mat-button
+                                [matMenuTriggerFor]="menu"
+                                (click)="$event.stopPropagation()"
+                                #menuTrigger="matMenuTrigger"
+                              >
+                                <i class="fas far fa-ellipsis-v"></i>
+                              </button>
+                              <mat-menu #menu="matMenu" class="p-2">
+                                <button
+                                  class="menu-button"
+                                  mat-menu-item
+                                  (click)="editInvoice(item, invoice)"
+                                  *ngIf="isShowEditBtn()"
+                                >
+                                  <i class="fas fa-pencil-alt"></i>
+                                  {{ "Edit" | localize }}
+                                </button>
+                                <button
+                                  class="menu-button"
+                                  mat-menu-item
+                                  (click)="deleteInvoice(item, invoice)"
+                                  *ngIf="isShowDeleteBtn()"
+                                >
+                                  <i class="fas fa-trash"></i>
+                                  {{ "Delete" | localize }}
+                                </button>
+                              </mat-menu>
+                            </ng-containter>
+                          </td>
+                          <td
+                            [attr.rowspan]="getRowspan(invoice)"
+                            class="t-name text-break-word"
+                          >
+                            <span>
+                              <a href="javascript::void();" target="_blank"
+                                >{{
+                                  invoice.invoiceId
+                                    ? "#" + invoice.invoiceId
+                                    : ""
+                                }}
+                              </a>
+                            </span>
+                            {{ invoice.invoiceName }}
+                            <span
+                              *ngIf="!invoice.isEspecial"
+                              class="invocie-date"
+                            >
+                              - {{ invoice.month }}/{{ invoice.year }}</span
+                            >
+                            <ng-containter *ngIf="!invoice.isEspecial">
+                              by
+                              {{
+                                invoice.isProjectTool
+                                  ? "Project Tool"
+                                  : invoice.invoiceCreatedBy
+                              }}
+                            </ng-containter>
+                            <span
+                              *ngIf="!invoice.isEspecial"
+                              class="label-status"
+                              [style.backgroundColor]="
+                                _utilities.getColorByCurrency(
+                                  invoice.invoiceCurrencyName
+                                )
+                              "
+                              >{{ invoice.invoiceCurrencyName }}</span
+                            >
+                          </td>
+                          <td
+                            [attr.rowspan]="getRowspan(invoice)"
+                            class="t-deadline"
+                          >
+                            {{ invoice.deadline | date: "dd/MM/yyyy" }}
+                          </td>
+                          <td
+                            [attr.rowspan]="getRowspan(invoice)"
+                            class="t-invoice-info"
+                          >
+                            <ng-containter *ngIf="!invoice.isEspecial">
+                              <span class="d-block"
+                                >Phải thu:
+                                <strong
+                                  >{{
+                                    _utilities.formatMoneyCustom(
+                                      invoice.collectionDebt
+                                    )
+                                  }}
+                                </strong>
+                              </span>
+                              <span
+                                class="d-block"
+                                matTooltip="National Transfer Fee"
+                                >NTF:
+                                <strong>{{
+                                  _utilities.formatMoneyCustom(invoice.ntf)
+                                }}</strong></span
+                              >
+                              <span
+                                class="d-block"
+                                matTooltip="Internal Transfer Fee"
+                                >ITF:
+                                <strong>
+                                  {{
+                                    _utilities.formatMoneyCustom(invoice.itf)
+                                  }}</strong
+                                >
+                              </span>
+                              <span class="d-block"
+                                >Invoice Money:
+                                <strong
+                                  >{{
+                                    _utilities.formatMoneyCustom(
+                                      invoice.invoiceTotal
+                                    )
+                                  }}
+                                </strong>
+                              </span>
+                            </ng-containter>
+                          </td>
+
+                          <td
+                            [attr.rowspan]="getRowspan(invoice)"
+                            class="position-relative t-note"
+                          >
+                            <ng-containter *ngIf="!invoice.isEspecial">
+                              <span
+                                class="d-block transaction-note"
+                                matTooltip="{{ invoice.note }} "
+                                [ngClass]="{
+                                  'hide-note': !invoice.isShowMoreNote,
+                                  'show-note': invoice.isShowMoreNote
+                                }"
+                                (click)="
+                                  invoice.isShowMoreNote =
+                                    !invoice.isShowMoreNote
+                                "
+                              >
+                                {{ invoice.note }}
+                              </span>
+
+                              <i *ngIf="isShowEditNote()"
+                                class="fas fa-edit icon-edit"
+                                (click)="
+                                  editNote(
+                                    invoice.invoiceId,
+                                    invoice.note,
+                                    item
+                                  )
+                                "
+                              ></i>
+                            </ng-containter>
+                          </td>
+                          <td
+                            [attr.rowspan]="getRowspan(invoice)"
+                            class="position-relative t-status"
+                          >
+                            <ng-containter *ngIf="!invoice.isEspecial">
+                              <span
+                                class="label-status center-status"
+                                [style.backgroundColor]="
+                                  _utilities.getBgTagInvoiceStatus(
+                                    invoice.status
+                                  )
+                                "
+                                >{{ invoice.statusName }}</span
+                              >
+                              <i *ngIf="isShowEditInvoiceBtn()"
+                                class="fas fa-edit icon-edit"
+                                (click)="
+                                  editStatus(
+                                    invoice.invoiceId,
+                                    invoice.status,
+                                    item
+                                  )
+                                "
+                              ></i>
+                            </ng-containter>
+                          </td>
+                        </tr>
+                        <tr
+                          *ngFor="let incom of invoice.incomings"
+                          [ngClass]="
+                            invoice.isEspecial ? 'overpaid-highlight' : ''
+                          "
+                        >
+                          <td class="t-incoming-name text-break-word">
+                            <ng-containter *ngIf="invoice.isEspecial">
+                              <button
+                                matTooltip="Action"
+                                class="menu-action"
+                                mat-button
+                                [matMenuTriggerFor]="menu"
+                                (click)="$event.stopPropagation()"
+                                #menuTrigger="matMenuTrigger"
+                              >
+                                <i class="fas far fa-ellipsis-v"></i>
+                              </button>
+                              <mat-menu #menu="matMenu" class="p-2">
+                                <button
+                                  *ngIf="isShowKhacHangTraKenhTienBtn()"
+                                  class="menu-button"
+                                  mat-menu-item
+                                  (click)="showDialogClientPayDeviant(incom.incomingEntryId, item.accountName, incom.currencyName, incom.money, incom.incomingName)"
+                                >
+                                  <i class="fas fa-credit-card"></i>
+                                  {{ "Khách hàng trả kênh tiền" | localize }}
+                                </button>
+                              </mat-menu>
+                            </ng-containter>
+                            <span>
+                              <a href="app/detail?index=1&id={{incom.bankTransactionId}}" target="_blank"
+                                >#{{ incom.incomingEntryId }}
+                              </a>
+                            </span>
+                            {{ incom.incomingName }}
+                          </td>
+                          <td class="t-money text-break-word">
+                            {{ _utilities.formatMoneyCustom(incom.toMoney) }}
+                            <span
+                              *ngIf="!invoice.isEspecial"
+                              class="label-status"
+                              [style.backgroundColor]="
+                                _utilities.getColorByCurrency(
+                                  invoice.invoiceCurrencyName
+                                )
+                              "
+                              >{{ invoice.invoiceCurrencyName }}</span
+                            >
+                            <span
+                              *ngIf="invoice.isEspecial"
+                              class="label-status"
+                              [style.backgroundColor]="
+                                _utilities.getColorByCurrency(
+                                  incom.currencyName
+                                )
+                              "
+                              >{{ incom.currencyName }}</span
+                            >
+                            <ng-containter
+                              *ngIf="
+                                !invoice.isEspecial &&
+                                invoice.invoiceCurrencyName !=
+                                  incom.currencyName
+                              "
+                            >
+                              <span class="d-block">
+                                1
+                                <ng-containter
+                                  [style.color]="
+                                    _utilities.getColorByCurrency(
+                                      incom.currencyName
+                                    )
+                                  "
+                                  >{{ incom.fromCurrencyName }}</ng-containter
+                                >
+                                =
+                                {{
+                                  _utilities.formatMoneyCustom(
+                                    incom.exchangeRateDisplay
+                                  )
+                                }}
+                                <ng-containter
+                                  [style.color]="
+                                    _utilities.getColorByCurrency(
+                                      invoice.invoiceCurrencyName
+                                    )
+                                  "
+                                >
+                                  {{ incom.toCurrencyName }}</ng-containter
+                                >
+                              </span>
+                            </ng-containter>
+                          </td>
+                          <td class="t-creation-time">
+                            <p class="mb-0 text-center">
+                              {{
+                                incom.creationTime | date: "dd/MM/yyyy HH:mm"
+                              }}
+                            </p>
+                            <p class="mb-0 mb-0 text-center">
+                              by {{ incom.createdBy }}
+                            </p>
+                          </td>
+
+                          <td class="t-transaction-info">
+                            <span class="text-break-word">
+                              <a
+                                href="/app/btransaction?id={{
+                                  incom.bTransactionId
+                                }}"
+                                target="_blank"
+                                >#{{ incom.bTransactionId }}
+                              </a>
+                              <strong
+                                >+
+                                {{
+                                  _utilities.formatMoneyCustom(
+                                    incom.bTransactionMoney
+                                  )
+                                }}
+                                <span
+                                  [style.color]="
+                                    _utilities.getColorByCurrency(
+                                      incom.currencyName
+                                    )
+                                  "
+                                >
+                                  {{ incom.currencyName }}
+                                </span>
+                              </strong>
+                            </span>
+                            <span class="d-block text-break-word">
+                              TK {{ incom.bTransactionAccountNumber }}
+                            </span>
+                            <span class="d-block text-break-word">
+                              At {{ incom.bTransactionTimeAt | date: "dd/MM/yyyy HH:mm:ss" }}
+                            </span>
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-light border-top">
+        <div class="row">
+          <div class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center just">
+            <button class="btn btn-secondary" (click)="refresh()">
+              <i class="fas fa-redo-alt"></i>
+            </button>
+            <mat-form-field style=" width: 20%; margin-left: 30px">
+              <mat-label>Number items</mat-label>
+              <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                <mat-option [value]="5"> 5 </mat-option>
+                <mat-option [value]="10"> 10 </mat-option>
+                <mat-option [value]="20"> 20 </mat-option>
+                <mat-option [value]="50"> 50 </mat-option>
+                <mat-option [value]="100"> 100 </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4 col-12 justify-content-center d-flex align-items-center">
+            <p class="mb-0 ">Total: {{ totalItems }}</p>
+          </div>
+          <div class="col-sm-4 col-12 d-flex align-items-center justify-content-end">
+            <div class="float-sm-right">
+              <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+              </abp-pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div
+  id="demo-modal"
+  class="modal ui-form-new"
+  [ngClass]="isShowPopAutoPayDebt ? 'show' : ''"
+>
+  <div class="modal__content">
+    <div class="modal-header">
+      <h4 class="modal-title">Warning</h4>
+      <button
+        type="button"
+        aria-label="Close"
+        class="close"
+        (click)="isShowPopAutoPayDebt = !isShowPopAutoPayDebt"
+      >
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+    <div class="modal-body">Không có khoản nợ nào cần phải thu.</div>
+  </div>
+</div>

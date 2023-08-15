@@ -1,0 +1,43 @@
+<div class="row d-flex" id="date-selector">
+  <div class="col-4">
+    <mat-form-field class="w-inherit col-12" appearance="outline">
+      <mat-label>{{ label }}</mat-label>
+      <mat-select class="selectpicker remove-example" (selectionChange)="changeOptions(true)"
+        [(ngModel)]="defaultDateType">
+        <mat-option *ngFor="let item of dateTimeOptions" [value]="item">
+          <p *ngIf="item != DateSelectorEnum.CUSTOM">
+            {{ item }}
+          </p>
+          <p *ngIf="item == DateSelectorEnum.CUSTOM" (click)="showPopup()">
+            {{ item }}
+          </p>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  <div *ngIf="defaultDateType != DateSelectorEnum.ALL" class="col-8 select-datepicker--action">
+    <div class="col-12 d-flex align-items-center" style="gap: 6px;">
+      <button mat-raised-button class="bg-blue" color="primary"
+        (click)="nextOrPre('pre')">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <span class="select-datepicker--label text-center" *ngIf="defaultDateType !== DateSelectorEnum.DAY">
+        {{ dateText}}</span>
+
+      <ng-container *ngIf="defaultDateType === DateSelectorEnum.DAY">
+        <div id="date-selector-date-picker">
+          <mat-form-field appearance="outline">
+            <input placeholder="Choose a date" matInput [matDatepicker]="picker" name="date" [(ngModel)]="searchDay"
+              (ngModelChange)="handleSelectDay()">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </ng-container>
+      <button mat-raised-button class="bg-blue" color="primary"
+        (click)="nextOrPre('next')">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

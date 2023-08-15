@@ -1,0 +1,17 @@
+
+<div class="period" [matTooltip]="tooltip">
+    <mat-form-field *ngIf="isShowFilter" appearance="outline" style="width: 340px;" >
+        <mat-select placeholder="Kỳ kế toán" [(ngModel)]="selectedPeriodId" (ngModelChange)="onPeriodChange()" [disabled]="isDisableFilter">
+          <mat-option *ngFor="let period of listPeriod" [value]="period.id">
+           {{period.name}} ({{period.startDate | dmyDateFormat}}<span *ngIf="period.endDate"> - {{period.endDate | dmyDateFormat}}</span>)
+           <span
+              style="margin-right: 3px"
+              class="badge"
+              [ngClass]="period?.isActive ? 'badge-primary' : 'badge-secondary'"
+            >
+              {{ period?.statusName}}</span>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+</div>
+

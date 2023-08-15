@@ -1,0 +1,527 @@
+<section class="content px-2 pt-2" id="finance-detail" [busy]="!transaction">
+  <div class="container-fluid">
+    <div class="row mb-4 card">
+      <div class="col-12">
+        <mat-tab-group [selectedIndex]="tabIndex">
+          <mat-tab label="Giao dịch ngân hàng">
+            <div>
+              <div class="card-body" *ngIf="transaction != null">
+                <form class="form-horizontal" autocomplete="off" #transactionDetail="ngForm">
+                  <div class="form-group row detail" [ngClass]="readMode == false ? 'required' : ''">
+                    <label class="col-md-2 col-form-label" for="name">
+                      {{ "m5_child3.name" | translate }}:
+                    </label>
+                    <div class="col-md-8" *ngIf="!readMode">
+                      <textarea class="form-control textarea-height" name="name" required #tranName="ngModel"
+                        #tranNameEl [readonly]="readMode" maxlength="1024"
+                        [ngClass]="readMode == true ? 'read-mode' : ''" [(ngModel)]="transaction.name"
+                        cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="20"></textarea>
+                      <abp-validation-summary [control]="tranName" [controlEl]="tranNameEl">
+                      </abp-validation-summary>
+                    </div>
+                    <div class="col-md-8" *ngIf="readMode">
+                      <textarea class="form-control textarea-height" name="namereadMode" [readonly]="readMode"
+                        [ngClass]="readMode == true ? 'read-mode' : ''"
+                        [value]="'#' + transaction.id + ' ' + transaction.name" cdkTextareaAutosize
+                        cdkAutosizeMinRows="2" cdkAutosizeMaxRows="20"></textarea>
+                    </div>
+                  </div>
+                  <div class="form-group row detail" [ngClass]="readMode == false ? 'required' : ''">
+                    <label class="col-md-2 col-form-label" for="fromBank">
+                      {{ "m5_child3.fromBank" | translate }}:
+                    </label>
+                    <div class="col-md-7" [hidden]="!readMode">
+                      <p class="mt-2 ml-2">
+                        {{ transaction.fromBankAccountName }}
+                      </p>
+                    </div>
+                    <div class="col-md-7">
+                      <!-- <input type="text" class="form-control " name="fromBankName" readonly="true"
+                                                [ngClass]="readMode==true?'read-mode':''" maxlength="1024"
+                                                [hidden]="!readMode" [(ngModel)]="transaction.fromBankAccountName" /> -->
+                      <mat-form-field [hidden]="readMode" appearance="outline" class="readonly-block w-100">
+                        <mat-select [(ngModel)]="transaction.fromBankAccountId" name="fromBankAccount"
+                          (openedChange)="selectionFromBankAccountOpenChange($event)"
+                          placeholder="select a bank account" required class="readonly-select" #formAccount>
+                          <mat-form-field class="w-100 px-3" style="
+                            position: sticky;
+                            top: 0;
+                            z-index: 2;
+                            background-color: white;">
+                            <input type="text" name="searchFrom" id="" matInput placeholder="search bankAccount"
+                              [(ngModel)]="searchFromBank" (keydown)="$event.stopPropagation()"
+                              (ngModelChange)="filterFromBank()" />
+                          </mat-form-field>
+                          <ng-container *ngFor="let account of formBankList">
+                            <mat-option (click)="
+                                setFromBankCurrency(account.currencyName)
+                              " *ngIf="account.id != toAccount.value"
+                              [value]="account.id">{{account.holderName}}</mat-option>
+                          </ng-container>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="form-group row detail" [ngClass]="readMode == false ? 'required' : ''">
+                    <label class="col-md-2 col-form-label" for="toBank">
+                      {{ "m5_child3.toBank" | translate }}:
+                    </label>
+                    <div class="col-md-7" [hidden]="!readMode">
+                      <p class="mt-2 ml-2">
+                        {{ transaction.toBankAccountName }}
+                      </p>
+                    </div>
+                    <div class="col-md-7">
+                      <!-- <input type="text" class="form-control " name="toBankName" readonly="true"
+                                                [ngClass]="readMode==true?'read-mode':''" maxlength="1024"
+                                                [hidden]="!readMode" [(ngModel)]="transaction.toBankAccountName" /> -->
+                      <mat-form-field appearance="outline" class="readonly-block w-100" [hidden]="readMode">
+                        <mat-select [(ngModel)]="transaction.toBankAccountId" name="toBankAccount"
+                          placeholder="select a bank account" (openedChange)="selectionToBankAccountOpenChange($event)"
+                          required class="readonly-select" #toAccount>
+                          <mat-form-field class="w-100 px-3" style="
+                            position: sticky;
+                            top: 0;
+                            z-index: 2;
+                            background-color: white;">
+                            <input type="text" name="abc" id="" matInput placeholder="search" [(ngModel)]="searchToBank"
+                              (keydown)="$event.stopPropagation()" (ngModelChange)="filterToBank()" />
+                          </mat-form-field>
+                          <ng-container *ngFor="let account of toBankList">
+                            <mat-option (click)="setToBankCurrency(account.currencyName)"
+                              *ngIf="account.id != formAccount.value" [value]="account.id">
+                              {{account.holderName}}</mat-option>
+                          </ng-container>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="form-group row detail" [ngClass]="readMode == false ? 'required' : ''">
+                    <label class="col-md-2 col-form-label" for="fromValue">
+                      {{ "m5_child3.fromValue" | translate }}:
+                    </label>
+                    <div class="col-md-4" [hidden]="!readMode">
+                      <p class="mt-2 ml-2">
+                        {{ transaction.fromValue | number : "1.0" : "en-US" }}
+                        {{ transaction.fromBankAccountCurrency }}
+                      </p>
+                    </div>
+                    <div class="col-md-4" [hidden]="readMode">
+                      <input type="text" mask="separator':''" thousandSeparator="," allowNegativeNumbers="true"
+                        class="form-control" name="fromValue" required #fromValue="ngModel" #fromValueEl
+                        [readonly]="readMode" maxlength="1024" [ngClass]="readMode == true ? 'read-mode' : ''"
+                        [(ngModel)]="transaction.fromValue" />
+                      <abp-validation-summary [control]="fromValue" [controlEl]="fromValueEl">
+                      </abp-validation-summary>
+                    </div>
+                    <div class="col-md-2 mt-2 font-weight-bold" [hidden]="readMode">
+                      {{ this.transaction.fromBankAccountCurrency }}
+                    </div>
+                  </div>
+                  <div class="form-group row detail" [ngClass]="readMode == false ? 'required' : ''">
+                    <label class="col-md-2 col-form-label" for="toValue">
+                      {{ "m5_child3.toValue" | translate }}:
+                    </label>
+                    <div class="col-md-4" [hidden]="!readMode">
+                      <p class="mt-2 ml-2">
+                        {{ transaction.toValue | number : "1.0" : "en-US" }}
+                        {{ transaction.toBankAccountCurrency }}
+                      </p>
+                    </div>
+                    <div class="col-md-4" [hidden]="readMode">
+                      <input type="text" mask="separator':''" thousandSeparator="," allowNegativeNumbers="true"
+                        class="form-control" name="toValue" required #toValue="ngModel" #toValueEl [readonly]="readMode"
+                        maxlength="1024" [ngClass]="readMode == true ? 'read-mode' : ''"
+                        [(ngModel)]="transaction.toValue" />
+                      <abp-validation-summary [control]="toValue" [controlEl]="toValueEl">
+                      </abp-validation-summary>
+                    </div>
+                    <div class="col-md-2 mt-2 font-weight-bold" [hidden]="readMode">
+                      {{ this.transaction.toBankAccountCurrency }}
+                    </div>
+                  </div>
+                  <div class="form-group row detail">
+                    <label class="col-md-2 col-form-label" for="fee">
+                      {{ "m5_child3.fee" | translate }}:
+                    </label>
+                    <div class="col-md-4" [hidden]="!readMode">
+                      <p class="mt-2 ml-2">
+                        {{ transaction.fee | number : "1.0" : "en-US" }}
+                      </p>
+                    </div>
+                    <div class="col-md-4" [hidden]="readMode">
+                      <input type="text" mask="separator':''" thousandSeparator="," allowNegativeNumbers="true"
+                        class="form-control" name="fee" [readonly]="readMode" maxlength="1024"
+                        [(ngModel)]="transaction.fee" [ngClass]="readMode == true ? 'read-mode' : ''" #fee="ngModel"
+                        #feeEl />
+                    </div>
+                  </div>
+                  <div class="form-group row detail">
+                    <label class="col-md-2 col-form-label" for="sentDate">
+                      {{ "m5_child3.sentDate" | translate }}:
+                    </label>
+                    <div class="col-md-4" [hidden]="!readMode">
+                      <p class="mt-2 ml-2">
+                        {{ transaction.transactionDate | date : "dd/MM/yyy" }}
+                      </p>
+                    </div>
+                    <div class="col-md-4" [hidden]="readMode">
+                      <mat-form-field class="date-picker" [appearance]="readMode == true ? '' : 'outline'">
+                        <input [ngClass]="" [readonly]="readMode" matInput [matDatepicker]="picker"
+                          [(ngModel)]="transaction.transactionDate" name="transactionDate" />
+                        <mat-datepicker-toggle [hidden]="readMode" matSuffix [for]="picker">
+                        </mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="form-group row detail">
+                    <label class="col-md-2 col-form-label" for="note">
+                      {{ "m5_child3.note" | translate }}:
+                    </label>
+                    <div class="col-md-4" [hidden]="!readMode">
+                      <p class="mt-2 ml-2">{{ transaction.note }}</p>
+                    </div>
+                    <div class="col-md-4" [hidden]="readMode">
+                      <textarea type="text" class="form-control" name="connectionString"
+                        [ngClass]="readMode == true ? 'read-mode' : ''" [readonly]="readMode" maxlength="1024"
+                        [(ngModel)]="transaction.note" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
+                    </div>
+                  </div>
+                  <div class="form-group row detail">
+                    <label class="col-md-2 col-form-label" for="note">
+                      {{ "m5_child3.bTransaction" | translate }}:
+                    </label>
+                    <div class="col-md-8">
+                      <a class="mt-2 ml-2 hyperlink" *ngIf="transaction.bTransactionId"
+                      [routerLink]="['/app/btransaction']"
+                      [queryParams]="{ id: transaction.bTransactionId }">
+                        {{ getBTRansactionInfo(transaction) }}
+                      </a>
+                    </div>
+                  </div>
+                  <div class="form-group row detail">
+                    <label class="col-md-2 col-form-label" for="note">
+                      {{ "m5_child3.UpdatedAt" | translate }}:
+                    </label>
+                    <div class="col-md-6">
+                      <p class="mt-2 ml-2">
+                        {{
+                        transaction.updatedTime
+                        | date : "dd/MM/yyyy HH:mm:ss "
+                        }}
+                        <span *ngIf="transaction.updatedBy">by {{ transaction.updatedBy }}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <a *ngIf="
+                        permission.isGranted(Finance_BankTransaction_Edit) &&
+                        !transaction.lockedStatus
+                      " href="javascript:;" class="btn bg-secondary mt-3" [hidden]="!readMode"
+                      (click)="editTransaction()">
+                      <i class="fas fa-edit"></i>
+                      {{ "action.edit" | translate }}
+                    </a>
+                  </div>
+
+                  <div class="form-group row" [hidden]="readMode">
+                    <div class="form-group row d-flex justify-content-between">
+                      <button class="btn btn-default mx-2" (click)="cancelEdit()">
+                        {{ "action.cancel" | translate }}
+                      </button>
+                      <button class="btn btn-primary" (click)="saveTransaction()" [disabled]="!transactionDetail.valid">
+                        {{ "action.save" | translate }}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </mat-tab>
+          <mat-tab label="{{ 'm5_child1.title' | translate }}">
+            <section class="content">
+              <div class="container-fluid">
+                <div>
+                  <!-- <div class="card-header">
+                    <div class="">
+                      <h4>{{ "m5_child1.title" | translate }}</h4>
+                    </div>
+                  </div> -->
+                  <div class="card-body table-responsive p-4">
+                    <div class="row mb-4">
+                      <!--<div class="col-6">
+                        <button *ngIf="
+                            permission.isGranted(Finance_IncomingEntry_Create)
+                          " (click)="createRecord()" class="btn bg-blue">
+                          <i class="fa fa-plus-square"></i>
+
+                          {{ "action.create" | translate }}
+                        </button>
+                      </div>-->
+                      <div class="col-6">
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <button type="button" class="btn bg-blue" (click)="filterRecordList()">
+                              <i class="fas fa-search"></i>
+                            </button>
+                          </div>
+                          <input type="text" class="form-control" name="keyword" [(ngModel)]="searchRecord"
+                            placeholder="Search" (keyup.enter)="filterRecordList()" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <table style="border-collapse: collapse" class="table table-hover text-nowrap">
+                      <thead class="bg-light">
+                        <tr>
+                          <th>STT</th>
+                          <th>{{ "m5_child1.name" | translate }}</th>
+                          <th>{{ "m5_child1.incomeType" | translate }}</th>
+                          <th>{{ "m5_child1.value" | translate }}</th>
+                          <th style="width: 160px;">{{ "m5_child1.createdAt" | translate }}</th>
+                          <th style="width: 220px;">{{ "m5_child1.UpdatedTime" | translate }}</th>
+                          <!--<th class="text-center">
+                            {{ "action.actions" | translate }}
+                          </th>-->
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <ng-container *ngFor="
+                            let revenue of revenueRecordList;
+                            let i = index
+                          ">
+                          <tr *ngIf="revenue != null" style="cursor: pointer">
+                            <td style="text-align: center">{{ i + 1 }}</td>
+                            <td>
+                              <b>#{{ revenue?.id }}</b> {{ revenue?.name }}
+                            </td>
+                            <td>
+                              <div class="row">
+                                <div class="col-10">
+                                  {{ revenue.incomingEntryTypeName }}
+                                  <i class="far fa-check-circle fa-lg"
+                                    [ngClass]="revenue.revenueCounted ? 'text-primary ml-2 pointer': 'text-secondary ml-2 pointer' "
+                                    [matTooltip]="revenue.revenueCounted ? 'Có tính vào doanh thu': 'Không tính vào doanh thu' "></i>
+                                </div>
+                                <div class="col-2">
+                                  <div class="col-2 col-edit-oucomeType">
+                                    <i class="fas fa-edit" (click)="onUpdateIncomingEntryType(revenue)"></i>
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td class="text-right">
+                              {{ revenue?.value | number : "1.0" : "en-US" }}
+                              {{ revenue.currencyName }}
+                            </td>
+
+                            <td style="text-align: center">
+                              {{ revenue?.date | date : "dd/MM/yyyy hh:mm:ss" }}
+                            </td>
+                            <td style="text-align: center">
+                              {{
+                              revenue?.updatedTime
+                              | date : "dd/MM/yyyy hh:mm:ss"
+                              }}
+                              <!-- <br/> -->
+                              <div *ngIf="revenue?.updatedBy">by {{ revenue?.updatedBy }}</div>
+                            </td>
+                            <!--<td class="text-center">
+                              <button class="btn btn-sm bg-secondary mr-1" (click)="
+                                  editRecord(revenue); $event.stopPropagation()
+                                ">
+                                <i class="fas fa-pencil-alt"></i>
+                                {{ "action.edit" | translate }}
+                              </button>
+                              <button class="btn btn-sm bg-danger ml-1" (click)="
+                                  deleteRecord(revenue);
+                                  $event.stopPropagation()
+                                ">
+                                <i class="fas fa-trash"></i>
+                                {{ "action.delete" | translate }}
+                              </button>
+                            </td>-->
+                          </tr>
+                        </ng-container>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </mat-tab>
+          <mat-tab label="{{ 'm5_child2.expenditureRequest' | translate }}">
+            <section class="content px-2">
+              <div class="container-fluid">
+                <div>
+                  <div class="card-header">
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                          <i class="fas fa-search"></i>
+                        </button>
+                      </div>
+                      <input type="text" class="form-control" name="keyword" placeholder="Search"
+                        [(ngModel)]="searchText" (keyup.enter)="getDataPage(1)" />
+                      <div class="input-group-append">
+                        <button type="button" class="btn btn-default border-radius-right" (click)="checkAddFilter()">
+                          <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                            [class.fa-angle-down]="!advancedFiltersVisible"></i>
+                        </button>
+                      </div>
+                      <!-- <button *ngIf="
+                          permission.isGranted(
+                            Finance_OutcomingEntry_BankTransaction_GetAllOutcomingEntryByStatusEND
+                          )
+                        " (click)="linkToExpenditureRequest()" class="btn bg-blue ml-3">
+                        <i class="fa fa-plus-square"></i>
+                        {{ "m5_child2.linkToexpenditureRequest" | translate }}
+                      </button> -->
+                    </div>
+                  </div>
+                  <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+                    <div class="card-body">
+                      <form class="form-horizontal">
+                        <div class="row">
+                          <div class="col-md-12 col-xl-12">
+                            <div class="mb-0">
+                              <div>
+                                <div *ngFor="
+                                    let item of filterItems;
+                                    let i = index
+                                  ">
+                                  <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                                    (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG">
+                                  </app-filter>
+                                </div>
+                                <i style="padding: 0" class="fas fa-plus-circle ml-3" (click)="addFilter()"></i>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <div class="card-body table-responsive p-4">
+                    <table style="border-collapse: collapse" class="table table-hover text-nowrap">
+                      <thead class="bg-light">
+                        <tr>
+                          <th>STT</th>
+                          <th>{{ "m5_child2.name" | translate }}</th>
+                          <th>Loại chi</th>
+                          <th>{{ "m5_child2.branch" | translate }}</th>
+                          <!-- <th>{{ "m5_child2.account" | translate }}</th> -->
+                          <th class="text-right">
+                            {{ "m5_child2.value" | translate }} ({{
+                            tong | number : "1.0" : "en-US"
+                            }})
+                          </th>
+                          <th class="text-center">
+                            {{ "m5_child2.status" | translate }}
+                          </th>
+                          <!-- <th class="text-center">
+                            {{ "action.actions" | translate }}
+                          </th> -->
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="
+                            let request of outcomingEntrysByTransaction
+                              | paginate
+                                : {
+                                    id: 'server',
+                                    itemsPerPage: pageSize,
+                                    currentPage: pageNumber,
+                                    totalItems: totalItems
+                                  };
+                            let i = index
+                          " style="cursor: pointer">
+                          <td>{{ i + 1 }}</td>
+                          <td style="max-width: 250px; white-space: normal">
+                            <a [routerLink]="['/app/expenditure-request']" [queryParams]="{ id: request.id }">
+                              # {{ request.id }} {{ request.name }}
+                            </a>
+                            <!-- <span class="">{{ request.name }}</span> -->
+                          </td>
+                          <td class="text-center d-flex justify-content-center border-0">
+                            {{request.outcomingEntryTypeName}}
+                            <div *ngIf="request?.expenseType !== null">
+                              <i class="far fa-check-circle fa-lg"
+                                [ngClass]="request?.expenseType === 0 ? 'text-primary ml-1' : 'text-secondary ml-1' "
+                                [matTooltip]="request?.expenseType === 0 ? 'Tính vào chi phí thực tế' : 'Không tính vào chi phí'"></i>
+                            </div>
+                          </td>
+                          <td>{{ request.branchName }}</td>
+                          <!-- <td>{{ request.accountName }}</td> -->
+                          <td class="text-right">
+                            {{ request.value | number : "1.0" : "en-US" }}
+                          </td>
+                          <td class="text-center" [ngClass]="request.workflowStatusCode">
+                            {{ request.workflowStatusName }}
+                          </td>
+                          <!-- <td class="text-center">
+                            <button *ngIf="
+                                permission.isGranted(
+                                  Finance_OutcomingEntry_Delete
+                                )
+                              " class="btn btn-sm bg-danger ml-1" (click)="deleteLinkToExpenditureRequest(request)">
+                              <i class="fas fa-trash"></i>
+                              xóa liên kết
+                            </button>
+                          </td> -->
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!--<div class="card-footer bg-light border-top">
+                    <div class="row">
+                      <div class="col-sm-4 col-12 text-sm-left text-center">
+                        <button class="btn btn-secondary" (click)="refresh()">
+                          <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <mat-form-field
+                          style="
+                            margin-top: 10px;
+                            width: 20%;
+                            margin-left: 30px;
+                          "
+                          class="background-color-gray"
+                        >
+                          <mat-label>Number items</mat-label>
+                          <mat-select
+                            [(ngModel)]="pageSizeType"
+                            (ngModelChange)="changePageSize()"
+                          >
+                            <mat-option [value]="5"> 5 </mat-option>
+                            <mat-option [value]="10"> 10 </mat-option>
+                            <mat-option [value]="20"> 20 </mat-option>
+                            <mat-option [value]="50"> 50 </mat-option>
+                            <mat-option [value]="100"> 100 </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <div class="col-sm-4 col-12 text-center">
+                        <p class="mb-0 my-2">Total: {{ totalItems }}</p>
+                      </div>
+                      <div class="col-sm-4 col-12">
+                        <div class="float-sm-right m-auto">
+                          <abp-pagination-controls
+                            id="server"
+                            (pageChange)="getDataPage($event)"
+                          >
+                          </abp-pagination-controls>
+                        </div>
+                      </div>
+                    </div>
+                  </div>-->
+                </div>
+              </div>
+            </section>
+          </mat-tab>
+        </mat-tab-group>
+        <hr />
+      </div>
+    </div>
+  </div>
+</section>

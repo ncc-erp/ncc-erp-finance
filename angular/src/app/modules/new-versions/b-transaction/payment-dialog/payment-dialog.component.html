@@ -1,0 +1,256 @@
+<form
+  class="form-horizontal ui-form-new"
+  autocomplete="off"
+  #revenueManagedForm="ngForm"
+>
+  <div
+    class="modal-header"
+    cdkDrag
+    cdkDragRootElement=".cdk-overlay-pane"
+    cdkDragHandle
+  >
+    <h4 class="modal-title">
+      Khách hàng thanh toán từ BĐSD: #{{ data.bTransactionId }}
+      (
+      <strong>
+        {{ _utilities.formatMoneyCustom(data.money) }}
+        <span
+          [style.color]="_utilities.getColorByCurrency(data.currencyName)"
+          >{{ data.currencyName }}</span
+        >
+      </strong>
+      )
+    </h4>
+    <button type="button" class="close" aria-label="Close" mat-dialog-close>
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="fixedBody">
+      <div class="form-group row px-2" style="margin-bottom: 0;">
+        <!-- <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "Khách hàng" | localize }}:
+        </label>
+        <div class="col-md-9">
+          <mat-form-field appearance="outline">
+            <mat-select
+              [(ngModel)]="payment.accountId"
+              name="customer"
+              placeholder="Chọn khách hàng..."
+              #customer="ngModel"
+              #customerEl
+              (selectionChange)="customerHandler()"
+              (openedChange)="handleSelectOpenedChange($event)"
+              required
+            >
+              <div class="p-2 input-wrapper">
+                <input
+                  type="text"
+                  name="customer"
+                  matInput
+                  class="search-input"
+                  placeholder="Search Text"
+                  (keydown)="$event.stopPropagation()"
+                  #searchInput
+                  (input)="filterAccount($event.target.value)"
+                  [(ngModel)]="searchCustomer"
+                  (blur)="focusOut()"
+                />
+                {{ isFocusing ? searchInput.focus() : "" }}
+              </div>
+              <mat-option
+                *ngFor="let item of filteredCustomerOptions"
+                [value]="item.value"
+                >{{ item.name }}</mat-option
+              >
+            </mat-select>
+          </mat-form-field>
+        </div> -->
+        <app-selection-customs
+            class="w-100"
+            label="Khách hàng"
+            [input]="filteredCustomerOptions"
+            [value]="payment.accountId"
+            [required]="true"
+            placeholder="Chọn khách hàng"
+            placeholderSearchText="Search khách hàng .."
+            [lableDirection]="lableDirectionKhachHang"
+            labelClass = "col-md-3"
+            selectionClass = "col-md-9"
+            (ngModelChange)="payment.accountId = $event; customerHandler()"
+          >
+          </app-selection-customs>
+      </div>
+
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label"> Khách hàng bonus: </label>
+        <div class="col-md-9 d-flex align-items-center">
+          <mat-checkbox
+            color="primary"
+            name="isCreateBonus"
+            id="checkbox-is-create-bonus"
+            [(ngModel)]="payment.isCreateBonus"
+          ></mat-checkbox>
+        </div>
+      </div>
+      <ng-container *ngIf="payment.isCreateBonus">
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label"> Tên ghi nhận thu: </label>
+          <div class="col-md-9">
+            <input
+              type="text"
+              required
+              [ngModelOptions]="{ standalone: true }"
+              (keydown)="$event.stopPropagation()"
+              (keyup.enter)="$event.stopPropagation()"
+              [(ngModel)]="payment.incomingEntryName"
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label"> Giá trị bonus: </label>
+          <div class="col-md-9">
+            <input
+              type="text"
+              required
+              [ngModelOptions]="{ standalone: true }"
+              (keydown)="$event.stopPropagation()"
+              (keyup.enter)="$event.stopPropagation()"
+              [(ngModel)]="payment.incomingEntryValue"
+              [allowNegativeNumbers]="false"
+              mask="separator"
+              thousandSeparator=","
+              class="form-control"
+            />
+          </div>
+        </div>
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label"> Loại nhận thu: </label>
+          <div class="col">
+            <app-selection-tree-incoming-entry-type
+              *ngIf="incomingEntryTypeOptions"
+              id="incoming-entry-type-options"
+              [treeValue]="incomingEntryTypeOptions"
+              placeholder="Loại ghi nhận thu"
+              [selected]="payment.incomingEntryTypeId"
+              (selectChange)="payment.incomingEntryTypeId = $event; incomingEntryTypeIdChange()"
+              space="3"
+            >
+            </app-selection-tree-incoming-entry-type>
+          </div>
+          <div class="d-flex align-items-center default-incoming-entry-type">
+            <mat-checkbox
+                class="float-right"
+                [checked]="isDefaultIncomingEntryType"
+                [disabled]="
+                  linkDone ||
+                  (!payment.incomingEntryTypeId &&
+                    !isDefaultIncomingEntryType)
+                "
+                (change)="defaultIncomingEntryTypeChange($event)"
+                #defaultIncomingEntryId
+                >Default</mat-checkbox
+              >
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #currencyConvert [ngIf]="currencyNeedConverts.length > 0">
+        <div class="form-group row mt-2">
+          <label class="col-md-3 col-form-label">
+            {{ "Tỉ giá" | localize }}: <span class="text-danger">*</span></label
+          >
+          <div class="col-9">
+            <ng-container
+              *ngFor="let item of currencyNeedConverts; let i = index"
+            >
+              <div
+                class="row col"
+                [ngClass]="i > 0 ? 'mt-1' : ''"
+                style="white-space: nowrap; flex-wrap: nowrap"
+              >
+                <label
+                  class="col-form-label col-2"
+                  *ngIf="!item.isReverseExchangeRate"
+                >
+                  1 {{ item.fromCurrencyName }} =
+                </label>
+                <label
+                  class="col-form-label col-2"
+                  *ngIf="item.isReverseExchangeRate"
+                >
+                  1 {{ item.toCurrencyName }} =
+                </label>
+                <div class="col-5">
+                  <input
+                    type="text"
+                    mask="separator':''"
+                    thousandSeparator=","
+                    allowNegativeNumbers="true"
+                    class="form-control"
+                    [name]="'exchangeRate' + i"
+                    [(ngModel)]="item.exchangeRate"
+                    required
+                    #exchangeRate="ngModel"
+                    #exchangeRateEl
+                    placeholder="Nhập tỉ giá..."
+                  />
+                  <abp-validation-summary
+                    [control]="exchangeRate"
+                    [controlEl]="exchangeRateEl"
+                  >
+                  </abp-validation-summary>
+                </div>
+                <label
+                  class="col-form-label col-1"
+                  *ngIf="!item.isReverseExchangeRate"
+                >
+                  {{ item.toCurrencyName }}
+                </label>
+                <label
+                  class="col-form-label col-1"
+                  *ngIf="item.isReverseExchangeRate"
+                >
+                  {{ item.fromCurrencyName }}
+                </label>
+                <div class="custom-control custom-checkbox ml-5 col-2">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    [name]="item.toCurrencyName"
+                    [id]="item.toCurrencyName"
+                    [(ngModel)]="item.isReverseExchangeRate"
+                  />
+                  <label
+                    class="custom-control-label mt-2"
+                    [for]="item.toCurrencyName"
+                    >Đảo ngược</label
+                  >
+                </div>
+                <!-- <mat-checkbox [(ngModel)]="item.isReverseExchangeRate" >
+                  Đảo ngược
+                </mat-checkbox> -->
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row">
+          <label class="col-md-3"></label>
+          <div class="col-9">
+            <strong>Format: 24,000.5 </strong>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+    <div class="row d-flex justify-content-between mt-4 px-1">
+      <button mat-dialog-close class="btn btn-default">Hủy</button>
+      <button
+        (click)="process()"
+        [disabled]="!revenueManagedForm.valid || isBtnDisable()"
+        class="btn btn-primary"
+      >
+        Thực hiện
+      </button>
+    </div>
+  </div>
+</form>

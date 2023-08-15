@@ -1,0 +1,10 @@
+.total{
+    font-size: 18px;
+}
+.move-cursor{
+    cursor: move;
+}
+::ng-deep #baocaochi .ngx-pagination{
+    padding: 0;
+    margin: 0;
+}

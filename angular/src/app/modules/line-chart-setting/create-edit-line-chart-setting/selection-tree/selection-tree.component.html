@@ -1,0 +1,43 @@
+<div style="margin-bottom: 10px">
+    <mat-accordion [togglePosition]="'before'">
+        <mat-expansion-panel #expanPanel [hideToggle]="isFinalNode()">
+            <mat-expansion-panel-header>
+                <div class="row w-100">
+                    <div class="col-10" style="display: flex; align-items: center;">
+                        <span class="text-uppercase font-weight-bold">
+                            {{ data?.name }}&nbsp;
+                        </span>
+                        <span class="badge" [ngClass]="data.isActive ? 'badge-success' : 'badge-danger'">
+                            {{ data?.isActive ? 'active' : 'inActive' }}
+                        </span>
+                        <span class="ml-2">
+                            <i *ngIf="data?.revenueCounted || data?.expenseType == 0"
+                             class="far fa-check-circle fa-lg text-primary"
+                             [matTooltip]="data?.revenueCounted ? 'Có tính vào doanh thu' : data.expenseType == 0
+                             ? 'Chi phí thực tế' : ''"></i>
+                        </span>
+                        <span class="ml-2">
+                            <i *ngIf="data?.revenueCounted === false || data?.expenseType == 1"
+                             class="far fa-check-circle fa-lg text-secondary"
+                             [matTooltip]="data?.revenueCounted === false ? 'Không tính vào doanh thu' : data.expenseType == 1
+                             ? 'Không tính vào chi phí' : ''"></i>
+                        </span>
+                    </div>
+                    <div class="col-2 child text-right">
+                        <mat-checkbox *ngIf="!selected" #checkbox [checked]="data.checked"
+                            (click)="$event.stopPropagation(); onCheck(checkbox); onSelect()"></mat-checkbox>
+                        <i *ngIf="selected" class="fas fa-times text-danger fa-lg"
+                            (click)="$event.stopPropagation();RemoveLineChartReference(data)"></i>
+                    </div>
+
+                </div>
+            </mat-expansion-panel-header>
+            <ng-container *ngIf="data?.children?.length > 0">
+                <app-selection-tree [existList]="existList" [selected]="selected" (onSelectedItem)="onSelect($event)"
+                    [chartId]="chartId" (onRemoveItem)="onRemove($event)" *ngFor="let item of data.children"
+                    [data]="item"></app-selection-tree>
+            </ng-container>
+
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>

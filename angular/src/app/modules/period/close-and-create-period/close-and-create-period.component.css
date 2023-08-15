@@ -1,0 +1,17 @@
+td, .table thead th{
+    vertical-align: middle;
+}
+a:hover{
+    text-decoration: underline;
+}
+
+.table-scoll {
+    max-height: 500px;
+    overflow: auto;
+}
+
+.table-scoll thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}

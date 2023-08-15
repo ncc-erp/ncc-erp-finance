@@ -1,0 +1,117 @@
+.fa-plus-circle {
+    font-size: 24px;
+    padding-left: 7.5px;
+}
+
+tr,
+th,
+td {
+    border: .2px solid rgba(204, 204, 204, .35);
+}
+
+.elnino {
+    cursor: pointer;
+}
+
+::ng-deep #accountant-account .mat-form-field-flex>.mat-form-field-infix {
+    padding: 0.3em 0px !important;
+}
+
+::ng-deep #accountant-account .mat-form-field-label-wrapper {
+    top: -1.5em !important;
+}
+
+::ng-deep #accountant-account .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75) !important;
+    width: 133.33333%;
+}
+
+/* ::ng-deep #accountant-account .mat-form-field-flex {
+    background: white;
+} */
+
+::ng-deep #accountant-account .mat-form-field-label-wrapper .mat-form-field-label {
+    font-weight: normal;
+    font-size: 14px;
+    margin-top: 2px !important;
+}
+
+::ng-deep #accountant-account .mat-form-field-appearance-legacy .mat-form-field-underline {
+    bottom: 0px !important;
+}
+
+::ng-deep #accountant-account .mat-form-field-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.input-group-prepend,
+.input-group-append {
+    display: block;
+}
+
+.select-searchOption {
+    border-radius: 0px;
+}
+
+th.no {
+    width: 60px !important;
+    padding: 12px;
+}
+
+th.accountType {
+    max-width: 140px;
+}
+
+th.actions {
+    text-align: center;
+    max-width: max-content;
+}
+
+td.actions {
+    box-sizing: border-box;
+    max-width: fit-content;
+    vertical-align: middle;
+    justify-content: center;
+    text-align: center;
+}
+
+td.no {
+    padding: 12px;
+}
+
+td.accountTypeName {
+    max-width: 140px;
+}
+
+td.name {
+    max-width: 260px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+td.default{
+    vertical-align: middle;
+}
+
+td.isActive {
+    vertical-align: middle;
+}
+
+.select-pagesize {
+    margin-top: -10px;
+    width: 20%;
+    margin-left: 30px;
+}
+
+
+
+.banks-wrapper {
+    max-width: 90%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.dataTable{
+    border-collapse: collapse;
+}

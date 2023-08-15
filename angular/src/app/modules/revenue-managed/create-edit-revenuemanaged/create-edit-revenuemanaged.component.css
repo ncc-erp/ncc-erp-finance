@@ -1,0 +1,23 @@
+::ng-deep #create-edit-revenuemanaged .mat-form-field-flex > .mat-form-field-infix {
+  padding: 0.4em 0px;
+}
+::ng-deep #create-edit-revenuemanaged .mat-form-field-appearance-outline .mat-form-field-label {
+  margin-top: -10px;
+}
+::ng-deep #create-edit-revenuemanaged label.ng-star-inserted {
+  transform: translateY(-0.59375em) scale(0.75);
+}
+.fileUpload {
+  align-items: center;
+  display: flex;
+}
+.tbl-file {
+  width: 100%;
+}
+.hyperlink {
+  color: #007bff;
+}
+.hyperlink:hover {
+  cursor: pointer;
+  text-decoration: underline !important;
+}

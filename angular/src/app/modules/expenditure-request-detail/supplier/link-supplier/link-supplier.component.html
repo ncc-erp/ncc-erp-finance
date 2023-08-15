@@ -1,0 +1,42 @@
+<form class="form-horizontal" autocomplete="off" #linkTransaction="ngForm">
+    <abp-modal-header title="{{'m5_child2.linkSupplier' | translate}} " (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+
+    <div class="modal-body">
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="bankTransaction">
+                {{ "m5_child2.supplierTitle" | translate }}:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field class="w-100" appearance="outline" id="select-supplier">
+                    <mat-select name="bankTransaction" placeholder="Select supplier" [(ngModel)]="supplier.id" required
+                        #fromBank="ngModel">
+                        <mat-form-field class="w-100 px-3 "
+                            style="position: sticky; top: 0;; z-index: 2; background-color: white;">
+                            <input type="text" name="searchFrom" id="" matInput placeholder="search"
+                                [(ngModel)]="searchSupplier" (keydown)="$event.stopPropagation()">
+                        </mat-form-field>
+                        <ng-container *ngFor="let supplier of supplierList | filter:searchSupplier">
+                            <mat-option [value]="supplier.id">
+                                {{supplier.searchText}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="fromBank.hasError('required') && fromBank.touched" style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+
+            </div>
+        </div>
+
+
+        <div class="form-group row d-flex justify-content-between mt-2">
+            <button class="btn btn-default mx-2" mat-dialog-close>{{ "action.cancel" | translate }}</button>
+            <button class="btn btn-primary" (click)="saveAndClose()" [disabled]="!linkTransaction.valid || isDisable">{{
+                "action.save"
+                | translate }}</button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,25 @@
+<div id="edit-report-date">
+    <h1 mat-dialog-title>Cập nhật ngày báo cáo</h1>
+
+    <div mat-dialog-content>
+        <div class="row">
+            <label class="col-4 mt-2" required>
+                Ngày báo cáo
+            </label>
+
+            <div class="col-8">
+                <mat-form-field appearance="outline" class="col-12">
+                    <mat-label>Choose a date</mat-label>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="reportDate">
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+
+    <div mat-dialog-actions class="d-flex justify-content-end mr-2">
+        <button class="btn btn-default mx-2" mat-dialog-close>{{ "action.cancel" | translate }}</button>
+        <button class="btn btn-primary" (click)="handleSave()" [disabled]="isSaving || !reportDate">{{ "action.save" | translate }}</button>
+    </div>
+</div>

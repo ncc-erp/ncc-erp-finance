@@ -1,0 +1,70 @@
+<form class="form-horizontal" autocomplete="off" #createTransactionForm="ngForm" id="create-multi-transaction">
+    <abp-modal-header title="{{'m5_child2.createMultiple' | translate}}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="name">
+                {{"m5_child3.name" | translate}}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="code" id="code" minlength="2" maxlength="64" required
+                    [(ngModel)]="requestBody.name" #nameModel="ngModel" #nameEl />
+                <abp-validation-summary [control]="nameModel" [controlEl]="nameEl"></abp-validation-summary>
+            </div>
+            </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="bankAccount">
+                {{"m5_child2.fromBankAccount" | translate}}
+            </label>
+            <div class="col-md-9">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select name="bankTransaction" placeholder="select an account"
+                        [(ngModel)]="requestBody.fromBankAccountId" required #account="ngModel">
+                        <mat-form-field class="w-100 px-3 " style="position: sticky; top: 0;; z-index: 2; background-color: white;">
+                            <input type="text" name="searchFrom" id="" matInput placeholder="search"
+                                [(ngModel)]="accountSearch">
+                        </mat-form-field>
+                        <ng-container *ngFor="let account of bankAccountList | filter:accountSearch">
+                            <mat-option [value]="account.id">
+                                {{account.holderName}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="account.hasError('required') && account.touched" style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+
+            </div>
+        </div>
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="connectionString">
+                Date:
+            </label>
+            <div class="col-md-9 datepick">
+                <mat-form-field appearance="outline">
+                    <mat-label style="font-weight: normal;">Choose a date</mat-label>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="requestBody.transactionDate"
+                        name="transactionDate" required>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-md-3 col-form-label" for="connectionString">
+                {{"m5_child3.note" | translate}}
+            </label>
+            <div class="col-md-9">
+                <textarea type="text" class="form-control" name="connectionString" maxlength="1024"
+                    [(ngModel)]="requestBody.note" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
+            </div>
+        </div>
+        <div class="form-group row d-flex justify-content-between mt-2">
+            <button class="btn btn-default mx-2" mat-dialog-close>{{ "action.cancel" | translate }}</button>
+            <button class="btn btn-primary" [disabled]="!createTransactionForm.valid " (click)="saveAndClose() "
+                cdkFocusInitial>{{ "action.save" | translate }}</button>
+        </div>
+    </div>
+</form>

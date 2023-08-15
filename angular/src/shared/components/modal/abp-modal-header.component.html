@@ -1,0 +1,11 @@
+<div class="modal-header" cdkDrag cdkDragRootElement=".modal-content, .cdk-overlay-pane" cdkDragHandle>
+  <h4 class="modal-title" [innerHTML]="title"></h4>
+  <button
+    type="button"
+    class="close"
+    aria-label="Close"
+    (click)="onCloseClick.emit()"
+  >
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>

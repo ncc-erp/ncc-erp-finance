@@ -1,0 +1,189 @@
+<form
+  class="form-horizontal"
+  autocomplete="off"
+  #createExpenditureForm="ngForm"
+  id="create-edit-expenditure"
+>
+  <abp-modal-header
+    [title]="
+      title == 'edit'
+        ? ('m3_child6.editTitle' | translate)
+        : ('m3_child6.createTitle' | translate)
+    "
+    (onCloseClick)="dialogRef.close()"
+  ></abp-modal-header>
+
+  <div class="modal-body">
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="expenditureName">
+        {{ "m3_child6.name" | translate }}:
+      </label>
+      <div class="col-md-9">
+        <input
+          type="text"
+          class="form-control"
+          name="expenditureName"
+          #expenditureName="ngModel"
+          #expenditureNameEl
+          maxlength="64"
+          [(ngModel)]="expenditure.name"
+          required
+          (ngModelChange)="handleChangeName()"
+        />
+        <abp-validation-summary
+          [control]="expenditureName"
+          [controlEl]="expenditureNameEl"
+        >
+        </abp-validation-summary>
+      </div>
+    </div>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="name">
+        {{ "m3_child6.code" | translate }}:
+      </label>
+      <div class="col-md-9">
+        <input
+          type="text"
+          class="form-control"
+          name="name"
+          id="name"
+          maxlength="128"
+          [(ngModel)]="expenditure.code"
+          required
+          #code="ngModel"
+          #codeEl
+        />
+        <abp-validation-summary
+          [control]="code"
+          [controlEl]="codeEl"
+        ></abp-validation-summary>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label" for="connectionString">
+        Parent:
+      </label>
+      <div class="col-md-7">
+        <!-- <mat-form-field class="w-100" appearance="outline">
+                    <mat-select [(ngModel)]="expenditure.parentId" name="parentSelect">
+                        <mat-form-field class="w-100 px-3 " style="position: sticky; top: 0;; z-index: 2; background-color: white;">
+                            <input matInput  [(ngModel)]="searchExpenditure"
+                            name="searchExpenditure" placeholder="search">
+                        </mat-form-field>
+                        <mat-option hidden="true" [value]="null">none</mat-option>
+                        <ng-container *ngFor="let expenditure of selectData |filter:searchExpenditure">
+                            <mat-option  [value]="expenditure.id">{{
+                                expenditure.name
+                                }}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field> -->
+        <app-selection-tree-incoming-entry-type
+          *ngIf="outcomingEntryTypeOptions"
+          [treeValue]="outcomingEntryTypeOptions"
+          placeholder="Loại chi"
+          [isRequired]="false"
+          [selected]="expenditure.parentId"
+          (selectChange)="expenditure.parentId = $event"
+          [isDisableParent]="false"
+          space="1.5"
+        >
+        </app-selection-tree-incoming-entry-type>
+      </div>
+      <div class="col-md-2">
+        <mat-icon
+          style="margin-top: 10px; cursor: pointer"
+          *ngIf="expenditure.parentId != null"
+          (click)="expenditure.parentId = null"
+          >clear</mat-icon
+        >
+      </div>
+    </div>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="workFlowSelect">
+        Workflow:
+      </label>
+      <div class="col-md-9">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-select
+            [(ngModel)]="expenditure.workflowId"
+            name="workFlowSelect"
+            required
+            #workflow="ngModel"
+            #workflowEl
+          >
+            <mat-form-field
+              class="w-100 px-3"
+              style="
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                background-color: white;
+              "
+            >
+              <input
+                matInput
+                [(ngModel)]="searchWorkFlow"
+                name="searchWorkFlow"
+                placeholder="search"
+              />
+            </mat-form-field>
+            <ng-container
+              *ngFor="let workFlow of workFlowList | filter : searchWorkFlow"
+            >
+              <mat-option [value]="workFlow.id">{{ workFlow.name }}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-error
+          *ngIf="workflow.hasError('required') && workflow.touched"
+          style="font-size: 13px"
+        >
+          This field is required
+        </mat-error>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label"> Status </label>
+      <div class="col-md-4">
+        <mat-form-field appearance="outline">
+          <mat-select
+            name="status"
+            id="status"
+            [(ngModel)]="expenditure.isActive"
+            placeholder="Select Status"
+            [disabled]="!isEdit"
+          >
+            <mat-option [value]="true"> Active </mat-option>
+            <mat-option [value]="false"> Inactive </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="form-group row">
+        <mat-checkbox
+          class="ml-1"
+          [checked]="!expenditure.expenseType"
+          (change)="expenditure.expenseType = 1 - expenditure.expenseType"
+          name="reveCount"
+        >
+          Tính vào chi phí
+        </mat-checkbox>
+    </div>
+
+    <div class="form-group row d-flex justify-content-between">
+      <button class="btn btn-default mx-2" mat-dialog-close>
+        {{ "action.cancel" | translate }}
+      </button>
+      <button
+        class="btn btn-primary"
+        cdkFocusInitial
+        [disabled]="!createExpenditureForm.valid || isDisable"
+        (click)="saveAndClose()"
+      >
+        {{ "action.save" | translate }}
+      </button>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,13 @@
+.currency{
+    margin-top: 10px;
+}
+.auto-paid .group-modal-header{
+    border-bottom: 1px solid #e9ecef;
+}
+::ng-deep #auto-payment-debt-dialog .auto-paid .group-modal-header .modal-header{
+    border: 0;
+}
+.auto-paid .s-title{
+    margin-bottom: 15px;
+    display: block;
+}

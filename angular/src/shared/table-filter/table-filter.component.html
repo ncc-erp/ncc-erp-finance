@@ -1,0 +1,40 @@
+<div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-2 col-sm-2">
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-select [placeholder]="'filter.filterby' | translate" id="propertyName" [value]="item.propertyName" (click)="$event.stopPropagation()"
+            (valueChange)="onChange($event, 'propertyName')">
+            <mat-option *ngFor="let filter of inputFilters"
+              [class.selected]="filter.propertyName === selectedPropertyName" [value]="filter.propertyName" (click)="$event.stopPropagation()">
+              {{filter.displayName}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-2 col-sm-2">
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <mat-select [placeholder]="'filter.comparision' | translate" id="comparision" [value]="item.comparision" (click)="$event.stopPropagation()"
+            (valueChange)="onChange($event, 'comparision')">
+            <mat-option *ngFor="let item of comparisions" [value]="item.id" (click)="$event.stopPropagation()">{{item.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-lg-7 col-sm-7">
+        <mat-form-field appearance="outline" style="width: 100%;">
+          <input matInput [placeholder]="'filter.textFilter' | translate" [value]="item.value" id="filterValue" (click)="$event.stopPropagation()"
+            type="text" name="value" maxlength="128" class="validate"
+            (change)="onChange($event?.target?.value || '', 'value')">
+        </mat-form-field>
+      </div>
+      <!-- <div class="col-lg-1 col-sm-1 mt-3">
+        <i class="fas fa-times" (click)="deleteFilter()"></i>
+      </div> -->
+  
+    </div>
+    <!-- <div class="col-sm-3 filter">
+      <button type="button" (click)="addFilter()" class="btn btn-primary waves-effect" [disabled]="selectedPropertyName=='' || selectedComparision < 0">Add
+        filter</button>
+      <button type="button" class="btn btn-primary waves-effect mt-5" (click)="doFilterData()">Filter data</button>
+    </div> -->
+  </div>

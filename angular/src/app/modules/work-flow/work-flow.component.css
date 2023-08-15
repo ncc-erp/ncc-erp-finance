@@ -1,0 +1,23 @@
+.fa-plus-circle{
+    font-size: 24px;
+    padding-left: 7.5px;
+}
+tr,th,td {
+    border: .2px solid rgba(204,204,204,.35);
+}
+
+::ng-deep #work-flow .mat-form-field-appearance-legacy .mat-form-field-underline {
+    bottom: 0px !important;
+}
+
+::ng-deep #work-flow .mat-form-field-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.hyperlink:hover {
+    cursor: pointer;
+    text-decoration: underline !important;
+}
+.hyperlink {
+    color: #007bff;
+}

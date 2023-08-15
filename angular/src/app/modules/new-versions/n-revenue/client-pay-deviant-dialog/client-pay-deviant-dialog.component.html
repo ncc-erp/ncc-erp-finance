@@ -1,0 +1,38 @@
+<form class="form-horizontal ui-form-new" autocomplete="off" #revenueManagedForm="ngForm">
+    <abp-modal-header title=" {{ title }}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+
+    <div class="modal-body">
+        <div class="fixedBody">
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="nameInvoice">
+                    {{ "Tên ghi nhận thu" | localize }}:
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" name="nameInvoice" placeholder=""
+                        [(ngModel)]="model.incomingName" required #requestName="ngModel" #requestNameEl />
+                    <abp-validation-summary [control]="requestName" [controlEl]="requestNameEl">
+                    </abp-validation-summary>
+                </div>
+            </div>
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="connectionString">
+                    {{ "Mã loại thu" | localize }}:
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" name="connectionString" placeholder=""
+                        [(ngModel)]="deviantCode" disabled="true"/>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-between mt-4 px-1">
+            <button class="btn btn-default mx-2" mat-dialog-close>
+                Cancel
+            </button>
+            <button class="btn btn-primary" [disabled]="!revenueManagedForm.valid || isSaving"
+                (click)="saveAndClose()">
+                Save
+            </button>
+        </div>
+    </div>
+</form>

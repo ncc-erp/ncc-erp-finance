@@ -1,0 +1,51 @@
+<form class="form-horizontal" autocomplete="off" #linkTransaction="ngForm">
+    <abp-modal-header title="{{'m5_child2.linkToIncomingEntry' | translate}} " (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+
+    <div class="modal-body">
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="bankTransaction">
+                {{ "m5_child1.title" | translate }}
+            </label>
+            <div class="col-md-9" id="select-transaction">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select name="bankTransaction" placeholder="select revenue"
+                        [(ngModel)]="requestBody.incomingEntryId" required #fromBank="ngModel">
+                        <mat-form-field class="w-100 px-3 "
+                            style="position: sticky; top: 0;; z-index: 2; background-color: white;">
+                            <input type="text" name="searchFrom" id="" matInput placeholder="search"
+                                [(ngModel)]="searchText" (keydown)="$event.stopPropagation()">
+                        </mat-form-field>
+                        <ng-container *ngFor="let data of incoming | filter:searchText">
+                            <mat-option [value]="data.id" data-toggle="tooltip" title="{{data.searchText}}">
+                                {{data.searchText}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="fromBank.hasError('required') && fromBank.touched" style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label">
+            </label>
+            <div class="col-md-9" id="select-transaction">
+                <section class="mt-2">
+                    <mat-checkbox matTooltip="vd: - request chi 8M vnđ, xuất tiền 10M (thừa 2M) => ghi nhận thu 2M là hoàn tiền.
+                        - request chi bán 100 usd giá trị 2M vnđ, xuất tiền 100 usd => ghi nhận thu 2M vnđ KHÔNG phải là hoàn tiền" (change)="setIsRefund($event.checked)" >Hoàn tiền</mat-checkbox>
+                </section>
+            </div>
+        </div>
+
+        <div class="form-group row d-flex justify-content-between mt-2">
+            <button class="btn btn-default mx-2" mat-dialog-close>{{ "action.cancel" | translate }}</button>
+            <button class="btn btn-primary" (click)="createRevenues()"
+                [disabled]="!linkTransaction.valid || isDisable">{{"action.save" | translate }}</button>
+        </div>
+    </div>
+</form>

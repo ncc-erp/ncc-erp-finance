@@ -1,0 +1,9 @@
+.currency{
+    margin-top: 14px;
+}
+.f-size{
+    font-size: 1.2rem;
+}
+::ng-deep #checkbox-end > .mat-checkbox-layout{
+    margin: 0 !important;
+}

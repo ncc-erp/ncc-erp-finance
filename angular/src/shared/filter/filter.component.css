@@ -1,0 +1,18 @@
+.filter button.mt-5 {
+    margin-left: 5px;
+}
+.filter {
+    margin-top: 10px;
+}
+
+.container{
+    display: flex;
+    align-items: center;
+}
+::ng-deep #filter .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}
+::ng-deep #filter .mat-form-field-label-wrapper { top: -1.5em; }
+
+::ng-deep #filter .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}

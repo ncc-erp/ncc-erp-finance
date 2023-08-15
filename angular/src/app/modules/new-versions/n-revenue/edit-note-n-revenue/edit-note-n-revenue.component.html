@@ -1,0 +1,25 @@
+<form class="form-horizontal ui-form-new" autocomplete="off" #revenueManagedForm="ngForm">
+    <abp-modal-header title=" {{ title }}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="fixedBody">
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="note">
+                    {{ "Ghi chú" | localize }}:
+                </label>
+                <div class="col-md-9">
+                    <textarea class="form-control" aria-colspan="3" rows="5" [(ngModel)]="revenue.note"
+                        name="note"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-between mt-4 px-1">
+            <button class="btn btn-default mx-2" mat-dialog-close>
+                Cancel
+            </button>
+            <button class="btn btn-primary" [disabled]="isDisable" (click)="saveAndClose()">
+                Save
+            </button>
+        </div>
+    </div>
+</form>

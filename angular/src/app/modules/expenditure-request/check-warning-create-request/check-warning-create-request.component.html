@@ -1,0 +1,115 @@
+<form 
+    class="form-horizontal pb-1"
+    autocomplete="off"
+    id="check-warning-create-request-form"
+>
+    <abp-modal-header
+        title="{{'m5_child2.warning' | translate }}"
+        (onCloseClick)="dialogRef.close()"
+    >    
+    </abp-modal-header>
+
+    <div class="modal-body pb-0">
+        <div class="table-container pb-0">
+            <table class="table table-hover warning-request-table">
+                <thead class="bg-light">
+                    <tr style="border: none">
+                        <th class="num-column text-center">{{ "m5_child2.numbering" | translate }}</th>
+                        <th class="name-column"> {{ "m5_child2.name" | translate }} </th>
+                        <th class="branch-column"> {{ "m5_child2.branch" | translate }} </th>
+                        <th class="value-column">{{ "m5_child2.value" | translate }}</th>
+                        <th class="request-type-column text-center">{{ "m5_child2.requestType" | translate }}</th>
+                        <th class="status-column">{{ "m5_child2.status" | translate }}</th>
+                        <th class="audit-date-column">{{"m5_child2.CreateAt" | translate}}</th>
+                        <th class="audit-date-column">{{"m5_child2.UpdatedAt" | translate}}</th>
+                    </tr>
+                </thead>
+                <tbody
+                    id="matching-request-list"
+                >
+                    <tr
+                        *ngFor = 'let request of requests;
+                                    let i = index;'
+                    >
+                        <td class="text-center">
+                            {{i+1}}
+                        </td>
+                        <td>
+                            <a
+                                title="#{{request.id}} {{request.name}}"
+                                class="hyperlink name-cell"
+                                [routerLink]="['/app/requestDetail/main']"
+                                [queryParams]="{ id: request.id }"
+                                (click)="showDetail(request.id)"
+                                target="_blank"
+                            >
+                                <b>#{{request.id}}</b> {{request.name}}
+                            </a>
+                        </td>
+                        <td class="text-center">{{request.branchName}}</td>
+                        <td class="text-right">
+                            {{ request.value | number : "1.0" : "en-US" }}
+                            <strong>{{ request.currencyName }}</strong>
+                        </td>
+                        <td class="text-center">
+                            <div>
+                                <span class="type-cell" title="{{ request.outcomingEntryTypeName }}">
+                                    {{ request.outcomingEntryTypeName }}
+                                </span>
+                                <div *ngIf="request?.expenseType !== null">
+                                  <i
+                                    class="far fa-check-circle fa-lg"
+                                    [ngClass]="
+                                      request?.expenseType === 0
+                                        ? 'text-primary ml-1'
+                                        : 'text-secondary ml-1'
+                                    "
+                                    [matTooltip]="
+                                      request.expenseType === 0
+                                        ? 'Tính vào chi phí thực tế'
+                                        : 'Không tính vào chi phí'
+                                    "
+                                  ></i>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <span
+                                [ngClass]="
+                                APP_CONSTANT.StatusStyle[
+                                    request.workflowStatusCode.trim()
+                                ]
+                                "
+                                >{{ request.workflowStatusName }}</span
+                            >
+                        </td>
+                        <td class="text-center">
+                            {{request.creationTime | date : "dd/MM/yyyy"}}
+                            <br> {{ request.updatedTime | date : "HH:mm:ss" }}
+                        </td>
+                        <td class="text-center">
+                            {{request.updatedTime | date : "dd/MM/yyyy"}}
+                            <br> {{request.updatedTime | date : "HH:mm:ss"}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group row d-flex justify-content-between mt-2 mb-0 pt-2">
+            <button 
+                class="btn btn-default mx-2"
+                id="close-warning-btn"
+                mat-dialog-close
+            >
+            {{ "action.cancel" | translate }}
+            </button>
+            <button
+                class="btn btn-primary"
+                id="proceed-save-btn"
+                (click)="proceedToSave()"
+            >
+                {{ "action.proceedSave" | translate }}
+            </button>
+        </div>
+    </div>
+</form>

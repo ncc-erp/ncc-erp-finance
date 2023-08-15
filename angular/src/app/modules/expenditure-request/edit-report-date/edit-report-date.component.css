@@ -1,0 +1,34 @@
+::ng-deep #edit-report-date .mat-form-field-appearance-legacy .mat-form-field-underline {
+    bottom: 0px !important;
+}
+
+::ng-deep #edit-report-date .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+}
+
+::ng-deep #edit-report-date .mat-form-field-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+::ng-deep #edit-report-date .mat-form-field-flex>.mat-form-field-infix {
+    padding: 0.4em 0px !important;
+    display: flex;
+}
+
+::ng-deep #edit-report-date .mat-form-field-label-wrapper {
+    top: -1.5em;
+}
+
+::ng-deep #edit-report-date .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+
+
+::ng-deep #edit-report-date .mat-form-field-label-wrapper .mat-form-field-label {
+    font-weight: normal;
+    font-size: 14px;
+    margin-top: 0.25em;
+}

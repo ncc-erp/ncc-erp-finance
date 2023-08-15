@@ -1,0 +1,99 @@
+<div id="expenditure">
+  <section class="content px-2 pt-2 filter-outcomingentry-type">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header row m-0">
+          <div class="col-6">
+            <h4>{{ "m3_child6.title" | translate }}</h4>
+          </div>
+
+          <div class="col-6 text-right">
+            <a
+              *ngIf="permission.isGranted(Directory_OutcomingEntryType_Create)"
+              href="javascript:;"
+              class="btn bg-blue"
+              (click)="createOutcome()"
+            >
+              <i class="fa fa-plus-square"></i>
+              {{ "action.create" | translate }}
+            </a>
+          </div>
+        </div>
+
+        <div class="card-body table-responsive p-4">
+          <div class="row mb-4">
+            <div class="col-7">
+              <div class="search-bar" style="position: relative">
+                <div class="input-group-prepend">
+                  <button
+                    (click)="getAllData()"
+                    type="button"
+                    class="btn bg-blue"
+                    style="border-radius: 3px 0 0 3px"
+                  >
+                    <i class="fas fa-search"></i>
+                  </button>
+                  <input
+                    (keyup.enter)="getAllData()"
+                    [(ngModel)]="inputFilter.searchText"
+                    type="text"
+                    matInput
+                    placeholder="{{ 'action.search' | translate }}"
+                    class="form-control"
+                    style="
+                      width: 100%;
+                      padding-left: 10px;
+                      border: 1px solid lightgrey !important;
+                      line-height: 30px;
+                      border-radius: 0 4px 4px 0 !important;
+                      margin-top: 0;
+                    "
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-select
+                  name="type"
+                  [(ngModel)]="inputFilter.expenseType"
+                  placeholder="Select type"
+                  (selectionChange)="getAllData()"
+                >
+                  <mat-option value="">Tất cả</mat-option>
+                  <mat-option value="0">Tính vào chi phí thực tế</mat-option>
+                  <mat-option value="1">
+                    Không tính vào chi phí thực tế</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-2">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Status</mat-label>
+                <mat-select
+                  name="type"
+                  [(ngModel)]="inputFilter.isActive"
+                  placeholder="Select status"
+                  (selectionChange)="getAllData()"
+                >
+                  <mat-option value="">All</mat-option>
+                  <mat-option [value]="true">Active</mat-option>
+                  <mat-option [value]="false">Inactive</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <mat-accordion>
+            <app-expenditure-list
+              *ngFor="let item of data.children; let i = index"
+              [items]="item"
+            >
+            </app-expenditure-list>
+          </mat-accordion>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

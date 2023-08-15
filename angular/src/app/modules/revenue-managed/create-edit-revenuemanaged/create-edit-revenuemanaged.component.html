@@ -1,0 +1,373 @@
+<form class="form-horizontal" autocomplete="off" #revenueManagedForm="ngForm" id="create-edit-revenuemanaged">
+  <abp-modal-header
+    title=" {{ isCreated ? 'Create Revenue Managed' : 'Edit Revenue Managed' }}"
+    (onCloseClick)="dialogRef.close()"
+  >
+  </abp-modal-header>
+
+  <div class="modal-body">
+    <div
+      class="fixedBody"
+      style="max-height: 75vh; overflow-y: scroll; overflow-x: hidden"
+    >
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "m5_child5.name" | translate }}:
+        </label>
+        <div class="col-md-8">
+          <input
+            type="text"
+            class="form-control"
+            name="nameInvoice"
+            placeholder="Nhập tên"
+            [(ngModel)]="invoice.nameInvoice"
+            required
+            #requestName="ngModel"
+            #requestNameEl
+          />
+          <abp-validation-summary
+            [control]="requestName"
+            [controlEl]="requestNameEl"
+          ></abp-validation-summary>
+        </div>
+      </div>
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "m5_child5.customer" | translate }}:
+        </label>
+        <!-- <div class="col-md-8">
+        <input
+          type="text"
+          class="form-control"
+          name="customer"
+          [(ngModel)]="invoice.customer"
+          required
+          #invoiceCustomer="ngModel"
+          #invoiceCustomerEl
+        />
+        <abp-validation-summary
+          [control]="invoiceCustomer"
+          [controlEl]="invoiceCustomerEl"
+        ></abp-validation-summary>
+      </div> -->
+
+        <mat-form-field appearance="outline" class="col-md-4">
+          <mat-select
+            [(ngModel)]="selectedAccountType"
+            (selectionChange)="onAccountTypeChange()"
+            name="accountType"
+            placeholder="Loại đối tượng"
+            required
+          >
+            <mat-option
+              *ngFor="let accountType of accountTypeList"
+              [value]="accountType"
+            >
+              {{ accountType.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="col-md-4 ml-1">
+          <mat-select
+            [disabled]="!selectedAccountType?.name"
+            [(ngModel)]="invoice.accountId"
+            required
+            name="customer"
+            [placeholder]="
+              selectedAccountType?.name
+                ? 'Chọn ' + selectedAccountType.name
+                : ''
+            "
+          >
+            <mat-form-field
+              class="w-100 px-3"
+              style="
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                background-color: white;
+              "
+            >
+              <input
+                matInput
+                [(ngModel)]="searchAccount"
+                name="searchProjectName"
+                placeholder="Search"
+                #searchAcc
+                (keydown)="$event.stopPropagation()"
+              />{{ searchAcc.focus() }}
+            </mat-form-field>
+            <ng-container
+              *ngFor="
+                let customer of customerList
+                  | dropdownFilter: 'name':searchAccount:'code'
+              "
+            >
+              <mat-option [value]="customer.id">
+                {{ customer.name }}
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "m5_child5.month" | translate }}:
+        </label>
+        <div class="col-md-8">
+          <mat-form-field appearance="outline">
+            <mat-select
+              [(ngModel)]="invoice.month"
+              name="month"
+              placeholder="Chọn tháng"
+              #month="ngModel"
+              #monthEl
+            >
+              <mat-option *ngFor="let month of months" [value]="month.value">
+                {{ month.text }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <abp-validation-summary
+            [control]="month"
+            [controlEl]="monthEl"
+          ></abp-validation-summary>
+        </div>
+      </div>
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "m5_child5.debtReceivable" | translate }}:
+        </label>
+        <div class="col-md-4">
+          <input
+            type="text"
+            mask="separator':''"
+            thousandSeparator=","
+            allowNegativeNumbers="true"
+            class="form-control"
+            name="collectionDebt"
+            [(ngModel)]="invoice.collectionDebt"
+            required
+            #collectionDebt="ngModel"
+            #collectionDebtEl
+            placeholder="Nhập công nợ phải thu"
+          />
+          <abp-validation-summary
+            [control]="collectionDebt"
+            [controlEl]="collectionDebtEl"
+          ></abp-validation-summary>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "m5_child5.debtReceived" | translate }}:
+        </label>
+        <div class="col-md-4">
+          <input
+            type="text"
+            mask="separator':''"
+            thousandSeparator=","
+            allowNegativeNumbers="true"
+            class="form-control"
+            placeholder="Nhập công nợ đã thu"
+            name="debtReceived"
+            [(ngModel)]="invoice.debtReceived"
+          />
+        </div>
+      </div>
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="unitId">
+          {{ "m5_child5.unit" | translate }}:
+        </label>
+        <div class="col-md-8">
+          <mat-form-field appearance="outline">
+            <mat-select
+              [(ngModel)]="invoice.unitId"
+              name="unitId"
+              placeholder="Chọn đơn vị tiền tệ"
+              #currency="ngModel"
+              #currencyEl
+              required
+            >
+              <mat-option
+                *ngFor="let currency of currencies"
+                [value]="currency.id"
+              >
+                {{ currency.code }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!-- <abp-validation-summary [control]="currency" [controlEl]="currencyEl"></abp-validation-summary> -->
+        </div>
+      </div>
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "m5_child5.sendDate" | translate }}:
+        </label>
+        <div class="col-md-8">
+          <mat-form-field appearance="outline">
+            <input
+              matInput
+              [matDatepicker]="picker"
+              placeholder="Chọn ngày gửi"
+              [(ngModel)]="invoice.sendInvoiceDate"
+              name="sendInvoiceDate"
+              required
+              #sendInvoiceDate="ngModel"
+              #sendInvoiceDateEl
+              [ngModelOptions]="{ standalone: true }"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker [startAt]="sendDate"></mat-datepicker>
+          </mat-form-field>
+          <abp-validation-summary
+            [control]="sendInvoiceDate"
+            [controlEl]="sendInvoiceDateEl"
+          ></abp-validation-summary>
+        </div>
+      </div>
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "m5_child5.deadline" | translate }}:
+        </label>
+        <div class="col-md-8">
+          <mat-form-field appearance="outline">
+            <input
+              matInput
+              [matDatepicker]="picker1"
+              placeholder="Nhập deadline"
+              [(ngModel)]="invoice.deadline"
+              name="deadline"
+              required
+              #deadline="ngModel"
+              #deadlineEl
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker1"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker1 [startAt]="deadline"></mat-datepicker>
+          </mat-form-field>
+          <abp-validation-summary
+            [control]="deadline"
+            [controlEl]="deadlineEl"
+          ></abp-validation-summary>
+        </div>
+      </div>
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "m5_child5.status" | translate }}:
+        </label>
+        <div class="col-md-8">
+          <mat-form-field appearance="outline">
+            <mat-select
+              [(ngModel)]="invoice.status"
+              name="status"
+              #status="ngModel"
+              placeholder="Chọn trạng thái"
+              #statusEl
+              required
+            >
+              <mat-option
+                *ngFor="let status of listStatus"
+                [value]="status.value"
+              >
+                {{ status.text }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "m5_child5.remind" | translate }}:
+        </label>
+        <div class="col-md-8">
+          <mat-form-field appearance="outline">
+            <mat-select
+              [(ngModel)]="invoice.remindStatus"
+              name="remindStatus"
+              placeholder="Chọn nhắc nhở"
+              #remindStatus="ngModel"
+              #remindStatusEl
+            >
+              <mat-option
+                *ngFor="let remind of listRemindStatus"
+                [value]="remind.value"
+              >
+                {{ remind.text }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "m5_child5.note" | translate }}:
+        </label>
+        <div class="col-md-8">
+          <textarea
+            class="form-control"
+            aria-colspan="3"
+            [(ngModel)]="invoice.note"
+            name="note"
+          ></textarea>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="fileUpload col-12">
+          <label class="btn btn-sm bg-success mb-1" for="slFiles">
+            <i class="fas fa-paperclip"></i> Attach File
+          </label>
+          <input
+            type="file"
+            name=""
+            id="slFiles"
+            style="display: none"
+            (change)="uploadFiles($event)"
+            multiple
+          />
+        </div>
+        <div class="tbl-file col-9">
+          <table class="w-100 table table-hover table-triped ">
+            <thead>
+              <th>#</th>
+              <th>File name</th>
+              <th></th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let file of listFiles; let i= index">
+                <td class="text-center">{{i+1}}</td>
+                <td>
+                  <a
+                  class="hyperlink"
+                    href="javascript:void(0)"
+                    (click)="downloadFile(file.name)"
+                    >{{ file.name }}</a
+                  >
+                </td>
+                <td class="text-center"><i class="fa fa-times fa-lg pointer" (click)="removeFile(file)"></i></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row d-flex justify-content-between mt-4 px-1">
+      <button class="btn btn-default mx-2" mat-dialog-close>
+        {{ "action.cancel" | translate }}
+      </button>
+      <button
+        class="btn btn-primary"
+        [disabled]="!revenueManagedForm.valid || isDisable"
+        (click)="saveAndClose()"
+      >
+        {{ "action.save" | translate }}
+      </button>
+    </div>
+  </div>
+</form>

@@ -1,0 +1,19 @@
+::ng-deep .filter-user .mat-form-field-flex>.mat-form-field-infix {
+    padding: 0.3em 0px !important;
+}
+::ng-deep .filter-user .mat-form-field-label-wrapper {
+    top: -1.5em !important;
+}
+::ng-deep .filter-user .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75) !important;
+    width: 133.33333%;
+}
+::ng-deep .filter-user .mat-form-field-appearance-outline .mat-form-field-wrapper{
+    margin: 0;
+}
+.col-stt{
+    width: 50px;
+}
+.col-username, .col-email{
+    width: 280px;
+}

@@ -1,0 +1,8 @@
+<div class="wrapper" style="z-index: 100;">
+  <app-header></app-header>
+  <sidebar></sidebar>
+  <div class="content-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+  <div id="sidebar-overlay" (click)="toggleSidebar()"></div>
+</div>

@@ -1,0 +1,15 @@
+<section class="content px-2" id="detail-tab" *ngIf="isShowDetailTab()">
+  <div class="container-fluid">
+    <div class="">
+      <div class="table-responsive">
+        <app-normal-detail-table
+          [expenditureRequest]="expenditureRequest"
+          (readMode)="readModeChange($event)"
+          *ngIf="!tempMode && expenditureRequest"
+          #normalDetailTable
+        >
+        </app-normal-detail-table>
+      </div>
+    </div>
+  </div>
+</section>

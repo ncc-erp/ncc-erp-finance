@@ -1,0 +1,274 @@
+<div class="container-fluid" id="normal-detail">
+  <div class="mt-2 mb-2 row">
+    <div class="input-group d-flex col-sm-12 col-md-5 col-xl-5">
+      <div class="input-group-prepend">
+        <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+      <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText"
+        (keyup.enter)="getDataPage(1)" />
+    </div>
+
+    <div class="col-2">
+      <mat-form-field class="col-12" appearance="outline">
+        <mat-label>Chi nhánh</mat-label>
+        <mat-select [(ngModel)]="detailRequest.branchId" #branchFilterDd (ngModelChange)="refresh()">
+          <mat-option value=""> All </mat-option>
+          <ng-container *ngFor="let item of branchList">
+            <mat-option [value]="item.id">
+              {{ item.name }}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="col-2">
+      <mat-form-field class="col-12" appearance="outline">
+        <mat-label>Đã trả status</mat-label>
+        <mat-select [(ngModel)]="detailRequest.isNotDone" #doneStatus (ngModelChange)="refresh()">
+          <mat-option value=""> All </mat-option>
+          <mat-option [value]="false"> Đã trả </mat-option>
+          <mat-option [value]="true"> Chưa trả </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-3 text-right">
+      <button *ngIf="isShowCreateBtn()" style="border: none" [disabled]="!isAllowed" (click)="addMore()"
+        class="bg-blue ml-2 btn">
+        <i class="fas fa-plus"></i>
+        Add
+      </button>
+      <button *ngIf="isShowCreateBtn()" style="border: none" [disabled]="!isAllowed" (click)="downloadFileTemplate()"
+        class="bg-success ml-2 btn">
+        <i class="fa fa-download"></i>
+        File mẫu
+      </button>
+      <button style="border: none" [disabled]="!isAllowed" (click)="importDetail()" class="bg-success ml-2 btn">
+        <i class="fa fa-upload"></i>
+        Import
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table style="border-collapse: collapse" class="table text-nowrap" [busy]="isTableLoading">
+      <thead class="bg-light">
+        <tr>
+          <th class="w-50">STT</th>
+          <th class="w-350 required col-form-label">
+            {{ "m5_child2.name" | translate }}
+          </th>
+          <th class="required col-form-label w-110">
+            {{ "m5_child2.branch" | translate }}
+          </th>
+          <!-- <th *ngIf="expenditureRequest?.outcomingEntryTypeCode == 'SALARY'"> -->
+          <th *ngIf="isShowLinkAccount()">
+            {{ "m5_child2.linkAccount" | translate }}
+          </th>
+          <th class="required col-form-label w-110">{{ "m5_child2.quantity" | translate }}</th>
+          <th class="required col-form-label w-110">{{ "m5_child2.price" | translate }}</th>
+          <th class="w-200">
+            {{ "m5_child2.total" | translate }}
+            ({{ requestListDetail?.totalMoney | number : "1.0" : "en-US" }})
+          </th>
+          <th class="w-90">Đã trả</th>
+          <th class="text-center w-150">{{ "action.actions" | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="
+            let item of requestListDetail?.paging.items
+              | paginate
+                : {
+                    id: 'server',
+                    itemsPerPage: pageSize,
+                    currentPage: pageNumber,
+                    totalItems: totalItems
+                  };
+            let i = index
+          " [ngTemplateOutlet]="row" [ngTemplateOutletContext]="{
+            mode: item.createMode
+          }">
+          <ng-template #row let-mode="mode">
+            <tr>
+              <td class="text-center w-50 align-middle">
+                {{ i + 1 + pageSize * (pageNumber - 1) }}<br />#{{ item.id }}
+              </td>
+              <td class="w-350">
+                <textarea [(ngModel)]="item.name" #inputName="ngModel" #inputNameEl required [readonly]="!mode"
+                  class="form-control" type="text" name="inputName" [placeholder]="mode ? 'Name' : ''" #name>
+                </textarea>
+                <abp-validation-summary [control]="inputName" [controlEl]="inputNameEl">
+                </abp-validation-summary>
+              </td>
+              <td class="w-110 text-center border-none align-middle">
+                <span class="w-100 text-center" *ngIf="!mode">
+                  {{ item.branchName }}
+                </span>
+                <mat-form-field
+                  appearance="outline"
+                  style="margin-top: -5px"
+                  *ngIf="mode"
+                  class="readonly-block w-100"
+                >
+                  <mat-select
+                    [(ngModel)]="item.branchId"
+                    name="branch"
+                    #branchId="ngModel"
+                    required
+                    [placeholder]="!branchList || !branchList.length ? 'No data' : 'Branch'"
+                    (openedChange)="branchSelectOpenedChange($event)"
+                  >
+                    <mat-form-field
+                      class="w-100 px-3 selection-input-seach-hanging-above"
+                    >
+                      <input
+                        type="text"
+                        name="searchBranch"
+                        matInput
+                        placeholder="Search"
+                        [(ngModel)]="searchBranch"
+                        (keydown)="$event.stopPropagation()"
+                        (ngModelChange)="onFilterBranch()"
+                      />
+                    </mat-form-field>
+                    <mat-option hidden="true" [value]="null">none</mat-option>
+                    <ng-container *ngFor="let brach of branchList">
+                      <mat-option [value]="brach.id">{{
+                        brach.name
+                        }}</mat-option>
+                    </ng-container>
+                  </mat-select>
+                  <mat-error *ngIf="branchId.hasError('required') && branchId.touched" style="margin-top: 18px;">
+                    This field is required
+                  </mat-error>
+                </mat-form-field>
+              </td>
+              <td *ngIf="isShowLinkAccount()" style="vertical-align: middle">
+                <span class="mt-2" *ngIf="!mode">
+                  {{ item.accountName }}
+                </span>
+                <mat-form-field style="margin-top: -5px" *ngIf="mode" appearance="outline">
+                  <mat-select [(ngModel)]="item.accountId" name="accountSelect" placeholder="select account"
+                    #inputAccount  #account>
+                    <ng-container *ngFor="let account of accountList">
+                      <mat-option [value]="account.id" (click)="item.accountName = account.name">
+                        {{ account.name }}</mat-option>
+                    </ng-container>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+
+              <td class="text-center align-middle">
+                <span class="mt-1" *ngIf="!mode">
+                  {{ item.quantity }}
+                </span>
+                <ng-container *ngIf="mode">
+                  <input [(ngModel)]="item.quantity" required #inputQuantity="ngModel" #inputQuantityEl
+                    class="form-control" name="detailQuantity" (ngModelChange)="
+                      item.total = calculateTempTotal(
+                        item.unitPrice,
+                        item.quantity
+                      )
+                    " type="text" min="0" [allowNegativeNumbers]="false" mask="separator" thousandSeparator="" />
+                  <abp-validation-summary [control]="inputQuantity" [controlEl]="inputQuantityEl">
+                  </abp-validation-summary>
+                </ng-container>
+              </td>
+              <td class="text-center align-middle">
+                <span *ngIf="!mode">
+                  {{ item.unitPrice | number : "1.0" : "en-US" }}
+                </span>
+                <ng-container *ngIf="mode">
+                  <input [(ngModel)]="item.unitPrice" required #inputPice="ngModel" #inputPriceEl class="form-control"
+                    type="text" mask="separator':''" thousandSeparator="," allowNegativeNumbers="true"
+                    name="detailPrice" (ngModelChange)="
+                      item.total = calculateTempTotal(
+                        item.unitPrice,
+                        item.quantity
+                      )
+                    " />
+                  <abp-validation-summary [control]="inputPice" [controlEl]="inputPriceEl">
+                  </abp-validation-summary>
+                </ng-container>
+              </td>
+
+              <td class="text-center align-middle">
+                {{ item.total | number : "1.0" : "en-US" }}
+              </td>
+
+              <td class="text-center isActive">
+                <div class="custom-control custom-checkbox" (click)="changeStatus(item)"
+                  *ngIf="isShowChangeStatusBtn()">
+                  <input [checked]="!item.isNotDone" type="checkbox" class="custom-control-input" disabled />
+                  <label class="custom-control-label"></label>
+                </div>
+                <div class="custom-control custom-checkbox" *ngIf="!isShowChangeStatusBtn()">
+                  <input [checked]="!item.isNotDone" type="checkbox" class="custom-control-input" disabled />
+                  <label class="custom-control-label"></label>
+                </div>
+              </td>
+
+              <td class="text-center w-150 align-middle" *ngIf="!mode">
+                <button [disabled]="!isAllowed" *ngIf="isShowEditBtn()" class="btn btn-sm bg-secondary mr-1"
+                  (click)="$event.stopPropagation(); editDetail(item)">
+                  <i class="fas fa-pencil-alt"></i>
+
+                  {{ "action.edit" | translate }}
+                </button>
+                <button *ngIf="isShowDeleteBtn()" class="btn btn-sm bg-danger ml-1"
+                  (click)="deleteDetail(item); $event.stopPropagation()" #deleteBtn>
+                  <i class="fas fa-trash"></i>
+                  {{ "action.delete" | translate }}
+                </button>
+              </td>
+              <td *ngIf="mode" class="text-center w-150" style="border: none">
+                <button
+                  (click)="saveRequestDetail(item)"
+                  type="submit"
+                  class="btn btn-primary mr-1 ml-3"
+                  [disabled]="!item.name || !item.unitPrice || !item.quantity || isSaving || !item.branchId"
+                >
+                  Save
+                </button>
+                <button (click)="clickBtnCancel()" class="btn btn-default">
+                  Cancel
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer bg-light border">
+    <div class="row">
+      <div class="col-sm-4 col-12 text-sm-left d-flex align-items-center text-center">
+        <button class="btn btn-secondary" (click)="refresh(); isAllowed = true">
+          <i class="fas fa-redo-alt"></i>
+        </button>
+        <mat-form-field style="width: 20%; margin-left: 30px">
+          <mat-label>Number items</mat-label>
+          <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize(); isAllowed = true">
+            <mat-option [value]="5"> 5 </mat-option>
+            <mat-option [value]="10"> 10 </mat-option>
+            <mat-option [value]="20"> 20 </mat-option>
+            <mat-option [value]="50"> 50 </mat-option>
+            <mat-option [value]="100"> 100 </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-sm-4 col-12 text-center d-flex align-items-center justify-content-center">
+        <p class="mb-0">Total: {{ totalItems }}</p>
+      </div>
+      <div class="col-sm-4 col-12 d-flex align-items-center justify-content-end">
+        <div class="float-sm-right">
+          <abp-pagination-controls id="server" (pageChange)="getDataPage($event); isAllowed = true">
+          </abp-pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+.mat-form-field-flex{
+    height: 45px;
+}
+.mat-dialog-actions {
+    justify-content: space-between
+}
+.saving-btn {
+    background-color: #007bff; color: #ffffff;
+}
+::ng-deep #bank-account-detail .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}
+::ng-deep #bank-account-detail .mat-form-field-label-wrapper { top: -1.5em; }
+
+::ng-deep #bank-account-detail .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+::ng-deep #bank-account-detail .mat-form-field-flex{
+    background: white;
+}
+.text{
+    opacity: 0.5;
+    font-size: 14px;
+}
+.come-back{
+    float: right;
+}
+td,th {
+    border: 0.2px solid rgba(204, 204, 204, 0.35);
+  }
+th{
+    border-top: 0;
+}
+.hyperlink:hover {
+    cursor: pointer;
+    text-decoration: underline !important;
+  }
+  .hyperlink {
+    color: #007bff;
+  }

@@ -1,0 +1,916 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-6">
+        <h1>{{ "m5_child2.title" | translate }}</h1>
+      </div>
+      <div class="col-6 text-right">
+        <button
+          *ngIf="permission.isGranted(Finance_OutcomingEntry_Create)"
+          class="btn bg-blue"
+          (click)="createRequest()"
+        >
+          <i class="fa fa-plus-square mr-1"></i>
+
+          {{ "action.create" | translate }}
+        </button>
+        <button
+          *ngIf="permission.isGranted(Finance_OutcomingEntry_ExportExcel)"
+          class="btn btn-success mx-2"
+          (click)="downloadFile()"
+        >
+          <i class="fas fa-download mr-1"></i> Export
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="content px-2" id="expenditure-request">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header align-items-center">
+        <div class="row align-items-center h-fit-content">
+          <div class="input-group col-2">
+            <div class="input-group col-12 d-flex">
+              <div class="input-group-prepend">
+                <button
+                  type="button"
+                  class="btn bg-blue"
+                  (click)="getDataPage(1)"
+                >
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                name="keyword"
+                placeholder="Tìm kiếm theo nội dung..."
+                [(ngModel)]="searchText"
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-2 col-xl-2">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>Tiền tệ</mat-label>
+              <mat-select
+                (selectionChange)="onFilterCurrency()"
+                [(ngModel)]="selectedCurrencyId"
+              >
+                <ng-container *ngFor="let item of listCurrency">
+                  <mat-option [value]="item.value">
+                    {{ item.name }}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-2 d-flex align-items-center">
+            <!-- <mat-form-field
+              appearance="outline"
+              [ngClass]="outcomingEntryTypeId != -1 ? 'col-11' : 'col-12'"
+            >
+              <mat-label>Loại chi</mat-label>
+              <mat-select
+                [(ngModel)]="outcomingEntryTypeId"
+                (selectionChange)="onFillterOutcomeType()"
+                (openedChange)="selectionOutcomingOpenChange($event)"
+              >
+                <mat-form-field
+                  class="w-100 px-3 selection-input-seach-hanging-above"
+                >
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="Loại chi"
+                    [(ngModel)]="searchOutcoming"
+                    name="searchOutcoming"
+                    (keydown)="$event.stopPropagation()"
+                    #inputSearchOutcoming
+                  />
+                </mat-form-field>
+                <mat-option hidden="true" [value]="null">none</mat-option>
+                <mat-option
+                  *ngFor="
+                    let node of treeOutcomingEntries | filter : searchOutcoming
+                  "
+                  [disabled]="node.children.length > 0"
+                  [value]="node.item.id"
+                >
+                  <span [innerHtml]="node.paddingLevel"></span
+                  ><span [ngClass]="node.children.length > 0 ? 'parent' : ''">
+                    {{ node.item.name }}
+                  </span>
+                </mat-option>
+              </mat-select>
+            </mat-form-field> -->
+            <app-tree-in-out-type
+              [filter]="treeInOutTypeOption"
+              [ngClass]="outcomingEntryTypeId != -1 ? 'col-11' : 'col-12'"
+              [selected]="outcomingEntryTypeId"
+              (selectChange)="outcomingEntryTypeId = $event;onFillterOutcomeType()"
+              placeholderSearch="Search loại chi"
+              [isRequired]="false"
+              placeholder="Loại chi"
+              undefinedValue="-1"
+              label="Loại chi"
+            >
+            </app-tree-in-out-type>
+            <i
+              class="fas fa-times fa-lg pointer"
+              *ngIf="outcomingEntryTypeId != -1"
+              (click)="onCancelFilterOutcomeType()"
+            ></i>
+          </div>
+          <div class="col-2">
+            <mat-form-field appearance="outline" class="col-12">
+              <mat-label>Tính vào chi phí</mat-label>
+              <mat-select
+                [(ngModel)]="expenseType"
+                (selectionChange)="onFilterExpenseType()"
+              >
+                <mat-option [value]="-1"> All </mat-option>
+                <mat-option [value]="0"> Tính vào chi phí </mat-option>
+                <mat-option [value]="1"> Không tính vào chi phí </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-4">
+            <app-date-selector
+              (onDateSelectorChange)="onDateChange($event)"
+              [type]="defaultDateFilterType"
+              [defaultDateFilter]="searchWithDateTime"
+              [label]="'Ngày báo cáo'"
+            ></app-date-selector>
+          </div>
+        </div>
+        <div class="row align-items-center h-fit-content mt-2">
+          <!-- Id -->
+          <div class="col-2 align-items-center">
+            <mat-form-field appearance="outline" class="col-12">
+              <mat-label>Id</mat-label>
+              <input
+                type="text"
+                matInput
+                class="form-control height-maxcontent"
+                name="id"
+                mask="separator"
+                placeholder="Tìm kiếm theo Id"
+                thousandSeparator=""
+                [(ngModel)]="searchId"
+                (keyup.enter)="onFilterId()"
+              />
+            </mat-form-field>
+          </div>
+          <!-- Requester -->
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>{{ "Requester" }}</mat-label>
+              <mat-select
+                name="selectedRequester"
+                placeholder="Requester"
+                [(ngModel)]="selectedRequester"
+                (selectionChange)="onFilterRequester()"
+                (openedChange)="selectionRequesterOpenChange($event)"
+                multiple
+              >
+                <mat-form-field
+                  class="w-100 px-3 selection-input-seach-hanging-above"
+                >
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="Requester"
+                    [(ngModel)]="searchRequester"
+                    name="searchRequester"
+                    (keydown)="$event.stopPropagation()"
+                    (ngModelChange)="searchRequesterChange()"
+                    #inputSearchRequester
+                  />
+                </mat-form-field>
+                <mat-option
+                  *ngIf="!requesterOptions || !requesterOptions.length"
+                  disabled
+                  class="disable-checkbox text-center"
+                  >No Data
+                  {{
+                    searchRequester ? "by '" + searchRequester + "'" : ""
+                  }}</mat-option
+                >
+                <mat-option
+                  [value]="requester.value"
+                  *ngFor="let requester of requesterOptions"
+                >
+                  {{ requester.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Branch -->
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>{{ "Branch" }}</mat-label>
+              <mat-select
+                name="branchOptions"
+                placeholder="Branch"
+                [(ngModel)]="selectedBranch"
+                (selectionChange)="onFilterBranch()"
+                (openedChange)="selectionBranchOpenChange($event)"
+                multiple
+              >
+                <mat-form-field
+                  class="w-100 px-3 selection-input-seach-hanging-above"
+                >
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="Branch"
+                    [(ngModel)]="searchBranch"
+                    name="searchRequester"
+                    (keydown)="$event.stopPropagation()"
+                    (ngModelChange)="searchBranchChange()"
+                    #inputSearchBranch
+                  />
+                </mat-form-field>
+                <mat-option
+                  *ngIf="!branchOptions || !branchOptions.length"
+                  disabled
+                  class="disable-checkbox text-center"
+                  >No Data
+                  {{
+                    searchBranch ? "by '" + searchBranch + "'" : ""
+                  }}</mat-option
+                >
+                <mat-option
+                  [value]="branch.id"
+                  *ngFor="let branch of branchOptions"
+                >
+                  {{ branch.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <!-- Money -->
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>Money</mat-label>
+              <input
+                type="text"
+                matInput
+                class="form-control height-maxcontent"
+                name="money"
+                placeholder="Nhập số tiền"
+                [(ngModel)]="searchMoney"
+                mask="separator"
+                thousandSeparator=","
+                (keyup.enter)="onFilterMoney()"
+              />
+            </mat-form-field>
+          </div>
+          <!-- Status -->
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field
+              [class]="selectedStatus ? 'col-10' : 'col-12'"
+              appearance="outline"
+            >
+              <mat-label>Status</mat-label>
+              <mat-select
+                name="status"
+                placeholder="Status"
+                [(ngModel)]="selectedStatus"
+                (selectionChange)="onFilterStatus()"
+              >
+                <mat-option
+                  [value]="status.code.trim()"
+                  *ngFor="let status of statusList"
+                >
+                  {{ status.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="col-md-2" *ngIf="selectedStatus">
+              <mat-icon
+                style="margin-top: 14px; cursor: pointer"
+                (click)="selectedStatus = undefined; onFilterStatus()"
+                >clear</mat-icon
+              >
+            </div>
+          </div>
+          <!-- Request change status -->
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field
+              [class]="selectedStatusYCTD ? 'col-10' : 'col-12'"
+              appearance="outline"
+            >
+              <mat-label>YCTĐ Status</mat-label>
+              <mat-select
+                name="statusYCTD"
+                [(ngModel)]="selectedStatusYCTD"
+                (selectionChange)="onFilterYCTDStatus()"
+              >
+                <mat-option
+                  [value]="status.code.trim()"
+                  *ngFor="let status of YCTDStatusOptions"
+                >
+                  {{ status.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="col-md-2" *ngIf="selectedStatusYCTD">
+              <mat-icon
+                style="margin-top: 14px; cursor: pointer"
+                (click)="selectedStatusYCTD = undefined; onFilterYCTDStatus()"
+                >clear</mat-icon
+              >
+            </div>
+          </div>
+          <!-- <div class="col-1 row align-items-center">
+            <span class="mr-2 m-0">
+              <mat-checkbox class="example-margin uy-nhiem-chi-check-box" (change)="filterAccreditation()">Uỷ nhiệm chi
+              </mat-checkbox>
+            </span>
+          </div> -->
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="row col-md-12 my-2">
+          <strong class="ml-3 mr-2" *ngIf="getTotalCurrencyOutcomingEntryDto?.length"> Tổng chi: </strong>
+          <div
+            *ngFor="let item of getTotalCurrencyOutcomingEntryDto"
+            style="border: none"
+          >
+            <div style="border: none" class="mr-3">
+              <strong
+                [style.color]="_utilities.getColorByCurrency(item.currencyName)"
+                >{{ item.currencyName }}</strong
+              >: {{ item.valueFormat }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body table-responsive px-4 pt-0">
+        <div class="fixTableHead">
+          <table
+            style="border-collapse: collapse"
+            class="table table-hover text-nowrap"
+            [busy]="isTableLoading"
+          >
+            <thead class="bg-light">
+              <tr style="border: none">
+                <th *ngIf="tableHeader[1].value" style="width: 50px">STT</th>
+                <th *ngIf="tableHeader[2].value" class="name-colum">
+                  {{ "m5_child2.name" | translate }}
+                </th>
+                <th
+                  *ngIf="tableHeader[3].value"
+                  class="author-column white-space-line"
+                >
+                  {{ "Ngày báo cáo" }}
+                </th>
+                <th
+                  *ngIf="tableHeader[4].value"
+                  class="branch-column white-space-line"
+                >
+                  {{ "m5_child2.branch" | translate }}
+                </th>
+                <th *ngIf="tableHeader[5].value">
+                  {{ "m5_child2.value" | translate }}
+                  <!-- <p class="m-0">
+                    {{ totalValue | number: "1.0":"en-US" }}
+                  </p> -->
+                </th>
+                <th
+                  *ngIf="tableHeader[6].value"
+                  class="text-center request-type-colum white-space-line"
+                  style="min-width: 200px;"
+                >
+                  {{ "m5_child2.requestType" | translate }}
+                </th>
+                <th
+                  *ngIf="tableHeader[7].value"
+                  [class]="
+                    !historyExtend
+                      ? 'width-history-default'
+                      : 'width-history-extend'
+                  "
+                >
+                  {{ "m5_child2.history" | translate }}
+                </th>
+                <th *ngIf="tableHeader[8].value" style="width: 50px">GDNH</th>
+
+                <th *ngIf="tableHeader[9].value" style="width: 100px">
+                  {{ "m5_child2.status" | translate }}
+                </th>
+                <th
+                  *ngIf="tableHeader[10].value"
+                  (click)="sortDate('creationTime')"
+                  style="cursor: pointer; width: 105px"
+                >
+                  <span class="mr-2">{{
+                    "m5_child2.CreateAt" | translate
+                  }}</span>
+                  <i
+                    [ngClass]="iconSort"
+                    *ngIf="iconCondition === 'creationTime'"
+                  ></i>
+                  <i
+                    *ngIf="iconCondition !== 'creationTime'"
+                    class="fas fa-sort"
+                  ></i>
+                </th>
+                <th
+                  *ngIf="tableHeader[11].value"
+                  (click)="sortDate('lastModifiedTime')"
+                  style="cursor: pointer; width: 105px"
+                >
+                  <span class="mr-2">{{
+                    "m5_child2.UpdatedAt" | translate
+                  }}</span>
+                  <i
+                    [ngClass]="iconSort"
+                    *ngIf="iconCondition === 'lastModifiedTime'"
+                  ></i>
+                  <i
+                    *ngIf="iconCondition !== 'lastModifiedTime'"
+                    class="fas fa-sort"
+                  ></i>
+                </th>
+
+                <th style="width: 50px" class="text-center">
+                  <div class="d-flex">
+                    {{ "action.actions" | translate }}
+                    <i
+                      class="icon-32 material-icons pointer"
+                      (click)="showOrHideHeader()"
+                      >arrow_drop_down</i
+                    >
+                    <span class="pointer" style="float: right; height: 20px">
+                      <div
+                        class="dropdown-content"
+                        [ngClass]="showHeader ? 'block' : 'none'"
+                        (clickOutside)="turnOff()"
+                      >
+                        <table class="table" #tableFilter>
+                          <tr
+                            style="border: none"
+                            *ngFor="let item of tableHeader"
+                          >
+                            <mat-checkbox
+                              name="item.fieldName"
+                              [(ngModel)]="item.value"
+                              (change)="changSelection(item)"
+                            >
+                              <input
+                                disabled="true"
+                                class="ml-2"
+                                [(ngModel)]="item.name"
+                                type="text"
+                              />
+                            </mat-checkbox>
+                          </tr>
+                        </table>
+                      </div>
+                    </span>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let request of requestList
+                    | paginate
+                      : {
+                          id: 'server',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems
+                        };
+                  let i = index
+                "
+                [ngClass]="{
+                  accreditationBackground: request.accreditation == true
+                }"
+              >
+                <td *ngIf="tableHeader[1].value">
+                  <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
+                </td>
+                <td
+                  *ngIf="tableHeader[2].value"
+                  style="min-width: 230px; white-space: normal"
+                >
+                  <a
+                    class="hyperlink name-colum"
+                    [routerLink]="['/app/requestDetail/main']"
+                    [queryParams]="{ id: request.id }"
+                    (click)="showDetail(request.id)"
+                    *ngIf="isAllowToRoutingDetail(); else detail"
+                  >
+                    <b> #{{ request.id }}</b> {{ request.name }}</a
+                  >
+                  <ng-template #detail>
+                    <b> #{{ request.id }}</b
+                    >&nbsp;{{ request.name }}
+                  </ng-template>
+                </td>
+                <td
+                  *ngIf="tableHeader[3].value"
+                  class="text-center reportDate-col"
+                >
+                  <span>{{ request.reportDate | date : "dd/MM/yyyy" }}</span>
+                  <span
+                    class="ml-1"
+                    style="float: right"
+                    [ngStyle]="{ float: !request.reportDate ? 'right' : '' }"
+                  >
+                    <i
+                      *ngIf="
+                        permission.isGranted(
+                          Finance_OutcomingEntry_UpdateReportDate
+                        )
+                      "
+                      class="fas fa-edit"
+                      (click)="handleUpdateReportDate(request)"
+                    ></i>
+                  </span>
+                </td>
+                <td
+                  *ngIf="tableHeader[4].value"
+                  class="text-center branch-column white-space-line"
+                >
+                    <span>{{ request.branchName }}</span>
+                    <span style="float: right;">
+                      <i *ngIf="isShowUpdateBranchBtn()"
+                    class="fas fa-edit ml-2 pointer"
+                    (click)="onUpdateBranch(request)"
+                  ></i>
+                    </span>
+                </td>
+                <td *ngIf="tableHeader[5].value" class="text-right">
+                  {{ request.value | number : "1.0" : "en-US" }}
+                  <strong
+                    [style.color]="
+                      _utilities.getColorByCurrency(request.currencyName)
+                    "
+                    >{{ request.currencyName }}
+                  </strong>
+                </td>
+
+                <td
+                  *ngIf="tableHeader[6].value"
+                  class="text-center request-type-colum white-space-line"
+                  style="min-width: 200px;"
+                >
+                  <div class="row">
+                    <div class="col-10">
+                      <span>{{ request.outcomingEntryTypeName }}</span>
+                      <div *ngIf="request?.expenseType !== null">
+                        <i
+                          class="far fa-check-circle fa-lg"
+                          [ngClass]="
+                            request?.expenseType === 0
+                              ? 'text-primary ml-1'
+                              : 'text-secondary ml-1'
+                          "
+                          [matTooltip]="
+                            request.expenseType === 0
+                              ? 'Tính vào chi phí thực tế'
+                              : 'Không tính vào chi phí'
+                          "
+                        ></i>
+                      </div>
+                    </div>
+                    <div class="col-2 col-edit-oucomeType">
+                      <i
+                        *ngIf="isShowUpdateRequestTypeBtn()"
+                        class="fas fa-edit"
+                        (click)="onEditOutcomingType(request)"
+                      ></i>
+                    </div>
+                  </div>
+                </td>
+
+                <td
+                  *ngIf="tableHeader[7].value"
+                  class="text-center"
+                  [class]="
+                    !historyExtend
+                      ? 'width-history-default'
+                      : 'width-history-extend'
+                  "
+                  class="pointer"
+                  (click)="historyExtend = !historyExtend"
+                >
+                  <div [ngClass]="historyExtend ? 'history' : 'preHistory'">
+                    <ng-container
+                      *ngFor="
+                        let statusHistory of request.statusHistories;
+                        let indexStatus = index
+                      "
+                      [ngTemplateOutlet]="statusHistory.isRoot ? root : temp"
+                    >
+                      <div class="row-history-status-text-overflow-ellipsis">
+                        <ng-template #root>
+                          <label
+                            [ngClass]="
+                              APP_CONSTANT.StatusStyle[
+                                statusHistory.workflowStatusCode.trim()
+                              ]
+                            "
+                            class="lable-history-status m-0"
+                            >{{ statusHistory.workflowStatusName }}</label
+                          >
+                          &nbsp;
+                          <label class="m-0">{{
+                            statusHistory.value + (statusHistory.currencyName ? statusHistory.currencyName : defaultCurrencyCode)
+                          }}</label>
+                          &nbsp;
+                          <span>{{
+                            statusHistory.creationTime
+                              | date : "dd/MM/yyyy HH:mm:ss"
+                          }}</span>
+                          by
+                          <b>{{ statusHistory.creationUser }}</b>
+                        </ng-template>
+                        <ng-template #temp>
+                          <a
+                            href="javascript:void(0);"
+                            (click)="
+                              viewDetailHistory(
+                                indexStatus,
+                                request.statusHistories,
+                                statusHistory.tempId
+                              );
+                              $event.stopPropagation()
+                            "
+                            matTooltip="Xem chi tiết thay đổi"
+                            class="link-view-history"
+                            *ngIf="isShowViewYCTD(); else notAllowViewYCTD"
+                          >
+                            <b>[YCTĐ]</b>
+                            &nbsp;
+                            <label
+                              [ngClass]="
+                                APP_CONSTANT.StatusStyle[
+                                  statusHistory.workflowStatusCode.trim()
+                                ]
+                              "
+                              class="lable-history-status m-0"
+                              >{{ statusHistory.workflowStatusName }}</label
+                            >
+                            &nbsp;
+                            <b class="m-0">{{ statusHistory.value + (statusHistory.currencyName ? statusHistory.currencyName : defaultCurrencyCode) }}</b>
+                            &nbsp;
+                            <span>{{
+                              statusHistory.creationTime
+                                | date : "dd/MM/yyyy HH:mm:ss"
+                            }}</span>
+                            by
+                            <b>{{ statusHistory.creationUser }}</b>
+                          </a>
+                          <ng-template #notAllowViewYCTD>
+                            <b>[YCTĐ]</b>
+                            &nbsp;
+                            <label
+                              [ngClass]="
+                                APP_CONSTANT.StatusStyle[
+                                  statusHistory.workflowStatusCode.trim()
+                                ]
+                              "
+                              class="lable-history-status m-0"
+                              >{{ statusHistory.workflowStatusName }}</label
+                            >
+                            &nbsp;
+                            <b class="m-0">{{ statusHistory.value + "đ" }}</b>
+                            &nbsp;
+                            <span>{{
+                              statusHistory.creationTime
+                                | date : "dd/MM/yyyy HH:mm:ss"
+                            }}</span>
+                            by
+                            <b>{{ statusHistory.creationUser }}</b>
+                          </ng-template>
+                        </ng-template>
+                      </div>
+                    </ng-container>
+                  </div>
+                </td>
+                <td *ngIf="tableHeader[8].value" class="text-center">
+                  <strong
+                    [matTooltip]="
+                      request.requestInBankTransaction +
+                      ' giao dịch ngân hàng liên quan'
+                    "
+                    >{{ request.requestInBankTransaction }}</strong
+                  >
+                </td>
+                <td *ngIf="tableHeader[9].value" class="text-center">
+                  <span
+                    [ngClass]="
+                      APP_CONSTANT.StatusStyle[
+                        request.workflowStatusCode.trim()
+                      ]
+                    "
+                    >{{ request.workflowStatusName }}</span
+                  >
+                </td>
+                <td *ngIf="tableHeader[10].value" class="text-center">
+                  {{ request.creationTime | date : "dd/MM/yyyy" }} <br />
+                  {{ request.creationTime | date : "HH:mm:ss" }}
+                  <span *ngIf="request.creationUser"
+                    ><br />by {{ request.creationUser }}</span
+                  >
+                </td>
+                <td *ngIf="tableHeader[11].value" class="text-center">
+                  {{ request.updatedTime | date : "dd/MM/yyyy" }} <br />
+                  {{ request.updatedTime | date : "HH:mm:ss" }}
+                  <span *ngIf="request.updatedBy"
+                    ><br />by {{ request.updatedBy }}</span
+                  >
+                </td>
+                <td class="text-center">
+                  <div>
+                    <button
+                      *ngIf="
+                        request.action.length > 0 ||
+                        request.workflowStatusCode == 'START' ||
+                        request.workflowStatusCode == 'BACK TO START' ||
+                        isShowMenuActions()
+                      "
+                      mat-button
+                      [matMenuTriggerFor]="menu"
+                      (click)="$event.stopPropagation()"
+                      #menuTrigger="matMenuTrigger"
+                    >
+                      <mat-icon>menu</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu" class="p-2">
+                      <!-- <button *ngIf="
+                          permission.isGranted(Finance_OutcomingEntry_Edit) &&
+                          (request.workflowStatusCode == 'START' ||
+                            request.workflowStatusCode == 'BACK TO START' ||
+                              request.workflowStatusCode == 'REJECTED')
+                        " class="mat-menu-item w-100" (click)="editRequest(request); $event.stopPropagation()">
+                        <i class="fas fa-pencil-alt mr-2"></i>
+                        {{ "action.edit" | translate }}
+                      </button> -->
+                      <button
+                        *ngIf="
+                          permission.isGranted(Finance_OutcomingEntry_Delete) &&
+                          (request.workflowStatusCode == 'START' ||
+                            request.workflowStatusCode == 'BACK TO START' ||
+                            request.workflowStatusCode == 'REJECTED')
+                        "
+                        class="mat-menu-item w-100"
+                        (click)="
+                          deleteRequest(request); $event.stopPropagation()
+                        "
+                      >
+                        <i class="fas fa-trash mr-2"></i>
+
+                        {{ "action.delete" | translate }}
+                      </button>
+                      <button
+                        *ngIf="isShowCloneBtn()"
+                        class="mat-menu-item w-100"
+                        (click)="
+                          cloneRequest(request);
+                          menuTrigger.closeMenu();
+                          $event.stopPropagation()
+                        "
+                      >
+                        <i class="fas fa-clone"></i>
+                        Clone
+                      </button>
+                      <button
+                        *ngIf="
+                          request.isShowButtonViewRequestChange &&
+                          request.tempOutcomingEntryId !== 0
+                        "
+                        class="mat-menu-item w-100"
+                        (click)="openRequestChange(request)"
+                      >
+                        <mat-icon style="margin-left: -5px" class="mr-1"
+                          >visibility</mat-icon
+                        >
+                        Xem YCTĐ
+                      </button>
+
+                      <button
+                        *ngIf="
+                          request.isShowButtonApproveRequestChange &&
+                          request.tempOutcomingEntryId !== 0
+                        "
+                        class="mat-menu-item w-100"
+                        (click)="handleApproveRequestChange(request)"
+                      >
+                        <mat-icon style="margin-left: -5px" class="mr-1"
+                          >check</mat-icon
+                        >
+                        Chấp nhận YCTĐ
+                      </button>
+
+                      <button
+                        *ngIf="
+                          request.isShowButtonRejectRequestChange &&
+                          request.tempOutcomingEntryId !== 0
+                        "
+                        class="mat-menu-item w-100"
+                        (click)="handleRejectRequestChange(request)"
+                      >
+                        <mat-icon style="margin-left: -5px" class="mr-1"
+                          >close</mat-icon
+                        >
+                        Từ chối YCTĐ
+                      </button>
+                      <div
+                        *ngIf="
+                          permission.isGranted(
+                            Finance_OutcomingEntry_ChangeStatus
+                          )
+                        "
+                      >
+                        <button
+                          *ngFor="let action of request.action"
+                          class="mat-menu-item w-100"
+                          (click)="$event.stopPropagation()"
+                          [disabled]="isTableLoading"
+                          (click)="
+                            isTableLoading = true;
+                            changeStatus(request.id, action.statusTransitionId)
+                          "
+                        >
+                          <mat-icon style="margin-left: -5px" class="mr-1"
+                            >check</mat-icon
+                          >
+                          {{ action.name }}
+                        </button>
+                      </div>
+
+                      <button
+                        *ngIf="
+                          permission.isGranted(
+                            Finance_OutcomingEntry_ExportPdf
+                          ) && request.requestInBankTransaction != null
+                        "
+                        class="mat-menu-item w-100"
+                        (click)="exportPdf(request.id)"
+                      >
+                        <mat-icon>file_copy</mat-icon>
+                        Xuất phiếu chi PDF
+                      </button>
+                    </mat-menu>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer bg-light border-top">
+        <div class="row">
+          <div
+            class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center just"
+          >
+            <button class="btn btn-secondary" (click)="refresh()">
+              <i class="fas fa-redo-alt"></i>
+            </button>
+            <mat-form-field style="width: 20%; margin-left: 30px">
+              <mat-label>Number items</mat-label>
+              <mat-select
+                [(ngModel)]="pageSizeType"
+                (ngModelChange)="changePageSize()"
+              >
+                <mat-option [value]="5"> 5 </mat-option>
+                <mat-option [value]="10"> 10 </mat-option>
+                <mat-option [value]="20"> 20 </mat-option>
+                <mat-option [value]="50"> 50 </mat-option>
+                <mat-option [value]="100"> 100 </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div
+            class="col-sm-4 col-12 justify-content-center d-flex align-items-center"
+          >
+            <p class="mb-0">Total: {{ totalItems }}</p>
+          </div>
+          <div
+            class="col-sm-4 col-12 d-flex align-items-center justify-content-end"
+          >
+            <div class="float-sm-right">
+              <abp-pagination-controls
+                id="server"
+                (pageChange)="getDataPage($event)"
+              >
+              </abp-pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

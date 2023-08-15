@@ -1,0 +1,90 @@
+<form
+  class="form-horizontal ui-form-new auto-paid"
+  autocomplete="off"
+  #revenueManagedForm="ngForm"
+  id="auto-payment-debt-dialog"
+>
+  <div class="group-modal-header">
+    <div
+      class="modal-header"
+      cdkDrag
+      cdkDragRootElement=".cdk-overlay-pane"
+      cdkDragHandle
+    >
+      <h4 class="modal-title">
+        <b>Auto trả nợ {{ accountName }} </b>
+      </h4>
+      <button type="button" class="close" aria-label="Close" mat-dialog-close>
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="d-flex s-title">
+      <span class="d-block mr-1"><strong>Khách hàng trả trước:</strong></span>
+      <div>
+        <span *ngFor="let item of moneyInfo" class="text-bold d-block">
+          {{ _utilities.formatMoneyCustom(item.totalMoney) }}
+          {{ item.currencyName }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-body">
+    <div class="fixedBody">
+      <ng-template #currencyConvert [ngIf]="currencyNeedConverts.length > 0">
+        <label>Tỉ giá: <span class="text-danger">*</span></label>
+        <ng-container *ngFor="let item of currencyNeedConverts; let i = index">
+          <div class="row col mt-1 mb-2">
+            <label class="col-form-label col-2">
+              1
+              {{
+                item.isReverseExchangeRate
+                  ? item.toCurrencyName
+                  : item.fromCurrencyName
+              }}
+              =
+            </label>
+            <div class="mr-2 ml-2">
+              <input
+                type="text"
+                mask="separator':''"
+                thousandSeparator=","
+                allowNegativeNumbers="true"
+                class="form-control"
+                name="collectionDebt"
+                [(ngModel)]="item.exchangeRate"
+                required
+                placeholder="Nhập tỉ giá..."
+              />
+            </div>
+            <label class="col-form-label">
+              {{
+                item.isReverseExchangeRate
+                  ? item.fromCurrencyName
+                  : item.toCurrencyName
+              }}
+            </label>
+            <div class="col col-form-label">
+              <mat-checkbox
+                [(ngModel)]="item.isReverseExchangeRate"
+                [ngModelOptions]="{ standalone: true }"
+                >Đảo ngược</mat-checkbox
+              >
+            </div>
+          </div>
+        </ng-container>
+        <strong>Format: 24,000.5 </strong>
+      </ng-template>
+    </div>
+    <div class="row d-flex justify-content-between mt-4 px-1">
+      <button mat-dialog-close class="btn btn-default">Hủy</button>
+      <button
+        (click)="process()"
+        class="btn btn-primary"
+        [disabled]="!revenueManagedForm.valid || isDisable || checkValidate()"
+      >
+        Thực hiện
+      </button>
+    </div>
+  </div>
+</form>

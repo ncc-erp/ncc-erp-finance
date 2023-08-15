@@ -1,0 +1,41 @@
+<div>
+  
+    <section class="content px-2">
+        <div class="container-fluid">
+            <div class="">
+
+
+                <div class="card-body table-responsive p-4">
+                    <table style="border-collapse: collapse;" class="table table-hover text-nowrap"
+                        [busy]="isTableLoading">
+                        <thead class="bg-light">
+                            <tr>
+
+                                <th>STT</th>
+                                <th>Project name</th>
+                                <th>File</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="
+                        let timeSheet of projectTimeSheetList  ;
+                          let index = index
+                        
+                      ">
+                                <td class="text-center" style="padding: 12px;">{{index+1}}</td>
+                                <td class="text-center" style="white-space: normal; max-width: 300px;" >
+                                    {{ timeSheet.projectName }}
+
+                                </td>
+                                <td class="text-center"> <span class="hyperlink" (click)="downloadFile(timeSheet.id)"> {{timeSheet.fileName
+                                        }} </span> </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>

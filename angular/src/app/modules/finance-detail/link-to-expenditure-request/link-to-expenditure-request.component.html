@@ -1,0 +1,111 @@
+<form class="form-horizontal" autocomplete="off" #bankForm="ngForm">
+    <div class="card-header row">
+        <h3 class="col-6">{{'m5_child2.linkRequest' | translate}}</h3>
+        <div class="col-5 row" style="justify-content: end;">
+            <label for="" style="padding-top: 11px;">Status:</label>
+            <mat-form-field class="col-6" appearance="outline">
+                <mat-select name="status" placeholder="Status" [(ngModel)]="selectedStatus"
+                    (selectionChange)="getDataPage(1);">
+                    <mat-option [value]="status.code" *ngFor="let status of statusList">
+                        {{status.name}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <div class="col-md-1">
+                <mat-icon style="margin-top: 14px; cursor: pointer;" *ngIf="selectedStatus!=''"
+                    (click)="selectedStatus=''; getDataPage(1);">clear</mat-icon>
+            </div>
+        </div>
+        <div class="col-1 text-right p-0" >
+            <i style="cursor: pointer; margin-top: 8px;" class="fas fa-times fa-lg" (click)="dialogRef.close()"></i>
+        </div>
+    </div>
+    <div  class="modal-body" style="height: 72vh;">
+        <!-- <div *ngFor="let item of outcomingEntrysByStatusEnd" class="form-group row required">
+            <div class="col-md-12">
+                <mat-checkbox class="example-margin">{{item.name}}</mat-checkbox>
+            </div>
+        </div> -->
+        <div class="fixTableHead">
+        <table style="border-collapse: collapse;" class="table table-hover text-nowrap" [busy]="isTableLoading">
+            <thead>
+                <th style="width: 80px;"></th>
+                <th>Tên request</th>
+                <th>Giá trị</th>
+                <th>Loại yêu cầu</th>
+                <th>Ngày tạo</th>
+                <th>Ngày gửi</th>
+                <th>Ngày duyệt</th>
+                <th>Ngày Thực thi</th>
+                <th>Giao dịch liên kết</th>
+            </thead>
+            <tbody>
+                <tr *ngFor="let request of expenditureRequestList">
+                    <td class="text-center">
+                        <mat-checkbox class="example-margin" (change)="checkval(request.id,$event)"></mat-checkbox>
+                    </td>
+                    <td>{{request.name}}</td>
+                    <td>
+                        {{request.value | number: "1.0"}} {{request.currencyName}}
+                    </td>
+                    <td class="text-center">{{request.outcomingEntryTypeCode}}</td>
+                    <td class="text-center">{{request.createdAt |date:"dd/MM/yyyy"}}</td>
+                    <td class="text-center">{{request.sendTime |date:"dd/MM/yyyy"}}</td>
+                    <td class="text-center">{{request.approveTime |date:"dd/MM/yyyy"}}</td>
+                    <td class="text-center">{{request.executeTime |date:"dd/MM/yyyy"}}</td>
+                    <td class="text-center">{{request.requestInBankTransaction}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <div class="row col-9 text-center">
+            <span class="mt-1 mb-0 my-2">
+                Total: {{ expenditureRequestList.length }}
+            </span>
+            <!-- <div class="col-sm-4 col-12 text-sm-left text-center">
+                <button class="btn btn-secondary" (click)="refresh()">
+                    <i class="fas fa-redo-alt"></i>
+                </button>
+                <mat-form-field style="margin-top: 10px; width: 20%;margin-left: 30px;">
+                    <mat-label>Number items</mat-label>
+                    <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()" name="pageSize">
+                        <mat-option [value]="5">
+                            5
+                        </mat-option>
+                        <mat-option [value]="10">
+                            10
+                        </mat-option>
+                        <mat-option [value]="20">
+                            20
+                        </mat-option>
+                        <mat-option [value]="50">
+                            50
+                        </mat-option>
+                        <mat-option [value]="100">
+                            100
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class=" pt-1 col-sm-4 col-12 text-center">
+
+                <span class="mb-0 my-2">
+                    Total: {{ expenditureRequestList.length }}
+                </span>
+            </div>
+            <div class="col-sm-4 col-12">
+                <div class="float-sm-right m-auto">
+                    <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                    </abp-pagination-controls>
+                </div>
+            </div> -->
+        </div>
+        <div class="col-3">
+            <button class="btn btn-default cancel-banks mr-3" mat-raised-button mat-dialog-close>Cancel</button>
+        <button class="btn saving-btn btn-primary" [disabled]="!bankForm.form.valid"
+            (click)="saveAndClose()">Save</button>
+        </div>
+    </div>
+</form>

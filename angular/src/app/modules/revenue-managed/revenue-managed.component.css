@@ -1,0 +1,234 @@
+button {
+  height: fit-content;
+}
+
+::ng-deep #revenue-managed .mat-form-field-flex>.mat-form-field-infix {
+  padding: 0.4em 0px !important;
+}
+
+::ng-deep #revenue-managed .mat-form-field-label-wrapper {
+  top: -1.5em !important;
+}
+
+::ng-deep #revenue-managed .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  transform: translateY(-1.1em) scale(.75) !important;
+  width: 133.33333%;
+}
+
+/* ::ng-deep #revenue-managed .mat-form-field-flex {
+  background: white;
+} */
+
+::ng-deep #revenue-managed .mat-form-field-label-wrapper .mat-form-field-label {
+  font-weight: normal;
+  font-size: 14px;
+  margin-top: 2px !important;
+}
+
+.file-table td,
+.file-table tr {
+  border: none;
+}
+
+.hyperlink {
+  color: #007bff;
+}
+
+.hyperlink:hover {
+  cursor: pointer;
+  text-decoration: underline !important;
+}
+
+td {
+  vertical-align: middle;
+}
+
+td:nth-child(11) {
+  max-width: 100px;
+  word-wrap: break-word;
+}
+
+th:nth-child(n+1) {
+  padding: 12px;
+}
+
+th:hover {
+  background: #ccc;
+  cursor: pointer;
+}
+
+td span {
+  display: block;
+}
+
+.card-table {
+  font-size: 16px;
+}
+
+.badge {
+  color: white;
+  font-size: 80%;
+}
+
+.badge-pill {
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+}
+
+.label-warning {
+  background: var(--orange);
+}
+
+.label-success {
+  background: var(--success);
+}
+
+.label-danger {
+  background: var(--danger);
+}
+
+.label-info {
+  background: var(--secondary)
+}
+
+.label-light-warning {
+  background: var(--yellow);
+}
+
+.text-warning {
+  color: var(--orange)
+}
+
+.search-input {
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #e1e1e1;
+  border-radius: 3px;
+  position: sticky;
+}
+
+.search-input:focus {
+  outline: 3px solid #f8f9fa;
+}
+
+.menu-button {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.input-group {
+  margin-left: -7.5px;
+}
+
+.input-group button {
+  height: 100%;
+}
+
+@media screen and (max-width: 700px) {
+  td:nth-child(n+1) {
+    max-width: 180px;
+    width: fit-content;
+  }
+}
+
+.tableRevenueDebt {
+  border: 0px;
+}
+
+.tableRevenueDebt tr,
+.tableRevenueDebt th,
+.tableRevenueDebt td {
+  border: 0px;
+}
+
+.tableRevenue {
+  border-collapse: collapse;
+}
+
+.tableRevenue th:first-child {
+  text-align: center;
+  width: 40px;
+  padding: 12px;
+}
+
+td.debt {
+  text-align: right;
+  min-width: 90px
+}
+
+td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+}
+
+td.no {
+  padding: 12px;
+}
+
+td.nameInvoice {
+  white-space: pre-line;
+  min-width: 140px;
+  max-width: 150px;
+}
+
+td.accountName {
+  white-space: pre-line;
+  min-width: 150px
+}
+
+td.note {
+  white-space: pre-line;
+  min-width: 70px;
+  max-width: 90px;
+}
+
+.select_pageSize {
+  margin-top: -10px;
+  width: 20%;
+  margin-left: 30px;
+}
+
+.input-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 10000;
+  background: white;
+  overflow: hidden;
+}
+
+::ng-deep #revenue-managed .mat-menu-item {
+  font-size: 16px;
+}
+
+.card-footer {
+  padding-bottom: 0px;
+}
+
+td.status {
+  max-width: 0.3rem;
+  text-align: center;
+  padding: 0 0.6em;
+}
+
+.tableRevenueDebt td {
+  min-width: 150px
+}
+
+.tableRevenueDebt thead {
+  display: block;
+}
+
+.tableRevenueDebt {
+  color: black;
+}
+
+.mat-expansion-panel {
+  width: fit-content;
+  font-family: var(--font-family);
+}
+
+.tableRevenueDebt tbody td:last-child{
+  font-weight: bold;
+}

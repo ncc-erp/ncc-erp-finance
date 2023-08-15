@@ -1,0 +1,309 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-6">
+        <h2>{{ "m5_child5.title" | translate }}</h2>
+      </div>
+      <div class="col-6 text-right">
+        <a  href="javascript:;" class="btn bg-blue"
+          (click)="createRevenueManaged()">
+          <i class="fa fa-plus-square"></i>
+          {{ "action.create" | translate }}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="content px-2" id="revenue-managed">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header">
+        <div class="row d-flex justify-content-between align-items-center">
+          <div class="col-md-12 col-lg-3 mt-1">
+            <div class="input-group col-md-12">
+              <div class="input-group-prepend">
+                <button type="button" class="btn bg-blue" (click)="getDataPage(FIRST_PAGE)">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm theo tên" [(ngModel)]="searchText"
+                (keyup.enter)="getDataPage(FIRST_PAGE)" />
+            </div>
+          </div>
+          <div class="mt-1 col-md-12 col-lg-2 row accountType">
+            <mat-form-field class="col-md-12" appearance="outline">
+              <mat-label>{{ "menu3.m3_child3" | translate }}</mat-label>
+              <mat-select name="accountType" [(ngModel)]="selectedAccountTypeCode"
+                (selectionChange)="handleAccountTypeChange()"
+                (openedChange)="handleSelectAccountTypeOpenedChange($event)" disableOptionCentering="true">
+                <div class="p-2 input-wrapper">
+                  <input type="text" matInput class="search-input" placeholder="Search Text"
+                    (keydown)="$event.stopPropagation()" (input)="filterAccountType($event.target.value)" />
+                </div>
+                <mat-option [value]="accountType.code" *ngFor="let accountType of filteredListAccountType">
+                  {{ accountType.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="mt-1 col-md-12 col-lg-2 row accountType">
+            <mat-form-field class="col-md-12" appearance="outline">
+              <mat-label>{{ "menu4.m4_child2" | translate }}</mat-label>
+              <mat-select name="accountName" placeholder="Account Name" [(value)]="selectedAccountId"
+                (selectionChange)="handleSelectionChange()" (openedChange)="handleSelectAccountIdOpenedChange($event)"
+                disableOptionCentering="true">
+                <div class="p-2 input-wrapper">
+                  <input type="text" matInput class="search-input" placeholder="Search Text"
+                    (keydown)="$event.stopPropagation()" (input)="filterAccount($event.target.value)" />
+                </div>
+                <mat-option [value]="account.id" *ngFor="let account of filteredListAccount">
+                  {{ account.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="mt-1 col-md-12 col-lg-2 row status">
+            <mat-form-field class="col-md-12" appearance="outline">
+              <mat-label>{{ "m5_child5.status" | translate }}</mat-label>
+              <mat-select name="status" placeholder="Status" [(ngModel)]="selectedStatus"
+                (selectionChange)="handleSelectionChange()" disableOptionCentering="true"Z>
+                <mat-option [value]="status.value" *ngFor="let status of listStatus">
+                  {{ status.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="mt-1 col-md-12 col-lg-2 row">
+            <mat-form-field class="col-md-12" appearance="outline">
+              <mat-label>{{ "m5_child5.unit" | translate }}</mat-label>
+              <mat-select name="currency" placeholder="currency" [(ngModel)]="selectedCurrency"
+                (selectionChange)="handleSelectionChange()" disableOptionCentering="true">
+                <mat-option [value]="currency.code" *ngFor="let currency of currencies">
+                  {{ currency.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="row px-4 pt-2">
+        <div class="col-6">
+          <div>
+            <mat-expansion-panel (opened)="isCollapsed = false"
+            (closed)="isCollapsed = true" #expanPanel hideToggle>
+              <mat-expansion-panel-header>
+                <h5 >
+                  <strong>Tổng công nợ </strong>
+                  <i class="fas fa-caret-down" *ngIf="!isCollapsed"></i>
+                  <i class="fas fa-caret-up" *ngIf="isCollapsed"></i>
+                </h5>
+              </mat-expansion-panel-header>
+              <table class="tableRevenueDebt">
+                <thead>
+                  <tr class="text-bold">
+                    <td class="px-4 py-2 text-center">Currency</td>
+                    <td class="px-4 py-2 text-center">
+                      {{ "m5_child5.debtReceivable" | translate }}
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                      {{ "m5_child5.debtReceived" | translate }}
+                    </td>
+                    <td class="px-4 py-2 text-center">
+                      {{ "m5_child5.remainDebt" | translate }}
+                    </td>
+                  </tr>
+                </thead>
+                <tbody [collapse]="isCollapsed">
+                  <tr *ngFor="let item of remainingDebts">
+                    <td class="pl-3 pr-4 text-center">
+                      <strong>{{ item.currencyCode }}</strong>
+                    </td>
+                    <td class="pl-3 pr-4 text-right">
+                      {{ item.collectionDebt | number: "1.0":"en-US" }}
+                    </td>
+                    <td class="pl-3 pr-4 text-right">
+                      {{ item.debtReceived | number: "1.0":"en-US" }}
+                    </td>
+                    <td class="pl-3 pr-4 text-right">
+                      {{ item.remainDebt | number: "1.0":"en-US" }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </mat-expansion-panel>
+          </div>
+        </div>
+      </div>
+      <div class="card-body revenue-card table-responsive card-table p-4">
+        <table class="table table-sm table-hover text-nowrap tableRevenue" [busy]="isTableLoading">
+          <thead class="bg-light">
+            <tr>
+              <th>
+                {{ "m3_child2.no" | translate }}
+              </th>
+              <th class="text-center">
+                {{ "m5_child5.name" | translate }}
+              </th>
+              <th>{{ "m5_child5.customer" | translate }}</th>
+              <th>{{ "m5_child5.month" | translate }}</th>
+              <th>{{ "m5_child5.debtReceivable" | translate }}</th>
+              <th>{{ "m5_child5.debtReceived" | translate }}</th>
+              <th (click)="sort(SORTABLE_FIELD.RemainDebt)">
+                {{ "m5_child5.remainDebt" | translate }}
+                <i *ngIf="currentSortField !== SORTABLE_FIELD.RemainDebt" class="fas fa-sort"></i>
+                <i *ngIf="
+                    currentSortOption === SORT_DIRECTION.DESCENDING &&
+                    currentSortField === SORTABLE_FIELD.RemainDebt
+                  " class="fas fa-sort-amount-down"></i>
+                <i *ngIf="
+                    currentSortOption === SORT_DIRECTION.ASCENDING &&
+                    currentSortField === SORTABLE_FIELD.RemainDebt
+                  " class="fas fa-sort-amount-up"></i>
+              </th>
+              <th>{{ "m5_child5.unit" | translate }}</th>
+              <th name="sendInvoiceDate" (click)="sort(SORTABLE_FIELD.SendInvoiceDate)">
+                {{ "m5_child5.sendDate" | translate }}
+                <i *ngIf="currentSortField !== SORTABLE_FIELD.SendInvoiceDate" class="fas fa-sort"></i>
+                <i *ngIf="
+                    currentSortOption === SORT_DIRECTION.DESCENDING &&
+                    currentSortField === SORTABLE_FIELD.SendInvoiceDate
+                  " class="fas fa-sort-amount-down"></i>
+                <i *ngIf="
+                    currentSortOption === SORT_DIRECTION.ASCENDING &&
+                    currentSortField === SORTABLE_FIELD.SendInvoiceDate
+                  " class="fas fa-sort-amount-up"></i>
+              </th>
+              <th name="deadline" (click)="sort(SORTABLE_FIELD.Deadline)">
+                {{ "m5_child5.deadline" | translate }}
+                <i *ngIf="currentSortField !== SORTABLE_FIELD.Deadline" class="fas fa-sort"></i>
+                <i *ngIf="
+                    currentSortOption === SORT_DIRECTION.DESCENDING &&
+                    currentSortField === SORTABLE_FIELD.Deadline
+                  " class="fas fa-sort-amount-down"></i>
+                <i *ngIf="
+                    currentSortOption === SORT_DIRECTION.ASCENDING &&
+                    currentSortField === SORTABLE_FIELD.Deadline
+                  " class="fas fa-sort-amount-up"></i>
+              </th>
+              <th>{{ "m5_child5.status" | translate }}</th>
+              <th>{{ "m5_child5.remind" | translate }}</th>
+              <!-- <th>{{ "m5_child5.file" | translate }}</th> -->
+              <th>{{ "m5_child5.note" | translate }}</th>
+              <th class="text-center">{{ "action.actions" | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="
+                let item of revenueManagedList
+                  | paginate
+                    : {
+                        id: 'server',
+                        itemsPerPage: pageSize,
+                        currentPage: pageNumber,
+                        totalItems: totalItems
+                      };
+                let index = index
+              ">
+              <td class="text-center no">
+                {{ index + 1 + (pageNumber - 1) * pageSize }}
+              </td>
+              <td class="hyperlink nameInvoice">
+                <span (click)="viewDetail(item)"> {{ item.nameInvoice }}</span>
+              </td>
+              <td class="accountName">
+                {{ item.accountName }}
+              </td>
+              <td class="text-center">{{ item.month }}</td>
+              <td class="debt">
+                {{ item.collectionDebt | number: "1.0" }}
+              </td>
+              <td class="debt">
+                {{ item.debtReceived | number: "1.0" }}
+              </td>
+              <td class="debt">
+                {{ item.remainDebt | number: "1.0" }}
+              </td>
+              <td class="text-center">{{ getCurrencyName(item.unitId) }}</td>
+              <td class="text-center">
+                {{ item.sendInvoiceDate | date: "dd/MM/yyyy" }}
+              </td>
+              <td class="text-center">
+                {{ item.deadline | date: "dd/MM/yyyy" }}
+
+                <span class="text-danger" *ngIf="item.status != listStatus[3].value">
+                  <span *ngIf="isDeadlinePassed(item.deadline); else timeLeft"><b>{{ getDateDiff(item.deadline) }} </b>d
+                    ago</span>
+                  <ng-template #timeLeft>
+                    <span class="text-success"><b>{{ -getDateDiff(item.deadline) }} </b>d left</span>
+                  </ng-template>
+                </span>
+              </td>
+              <td class="text-center status">
+                <span class="badge badge-pill" [class.label-info]="item.status == listStatus[4].value"
+                  [class.label-success]="item.status == listStatus[3].value"
+                  [class.label-warning]="item.status == listStatus[2].value"
+                  [class.label-danger]="item.status == listStatus[1].value">
+                  {{ APP_CONSTANT.RevenueManagedStatus[item.status] }}
+                </span>
+              </td>
+              <td class="text-center">
+                <span>
+                  {{ APP_CONSTANT.RemindStatus[item.remindStatus] }}
+                </span>
+              </td>
+              <td class="note">
+                {{ item.note }}
+              </td>
+              <td class="text-center">
+                <button [matMenuTriggerFor]="actionMenu" mat-icon-button
+                  aria-label="Example icon button with a menu icon">
+                  <mat-icon>menu</mat-icon>
+                </button>
+                <mat-menu #actionMenu>
+                  <button class="menu-button"  mat-menu-item
+                    (click)="uploadFile(item)">
+                    <i class="fas fa-upload"></i>
+                    Upload file
+                  </button>
+                  <button class="menu-button"  mat-menu-item
+                    (click)="editInvoice(item)">
+                    <i class="fas fa-pencil-alt"></i>
+                    {{ "action.edit" | translate }}
+                  </button>
+                  <button class="menu-button"  mat-menu-item
+                    (click)="delete(item)">
+                    <i class="fas fa-trash"></i>
+                    {{ "action.delete" | translate }}
+                  </button>
+                </mat-menu>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-light border-top">
+        <div class="row">
+          <div class="col-sm-4 col-12 text-sm-left text-center">
+            <button class="btn btn-secondary" (click)="refresh()">
+              <i class="fas fa-redo-alt"></i>
+            </button>
+            <mat-form-field class="select_pageSize">
+              <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                <mat-option *ngFor="let option of PAGE_SIZE_OPTIONS" [value]="option">{{ option }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-4 col-12 text-center">
+            <p class="mb-0 my-2">Total: {{ totalCountRows }}</p>
+          </div>
+          <div class="col-sm-4 col-12">
+            <div class="float-sm-right m-auto">
+              <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+              </abp-pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

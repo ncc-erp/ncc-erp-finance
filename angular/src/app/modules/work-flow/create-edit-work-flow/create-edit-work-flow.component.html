@@ -1,0 +1,28 @@
+<form class="form-horizontal" autocomplete="off" #workFlowForm="ngForm">
+    <div class="card-header" cdkDrag cdkDragRootElement=".modal-content, .cdk-overlay-pane" cdkDragHandle>
+        <h3>{{'m2_child4.createTitle' | translate}}</h3>
+    </div>
+    <mat-dialog-content>
+
+
+
+    </mat-dialog-content>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="accountTypeName">
+                {{ 'm2_child4.name' | translate }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="accountTypeName" id="accountTypeName" minlength="2" maxlength="64"
+                    required [(ngModel)]="workFlow.name" #accountTypeNameModel="ngModel" #accountTypeNameEl />
+                <abp-validation-summary [control]="accountTypeNameModel" [controlEl]="accountTypeNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+    </div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-default cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button class="btn saving-btn btn-primary ml-2"
+            (click)="saveAndClose()" [disabled]="!workFlowForm.form.valid">Save</button>
+    </div>
+</form>

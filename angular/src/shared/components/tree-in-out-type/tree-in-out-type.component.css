@@ -1,0 +1,7 @@
+::ng-deep .tree-select .mat-form-field-appearance-outline .mat-form-field-infix{
+    padding: .5em 0;
+}
+.options{
+    max-height: 20vh;
+    overflow: auto;
+}

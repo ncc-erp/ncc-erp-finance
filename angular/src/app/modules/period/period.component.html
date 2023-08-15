@@ -1,0 +1,115 @@
+<div id="period">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-6">
+                    <h2>Kỳ kế toán</h2>
+                </div>
+                <div class="col-6 text-right">
+                    <button class="btn btn-primary" (click)="onCreate()" *ngIf="isShowCreateBtn()">
+                        <i class="fa fa-plus-square"></i>
+                        {{ 'action.create' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="content px-2">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row-group">
+                        <div class="col-12 item-group item-group--search input-group">
+                          <div class="input-group-prepend">
+                          <button type="button" class="btn bg-blue" (click)="getFirstPage()">
+                            <i class="fas fa-search"></i>
+                          </button>
+                          </div>
+                          <input
+                            type="text"
+                            class="form-control"
+                            name="keyword"
+                            placeholder="Tìm kiếm theo tên"
+                            [(ngModel)]="searchText"
+                            (keyup.enter)="getFirstPage()"
+                          />
+                        </div>
+                      </div>
+                </div>
+                <div class="card-body table-responsive">
+                    <table class="table table-hover border-top" [busy]="isTableLoading">
+                        <thead class="bg-light">
+                            <th class="col-stt">STT</th>
+                            <th class="col-name">Tên kì</th>
+                            <th class="col-status">Trạng thái</th>
+                            <th class="col-date">Ngày bắt đầu</th>
+                            <th class="col-date">Ngày kết thúc</th>
+                            <th class="col-date">Created At</th>
+                            <th class="col-action">Action</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let period of listPeriods | paginate:
+                            {
+                                id: 'Period',
+                                itemsPerPage: pageSize,
+                                currentPage: pageNumber,
+                                totalItems: totalItems
+                            }; let index = index">
+                                <td class="text-center">{{index+1 + (pageNumber - 1)*pageSize}}</td>
+                                <td class="text-left">{{period.name}}</td>
+                                <td class="text-center">
+                                    <span [ngClass]="period.isActive ? 'badge badge-success' : 'badge badge-warning'" class="">
+                                        {{period.statusName}}
+                                    </span>
+                                </td>
+                                <td class="text-center">{{period.startDate | date: "dd/MM/yyyy"}}</td>
+                                <td class="text-center">{{period.endDate | date: "dd/MM/yyyy"}}</td>
+                                <td class="text-center">
+                                  {{period.creationTime | date: "dd/MM/yyyy HH:mm"}} <br> by {{period.createByUserName}}
+                                </td>
+                                <td class="text-center">
+                                    <button mat-icon-button [matMenuTriggerFor]="menu"  *ngIf="period.isActive && (isShowEditBtn() || isShowCloseAndCreate())">
+                                        <mat-icon>menu</mat-icon>
+                                    </button>
+                                    <mat-menu #menu="matMenu">
+                                        <button class="mat-menu-item" (click)="onUpdate(period)" *ngIf="isShowEditBtn()">
+                                            <i class="fas fa-pencil-alt mr-2"></i>
+                                            {{ "action.edit" | translate }}
+                                        </button>
+                                        <button class="mat-menu-item" (click)="onCloseAndCreate()" *ngIf="isShowCloseAndCreate()">
+                                            <i class="fas fa-trash mr-2"></i>
+                                            Đóng kì hiện tại và tạo kì mới
+                                        </button>
+                                    </mat-menu>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer bg-light border-top">
+                    <div class="row">
+                      <div class="col-sm-4 col-12 text-sm-left text-center">
+                        <button class="btn btn-secondary" (click)="refresh()">
+                          <i class="fas fa-redo-alt"></i>
+                        </button>
+                        <mat-form-field class="select_pageSize">
+                          <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                            <mat-option *ngFor="let option of LIST_PAGE_SIZE_OPTIONS" [value]="option">{{ option }}</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <div class="col-sm-4 col-12 text-center">
+                        <p class="mb-0 my-2">Total: {{ totalItems }}</p>
+                      </div>
+                      <div class="col-sm-4 col-12">
+                        <div class="float-sm-right m-auto">
+                          <abp-pagination-controls id="Period" (pageChange)="getDataPage($event)">
+                          </abp-pagination-controls>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+        </div>
+    </section>
+</div>

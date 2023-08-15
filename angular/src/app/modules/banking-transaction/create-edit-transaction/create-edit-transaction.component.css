@@ -1,0 +1,26 @@
+::ng-deep #create-edit-transaction .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}
+::ng-deep #create-edit-transaction .mat-form-field-label-wrapper { top: -1.5em; }
+
+::ng-deep #create-edit-transaction .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+::ng-deep #create-edit-transaction .mat-form-field-flex{
+    background: white;
+}
+
+::ng-deep #create-edit-transaction .mat-form-field-wrapper{
+    padding-bottom: 0;
+}
+
+::ng-deep #create-edit-transaction .modal-header{
+    padding-top: 0;
+}
+::ng-deep #create-edit-transaction .mat-form-field-label-wrapper .mat-form-field-label{
+    font-weight: normal;
+    font-size: 14px;
+    margin-top: 12px;
+}
+::ng-deep #create-edit-transaction .datepick  .mat-form-field-label-wrapper .mat-form-field-label{
+    margin-top: 0;
+}

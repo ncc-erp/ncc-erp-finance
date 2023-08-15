@@ -1,0 +1,65 @@
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6">
+                <h1>{{ 'm2_child4.workFlowStatusStatus' | translate }}</h1>
+            </div>
+            <div class="col-6 text-right">
+                <a *ngIf="permission.isGranted(Admin_WorkflowStatus_Create)" href="javascript:;" class="btn bg-blue"
+                    (click)="createStatus()">
+                    <i class="fa fa-plus-square"></i>
+                    {{ 'action.create' | translate }}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content px-2">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body table-responsive p-4">
+                <table style="border-collapse: collapse;"
+                    class="table table-hover text-nowrap">
+                    <thead class="bg-light">
+                        <tr>
+                            <th style="text-align: center;">{{ 'm2_child4.name' |
+                                translate }}</th>
+                            <th style="text-align: center;">{{ 'm2_child4.code' |
+                                translate }}</th>
+                            <th *ngIf="permission.isGranted(Admin_WorkflowStatus_Edit) || permission.isGranted(Admin_WorkflowStatus_Delete)" style="width: 200px;text-align: center;">{{
+                                'action.actions' | translate }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container *ngFor="
+                            let data of statuses">
+                            <tr *ngIf="data.name != null && data.code != null">
+                                <td>{{ data.name }}</td>
+                                <td>{{ data.code }}</td>
+                                <td *ngIf="permission.isGranted(Admin_WorkflowStatus_Edit) || permission.isGranted(Admin_WorkflowStatus_Delete)"
+                                class="d-flex justify-content-center border-0"
+                                    style="padding: 12px;">
+                                    <button *ngIf="permission.isGranted(Admin_WorkflowStatus_Edit)" style="text-align: center;" type="button"
+                                        class="btn btn-sm bg-secondary mr-1"
+                                        (click)="editStatus(data)">
+                                        <i class="fas fa-pencil-alt"></i>
+                                        {{ 'action.edit' | translate }}
+                                    </button>
+                                    <button *ngIf="permission.isGranted(Admin_WorkflowStatus_Delete)"
+                                     style="text-align: center;" type="button"
+                                        class="btn btn-sm bg-danger ml-1"
+                                        (click)="deleteStatus(data)">
+                                        <i class="fas fa-trash"></i>
+                                        {{ 'action.delete' | translate }}
+                                    </button>
+                                </td>
+
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

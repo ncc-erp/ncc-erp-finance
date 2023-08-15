@@ -1,0 +1,86 @@
+<div style="margin-bottom: 10px">
+  <mat-accordion>
+    <mat-expansion-panel
+      #expanPanel
+      hideToggle
+      [ngClass]="items.children.length == 0 ? 'final' : ''"
+      [ngClass]="items.parentId != 'null' ? 'parent' : ''"
+    >
+      <mat-expansion-panel-header>
+        <div class="row w-100">
+          <div class="col-9">
+            <mat-icon *ngIf="items.children.length" style="margin-right: 25px; color: #fed55f">{{
+              expanPanel.expanded == true ? "drive_file_move" : "folder"
+            }}</mat-icon>
+            <mat-icon *ngIf="!items.children.length" style="margin-right: 25px">{{
+                expanPanel.expanded == true ? "description" : "insert_drive_file"
+              }}</mat-icon>
+
+            <span class="text-uppercase font-weight-bold">
+              {{ items.name }}&nbsp;
+            </span>
+            <span style="margin-right: 3px"> ({{ items.code }}) </span>
+
+            <span style="margin-right: 3px" [ngClass]="items.isActive ? 'badge badge-primary' : 'badge badge-secondary'"> {{ items.isActive ? 'Active' : 'Inactive' }}</span>
+            <i class="far fa-check-circle fa-lg ml-2" *ngIf="items.expenseType == 0" style="color: #4aff34;"
+            [matTooltip]="'Tính vào chi phí'"></i>
+            <i class="far fa-check-circle fa-lg ml-2" *ngIf="items.expenseType == 1" style="color: #cdcccc;"
+            [matTooltip]="'Không tính vào chi phí'"></i>
+          </div>
+          <div class="col-3">
+            <button
+              *ngIf="permission.isGranted(Directory_OutcomingEntryType_Create)"
+              (click)="create(items); $event.stopPropagation()"
+              style="position: absolute; right: 90px; background-color: #5f656b"
+            >
+              <mat-icon style="float: right;"> add_box </mat-icon>
+            </button>
+            <button
+              *ngIf="permission.isGranted(Directory_OutcomingEntryType_Edit)"
+              (click)="edit(items); $event.stopPropagation()"
+              style="position: absolute; right: 50px; background-color: #5f656b"
+            >
+              <mat-icon style="float: right"> edit </mat-icon>
+            </button>
+            <button
+              *ngIf="permission.isGranted(Directory_OutcomingEntryType_Delete)"
+              style="position: absolute; right: 10px"
+              (click)="delete(items); $event.stopPropagation()"
+            >
+              <mat-icon style="margin-bottom: 12px">delete</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-expansion-panel-header>
+      <ng-container *ngIf="items.children.length > 0">
+        <app-expenditure-list
+          *ngFor="let item of items.children"
+          [items]="item"
+        ></app-expenditure-list>
+      </ng-container>
+      <ng-container *ngIf="items.children.length == 0">
+        <div
+          *ngIf="items.id != null"
+          style="background-color: white; color: black"
+        >
+          <p>
+            <strong>{{ "m3_child6.code" | translate }}:</strong>
+            {{ items.code }}
+          </p>
+          <p>
+            <strong>{{ "m3_child6.name" | translate }}:</strong>
+            {{ items.name }}
+          </p>
+          <p>
+            <strong>Tính vào chi phí: </strong>
+            {{ items.expenseType ? "Không" : "Có" }}
+          </p>
+          <p>
+            <strong>Trạng thái: </strong>
+            <span style="margin-right: 3px" [ngClass]="items.isActive ? 'badge badge-primary' : 'badge badge-secondary'"> {{ items.isActive ? 'Active' : 'Inactive' }}</span>
+          </p>
+        </div>
+      </ng-container>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>

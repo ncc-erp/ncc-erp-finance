@@ -1,0 +1,297 @@
+<form
+  class="form-horizontal"
+  autocomplete="off"
+  #createTenantForm="ngForm"
+  (ngSubmit)="save()"
+  id="edit-currency"
+>
+  <abp-modal-header
+    [title]="'m3_child1.editTitle' | translate"
+    (onCloseClick)="bsModalRef.hide()"
+  ></abp-modal-header>
+  <div class="modal-body">
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="tenancyName">
+        {{ "m3_child1.name" | translate }}
+      </label>
+      <div class="col-md-9">
+        <input
+          type="text"
+          class="form-control"
+          name="tenancyName"
+          id="tenancyName"
+          minlength="2"
+          maxlength="64"
+          required
+          [(ngModel)]="currency.name"
+          #tenancyNameModel="ngModel"
+          (ngModelChange)="handleChangeName()"
+          #tenancyNameEl
+        />
+        <abp-validation-summary
+          [control]="tenancyNameModel"
+          [controlEl]="tenancyNameEl"
+        ></abp-validation-summary>
+      </div>
+    </div>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="code">
+        {{ "m3_child1.code" | translate }}
+      </label>
+      <div class="col-md-9">
+        <input
+          type="text"
+          class="form-control"
+          name="code"
+          id="code"
+          minlength="2"
+          maxlength="64"
+          required
+          [(ngModel)]="currency.code"
+          #codeModel="ngModel"
+          #codeEl
+        />
+        <abp-validation-summary
+          [control]="codeModel"
+          [controlEl]="codeEl"
+        ></abp-validation-summary>
+      </div>
+    </div>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="maxITF">
+        {{ "Max Internal transfer fee" | localize }}
+      </label>
+      <div class="col-md-9">
+        <input
+          type="text"
+          mask="separator':''"
+          thousandSeparator=","
+          allowNegativeNumbers="true"
+          class="form-control"
+          name="maxITF"
+          id="maxITF"
+          required
+          [(ngModel)]="currency.maxITF"
+          #maxITFModel="ngModel"
+          #maxITFEl
+        />
+        <abp-validation-summary
+          [control]="maxITFModel"
+          [controlEl]="maxITFEl"
+        ></abp-validation-summary>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-md-3 col-form-label">
+        {{ "Ghi nhận thu: default bank gửi " | localize }}
+      </label>
+      <div class="col-md-9">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-select
+            [(ngModel)]="currency.defaultBankAccountId"
+            name="defaultBankAccount"
+            placeholder="Chọn tài khoản ngân hàng"
+            #defaultBankAccountId="ngModel"
+          >
+            <mat-form-field
+              class="w-100 px-3"
+              style="position: sticky; top: 0; z-index: 2000; background: white"
+            >
+              <input
+                type="text"
+                name="searchBank"
+                id=""
+                matInput
+                placeholder="Nhập tên tài khoản ngân hàng"
+                [(ngModel)]="searchBankAccountName"
+                (ngModelChange)="filterBankAccount()"
+                (keydown)="$event.stopPropagation()"
+              />
+            </mat-form-field>
+            <mat-option hidden="true" [value]="null">none</mat-option>
+            <mat-option *ngIf="!bankAccountIds || !bankAccountIds.length" disabled>No data {{searchBankAccountName?" by '"+searchBankAccountName+"'":""}}</mat-option>
+            <ng-container *ngFor="let bankAccount of bankAccountIds">
+              <mat-option [value]="bankAccount.value">
+                <span> {{ bankAccount.name }}</span>
+              </mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <ng-container *ngIf="!isEnableMultiCurrency">
+      <div class="form-group row">
+        <label class="col-md-3 col-form-label">
+          {{ "Bank gửi/nhận khi bán ngoại tệ " | localize }}
+        </label>
+        <div class="col-md-9">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-select
+              [(ngModel)]="currency.defaultBankAccountIdWhenSell"
+              name="conversionTransactionDefaultBankAccountId"
+              placeholder="Chọn tài khoản ngân hàng"
+              #conversionTransactionDefaultBankAccountId="ngModel"
+              (openedChange)="defaultBankAccountIdWhenSellOpenChange($event)"
+            >
+              <mat-form-field
+                class="w-100 px-3"
+                style="position: sticky; top: 0; z-index: 2000; background: white"
+              >
+                <input
+                  type="text"
+                  name="searchBankSell"
+                  id=""
+                  matInput
+                  placeholder="Nhập tên tài khoản ngân hàng"
+                  [(ngModel)]="searchbankAccountWhenSell"
+                  (ngModelChange)="filterBankAccountWhenSell()"
+                  (keydown)="$event.stopPropagation()"
+                />
+              </mat-form-field>
+              <mat-option
+                *ngIf="
+                  !bankAccountsWhenSellByCurrencyVND ||
+                  !bankAccountsWhenSellByCurrencyVND.length
+                "
+                disabled
+                >No data
+                {{
+                  searchbankAccountWhenSell
+                    ? " by '" + searchbankAccountWhenSell + "'"
+                    : ""
+                }}</mat-option
+              >
+              <ng-container
+                *ngFor="let bankAccount of bankAccountsWhenSellByCurrencyVND"
+              >
+                <mat-option [value]="bankAccount.value">
+                  <span> {{ bankAccount.name }}</span>
+                </mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-md-3 col-form-label">
+          {{ "Bank gửi khi mua ngoại tệ " | localize }}
+        </label>
+        <div class="col-md-9">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-select
+              [(ngModel)]="currency.defaultFromBankAccountIdWhenBuy"
+              name="defaultFromBankAccountIdWhenBuy"
+              #defaultFromBankAccountIdWhenBuy="ngModel"
+              placeholder="Chọn tài khoản ngân hàng"
+              (openedChange)="defaultFromBankAccountIdWhenBuyOpenChange($event)"
+            >
+              <mat-form-field
+                class="w-100 px-3"
+                style="position: sticky; top: 0; z-index: 2000; background: white"
+              >
+                <input
+                  type="text"
+                  name="searchFromBankBuy"
+                  id=""
+                  matInput
+                  placeholder="Nhập tên tài khoản ngân hàng"
+                  [(ngModel)]="searchFromBankAccountWhenBuy"
+                  (ngModelChange)="filterFromBankAccountWhenBuy()"
+                  (keydown)="$event.stopPropagation()"
+                />
+              </mat-form-field>
+              <mat-option
+                *ngIf="
+                  !fromBankAccountsWhenBuy || !fromBankAccountsWhenBuy.length
+                "
+                disabled
+                >No data
+                {{
+                  searchFromBankAccountWhenBuy
+                    ? " by '" + searchFromBankAccountWhenBuy + "'"
+                    : ""
+                }}</mat-option
+              >
+              <ng-container *ngFor="let bankAccount of fromBankAccountsWhenBuy">
+                <mat-option [value]="bankAccount.value">
+                  <span> {{ bankAccount.name }}</span>
+                </mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-md-3 col-form-label">
+          {{ "Bank nhận khi mua ngoại tệ " | localize }}
+        </label>
+        <div class="col-md-9">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-select
+              [(ngModel)]="currency.defaultToBankAccountIdWhenBuy"
+              name="defaultToBankAccountIdWhenBuy"
+              placeholder="Chọn tài khoản ngân hàng"
+              (openedChange)="defaultToBankAccountIdWhenBuyOpenChange($event)"
+              #defaultToBankAccountIdWhenBuy="ngModel"
+            >
+              <mat-form-field
+                class="w-100 px-3"
+                style="position: sticky; top: 0; z-index: 2000; background: white"
+              >
+                <input
+                  type="text"
+                  name="searchToBankBuy"
+                  id=""
+                  matInput
+                  placeholder="Nhập tên tài khoản ngân hàng"
+                  [(ngModel)]="searchToBankAccountWhenBuy"
+                  (ngModelChange)="filterToBankAccountWhenBuy()"
+                  (keydown)="$event.stopPropagation()"
+                />
+              </mat-form-field>
+              <mat-option
+                *ngIf="
+                  !toBankAccountsWhenBuyByCurrencyVND ||
+                  !toBankAccountsWhenBuyByCurrencyVND.length
+                "
+                disabled
+                >No data
+                {{
+                  searchToBankAccountWhenBuy
+                    ? " by '" + searchToBankAccountWhenBuy + "'"
+                    : ""
+                }}</mat-option
+              >
+              <ng-container
+                *ngFor="let bankAccount of toBankAccountsWhenBuyByCurrencyVND"
+              >
+                <mat-option [value]="bankAccount.value">
+                  <span> {{ bankAccount.name }}</span>
+                </mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </ng-container>
+    <div class="form-group row align-items-center"
+    *ngIf="permission.isGranted(Directory_Currency_ChangeDefaultCurrency)">
+      <label class="col-md-3 col-form-label" for="maxITF">
+        {{ "Tiền tệ chính" | localize }}
+      </label>
+      <div class="col-md-9">
+        <mat-checkbox
+          color="primary"
+          [(ngModel)]="currency.isCurrencyDefault"
+          name="isCurrencyDefault"
+          #isCurrencyDefault="ngModel"
+        ></mat-checkbox>
+      </div>
+    </div>
+  </div>
+  <abp-modal-footer
+    [saveDisabled]="!createTenantForm.form.valid || saving"
+    (onCancelClick)="bsModalRef.hide()"
+    (onSaveClick)="save()"
+  ></abp-modal-footer>
+</form>

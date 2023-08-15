@@ -1,0 +1,148 @@
+tr,
+th,
+td {
+  border: 0.2px solid rgba(204, 204, 204, 0.35);
+}
+i {
+  cursor: pointer;
+}
+table {
+  max-width: 100%;
+}
+input:read-only {
+  background: none;
+  border: none;
+}
+/* ::ng-deep #expenditure-request .mat-form-field-flex > .mat-form-field-infix {
+  padding: 0.4em 0px !important;
+} */
+/* ::ng-deep #expenditure-request .mat-form-field-label-wrapper {
+  top: -1.5em;
+} */
+/* ::ng-deep #expenditure-request .mat-form-field-flex{
+  background: white;
+} */
+::ng-deep #expenditure-request .mat-form-field-appearance-legacy .mat-form-field-underline{
+  bottom: 0px !important;
+}
+::ng-deep #expenditure-request
+  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+  .mat-form-field-label {
+  transform: translateY(-1.1em) scale(0.75);
+  width: 133.33333%;
+}
+::ng-deep #expenditure-request .mat-form-field-wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+::ng-deep .uy-nhiem-chi-check-box .mat-checkbox-layout{
+  margin: 0 !important;
+}
+.hyperlink:hover {
+  cursor: pointer;
+  text-decoration: underline !important;
+}
+.hyperlink {
+  color: #007bff;
+}
+
+::ng-deep #expenditure-request .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}
+::ng-deep #expenditure-request .mat-form-field-label-wrapper { top: -1.5em; }
+::ng-deep #expenditure-request .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  transform: translateY(-1.1em) scale(.75);
+  width: 133.33333%;
+}
+/* ::ng-deep #expenditure-request .mat-form-field-flex{
+  background: white;
+} */
+::ng-deep #expenditure-request .mat-form-field-label-wrapper .mat-form-field-label{
+  font-weight: normal;
+  font-size: 14px;
+  margin-top: 0.25em;
+}
+::ng-deep #expenditure-request .height-maxcontent {
+  height: max-content;
+}
+.none {
+  display: none;
+}
+
+.block {
+  display: block;
+}
+.dropdown-content {
+  /* display: none; */
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  padding: 12px 16px;
+  z-index: 1;
+  right: 50px;
+}
+.accreditationBackground{
+  background-color: #fff2c3 !important;
+}
+
+
+.request-type-colum{
+  width: 165px;
+}
+.uy-nhiem-chi-column{
+  max-width: 100px;
+}
+
+.branch-column{
+  width: 130px;
+}
+.accept-file-column{
+  max-width: 75px;
+}
+.width-history-default{
+  max-width: 180px;
+  min-width: 180px;
+  width: 180px;
+}
+.width-history-extend{
+  max-width: max-content;
+  min-width: max-content;
+  width: max-content;
+}
+.history::-webkit-scrollbar {
+  display: none;
+}
+.history{
+  width: 100%;
+  text-align: left;
+}
+.preHistory{
+  text-align: left;
+  width: 100%;
+  overflow: hidden;
+  height: 72px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+}
+.row-history-status-text-overflow-ellipsis{
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.padding-horizontal{
+  padding-right: 7.5px;
+  padding-left: 7.5px;
+}
+.dropdown{
+  width: 244px;
+  padding-left: 7px;
+}
+#expenditure-request tr, th, td{
+  vertical-align: middle;
+}
+.col-edit-oucomeType{
+  display: flex;
+  align-items: center;
+}
+.reportDate-col{
+  white-space: nowrap;
+}

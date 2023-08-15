@@ -1,0 +1,11 @@
+
+
+.review-explain-tbl td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.review-explain-tbl textarea {
+  width: 100%;
+  height: 80px;
+}

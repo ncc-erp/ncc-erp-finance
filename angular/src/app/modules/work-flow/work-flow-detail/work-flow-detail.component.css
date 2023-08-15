@@ -1,0 +1,16 @@
+.fa-plus-circle{
+    font-size: 24px;
+    padding-left: 7.5px;
+}
+tr,th,td {
+    border: .2px solid rgba(204,204,204,.35);
+}
+::ng-deep #work-flow-detail .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}
+
+::ng-deep #work-flow-detail .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+::ng-deep #work-flow-detail .mat-form-field-flex{
+    background: white;
+}

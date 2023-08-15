@@ -1,0 +1,145 @@
+<div>
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h1>{{ "Tenants" | localize }}</h1>
+        </div>
+        <div class="col-6 text-right">
+          <a href="javascript:;" class="btn bg-blue" (click)="createTenant()" *ngIf="isShowCreateBtn()">
+            <i class="fa fa-plus-square"></i>
+            {{ "Thêm mới" | localize }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content px-2 filter-tenants">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="input-group d-flex col-sm-12 col-md-10 col-xl-10">
+              <div class="input-group-prepend">
+                <button
+                  type="button"
+                  class="btn bg-blue"
+                  (click)="getDataPage(1)"
+                >
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                name="keyword"
+                [placeholder]="'Tìm kiếm theo TenancyName, Name' | localize"
+                [(ngModel)]="keyword"
+                (keyup.enter)="getDataPage(1)"
+              />
+            </div>
+            <div class="col-sm-12 col-md-2 col-xl-2 tenants-active">
+              <mat-form-field class="col-12" appearance="outline">
+                <mat-label>Active</mat-label>
+                <mat-select
+                  name="active"
+                  placeholder="Active"
+                  [(ngModel)]="isActive"
+                  (ngModelChange)="selectionActivechange()"
+
+                >
+                  <mat-option [value]="-1">All</mat-option>
+                  <mat-option [value]="true"> Active </mat-option>
+                  <mat-option [value]="false"> DeActive </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+           </div>
+        </div>
+        <div class="card-body table-responsive p-4">
+          <table class="table table-hover text-nowrap" [busy]="isTableLoading">
+            <thead class="bg-light">
+              <tr>
+                <th>{{ "TenancyName" | localize }}</th>
+                <th>{{ "Name" | localize }}</th>
+                <th>{{ "IsActive" | localize }}</th>
+                <th style="width: 200px">{{ "Actions" | localize }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let tenant of tenants
+                    | paginate
+                      : {
+                          id: 'server',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems
+                        }
+                "
+              >
+                <td>{{ tenant.tenancyName }}</td>
+                <td>{{ tenant.name }}</td>
+                <td class="text-center">
+                  <div class="custom-control custom-checkbox">
+                    <input
+                      type="checkbox"
+                      class="custom-control-input"
+                      disabled
+                      [checked]="tenant.isActive"
+                    />
+                    <label class="custom-control-label"></label>
+                  </div>
+                </td>
+                <td>
+                  <div style="display: flex; justify-content: center; margin-left: 10px;">
+                    <button
+                    type="button"
+                    class="btn btn-sm bg-secondary"
+                    (click)="editTenant(tenant)"
+                    *ngIf="isShowEditBtn()"
+                  >
+                    <i class="fas fa-pencil-alt"></i>
+                    {{ "Sửa" | localize }}
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-sm bg-danger mx-2"
+                    (click)="delete(tenant)"
+                    *ngIf="isShowDeleteBtn()"
+                  >
+                    <i class="fas fa-trash"></i>
+                    {{ "Xoá" | localize }}
+                  </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-light border-top">
+          <div class="row">
+            <div class="col-sm-4 col-12 text-sm-left text-center">
+              <button class="btn btn-secondary" (click)="refresh()">
+                <i class="fas fa-redo-alt"></i>
+              </button>
+            </div>
+            <div class="col-sm-4 col-12 text-center">
+              <p class="mb-0 my-2">Total: {{ totalItems }}</p>
+            </div>
+            <div class="col-sm-4 col-12">
+              <div class="float-sm-right m-auto">
+                <abp-pagination-controls
+                  id="server"
+                  (pageChange)="getDataPage($event)"
+                >
+                </abp-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

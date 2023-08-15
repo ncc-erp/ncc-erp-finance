@@ -1,0 +1,176 @@
+<section class="content px-2 pb-4" id="relevant-tab" *ngIf="isShowRelevantBankTab()">
+    <div class="container-fluid">
+        <div class="mt-3">
+            <div class="row">
+                <div class="input-group col-6">
+                    <div class="input-group-prepend">
+                        <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <input type="text" class="form-control" name="keyword" placeholder="Search" [(ngModel)]="searchText"
+                        (keyup.enter)="getDataPage(1)" />
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                            <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                                [class.fa-angle-down]="!advancedFiltersVisible"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-4 d-flex ">
+                    <!--<button *ngIf="permission.isGranted(Finance_OutcomingEntry_OutcomingEntryDetail_AddTransaction)"
+                            class="btn bg-blue " (click)="createTransaction()">
+                            <i class="fa fa-plus-square"></i>
+
+                            {{ "m5_child2.addNewTransaction" | translate }}
+                        </button>-->
+                    <!-- <ng-container *ngIf="expenditureRequest.outcomingEntryTypeCode=='SALARY'
+                            && expenditureRequest.workflowStatusCode=='END' &&detailList.length>0">
+
+                        <button
+
+                            class="btn bg-danger ml-1" (click)="addMultipleTransaction()">
+                            <i class="fa fa-plus-square"></i>
+
+                            {{ "m5_child2.createMultiple" | translate }}
+
+                        </button>
+                    </ng-container> -->
+                    <button *ngIf="isShowLinkToTransactionBtn()"
+                        class="btn bg-secondary ml-3" (click)="linkToTransaction()">
+                        <i class="fa fa-plus-square"></i>
+                        {{ "m5_child2.linkToTransaction" | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+            <div class="card-body">
+                <form class="form-horizontal">
+                    <div class="row">
+                        <div class="col-md-12 col-xl-12">
+                            <div class="mb-0">
+                                <div>
+                                    <div *ngFor="let item of filterItems; let i = index">
+                                        <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                                            (deleteDataFilter)="deleteFilterItem(i)"
+                                            [inputFilters]="BANK_FILTER_CONFIG">
+                                        </app-filter>
+                                    </div>
+                                    <i style="padding: 0;" class="fas fa-plus-circle ml-3" (click)="addFilter()"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class=" table-responsive py-4">
+            <table style="border-collapse: collapse;" class="table table-hover text-nowrap" [busy]="isTableLoading">
+                <thead class="bg-light">
+                    <tr>
+                        <th>STT</th>
+                        <th>{{ "m5_child3.name" | translate }} </th>
+                        <th>{{ "m5_child3.bTransaction" | translate }} </th>
+                        <th>{{ "m5_child3.fromBank" | translate }}</th>
+                        <th>{{ "m5_child3.toBank" | translate }}</th>
+                        <th>
+                            {{ "m5_child3.value" | translate }}<br>
+                            <ng-container *ngIf="totalMoney">({{totalMoney}})</ng-container>
+                        </th>
+                        <th>{{ "m5_child3.fee" | translate }}</th>
+                        <th>{{ "m5_child3.sentDate" | translate }}</th>
+                        <th class="text-center">{{ 'action.actions' | translate }}</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let transaction of transactionDetailList  |paginate
+                : {
+                    id: 'server',
+                    itemsPerPage: pageSize,
+                    currentPage: pageNumber,
+                    totalItems: totalItems
+                  }; let i = index" style="cursor: pointer">
+                        <td>{{ i+1 }}</td>
+                        <td style="min-width: 250px; white-space: normal;">
+                            <a style="white-space: normal;" class="hyperlink" [routerLink]="['/app/bank-transaction']"
+                                [queryParams]="{id: transaction.transactionId}">{{transaction.name}}</a>
+                        </td>
+                        <td style="min-width: 250px;">
+                            <a style="white-space: normal;" class="hyperlink"
+                            [routerLink]="['/app/btransaction']"
+                            [queryParams]="{ id: transaction.bTransactionId }"
+                            >{{transaction.bTransactionInfo}}</a>
+                        </td>
+                        <td style="white-space: normal;">{{ transaction.fromBank }}</td>
+                        <td style="white-space: normal;">{{transaction.toBank}}</td>
+                        <td>
+                            <span>{{ transaction.fromValue | number: "1.0":"en-US" }}
+                                <strong>{{
+                                    transaction.fromBankCurrencyCode }}</strong>
+                            </span>
+                            <p *ngIf="transaction.fromValue != transaction.toValue || transaction.fromBankCurrencyCode !== transaction.toBankCurrencyCode"
+                                style="color: red">
+                                -> {{ transaction.toValue | number: "1.0":"en-US" }}
+                                <strong>{{
+                                    transaction.toBankCurrencyCode }}</strong>
+                            </p>
+                        </td>
+                        <td>{{ transaction.fee | number:'1.0':'en-US' }} {{transaction.toBankCurrencyCode}}</td>
+                        <td>{{ transaction.transactionDate |date:"dd/MM/yyyy"}}</td>
+                        <td class="text-center">
+                            <button
+                                *ngIf="isShowDeleteLinkBtn()"
+                                class="btn btn-sm bg-secondary mr-1"
+                                (click)="deleteLinkedTransaction(transaction); $event.stopPropagation()">
+                                <i class="fas fa-pencil-alt"></i>
+
+                                {{ "m5_child2.deleteLink" | translate }}
+                            </button>
+                            <!-- <br />
+                            <button *ngIf="permission.isGranted(Finance_BankTransaction_Delete)"
+                                class="btn btn-sm bg-danger ml-1 mt-2"
+                                (click)="deleteTransaction(transaction); $event.stopPropagation()" #deleteBtn>
+                                <i class="fas fa-trash"></i>
+                                {{ "m5_child2.deleteTransaction" | translate }}
+
+                            </button> -->
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <div class="card-footer bg-light border-top">
+            <div class="row">
+                <div class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center just">
+                    <button class="btn btn-secondary" (click)="refresh()">
+                        <i class="fas fa-redo-alt"></i>
+                    </button>
+                    <mat-form-field style=" width: 20%; margin-left: 30px">
+                        <mat-label>Number items</mat-label>
+                        <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                            <mat-option [value]="5"> 5 </mat-option>
+                            <mat-option [value]="10"> 10 </mat-option>
+                            <mat-option [value]="20"> 20 </mat-option>
+                            <mat-option [value]="50"> 50 </mat-option>
+                            <mat-option [value]="100"> 100 </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-4 col-12 justify-content-center d-flex align-items-center">
+                    <p class="mb-0 ">Total: {{ totalItems }}</p>
+                </div>
+                <div class="col-sm-4 col-12 d-flex align-items-center justify-content-end">
+                    <div class="float-sm-right">
+                        <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                        </abp-pagination-controls>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

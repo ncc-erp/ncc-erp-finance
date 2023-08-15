@@ -1,0 +1,62 @@
+<form class="form-horizontal" autocomplete="off" #workFlowForm="ngForm" id="create-edit-transition">
+    <div class="card-header" cdkDrag cdkDragRootElement=".modal-content, .cdk-overlay-pane" cdkDragHandle>
+        <h3>{{'m2_child4.createTitleTransition' | translate}}</h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group row required" style="align-items: center;">
+            <label class="col-md-4 col-form-label" for="code">
+                {{ 'm2_child4.workFlowStatusTransitionName' | translate }}
+            </label>
+            <div class="col-md-8">
+                <input type="text" placeholder="name" class=" form-control" name=" holdername " id="holdername " minlength="2"
+                    maxlength="64" required [(ngModel)]="transition.name"/>
+            </div>
+        </div>
+
+        <div class="form-group row required" style="align-items: center;">
+            <label class="col-md-4 col-form-label" for="code">
+                {{ 'm2_child4.workFlowStatusTransitionFrom' | translate }}
+            </label>
+            <div class="col-md-8">
+                    <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                        <mat-select placeholder="{{ 'm2_child4.workFlowStatusTransitionFrom' | translate }}"
+                        name="fromStatus" #fromStatus="ngModel" [(ngModel)]="transition.fromStatusId" required>
+                            <mat-option *ngFor="let type of workFlowStatus" [value]="type.id">
+                                {{type.name}} (<span>{{type.code}}</span>)
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-error class="mt-1" *ngIf="fromStatus.hasError('required') && fromStatus.touched" style="font-size: 13px;">
+                        This field is required
+                    </mat-error>
+            </div>
+        </div>
+
+        <div class="form-group row required" style="align-items: center;">
+            <label class="col-md-4 col-form-label" for="code">
+                {{ 'm2_child4.workFlowStatusTransitionTo' | translate }}
+            </label>
+            <div class="col-md-8">
+                    <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                        <mat-select placeholder="{{ 'm2_child4.workFlowStatusTransitionTo' | translate }}"
+                        name="toStatus" #toStatus="ngModel" required [(ngModel)]="transition.toStatusId">
+                            <mat-option *ngFor="let type of workFlowStatus" [value]="type.id">
+                                {{type.name}} (<span>{{type.code}}</span>)
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <mat-error class="mt-1" *ngIf="toStatus.hasError('required') && toStatus.touched" style="font-size: 13px;">
+                        This field is required
+                    </mat-error>
+            </div>
+        </div>
+    </div>
+
+
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-default cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button class="btn saving-btn btn-primary ml-2" [disabled]="!workFlowForm.form.valid"
+        (click)="saveAndClose()">Save</button>
+    </div>
+</form>
+

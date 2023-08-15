@@ -1,0 +1,190 @@
+<div id="auditlog">
+    <section class="content-header">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-6">
+              <h1>{{ "Audit Log" | localize }}</h1>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="content px-2 filter-tenants">
+        <div class="container-fluid">
+            <div class="card">
+              <div class="card-header">
+                <div class="row">
+                    <div class="input-group d-flex col-sm-12 col-md-3 col-xl-3">
+                      <div class="input-group-prepend">
+                        <button
+                          type="button"
+                          class="btn bg-blue"
+                          (click)="getDataPage(1)"
+                        >
+                          <i class="fas fa-search"></i>
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="searchText"
+                        [placeholder]="'Tìm kiếm theo Parameters' | localize"
+                        [(ngModel)]="searchText"
+                        (keyup.enter)="getDataPage(1)"
+                      />
+                    </div>
+                    <div class="col">
+                      <mat-form-field id="search1" appearance="outline" class="w-100">
+                        <mat-label>Service Name</mat-label>
+                        <mat-select name="serviceNameSelected" [(value)]="serviceNameSelected" (selectionChange)="refresh()" placeholder="Service Name">
+                          <mat-form-field  id="search" class="p-2 w-100 input-wrapper">
+                            <input type="text" matInput class="search-input" placeholder="Search Text" [(ngModel)]="serviceNameSearch"
+                              (keydown)="$event.stopPropagation()" (ngModelChange)="handleSearchServiceName()" />
+                          </mat-form-field>
+                          <mat-option value="">All</mat-option>
+                          <mat-option *ngFor="let item of listServiceNameFilter" [value]='item'>
+                            {{ item }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                    <div class="col">
+                      <mat-form-field id="search1" appearance="outline" class="w-100">
+                        <mat-label>Method Name</mat-label>
+                        <mat-select name="methodNameSelected" [(value)]="methodNameSelected" (selectionChange)="refresh()" placeholder="Method name">
+                          <mat-form-field  id="search" class="p-2 w-100 input-wrapper">
+                            <input type="text" matInput class="search-input" placeholder="Search Text" [(ngModel)]="methodNameSearch"
+                              (keydown)="$event.stopPropagation()" (ngModelChange)="handleSearchMethodName()" />
+                          </mat-form-field>
+                          <mat-option value="">All</mat-option>
+                          <mat-option *ngFor="let item of listMethodNameFilter" [value]='item'>
+                            {{ item }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                    <div class="col">
+                      <mat-form-field id="search1" appearance="outline" class="w-100">
+                        <mat-label>Email Adress</mat-label>
+                        <mat-select name="selecteduserId" [(value)]="selecteduserId" (selectionChange)="refresh()" placeholder="Email Address">
+                          <mat-form-field  id="search" class="p-2 w-100 input-wrapper">
+                            <input type="text" matInput class="search-input" placeholder="Search Text" [(ngModel)]="this.emailAddressSearch"
+                              (keydown)="$event.stopPropagation()" (ngModelChange)="handleSearchEmailAddress()" />
+                          </mat-form-field>
+                          <mat-option value="">All</mat-option>
+                          <mat-option value="0">Null</mat-option>
+                          <mat-option *ngFor="let item of emailAddress" [value]='item.userId'>
+                            {{item.emailAddress}}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                      </div>
+                </div>
+              </div>
+              <div class="card-body table-responsive p-4">
+                <table class="table table-hover text-nowrap" [busy]="isTableLoading">
+                  <thead class="bg-light">
+                    <tr>
+                      <th class="text-center stt align">#</th>
+                      <th class="align" (click)="sortData('userId')" style="cursor: pointer;">
+                        {{ "UserId" | localize }}
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'userId'"></i>
+                        <i *ngIf="iconCondition !== 'userId'" class="fas fa-sort"></i>
+                      </th>
+                      <th class="align" (click)="sortData('emailAddress')" style="cursor: pointer;">
+                        {{ "Email Address" | localize }}
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'emailAddress'"></i>
+                        <i *ngIf="iconCondition !== 'emailAddress'" class="fas fa-sort"></i>
+                      </th>
+                      <th class="align" (click)="sortData('methodName')" style="cursor: pointer">{{ "Service Name - Method Name" | localize }}
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'methodName'"></i>
+                        <i *ngIf="iconCondition !== 'methodName'" class="fas fa-sort"></i>
+                      </th>
+                      <th class="align" (click)="sortData('parameters')" style="cursor: pointer">{{ "Parameters" | localize }}
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'parameters'"></i>
+                        <i *ngIf="iconCondition !== 'parameters'" class="fas fa-sort"></i>
+                      </th>
+                      <th class="align">{{ "Note" | localize }}</th>
+                      <th class="align" (click)="sortData('executionTime')" style="cursor: pointer;">{{ "Excution Time" | localize }}
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'executionTime'"></i>
+                        <i *ngIf="iconCondition !== 'executionTime'" class="fas fa-sort"></i></th>
+                      <th class="align"  (click)="sortData('executionDuration')" style="cursor: pointer; width: 178px;">
+                        {{ "Execution Duration" | localize }}
+                        <i [ngClass]="iconSort" *ngIf="iconCondition === 'executionDuration'"></i>
+                        <i *ngIf="iconCondition !== 'executionDuration'" class="fas fa-sort"></i>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let data of auditlogs
+                          | paginate
+                            : {
+                                id: 'server',
+                                itemsPerPage: pageSize,
+                                currentPage: pageNumber,
+                                totalItems: totalItems
+                              }; let i = index
+                      "
+                    >
+                      <td class="align">{{i+1}}</td>
+                      <td class="align" style="width: 86px; word-break: break-all; white-space:normal!important"><span [class]="data.userId ? '':'text-danger'">
+                        {{ data.userId ? data.userId : "null" }}</span></td>
+                      <td class="align" style="width: 240px; word-break: break-all; white-space:normal!important"><span [class]="data.emailAddress ? '':'text-danger'">
+                        {{ data.emailAddress ? data.emailAddress : "null" }}</span></td>
+                      <td style="width: 416px; word-break: break-word; white-space:normal!important">
+                        <p>{{data.serviceName}}</p>
+                        <b>{{data.methodName}}</b>
+                      </td>
+                      <td>
+                        <div (click)="changeStatusNote(data)">
+                        <textarea rows="10" cols="20" disabled="disabled"
+                          [ngClass]="data.hideNote == false ? 'preReview-parameters' : 'review-parameters'" data-placement="right"
+                          title="Cuộn chuột hoặc Click để mở rộng nội dung" [(ngModel)]="data.parameters"></textarea>
+                      </div>
+                      </td>
+                      <td class="align" style="width: 195px; word-break: break-word;  white-space:normal!important">{{ data.note }}</td>
+                      <td class="align">
+                        {{data.executionTime | date: "dd/MM/yyyy"}}
+                        <br>
+                        {{data.executionTime | date: "HH:mm"}}</td>
+                      <td class="align">{{ data.executionDuration }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="card-footer bg-light border-top" style="padding-bottom: 0;">
+                <div class="row" style="margin-top: 13px">
+                  <div class="col-sm-4 col-12 text-sm-left text-center">
+                    <button class="btn btn-secondary" (click)="refresh()">
+                      <i class="fas fa-redo-alt"></i>
+                    </button>
+                    <mat-form-field style=" width: 20%; margin-left: 30px">
+                      <mat-label>Number items</mat-label>
+                      <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                        <mat-option [value]="5"> 5 </mat-option>
+                        <mat-option [value]="10"> 10 </mat-option>
+                        <mat-option [value]="20"> 20 </mat-option>
+                        <mat-option [value]="50"> 50 </mat-option>
+                        <mat-option [value]="100"> 100 </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-sm-4 col-12 text-center">
+                    <p class="mb-0 my-2">Total: {{ totalItems }}</p>
+                  </div>
+                  <div class="col-sm-4 col-12">
+                    <div class="float-sm-right m-auto">
+                      <abp-pagination-controls
+                        id="server"
+                        (pageChange)="getDataPage($event)"
+                      >
+                      </abp-pagination-controls>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </section>
+</div>

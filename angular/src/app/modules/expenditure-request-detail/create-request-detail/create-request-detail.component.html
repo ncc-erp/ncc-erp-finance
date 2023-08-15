@@ -1,0 +1,117 @@
+<form class="form-horizontal" autocomplete="off" #createRequestDetail="ngForm" id="create-request-detail">
+    <abp-modal-header title=" create new detail" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="name">
+                {{ 'm5_child2.detailName' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" [(ngModel)]="requestDetail.name" class="form-control" name="name" maxlength="1024"
+                    required #name="ngModel" #nameEl minlength="2" />
+                <abp-validation-summary [control]="name" [controlEl]="nameEl"></abp-validation-summary>
+            </div>
+        </div>
+        <div *ngIf="outcomeEntryRequest.outcomingEntryTypeCode=='SALARY'" class="form-group row ">
+            <label class="col-md-3 col-form-label" for="accountName">
+                {{ 'm5_child2.linkAccount' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select name="accountName" placeholder="select an account" [(ngModel)]="requestDetail.accountId"
+                        #account="ngModel">
+                        <mat-form-field class="w-100 px-3 "
+                            style="position: sticky; top: 0;; z-index: 2; background-color: white;">
+                            <input type="text" name="searchFrom" id="" matInput placeholder="search"
+                                [(ngModel)]="searchAccount">
+                        </mat-form-field>
+                        <ng-container *ngFor="let account of accountList | filter:searchAccount">
+                            <mat-option [value]="account.id">{{account.name}}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+
+
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="unit">
+                {{ 'm5_child2.quantity' | translate }}:
+
+            </label>
+            <div class="col-md-9">
+                <input   type="text" [(ngModel)]="requestDetail.quantity" class="form-control" name="unit"
+                    maxlength="1024" required #quantity="ngModel" #quantityEl />
+                <abp-validation-summary [control]="quantity" [controlEl]="quantityEl"></abp-validation-summary>
+
+            </div>
+        </div>
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="unitPrice">
+                {{ 'm5_child2.price' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text"
+                    [(ngModel)]="requestDetail.unitPrice" class="form-control" name="unitPrice" maxlength="1024"
+                    required #price="ngModel" #priceEl  mask="separator':''" thousandSeparator="," allowNegativeNumbers="true" />
+                <abp-validation-summary [control]="price" [controlEl]="priceEl"></abp-validation-summary>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label">
+                {{ 'm5_child2.branch' | translate }}:
+            </label>
+            <div class="col-md-9 display-webkit-box">
+                <mat-form-field
+                  appearance="outline"
+                >
+                  <mat-select
+                    [(ngModel)]="requestDetail.branchId"
+                    name="branchId"
+                    #formAccount="ngModel"
+                    placeholder="Select branch"
+                    (openedChange)="branchSelectOpenedChange()"
+                  >
+                    <mat-form-field
+                      class="w-100 px-3 selection-input-seach-hanging-above"
+                    >
+                      <input
+                        type="text"
+                        name="searchBranch"
+                        matInput
+                        placeholder="Search"
+                        [(ngModel)]="searchBranch"
+                        (ngModelChange)="filterBranch()"
+                      />
+                    </mat-form-field>
+                    <ng-container *ngFor="let brach of branchList">
+                      <mat-option [value]="brach.id">{{
+                        brach.name
+                      }}</mat-option>
+                    </ng-container>
+                  </mat-select>
+                </mat-form-field>
+                <div class="col-md-2">
+                  <mat-icon
+                    style="margin-top: 10px; cursor: pointer"
+                    *ngIf="requestDetail.branchId != null"
+                    (click)="requestDetail.branchId = null"
+                  >
+                    clear</mat-icon
+                  >
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row d-flex justify-content-between mt-2">
+            <button class="btn btn-default mx-2" mat-dialog-close>{{ "action.cancel" | translate }}</button>
+            <button class="btn btn-primary" (click)="saveAndClose()"
+                [disabled]="!createRequestDetail.valid || isDisable">{{
+                "action.save"
+                | translate }}</button>
+        </div>
+    </div>
+</form>

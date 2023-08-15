@@ -1,0 +1,85 @@
+
+<form autocomplete="off" #previewPeriodForm="ngForm">
+    <abp-modal-header title=" {{ title }}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <ng-container>
+        <div class="modal-body">
+            <ng-container>
+                <div class="form-group row required">
+                    <label class="col-md-1 center-y col-form-label" style="font-size: 18px;">
+                        Tên kì:
+                    </label>
+                    <div class="col-md-11">
+                        <input type="text" name="periodName" [(ngModel)]="period.name" class="form-control" required placeholder="Nhập tên"
+                            #periodName="ngModel" #periodNameEl>
+                        <abp-validation-summary [control]="periodName" [controlEl]="periodNameEl">
+                        </abp-validation-summary>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container>
+                <div style="display: flex;">
+                    <div style="font-size: 18px;font-weight: 600;" class="mr-4">Biến động số dư chưa done:
+                        <a [href]="'/app/btransaction?status='+btransPendingStatus" target="_blank" rel="noopener noreferrer">{{periodInfo.countBTransactionDiffDoneStatus}}</a>
+                        </div>
+                    <div style="font-size: 18px;font-weight: 600;">Request chi chưa done nhưng có giao dịch ngân hàng:
+                        <a href="/app/finance-review" target="_blank" rel="noopener noreferrer">{{periodInfo.countOutcomingEntryDiffEndStatus}}</a>
+                    </div>
+                </div>
+                <div class="table-responsive mt-3">
+                    <div class="table-scoll">
+                        <table class="table table-hover border-top">
+                            <thead class="bg-light">
+                                <th class="col-stt">#</th>
+                                <th class="col-name">Tên ngân hàng</th>
+                                <th class="">
+                                    <p class="mb-0" matTooltip="Kiểm tra lại số dư trên ứng dụng ngân hàng">Số dư hiện tại thực tế</p>
+                                    <p class="mb-0">(A)</p>
+                                </th>
+                                <th class="">
+                                    <p class="mb-0">Số dư hiện tại theo sổ</p>
+                                    <p class="mb-0">(B)</p>
+                                </th>
+                                <th>
+                                    <p class="mb-0">Chênh lệch</p>
+                                    <p class="mb-0">(A - B)</p>
+                                </th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let account of periodInfo.bankAccountInfos; let index = index">
+                                    <td class="text-center">{{index+1}}</td>
+                                    <td>{{account.bankAccountName}}</td>
+                                    <td class="text-right">
+                                        <mat-form-field class="w-100  center-flex" appearance="outline">
+                                            <input matInput [name]="index+1" [(ngModel)]="account.currentBalance" placeholder="nhập số tiền*" id="{{index+1}}"
+                                                [allowNegativeNumbers]="false" mask="separator" thousandSeparator="," min=0 value=0  (keyup)="onFillCurrentBalance(account)"
+                                                #money="ngModel"  #moneyEl required>
+                                        </mat-form-field>
+                                        <abp-validation-summary [control]="money" [controlEl]="moneyEl" style="text-align: left;">
+                                        </abp-validation-summary>
+                                    </td>
+                                    <td class="text-right">{{account.balanceByBTransaction | number: "1.0":"en-US"}}</td>
+                                    <td class="text-right">{{account.diffMoney}}</td>
+                                    <td class="text-center" >
+                                        <button id="index" type="button" class="btn btn-primary" (click)="onCheck(account)" [disabled]="!account.checkMode">
+                                            Check
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+    <div class="row d-flex justify-content-between mt-3 px-3">
+        <button class="btn btn-default mx-2" mat-dialog-close>
+            Đóng
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onCloseAndCreate()" [disabled]="!previewPeriodForm.valid">
+            Đóng kì hiện tại và tạo kì mới
+        </button>
+    </div>
+</form>

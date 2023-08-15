@@ -1,0 +1,7 @@
+::ng-deep #updateBranch .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding:8px 0 8px 0;
+}
+label{
+    height: 36px;
+    line-height: 36px;
+}

@@ -1,0 +1,7 @@
+.hyperlink:hover {
+    cursor: pointer;
+    text-decoration: underline !important;
+  }
+  .hyperlink {
+    color: #007bff;
+  }

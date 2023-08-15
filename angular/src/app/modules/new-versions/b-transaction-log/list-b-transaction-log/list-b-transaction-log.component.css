@@ -1,0 +1,8 @@
+::ng-deep #list-b-transaction-log .mat-form-field-appearance-legacy .mat-form-field-underline {
+    bottom: 0px !important;
+}
+
+::ng-deep #list-b-transaction-log .mat-form-field-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+}
