@@ -116,9 +116,9 @@ To run the project, use these commands:
 ## Screenshots
 FinanceManagement tool has varios function for you to manage your company's finance, such as:
 - Dashboard 
-![Dashboard](./_screenshots/Dashboard1)
-![Dashboard](./_screenshots/Dashboard2)
-![Dashboard](./_screenshots/Dashboard3)
+![Dashboard](./_screenshots/Dashboard1.png)
+![Dashboard](./_screenshots/Dashboard2.png)
+![Dashboard](./_screenshots/Dashboard3.png)
 - Revenue Record
 ![FinanceManagement Revenue Record](./_screenshots/FinanceManagement-RevenueRecord.png)
 - Expenditure Request
@@ -126,9 +126,9 @@ FinanceManagement tool has varios function for you to manage your company's fina
 - For Control
 ![FinanceManagement For Control](./_screenshots/FinanceManagement-ForControl.png)
 - Roles
-![AdminRoles](./_screenshots/Admin-Role)
+![AdminRoles](./_screenshots/Admin-Role.png)
 - Ternants
-![AdminTernants](./_screenshots/Admin-Ternant)
+![AdminTernants](./_screenshots/Admin-Ternant.png)
 
 ## License
 <lisence>
