@@ -20,7 +20,6 @@ Before you begin, ensure you have met the following requirements:
 - [SQL Server Management Studio (SSMS)](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16) installed
 - [Node 14.17.0](https://nodejs.org/en/blog/release/v14.17.0) installed
 - [.NET Core 3.1 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/3.1) installed
-- [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) installed
 - [Git](https://www.git-scm.com/downloads) installed
 ### BackEnd Setup
 1. **Create a folder** to store project code
