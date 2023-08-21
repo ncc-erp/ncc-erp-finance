@@ -27,7 +27,7 @@ Before you begin, ensure you have met the following requirements:
 - Ex: **ncc-erp-finance** folder
 2. **Clone project** in this created folder, `Right Click` and select `Git Bash Here` to use the following command: 
 ```bash
-   git clone https://github.com/ncc-erp/ncc-erp-finance.git
+git clone https://github.com/ncc-erp/ncc-erp-finance.git
 ```
 3. Open the **Finance Management Solution** using **Visual Studio 2022**:
 
@@ -69,7 +69,7 @@ You also have to set other paramaters here when you need.
 - At **Default project** choose **src\FinanceManagement.EntityFrameworkCore**
 - Then use this command and wait some minutes:
 ```bash
-   update-database
+update-database
 ```
 
 8. Run the project
@@ -85,28 +85,28 @@ Choose **Debug** > **Start Debuging** (`F5`) or **Start without Debuging** (`ctr
 - Select **Terminal** > **New Terminal**
 - Using this command:
 ```bash
-   npm install
+npm install
 ```
 - Then 
 ```bash
-   npm audit fix
+npm audit fix
 ```
 
 3. Install Angular CLI 9.1.4 globally
 ```bash
-   npm install -g @angular/cli@9.1.4
+npm install -g @angular/cli@9.1.4
 ```
 
 4. Run the frontend project
 ```bash
-   npm start
+npm start
 ```
 
 5. Login
 - Login with the default account:
 ```bash
-   Username: admin
-   Password: 123qwe
+Username: admin
+Password: 123qwe
 ```
 
 ### Running
@@ -117,7 +117,7 @@ To run the project, use these commands:
 2. Start the frontend:
 
 ```bash
-   npm start
+npm start
 ```
 
 ## Screenshots
