@@ -1,5 +1,6 @@
 # FinanceManagement
 ## Overview
+Finance Management (Finfast) is the optimal financial management solution for businesses. Finfast is a place to help store and digitize invoices and documents of businesses, making management easier and more systematic.
 
 ## Table of Contents
 - [Getting Started](#getting-started)
