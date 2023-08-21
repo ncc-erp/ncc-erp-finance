@@ -137,4 +137,4 @@ FinanceManagement tool has varios function for you to manage your company's fina
 ![AdminTernants](./_screenshots/Admin-Ternant.png)
 
 ## License
-<lisence>
+[MIT License](./LICENSE)
