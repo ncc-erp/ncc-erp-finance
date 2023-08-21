@@ -102,6 +102,13 @@ Choose **Debug** > **Start Debuging** (`F5`) or **Start without Debuging** (`ctr
    npm start
 ```
 
+5. Login
+- Login with the default account:
+```bash
+   Username: admin
+   Password: 123qwe
+```
+
 ### Running
 To run the project, use these commands:
 
