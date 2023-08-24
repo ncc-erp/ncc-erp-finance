@@ -1,0 +1,18 @@
+.col-status{
+    width: 150px;
+}
+.col-type{
+    width: 150px;
+}
+.fixHeader{
+    overflow-y: auto;
+    max-height: 50vh;
+}
+.fixHeader thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+a:hover{
+    text-decoration: underline;
+}

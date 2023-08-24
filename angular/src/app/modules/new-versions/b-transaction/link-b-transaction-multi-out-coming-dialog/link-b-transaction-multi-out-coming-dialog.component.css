@@ -1,0 +1,46 @@
+.fixTableHead {
+    overflow-y: auto;
+    max-height: 29vh;
+}
+.fixTableHead thead {
+    position: sticky;
+    top: -1px;
+    z-index: 2;
+}
+.fixTableHead table tbody:nth-of-type(1) tr:nth-of-type(1) td {
+    border-top: none !important;
+}
+.input-search-outcomming-padding-top-1-8rem{
+    margin-top: 1.8rem;
+}
+.button-magin-left-0-5rem{
+    margin-left: .5rem;
+}
+.exchange-rate{
+    padding-top: .5rem;
+    white-space: nowrap;
+    display: flex;
+}
+.tr-outcomming{
+    font-size: 18px;
+    padding: 0.3em 0;
+}
+.btn-float-right{
+    float: right;
+}
+.padding-top-5px{
+    padding-top: 5px;
+}
+.div-padding-bottom-5px{
+    padding-bottom: 5px;
+}
+.err-mess{
+    color: red;
+    font-size: 1.2rem;
+}
+::ng-deep .hide-checkbox .mat-pseudo-checkbox{
+    display: none !important;
+}
+::ng-deep #checkbox-end > .mat-checkbox-layout{
+    margin: 0 !important;
+}

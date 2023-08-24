@@ -1,0 +1,9 @@
+::ng-deep #create-edit-b-transaction .mat-datepicker-content table tr,
+::ng-deep #create-edit-b-transaction .mat-datepicker-content th,
+::ng-deep #create-edit-b-transaction .mat-datepicker-content td {
+    border: 0;
+}
+::ng-deep .mat-stroked-button{
+    color: white;
+    background-color: #0069d9;
+}

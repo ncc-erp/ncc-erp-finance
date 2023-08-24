@@ -1,0 +1,69 @@
+<div class="col-md-12 tree-select" style="padding: 0px">
+    <div
+      class="col-md-12 d-flex align-items-center"
+      [style.padding]="0"
+    >
+      <div class="col-md-12 item-group" style="padding-bottom: 5px; padding-left: 0; padding-right: 0;" >
+        <mat-form-field class="w-inherit" appearance="outline">
+            <mat-select
+            [(ngModel)]="selected"
+            name="selection_tree"
+            [disabled]="disabled"
+            (ngModelChange)="selectedChange()"
+            [required]="isRequired"
+            [disabled]="isDisable"
+            [placeholder]="placeholder"
+            #selection="ngModel"
+            (openedChange)="selectedOpenedChange($event)"
+          >
+            <mat-form-field
+              class="w-100 px-3"
+              style="
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                background: white;
+              "
+            >
+              <input
+                type="text"
+                name="searchText"
+                (keydown)="$event.stopPropagation()"
+                id="search"
+                matInput
+                placeholder="Search text..."
+                [(ngModel)]="searchText"
+                #input
+                (ngModelChange)="searchTextChange()"
+              />
+            </mat-form-field>
+            <mat-option
+              *ngIf="!options ||!options.length"
+              disabled
+              class="text-center"
+            >
+              No data
+              <span *ngIf="searchText">
+                by "{{ searchText }}"</span
+              >
+            </mat-option>
+            <ng-container *ngFor="let option of options">
+              <mat-option
+                *ngIf="option.id"
+                [disabled]="option.hasChildren && isDisableParent"
+                [value]="option.id"
+                [matTooltip]="option.name"
+                >
+                <span
+                  [style]="'padding-left: ' + option.space * space + 'rem;'"
+                >
+                  {{ option.name }}
+                </span>
+              </mat-option>
+            </ng-container>
+          </mat-select>
+
+        </mat-form-field>
+      </div>
+    </div>
+  </div>

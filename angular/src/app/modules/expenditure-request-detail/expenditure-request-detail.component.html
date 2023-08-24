@@ -1,0 +1,32 @@
+<section class="content px-2 pt-2" id="expenditure-request-detail">
+    <div class="container-fluid">
+        <div class="row mb-4 card">
+            <div class="col-12">
+                <nav mat-tab-nav-bar>
+                    <a [ngClass]="currentUrl.includes('main')?'active':''" mat-tab-link (click)="routingMainTab()" *ngIf="isShowMainTab()">
+                        {{ "m5_child2.general information" | translate }}
+                    </a>
+                    <a [ngClass]="currentUrl.includes('detail')?'active':''" mat-tab-link (click)="routingDetailTab()" *ngIf="isShowDetailTab()">
+                        {{ "m5_child2.detail" | translate }}
+                    </a>
+
+                    <a [ngClass]="currentUrl.includes('relevant-transaction')?'active':''" mat-tab-link *ngIf="isShowRelevantBankTab()"
+                        (click)="routingRelevantTab()">
+                        {{ "m5_child2.related bank transactions" | translate }}
+                    </a>
+                    <a [ngClass]="currentUrl.includes('revenues-transaction')?'active':''" mat-tab-link *ngIf="isShowRevenuesTab()"
+                        (click)="routingRevenuesTab()">
+                        {{ "m5_child2.related revenue sources" | translate }}
+                    </a>
+                    <a [ngClass]="currentUrl.includes('supplier')?'active':''" mat-tab-link *ngIf="isShowSuplierTab()"
+                        (click)="routingSupplierTab()">
+                        {{ "m5_child2.supplierTitle" | translate }}
+                    </a>
+                </nav>
+                <router-outlet></router-outlet>
+            </div>
+
+
+        </div>
+    </div>
+</section>

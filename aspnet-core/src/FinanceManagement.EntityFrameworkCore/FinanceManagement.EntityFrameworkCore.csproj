@@ -1,0 +1,127 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
+    <RootNamespace>FinanceManagement</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Migrations\20180726102624_Upgrade_ABP_380.cs" />
+    <Compile Remove="Migrations\20180927062408_test.cs" />
+    <Compile Remove="Migrations\20190111071724_Upgraded_To_Abp_v4_1_0.cs" />
+    <Compile Remove="Migrations\20210324092157_add_two_table_Currencies_and_table_CurrencyConverts.cs" />
+    <Compile Remove="Migrations\20210324092157_add_two_table_Currencies_and_table_CurrencyConverts.Designer.cs" />
+    <Compile Remove="Migrations\20210406071419_add_table_OutcomingEntryTypes.cs" />
+    <Compile Remove="Migrations\20210406071419_add_table_OutcomingEntryTypes.Designer.cs" />
+    <Compile Remove="Migrations\20210407070603_add_table_BankTransactions.cs" />
+    <Compile Remove="Migrations\20210407070603_add_table_BankTransactions.Designer.cs" />
+    <Compile Remove="Migrations\20210407070922_change_table_BankTransactions.cs" />
+    <Compile Remove="Migrations\20210407070922_change_table_BankTransactions.Designer.cs" />
+    <Compile Remove="Migrations\20210408032449_add_table_Branch.cs" />
+    <Compile Remove="Migrations\20210408032449_add_table_Branch.Designer.cs" />
+    <Compile Remove="Migrations\20210408073315_add_table_IncomingEntry.cs" />
+    <Compile Remove="Migrations\20210408073315_add_table_IncomingEntry.Designer.cs" />
+    <Compile Remove="Migrations\20210408074512_change_table_Branch_remove_column_AccountId.cs" />
+    <Compile Remove="Migrations\20210408074512_change_table_Branch_remove_column_AccountId.Designer.cs" />
+    <Compile Remove="Migrations\20210507025741_update_Bank.cs" />
+    <Compile Remove="Migrations\20210507025741_update_Bank.Designer.cs" />
+    <Compile Remove="Migrations\20210510094103_update_Table_RelationInOutEntry.cs" />
+    <Compile Remove="Migrations\20210510094103_update_Table_RelationInOutEntry.Designer.cs" />
+    <Compile Remove="Migrations\20210510094457_update_Relationship_RelationInOutEntry.cs" />
+    <Compile Remove="Migrations\20210510094457_update_Relationship_RelationInOutEntry.Designer.cs" />
+    <Compile Remove="Migrations\20210510100800_add_table_RelationInOutEntry..cs" />
+    <Compile Remove="Migrations\20210510100800_add_table_RelationInOutEntry..Designer.cs" />
+    <Compile Remove="Migrations\20210510100857_add_new_table_RelationInOutEntry.cs" />
+    <Compile Remove="Migrations\20210510100857_add_new_table_RelationInOutEntry.Designer.cs" />
+    <Compile Remove="Migrations\20210510101522_add_new_table_RelationInOutEntry.cs" />
+    <Compile Remove="Migrations\20210510101522_add_new_table_RelationInOutEntry.Designer.cs" />
+    <Compile Remove="Migrations\20210510102200_add_new_table_RelationInOutEntry.cs" />
+    <Compile Remove="Migrations\20210510102200_add_new_table_RelationInOutEntry.Designer.cs" />
+    <Compile Remove="Migrations\20210804090243_xoa-cot-isAcceptFile-OutcomingEntry-them-cot-isAcceptFile-OutcomingEntryFile.cs" />
+    <Compile Remove="Migrations\20210804090243_xoa-cot-isAcceptFile-OutcomingEntry-them-cot-isAcceptFile-OutcomingEntryFile.Designer.cs" />
+    <Compile Remove="Migrations\20210804094008_xoa-cot-isAcceptFile-OutcomingEntryFile-them-cot-isAcceptFile-OutcomingEntry.cs" />
+    <Compile Remove="Migrations\20210804094008_xoa-cot-isAcceptFile-OutcomingEntryFile-them-cot-isAcceptFile-OutcomingEntry.Designer.cs" />
+    <Compile Remove="Migrations\20211126081113_add_2table_ComparativeStatistic_and_Explanation.cs" />
+    <Compile Remove="Migrations\20211126081113_add_2table_ComparativeStatistic_and_Explanation.Designer.cs" />
+    <Compile Remove="Migrations\20220225075614_AddTable_FinanceReviewExplain.cs" />
+    <Compile Remove="Migrations\20220225075614_AddTable_FinanceReviewExplain.Designer.cs" />
+    <Compile Remove="Migrations\20220830035225_updateEntitiesNewVersion.cs" />
+    <Compile Remove="Migrations\20220830035225_updateEntitiesNewVersion.Designer.cs" />
+    <Compile Remove="Migrations\20220830035732_updateEntitiesNewVersion.cs" />
+    <Compile Remove="Migrations\20220830035732_updateEntitiesNewVersion.Designer.cs" />
+    <Compile Remove="Migrations\20220830035922_updateEntitiesNewVersion.cs" />
+    <Compile Remove="Migrations\20220830035922_updateEntitiesNewVersion.Designer.cs" />
+    <Compile Remove="Migrations\20220830040140_updateEntitiesNewVersion.cs" />
+    <Compile Remove="Migrations\20220830040140_updateEntitiesNewVersion.Designer.cs" />
+    <Compile Remove="Migrations\20220831015507_updateEntitiesNewVersion.cs" />
+    <Compile Remove="Migrations\20220831015507_updateEntitiesNewVersion.Designer.cs" />
+    <Compile Remove="Migrations\20220908041323_addEntitiesNewVersion.cs" />
+    <Compile Remove="Migrations\20220908041323_addEntitiesNewVersion.Designer.cs" />
+    <Compile Remove="Migrations\20220913014728_addTransferFeeForRevenue.cs" />
+    <Compile Remove="Migrations\20220913014728_addTransferFeeForRevenue.Designer.cs" />
+    <Compile Remove="Migrations\20220914073031_updateFromBTransaction.cs" />
+    <Compile Remove="Migrations\20220914073031_updateFromBTransaction.Designer.cs" />
+    <Compile Remove="Migrations\20220915025858_addFieldCodeForRevenueManaged.cs" />
+    <Compile Remove="Migrations\20220915025858_addFieldCodeForRevenueManaged.Designer.cs" />
+    <Compile Remove="Migrations\20220920070500_updateDBNewVersion.cs" />
+    <Compile Remove="Migrations\20220920070500_updateDBNewVersion.Designer.cs" />
+    <Compile Remove="Migrations\20220922073035_addTblBTransactionLogs.cs" />
+    <Compile Remove="Migrations\20220922073035_addTblBTransactionLogs.Designer.cs" />
+    <Compile Remove="Migrations\20220922082822_addTblBTransactionLogs.cs" />
+    <Compile Remove="Migrations\20220922082822_addTblBTransactionLogs.Designer.cs" />
+    <Compile Remove="Migrations\20220923020647_updateMaxlengthMessge.cs" />
+    <Compile Remove="Migrations\20220923020647_updateMaxlengthMessge.Designer.cs" />
+    <Compile Remove="Migrations\20220923030055_addTblBTransactionLogs.cs" />
+    <Compile Remove="Migrations\20220923030055_addTblBTransactionLogs.Designer.cs" />
+    <Compile Remove="Migrations\20220926065733_addFieldTypeForAccount.cs" />
+    <Compile Remove="Migrations\20220926065733_addFieldTypeForAccount.Designer.cs" />
+    <Compile Remove="Migrations\20220926070301_addAccountTypeEnumAndIsCrawlBTran.cs" />
+    <Compile Remove="Migrations\20220926070301_addAccountTypeEnumAndIsCrawlBTran.Designer.cs" />
+    <Compile Remove="Migrations\20221010073012_addFieldBranchInOutComDetail.cs" />
+    <Compile Remove="Migrations\20221010073012_addFieldBranchInOutComDetail.Designer.cs" />
+    <Compile Remove="Migrations\20221010073356_addFieldBranchInOutComDetail.cs" />
+    <Compile Remove="Migrations\20221010073356_addFieldBranchInOutComDetail.Designer.cs" />
+    <Compile Remove="Migrations\20221010074248_addFieldBranchInOutComDetail1.cs" />
+    <Compile Remove="Migrations\20221010074248_addFieldBranchInOutComDetail1.Designer.cs" />
+    <Compile Remove="Migrations\20221011034412_addKeyForBTransactionLog.cs" />
+    <Compile Remove="Migrations\20221011034412_addKeyForBTransactionLog.Designer.cs" />
+    <Compile Remove="Migrations\20221018091351_addTblOutcomingEntryHistory.cs" />
+    <Compile Remove="Migrations\20221018091351_addTblOutcomingEntryHistory.Designer.cs" />
+    <Compile Remove="Migrations\20221024024937_defaultBankAccountOfCurrency.cs" />
+    <Compile Remove="Migrations\20221024024937_defaultBankAccountOfCurrency.Designer.cs" />
+    <Compile Remove="Migrations\20221024075814_addTblOutcomingEntryHistory.cs" />
+    <Compile Remove="Migrations\20221024075814_addTblOutcomingEntryHistory.Designer.cs" />
+    <Compile Remove="Migrations\20221107084602_addFieldHistoryNote_OutcomingEntry.cs" />
+    <Compile Remove="Migrations\20221107084602_addFieldHistoryNote_OutcomingEntry.Designer.cs" />
+    <Compile Remove="Migrations\20221110064811_addTblTempOutcoming.cs" />
+    <Compile Remove="Migrations\20221110064811_addTblTempOutcoming.Designer.cs" />
+    <Compile Remove="Migrations\20221110064938_addTempOutcoming.cs" />
+    <Compile Remove="Migrations\20221110064938_addTempOutcoming.Designer.cs" />
+    <Compile Remove="Migrations\20221128043130_addTblPeriod.cs" />
+    <Compile Remove="Migrations\20221128043130_addTblPeriod.Designer.cs" />
+    <Compile Remove="Migrations\20221129090734_addPeriod.cs" />
+    <Compile Remove="Migrations\20221129090734_addPeriod.Designer.cs" />
+    <Compile Remove="Migrations\20221221074225_updateTblCurrency_LineChart.cs" />
+    <Compile Remove="Migrations\20221221074225_updateTblCurrency_LineChart.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.95.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.28" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.28" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.28">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.28">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.28" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FinanceManagement.Core\FinanceManagement.Core.csproj" />
+  </ItemGroup>
+</Project>

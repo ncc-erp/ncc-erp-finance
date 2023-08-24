@@ -1,0 +1,72 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger: 
+  - stg
+
+pool:
+  name: 'ERP_DEV'
+
+jobs:
+  - job: DotnetBuild
+    steps: 
+    - script: |
+        export PATH=$PATH:/opt/dotnet3/
+        cd aspnet-core/src/FinanceManagement.Migrator
+        dotnet3 build
+        dotnet3 publish
+        cd bin/Debug/netcoreapp3.1/publish/
+        zip -r backend_migrator.zip *
+      displayName: 'Dotnet Build Migrator'
+  
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'aspnet-core/src/FinanceManagement.Migrator/bin/Debug/netcoreapp3.1/publish/backend_migrator.zip'
+        ArtifactName: 'stg-dotnet-migrator-finfast'
+        publishLocation: 'Container'
+      displayName: 'Publish Artifacts Migrator'
+
+    - script: |
+        export PATH=$PATH:/opt/dotnet3/
+        cd aspnet-core
+        dotnet3 build
+        dotnet3 publish
+        cd src/FinanceManagement.Web.Host/bin/Debug/netcoreapp3.1/publish/
+        zip -r backend_publish.zip *
+      displayName: 'Dotnet Build Host'
+    
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'aspnet-core/src/FinanceManagement.Web.Host/bin/Debug/netcoreapp3.1/publish/backend_publish.zip'
+        ArtifactName: 'stg-dotnet-host-finfast'
+        publishLocation: 'Container'
+      displayName: 'Publish Artifacts Host'
+
+  - job: AngularBuild
+    steps:
+      - script: |
+          cd angular 
+          export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+          nvm use 14.15
+          node -v
+          echo "Copy node-modules"
+          unzip -qo ~/soft/check_node/finfast/node_modules.zip
+          cp ~/soft/check_node/finfast/check.sh ./check.sh
+          echo "===Check package.json==="
+          bash check.sh
+          echo "===Build node==="
+          ng build --prod
+          cd dist
+          zip -r frontend_publish.zip *
+        displayName: 'Build Frontend'
+        
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: 'angular/dist/frontend_publish.zip'
+          ArtifactName: 'stg-fe-finfast'
+          publishLocation: 'Container'
+        displayName: 'Publish Artifacts Frontend'

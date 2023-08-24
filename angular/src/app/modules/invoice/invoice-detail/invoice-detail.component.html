@@ -1,0 +1,23 @@
+<section class="content px-2 pt-2" id="invoice-detail">
+    <div class="container-fluid">
+        <div class="row mb-4 card">
+            <div class="col-12">
+                <nav mat-tab-nav-bar>
+                    <a [ngClass]="currentUrl.includes('invoice-general')?'active':''" mat-tab-link (click)="routingMainTab()">
+                        Thông tin chung
+                    </a>
+                    <a [ngClass]="currentUrl.includes('project-timesheet')?'active':''" mat-tab-link (click)="routingProjectTimesheet()">
+                        Project timeSheet
+                    </a>
+                    <a [ngClass]="currentUrl.includes('transaction-tab')?'active':''" mat-tab-link (click)="routingTransaction()">
+                        Giao dịch ngân hàng
+                    </a>
+                
+                </nav>
+                <router-outlet></router-outlet>
+            </div>
+
+
+        </div>
+    </div>
+</section>

@@ -1,0 +1,62 @@
+ <div> 
+  <abp-modal-header [title]="'Giải trình'" (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
+  <div class="modal-body">
+    <table class="table table-bordered review-explain-tbl">
+      <tr>
+        <th style="width: 20%">Thu Sổ VND</th>
+        <th style="width: 20%">Thu Sao kê VND</th>
+        <th style="width: 20%">Chênh lệch</th>
+        <th>Giải trình</th>
+      </tr>
+      <tr>
+        <td>{{ reviewExplain.incomingVND | number : "1.0" }} VND</td>
+        <td>{{ reviewExplain.incomingVNDTransaction | number : "1.0" }} VND</td>
+        <td>{{ reviewExplain.incomingDiffVND | number : "1.0" }} VND</td>
+        <td>{{ reviewExplain.incomingDiffVNDNote}}</td>
+      </tr>
+    </table>
+    <table class="table table-bordered review-explain-tbl">
+      <tr>
+        <th style="width: 20%">Chi Sổ VND</th>
+        <th style="width: 20%">Chi Sao kê VND</th>
+        <th style="width: 20%">Chênh lệch</th>
+        <th>Giải trình</th>
+      </tr>
+      <tr>
+        <td>{{ reviewExplain.outcomingVND | number : "1.0" }} VND</td>
+        <td>{{ reviewExplain.outcomingVNDTransaction | number : "1.0" }} VND</td>
+        <td>{{ reviewExplain.outcomingDiffVND | number : "1.0" }} VND</td>
+        <td>{{ reviewExplain.outcomingDiffVNDNote}}</td>
+      </tr>
+    </table>
+    <table class="table table-bordered review-explain-tbl">
+      <tr>
+        <th style="width: 20%">Thu Sổ USD</th>
+        <th style="width: 20%">Thu Sao kê USD</th>
+        <th style="width: 20%">Chênh lệch</th>
+        <th>Giải trình</th>
+      </tr>
+      <tr>
+        <td>{{ reviewExplain.incomingUSD | number : "1.0" }} USD</td>
+        <td>{{ reviewExplain.incomingUSDTransaction | number : "1.0" }} USD</td>
+        <td>{{ reviewExplain.incomingDiffUSD | number : "1.0" }} USD</td>
+        <td>{{ reviewExplain.incomingDiffUSDNote}}</td>
+      </tr>
+    </table>
+    <table class="table table-bordered review-explain-tbl">
+      <tr>
+        <th style="width: 20%">Chi Sổ USD</th>
+        <th style="width: 20%">Chi Sao kê USD</th>
+        <th style="width: 20%">Chênh lệch</th>
+        <th>Giải trình</th>
+      </tr>
+      <tr>
+        <td>{{ reviewExplain.outcomingUSD | number : "1.0" }} USD</td>
+        <td>{{ reviewExplain.outcomingUSDTransaction | number : "1.0" }} USD</td>
+        <td>{{ reviewExplain.outcomingDiffUSD | number : "1.0" }} USD</td>
+        <td>{{ reviewExplain.outcomingDiffUSDNote}}</td>
+      </tr>
+    </table>
+
+  </div>
+</div>

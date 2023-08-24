@@ -1,0 +1,22 @@
+::ng-deep #create-multi-incoming-entry .mat-form-field-appearance-outline .mat-form-field-infix{
+    padding: .5em 0;
+}
+#create-multi-incoming-entry .fixTableHead{
+    max-height: 20vw;
+}
+#create-multi-incoming-entry tr td{
+    vertical-align: middle;
+}
+
+.hard-width-200{
+    max-width: 200px;
+}
+.hard-width-150{
+    max-width: 150px;
+}
+.hard-width-100{
+    max-width: 100px;
+}
+.hard-width-50{
+    max-width: 50px;
+}

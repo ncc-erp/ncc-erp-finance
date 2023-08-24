@@ -1,0 +1,117 @@
+tr,th,td {
+    border: .2px solid rgba(204,204,204,.35);
+}
+::ng-deep #detail-tab .mat-tab-list .mat-tab-labels .mat-tab-label-active {
+    font-weight: bold;
+}
+#detail-tab{
+    margin-bottom: 1rem;
+}
+.read-mode{
+    border: none !important;
+}
+/* :read-only{
+    background: none;
+} */
+.detail :read-only{
+    background: none;
+}
+.diplay-flex{
+    display: flex;
+}
+.border-none{
+    border: none;
+}
+.icon-clear-branch{
+    margin-top: 10px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+::ng-deep #detail-tab .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}
+::ng-deep #detail-tab .mat-form-field-label-wrapper { top: -1.5em;
+}
+
+::ng-deep #detail-tab .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+table{
+    width: 100%;
+}
+input:read-only{
+    background: none;
+    border: none;
+}
+textarea:read-only{
+    background: none;
+    border: none;
+}
+.w-85{
+    width: 85% !important;
+}
+#detail-tab .card-header{
+    display: -webkit-box;
+    border-bottom: none;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.w-150{
+    width: 150px !important;
+}
+.w-250{
+    width: 250px !important;
+}
+.temp-delete{
+    position: relative;
+    /* background-color: #ffe5e5; */
+    vertical-align: middle;
+    text-decoration-line: line-through;
+}
+.temp-delete > td{
+    vertical-align: middle;
+}
+.temp-delete:after{
+    content: "";
+    width: 100%;
+    position: absolute;
+    height: 1px;
+    /* border: 1px solid red; */
+    left: 0;
+    top: 50%;
+
+}
+.temp-create{
+    background-color: #edffed;
+}
+.temp-create > td{
+    vertical-align: middle;
+}
+.temp-update{
+    border: none;
+    background-color: #f1eed5;
+}
+.temp-update > td{
+    vertical-align: middle;
+    border: none;
+    border-left: .2px solid rgba(204,204,204,.35);
+    border-right: .2px solid rgba(204,204,204,.35);
+}
+
+.temp-update-top{
+    border-left: .2px solid rgba(204,204,204,.35);
+    border-right: .2px solid rgba(204,204,204,.35);
+    border-top: .2px solid rgba(204,204,204,.35);
+}
+.temp-update-bottom{
+    border-left: .2px solid rgba(204,204,204,.35);
+    border-right: .2px solid rgba(204,204,204,.35);
+    border-bottom: .2px solid rgba(204,204,204,.35);
+}
+
+.font-size{
+    font-size: 1rem;
+}
+td{
+    vertical-align: middle;
+}
+

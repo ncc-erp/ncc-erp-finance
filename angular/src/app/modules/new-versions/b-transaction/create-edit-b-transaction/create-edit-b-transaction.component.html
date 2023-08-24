@@ -1,0 +1,121 @@
+<form
+  class="form-horizontal ui-form-new"
+  autocomplete="off"
+  #btransactionManagedForm="ngForm"
+  id="create-edit-b-transaction"
+>
+  <abp-modal-header title=" {{ title }}" (onCloseClick)="dialogRef.close()">
+  </abp-modal-header>
+
+  <div class="modal-body">
+    <div class="fixedBody">
+      <div class="form-group row required">
+        <div class="col-md-12">
+          <app-selection-customs
+          class="w-100"
+          label="Tài khoản ngân hàng"
+          labelClass="col-md-3 col-form-label"
+          selectionClass="col-md-9"
+          [input]="filteredListBankAccount"
+          [value]="btransaction.bankAccountId"
+          [required]="true"
+          [lableDirection]="LableDirectionLeft"
+          placeholder="Chọn tài khoản ngân hàng"
+          placeholderSearchText="Search tài khoản ngân hàng .."
+          (ngModelChange)="btransaction.bankAccountId = $event; generateNote()"
+        >
+        </app-selection-customs>
+        </div>
+      </div>
+
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="money">
+          {{ "Số tiền giao dịch" | localize }}:
+        </label>
+        <div class="col-md-9">
+          <input
+            type="text"
+            mask="separator"
+            thousandSeparator=","
+            allowNegativeNumbers="true"
+            class="form-control"
+            name="money"
+            [(ngModel)]="btransaction.money"
+            required
+            #money="ngModel"
+            #collectDebtEl
+            placeholder=""
+            (ngModelChange)="generateNote()"
+          />
+          <strong>Format: 24,000.5 </strong>
+          <abp-validation-summary [control]="money" [controlEl]="collectDebtEl">
+          </abp-validation-summary>
+        </div>
+      </div>
+
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label" for="timeAt">
+          {{ "Ngày giao dịch" | localize }}:
+        </label>
+        <div class="col-md-9">
+          <mat-form-field appearance="outline">
+            <input
+              matInput
+              [ngxMatDatetimePicker]="picker"
+              placeholder="Choose a date"
+              [(ngModel)]="btransaction.timeAt"
+              [min]="minDate"
+              [max]="maxDate"
+              name="timeAt"
+              #timeAt="ngModel"
+              #timeAtEl
+              required
+              (ngModelChange)="generateNote()"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <ngx-mat-datetime-picker
+              #picker
+              [showSpinners]="showSpinners"
+              [stepHour]="stepHour"
+              [stepMinute]="stepMinute"
+              [stepSecond]="stepSecond"
+              [touchUi]="touchUi"
+              [enableMeridian]="enableMeridian"
+            >
+            </ngx-mat-datetime-picker>
+          </mat-form-field>
+          <strong>Format: DD/MM/YYYY HH:mm </strong>
+          <abp-validation-summary [control]="timeAt" [controlEl]="timeAtEl">
+          </abp-validation-summary>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-md-3 col-form-label" for="connectionString">
+          {{ "Nội dung giao dịch" | localize }}:
+        </label>
+        <div class="col-md-9">
+          <textarea
+            class="form-control"
+            aria-colspan="3"
+            [(ngModel)]="btransaction.note"
+            name="note"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="row d-flex justify-content-between mt-4 px-1">
+      <button class="btn btn-default mx-2" mat-dialog-close>Cancel</button>
+      <button
+        class="btn btn-primary"
+        type="button"
+        [disabled]="!btransactionManagedForm.valid || isDisable || !btransaction.bankAccountId"
+        (click)="saveAndClose()"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</form>

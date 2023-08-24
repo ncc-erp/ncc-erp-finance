@@ -1,0 +1,42 @@
+tr,th,td {
+    border: .2px solid rgba(204,204,204,.35);
+}
+::ng-deep #relevant-tab .mat-tab-list .mat-tab-labels .mat-tab-label-active {
+    font-weight: bold;
+}
+.read-mode{
+    border: none !important;
+}
+/* :read-only{
+    background: none;
+} */
+.detail :read-only{
+    background: none;
+
+}
+::ng-deep #relevant-tab .mat-form-field-flex > .mat-form-field-infix { 
+    padding: 0.3em 0px !important;
+}
+::ng-deep #relevant-tab .mat-form-field-label-wrapper { 
+    top: -1.5em;
+}
+/* ::ng-deep #relevant-tab .mat-form-field-flex{
+    background: white;
+} */
+::ng-deep #relevant-tab .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+
+::ng-deep #relevant-tab .mat-form-field-appearance-legacy .mat-form-field-underline {
+    bottom: 0px !important;
+}
+
+::ng-deep #relevant-tab .mat-form-field-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* table{
+    width: 100%;
+} */

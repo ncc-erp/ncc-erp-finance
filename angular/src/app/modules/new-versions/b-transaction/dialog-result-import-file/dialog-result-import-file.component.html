@@ -1,0 +1,65 @@
+<abp-modal-header [title]="'Kết quả import Biến động số dư'" (onCloseClick)="close()"></abp-modal-header>
+<div class="modal-body">
+  <div class="row mt-1">
+    <div class="col-md-12" style="border: 2px solid green; border-radius: 5px">
+      <ng-template
+        #tpSuccess
+        [ngIf]="importBTransactionResult.success.length > 0"
+        [ngIfElse]="tpNotSuccess"
+      >
+        <ng-container *ngFor="let item of importBTransactionResult.success">
+          <p class="m-0">{{ item }}</p>
+        </ng-container>
+      </ng-template>
+      <ng-template #tpNotSuccess>
+        <p>Không có bản ghi được thêm mới.</p>
+      </ng-template>
+    </div>
+  </div>
+  <div class="row mt-1">
+    <ng-template #tpPeding [ngIf]="importBTransactionResult.pending.length > 0">
+      <div
+        class="col-md-12"
+        style="border: 2px solid rgb(238, 108, 48); border-radius: 5px"
+      >
+        <ng-container *ngFor="let item of importBTransactionResult.pending">
+          <p class="m-0">{{ item }}</p>
+        </ng-container>
+      </div>
+    </ng-template>
+  </div>
+  <div class="row mt-1">
+    <ng-template #tpPeding [ngIf]="importBTransactionResult.exists.length > 0">
+      <div
+        class="col-md-12"
+        style="border: 2px solid rgb(238, 108, 48); border-radius: 5px"
+      >
+        <ng-container *ngFor="let item of importBTransactionResult.exists">
+          <p class="m-0">{{ item }}</p>
+        </ng-container>
+      </div>
+    </ng-template>
+  </div>
+  <div class="row mt-1">
+    <ng-template #tpPeding [ngIf]="importBTransactionResult.errors.length > 0">
+      <div
+        class="col-md-12"
+        style="border: 2px solid rgb(238, 108, 48); border-radius: 5px"
+      >
+        <ng-container *ngFor="let item of importBTransactionResult.errors">
+          <p class="m-0">{{ item }}</p>
+        </ng-container>
+      </div>
+    </ng-template>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-secondary"
+      data-dismiss="modal"
+      (click)="close()"
+    >
+      Close
+    </button>
+  </div>
+</div>

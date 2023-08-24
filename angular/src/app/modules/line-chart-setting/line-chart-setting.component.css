@@ -1,0 +1,12 @@
+button {
+  height: fit-content;
+}
+.stt {
+  width: 50px;
+}
+.action {
+  width: 150px;
+}
+.isActive {
+  width: 60px;
+}

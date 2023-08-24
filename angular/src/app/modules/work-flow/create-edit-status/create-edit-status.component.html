@@ -1,0 +1,34 @@
+<form class="form-horizontal" autocomplete="off" #workFlowForm="ngForm">
+    <div class="card-header">
+        <h3 *ngIf="!isEdit">{{'m2_child4.createTitleStatus' | translate}}</h3>
+        <h3 *ngIf="isEdit">{{'m2_child4.editTitleStatus' | translate}} </h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="accountTypeName">
+                {{ 'm2_child4.name' | translate }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="accountTypeName" id="accountTypeName" minlength="2" maxlength="64"
+                    required [(ngModel)]="data.name" #accountTypeNameModel="ngModel" #accountTypeNameEl />
+                <abp-validation-summary [control]="accountTypeNameModel" [controlEl]="accountTypeNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="code">
+                {{ 'm2_child4.code' | translate }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="code" id="code" minlength="2" maxlength="64" required
+                    [(ngModel)]="data.code" #codeModel="ngModel" #codeEl />
+                <abp-validation-summary [control]="codeModel" [controlEl]="codeEl"></abp-validation-summary>
+            </div>
+        </div>
+    </div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-default cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button class="btn saving-btn btn-primary ml-2"
+            [mat-dialog-close]="data" [disabled]="!workFlowForm.form.valid">Save</button>
+    </div>
+</form>

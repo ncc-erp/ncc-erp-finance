@@ -1,0 +1,72 @@
+<form class="form-horizontal ui-form-new" autocomplete="off" #revenueManagedForm="ngForm">
+    <abp-modal-header title=" {{ title }}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+
+    <div class="modal-body" *ngIf="especialIncomingEntryType">
+        <div class="fixedBody">
+            <div class="form-group row required">
+                <label class="col-md-5 col-form-label" for="debtIncomingEntryTypeCode">
+                    {{ "Mã loại thu invoice" | localize }}: 
+                </label>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" name="debtIncomingEntryTypeCode" placeholder=""
+                        [(ngModel)]="especialIncomingEntryType.debtIncomingEntryTypeCode" required #debtIncomingEntryTypeCode="ngModel" #debtIncomingEntryTypeCodeEl />
+                    <abp-validation-summary [control]="debtIncomingEntryTypeCode" [controlEl]="debtIncomingEntryTypeCodeEl">
+                    </abp-validation-summary>
+                    <div
+                        class="notify-input-check"
+                        [ngClass]="setCssClassName(especialIncomingEntryType.debtIncomingEntryTypeStatus)"
+                        *ngIf="especialIncomingEntryType.debtIncomingEntryTypeStatus"
+                    >
+                        {{ especialIncomingEntryType.debtIncomingEntryTypeStatus }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row required">
+                <label class="col-md-5 col-form-label" for="balanceIncomingEntryTypeCode">
+                    {{ "Mã loại thu khách hàng trả trước" | localize }}: 
+                </label>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" name="balanceIncomingEntryTypeCode" placeholder=""
+                        [(ngModel)]="especialIncomingEntryType.balanceIncomingEntryTypeCode" required #balanceIncomingEntryTypeCode="ngModel" #balanceIncomingEntryTypeCodeEl />
+                    <abp-validation-summary [control]="balanceIncomingEntryTypeCode" [controlEl]="balanceIncomingEntryTypeCodeEl">
+                    </abp-validation-summary>
+                    <div
+                        class="notify-input-check"
+                        [ngClass]="setCssClassName(especialIncomingEntryType.balanceIncomingEntryTypeStatus)"
+                        *ngIf="especialIncomingEntryType.balanceIncomingEntryTypeStatus"
+                    >
+                        {{ especialIncomingEntryType.balanceIncomingEntryTypeStatus }}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row required">
+                <label class="col-md-5 col-form-label" for="deviantIncomingEntryTypeCode">
+                    {{ "Mã loại thu khách hàng trả kênh tiền" | localize }}: 
+                </label>
+                <div class="col-md-7">
+                    <input type="text" class="form-control" name="deviantIncomingEntryTypeCode" placeholder=""
+                        [(ngModel)]="especialIncomingEntryType.deviantIncomingEntryTypeCode" required #deviantIncomingEntryTypeCode="ngModel" #deviantIncomingEntryTypeCodeEl />
+                    <abp-validation-summary [control]="deviantIncomingEntryTypeCode" [controlEl]="deviantIncomingEntryTypeCodeEl">
+                    </abp-validation-summary>
+                    <div
+                        class="notify-input-check"
+                        [ngClass]="setCssClassName(especialIncomingEntryType.deviantIncomingEntryTypeStatus)"
+                        *ngIf="especialIncomingEntryType.deviantIncomingEntryTypeStatus"
+                    >
+                        {{ especialIncomingEntryType.deviantIncomingEntryTypeStatus }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-between mt-4 px-1">
+            <button class="btn btn-default mx-2" mat-dialog-close>
+                Cancel
+            </button>
+            <button class="btn btn-primary" [disabled]="!revenueManagedForm.valid || isSaving"
+                (click)="saveAndClose()">
+                Save
+            </button>
+        </div>
+    </div>
+</form>

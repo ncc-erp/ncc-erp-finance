@@ -1,0 +1,8 @@
+::ng-deep #create-multi-transaction .mat-form-field-label-wrapper .mat-form-field-label{
+    font-weight: normal;
+    font-size: 14px;
+    margin-top: 12px;
+}
+::ng-deep #create-multi-transaction .datepick  .mat-form-field-label-wrapper .mat-form-field-label{
+    margin-top: 0;
+}

@@ -1,0 +1,127 @@
+tr,
+th,
+td {
+  border: 0.2px solid rgba(204, 204, 204, 0.35);
+}
+
+i {
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+}
+
+.hyperlink:hover {
+  cursor: pointer;
+  text-decoration: underline !important;
+}
+
+.hyperlink {
+  color: #007bff;
+}
+
+.allowBreak {
+  white-space: normal;
+  max-width: 250px;
+}
+
+.overflow-visible {
+  white-space: initial;
+}
+
+.text-form {
+  width: 150px;
+  word-break: break-word;
+}
+
+.none {
+  display: none;
+}
+
+.block {
+  display: block;
+}
+
+.dropdown-content {
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  padding: 12px 16px;
+  z-index: 1;
+  right: 50px;
+}
+
+
+.isWarning {
+  background-color: #fff2c3 !important
+}
+
+.read-mode {
+  border: none !important;
+}
+
+.bank-account-colum {
+  max-width: 200px;
+  white-space: pre-line;
+}
+
+::ng-deep #bank-transaction .mat-form-field-appearance-legacy .mat-form-field-underline {
+  bottom: 0px !important;
+}
+
+::ng-deep #bank-transaction .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  transform: translateY(-1.1em) scale(0.75);
+  width: 133.33333%;
+}
+
+::ng-deep #bank-transaction .mat-form-field-wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+::ng-deep #bank-transaction .mat-form-field-flex>.mat-form-field-infix {
+  padding: 0.4em 0px !important;
+}
+
+::ng-deep #bank-transaction .mat-form-field-label-wrapper {
+  top: -1.5em;
+}
+
+::ng-deep #bank-transaction .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+  transform: translateY(-1.1em) scale(.75);
+  width: 133.33333%;
+}
+
+/* ::ng-deep #bank-transaction .mat-form-field-flex{
+  background: white;
+} */
+::ng-deep #bank-transaction .mat-form-field-label-wrapper .mat-form-field-label {
+  font-weight: normal;
+  font-size: 14px;
+  margin-top: 0.25em;
+}
+
+::ng-deep #bank-transaction .height-maxcontent {
+  height: max-content;
+}
+
+::ng-deep #bank-transaction .form-control:disabled,
+.form-control[readonly] {
+  background-color: white;
+}
+
+.selection-input-seach-hanging-above {
+  padding: 0;
+}
+
+.action-bank-transaction {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.action-item {
+  flex: 1;
+}

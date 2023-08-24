@@ -1,0 +1,152 @@
+<form class="form-horizontal" autocomplete="off" #createTransactionForm="ngForm" id="create-edit-transaction">
+    <abp-modal-header
+        title=" {{ data.command=='create' ?('m5_child3.create' | translate):('m5_child3.edit' | translate) }}"
+        (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+
+    <div class="modal-body ">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="connectionString">
+                {{ 'm5_child3.name' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="name" minlength="2" maxlength="1024"
+                    [(ngModel)]="transaction.name" required #name="ngModel" #nameEl />
+                <abp-validation-summary [control]="name" [controlEl]="nameEl"></abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                {{ 'm5_child3.fromBank' | translate }}:
+            </label>
+            <div class="col-md-9 ">
+                <mat-form-field class="w-100 " appearance="outline">
+                    <mat-select [(ngModel)]="transaction.fromBankAccountId" name="fromBankAccount"
+                    (openedChange)="fromBankAccountSelectOpenedChange()"
+                        placeholder="select a bank account"  #formAccount="ngModel" required
+                        >
+                        <mat-form-field class="w-100 px-3"
+                            style="position: sticky; top: 0;; z-index: 2; background-color: white;">
+                            <input type="text" name="searchFrom" id="" matInput placeholder="Search"
+                            (keydown)="$event.stopPropagation()"
+                                [(ngModel)]="searchFromBank" >
+                        </mat-form-field>
+                        <ng-container *ngFor="let account of fromBankList |filter: searchFromBank">
+                            <mat-option *ngIf="account.id!=toAccount.value" [value]="account.id"
+                                (click)="setFromBankCurrency(account.currencyName);setFromValue(account.accountTypeCode)"
+                                data-toggle="tooltip"
+                                title="{{account.holderName}}"
+                            >
+                                {{account.holderName}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="formAccount.hasError('required') && formAccount.touched" style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="name"> {{ 'm5_child3.toBank' | translate }}: </label>
+            <div class="col-md-9 ">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select [(ngModel)]="transaction.toBankAccountId" name="toBankAccount"
+                        (openedChange)="toBankAccountSelectOpenedChange()"
+                        placeholder="select a bank account"  #toAccount="ngModel"required
+                    >
+                        <mat-form-field class="w-100 px-3"
+                            style="position: sticky; top: 0;; z-index: 2; background-color: white;">
+                            <input type="text" name="searchFrom" id="" matInput placeholder="Search"
+                            (keydown)="$event.stopPropagation()"
+                                [(ngModel)]="searchToBank" >
+                        </mat-form-field>
+                        <ng-container *ngFor="let account of toBankList |filter: searchToBank">
+                            <mat-option *ngIf="account.id!=formAccount.value" [value]="account.id"
+                                (click)="setToBankCurrency(account.currencyName); setToValue(account.accountTypeCode)"
+                                data-toggle="tooltip"
+                                title="{{account.holderName}}"
+                            >
+                                {{account.holderName}}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="toAccount.hasError('required') && toAccount.touched" style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+
+        </div>
+        <div class="form-group row required" [hidden]= "hideFromValue">
+            <label class="col-md-3 col-form-label" for="connectionString">
+                {{ 'm5_child3.fromValue' | translate }}:
+            </label>
+            <div class="col-md-8" >
+                <input class="form-control" name="sentValue" maxlength="1024" type="text" mask="separator':''" thousandSeparator="," allowNegativeNumbers="true"
+                    [(ngModel)]="transaction.fromValue"  #fromValue="ngModel" #fromValueEl />
+                <abp-validation-summary [control]="fromValue" [controlEl]="fromValueEl"></abp-validation-summary>
+
+            </div>
+            <div class="col-md-1 mt-3">
+                <span class="font-weight-bold ">
+                    {{fromBankCurrency}}
+                </span>
+            </div>
+
+        </div>
+        <div class="form-group row required"  [hidden]= "hideToValue">
+            <label class="col-md-3 col-form-label" for="connectionString">
+                {{ 'm5_child3.toValue' | translate }}:
+            </label>
+            <div class="col-md-8">
+                <input type="text" mask="separator':''" thousandSeparator="," allowNegativeNumbers="true"
+                    class="form-control" name="sendValue" maxlength="1024" [(ngModel)]="transaction.toValue"
+                    #toValue="ngModel" #toValueEl />
+                <abp-validation-summary [control]="toValue" [controlEl]="toValueEl"></abp-validation-summary>
+
+            </div>
+            <div class="col-md-1 mt-3">
+                <span class="font-weight-bold mt-1">{{toBankCurrency}}</span>
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-md-3 col-form-label" for="connectionString">
+                {{ 'm5_child3.fee' | translate }}:
+            </label>
+            <div class="col-md-8">
+                <input type="text" mask="separator':''" thousandSeparator="," allowNegativeNumbers="true"
+                    class="form-control" name="fee" maxlength="1024" [(ngModel)]="transaction.fee" />
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-md-3 col-form-label">
+                {{ 'm5_child3.sentDate' | translate }}:
+            </label>
+            <div class="col-md-9 datepick">
+                <mat-form-field appearance="outline">
+                    <mat-label style="font-weight: normal;">Choose a date</mat-label>
+                    <input matInput [matDatepicker]="picker" [(ngModel)]="transaction.transactionDate"
+                        name="transactionDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-md-3 col-form-label" for="connectionString">
+                Note:
+            </label>
+            <div class="col-md-9">
+                <textarea type="text" class="form-control" name="connectionString" maxlength="1024"
+                    [(ngModel)]="transaction.note" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
+            </div>
+        </div>
+        <div class="form-group row d-flex justify-content-between mt-2">
+            <button class="btn btn-default mx-2" mat-dialog-close>{{ "action.cancel" | translate }}</button>
+            <button type="button" class="btn btn-primary" [disabled]="!createTransactionForm.valid ||hideFromValue==true&&hideToValue==true"
+                (click)="saveAndClose() ">{{ "action.save" | translate }}</button>
+        </div>
+    </div>
+</form>

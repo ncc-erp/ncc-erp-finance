@@ -1,0 +1,23 @@
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 0.5em 0 0.5em 0;
+}
+.fixHeader{
+    overflow-y: auto;
+    max-height: 50vh;
+}
+.fixHeader thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+label{
+    vertical-align: middle;
+}
+.center-y{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+td{
+    vertical-align: middle;
+}

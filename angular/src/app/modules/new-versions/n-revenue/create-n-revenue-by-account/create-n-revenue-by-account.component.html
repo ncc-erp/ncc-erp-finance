@@ -1,0 +1,132 @@
+<form class="form-horizontal ui-form-new" autocomplete="off" #revenueManagedForm="ngForm">
+    <abp-modal-header title=" {{ title }}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+
+    <div class="modal-body">
+        <div class="fixedBody">
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="nameInvoice">
+                    {{ "Tên khoản phải thu" | localize }}:
+                </label>
+                <div class="col-md-9">
+                    <input type="text" class="form-control" name="nameInvoice" placeholder=""
+                        [(ngModel)]="revenue.nameInvoice" required #requestName="ngModel" #requestNameEl />
+                    <abp-validation-summary [control]="requestName" [controlEl]="requestNameEl">
+                    </abp-validation-summary>
+                </div>
+            </div>
+            <div class="form-group row required">
+                <div class="col-md-12">
+                    <app-selection-customs
+                      class="w-100"
+                      label="Đối tượng kế toán"
+                      labelClass="col-md-3 col-form-label"
+                      selectionClass="col-md-9"
+                      [input]="filteredListAccount"
+                      [value]="revenue.accountId"
+                      [required]="true"
+                      [lableDirection]="LableDirectionLeft"
+                      placeholder="Chọn Đối tượng kế toán"
+                      placeholderSearchText="Search text .."
+                      (ngModelChange)="revenue.accountId = $event"
+                    >
+                    </app-selection-customs>
+                  </div>
+            </div>
+
+            <div class="form-group row required">
+                <div class="col-md-12">
+                    <app-selection-customs
+                      class="w-100"
+                      label="Invoice date"
+                      labelClass="col-md-3 col-form-label"
+                      selectionClass="col-md-9"
+                      [input]="listMonthAndYear"
+                      [value]="revenue.monthAndYear"
+                      [required]="true"
+                      [lableDirection]="LableDirectionLeft"
+                      placeholder=""
+                      placeholderSearchText="Search text .."
+                      (ngModelChange)="revenue.monthAndYear = $event"
+                    >
+                    </app-selection-customs>
+                  </div>
+            </div>
+
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="collectionDebt">
+                    {{ "Phải thu" | localize }}:
+                </label>
+                <div class="col-md-9">
+                    <input type="text" mask="separator':''" thousandSeparator="," allowNegativeNumbers="true"
+                        class="form-control" name="collectionDebt" [(ngModel)]="revenue.collectionDebt" required
+                        #collectionDebt="ngModel" #collectDebtEl placeholder="" />
+                    <abp-validation-summary [control]="collectionDebt" [controlEl]="collectDebtEl">
+                    </abp-validation-summary>
+                    <strong>Format: 24,000.5 </strong>
+                </div>
+            </div>
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="transferFee">
+                    {{ "Transfer Fee" | localize }}:
+                </label>
+                <div class="col-md-9">
+                    <input type="text" mask="separator':''" thousandSeparator="," allowNegativeNumbers="true"
+                        class="form-control" name="transferFee" [(ngModel)]="revenue.ntf" required
+                        #transferFee="ngModel" #transferFeeEl placeholder="" />
+                    <abp-validation-summary [control]="transferFee" [controlEl]="transferFeeEl">
+                    </abp-validation-summary>
+                </div>
+            </div>
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="deadline">
+                    {{ "Hạn thu" | localize }}:
+                </label>
+                <div class="col-md-9">
+                    <mat-form-field appearance="outline">
+                        <input matInput [matDatepicker]="picker" placeholder="" [(ngModel)]="revenue.deadline"
+                            name="deadline" required #deadline="ngModel" #deadlineEl
+                            [ngModelOptions]="{ standalone: true }" />
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                    <strong>Format: DD/MM/YYYY</strong>
+                    <abp-validation-summary [control]="deadline" [controlEl]="deadlineEl">
+                    </abp-validation-summary>
+                </div>
+            </div>
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="unitId">
+                    {{ "Curency" | localize }}:
+                </label>
+                <div class="col-md-9">
+                    <mat-form-field appearance="outline">
+                        <mat-select [(ngModel)]="revenue.currencyId" name="unitId" placeholder="" #currency="ngModel"
+                            #currencyEl required>
+                            <mat-option *ngFor="let currency of listCurrency" [value]="currency.value">
+                                {{ currency.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-md-3 col-form-label" for="connectionString">
+                    {{ "Ghi chú" | localize }}:
+                </label>
+                <div class="col-md-9">
+                    <textarea class="form-control" aria-colspan="3" [(ngModel)]="revenue.note" name="note"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-between mt-4 px-1">
+            <button class="btn btn-default mx-2" mat-dialog-close>
+                Cancel
+            </button>
+            <button class="btn btn-primary" [disabled]="!revenueManagedForm.valid || isDisable || !revenue.accountId"
+                (click)="saveAndClose()">
+                Save
+            </button>
+        </div>
+    </div>
+</form>

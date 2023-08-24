@@ -1,0 +1,9 @@
+.currency{
+    margin-top: 14px;
+}
+::ng-deep #checkbox-is-create-bonus label{
+    margin-bottom: 0 !important;
+}
+::ng-deep .default-incoming-entry-type label{
+    margin-bottom: 0.25rem !important;
+}

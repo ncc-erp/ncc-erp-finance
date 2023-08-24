@@ -1,0 +1,63 @@
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="text-right ">
+                <div class="click-fluid">
+                    <button class="btn bg-primary ml-1" (click)="linkToSupplier()" *ngIf="isShowLinkBtn()">
+                        <i class="fa fa-plus-square"></i>
+                        {{ "m5_child2.linkSupplier" | translate }}
+                    </button>
+                </div>
+            </div>
+            <div class="text-right ">
+                <div *ngIf="isShowCreateBtn()" class="click-fluid">
+                    <button class="btn ml-1" style="background-color: #616970;color: #ffffff;"
+                        (click)="createSupplier()">
+                        <i class="fa fa-plus-square"></i>
+                        {{ "m5_child2.createSupplier" | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content px-2">
+    <div class="container-fluid">
+        <div class=" table-responsive ">
+            <table style="border-collapse: collapse;" class="table table-hover text-nowrap">
+                <thead class="bg-light">
+                    <tr>
+                        <th>STT</th>
+                        <th>{{ "m5_child2.supplierName" | translate }}</th>
+                        <th>{{ "m5_child2.supplierPhone" | translate }}</th>
+                        <th>{{ "m5_child2.supplierAddress" | translate }}</th>
+                        <th>{{ "m5_child2.supplierContactName" | translate }}</th>
+                        <th>{{ "m5_child2.supplierContactPhone" | translate }}</th>
+                        <th>{{ "m5_child2.supplierTax" | translate }}</th>
+                        <th *ngIf="isShowDeleteLinkBtn()"
+                            style="width: 100px; text-align: center;">{{ 'action.actions' | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let supplier of supplierList; let i =index">
+                        <td>{{i+1}}</td>
+                        <td>{{supplier.name}}</td>
+                        <td>{{supplier.phoneNumber}}</td>
+                        <td>{{supplier.address}}</td>
+                        <td>{{supplier.contactPersonName}}</td>
+                        <td>{{supplier.contactPersonPhone}}</td>
+                        <td>{{supplier.taxNumber}}</td>
+                        <td *ngIf="isShowDeleteLinkBtn()"
+                            style="padding: 12px; justify-content: center; align-items: center; vertical-align: middle;">
+                            <button type="button" class="btn btn-sm bg-danger ml-1" (click)="deleteLinked(supplier)">
+                                <i class="fas fa-trash"></i>
+                                {{ "m5_child2.deleteLink" | translate }}
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</section>

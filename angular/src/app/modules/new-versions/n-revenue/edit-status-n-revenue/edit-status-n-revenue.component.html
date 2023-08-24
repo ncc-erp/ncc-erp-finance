@@ -1,0 +1,60 @@
+<form class="form-horizontal ui-form-new" autocomplete="off" #revenueManagedForm="ngForm">
+    <abp-modal-header title=" {{ title }}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+
+    <div class="modal-body">
+        <div class="fixedBody">
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="status">
+                    {{ "Status" | localize }}:
+                </label>
+                <div class="col-md-9">
+                    <mat-form-field appearance="outline">
+                        <mat-select [(ngModel)]="revenue.status" name="status" placeholder="" required>
+                            <mat-option *ngFor="let status of listRevenueStatuses" [value]="status.value">
+                                {{ status.name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <ng-containter *ngIf="resultCheckSetDoneInvoice.isAllowedSetDone == false">
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label" for="ITF" matTooltip="Phí giao dịch nội địa">
+                        {{ "ITF" | localize }}:
+                    </label>
+                    <div class="col-md-9">
+                        <input type="text" mask="separator':''" thousandSeparator="," allowNegativeNumbers="true"
+                            class="form-control" name="ITF" [ngModel]="resultCheckSetDoneInvoice.totalDebt" disabled />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label" for="ITF" matTooltip="Giới hạn phí chuyển khoản nội địa">
+                        {{ "Max ITF" | localize }}:
+                    </label>
+                    <div class="col-md-9">
+                        <input type="text" mask="separator':''" thousandSeparator="," allowNegativeNumbers="true"
+                            class="form-control" name="maxITF" [ngModel]="resultCheckSetDoneInvoice.maxITF" disabled />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-3 col-form-label">
+                    </label>
+                    <div class="col-md-9">
+                        <span style="font-size: 100%;" class="error invalid-feedback d-block ng-star-inserted"> Không thể hoàn thành vì phần còn
+                            nợ vượt quá giới hạn phí chuyển khoản nội địa (Max ITF)</span>
+                    </div>
+                </div>
+            </ng-containter>
+        </div>
+        <div class="row d-flex justify-content-between mt-4 px-1">
+            <button class="btn btn-default mx-2" mat-dialog-close>
+                Cancel
+            </button>
+            <button class="btn btn-primary" [disabled]="!revenueManagedForm.valid || isDisable"
+                (click)="saveAndClose()">
+                Save
+            </button>
+        </div>
+    </div>
+</form>

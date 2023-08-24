@@ -1,0 +1,92 @@
+<div class="card" id="general-tab">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-7">
+
+                <form class="form-horizontal" autocomplete="off" #requestDetail="ngForm">
+                    <div class="form-group row detail " [ngClass]="readMode==false?'required':''">
+                        <label class="col-md-2 col-form-label" for="requestName">
+                            {{ 'm5_child4.name' | translate }}:
+                        </label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control " name="requestName" [readonly]="readMode"
+                                [ngClass]="readMode==true?'read-mode':''" maxlength="1024" minlength="2"
+                                [value]="invoice.name" required [(ngModel)]="invoice.name" />
+
+                        </div>
+                    </div>
+                    <div class="form-group row detail ">
+                        <label class="col-md-2 col-form-label" for="requester">
+                            {{ 'm5_child4.client' | translate }}:
+
+                        </label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control " name="requester" readonly="true" 
+                                [ngClass]="readMode==true?'read-mode':''" [(ngModel)]="invoice.clientName" />
+                        </div>
+                    </div>
+                    <div class="form-group row detail ">
+                        <label class="col-md-2 col-form-label" for="requester">
+                            {{ 'm5_child4.project' | translate }}:
+                        </label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control " name="project" readonly="true" 
+                                [ngClass]="readMode==true?'read-mode':''" [(ngModel)]="invoice.project" />
+                        </div>
+                    </div>
+                    <div class="form-group row detail ">
+                        <label class="col-md-2 col-form-label" for="requester">
+                            {{ 'm5_child4.date' | translate }}:
+                        </label>
+                        <div class="col-md-6 pt-2 pl-3">
+                            <span >{{invoice.timeAt |date:"dd/MM/yyyy hh:mm a"}}</span>
+                            <!-- <input type="text" class="form-control " name="timeAt" readonly="true" 
+                                [ngClass]="readMode==true?'read-mode':''" [(ngModel)]="invoice.timeAt" /> -->
+                        </div>
+                    </div>
+                  
+                    <div class="form-group row detail">
+                        <label class="col-md-2 col-form-label" for="status">
+                            {{ 'm5_child4.total' | translate }}:
+                        </label>
+                        <p class="mt-2" style="margin-left: 17px;">{{invoice.totalPrice | number:'1.0':'en-US'}}</p>
+                    </div>
+                    <div class="form-group row detail">
+                        <label class="col-md-2 col-form-label" for="status">
+                            {{ 'm5_child4.status' | translate }}:
+                        </label>
+                        <p class="mt-2" style="margin-left: 17px;">
+                            {{APP_CONSTANT.InvoiceStatus[invoice.status ]}}
+                        </p>
+
+
+                    </div>
+                    <div class="form-group row detail">
+                        <label class="col-md-2 col-form-label" for="status">
+                            Created by:
+                        </label>
+                        <p  [hidden]="!readMode" class="mt-2"
+                            style="margin-left: 17px;">{{invoice.createdBy== 0?'Project':'Finance'}}</p>
+
+                      
+                    </div>
+                    <div class="form-group row" [hidden]="readMode">
+                        <div class="form-group row d-flex justify-content-between">
+                            <button class="btn btn-default mx-2" (click)="cancelEdit()">
+                                {{ "action.cancel" | translate }}
+                            </button>
+                            <button class="btn btn-primary" (click)="saveInvoice()" [disabled]="!requestDetail.valid ">
+                                {{ "action.save" | translate }}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+
+
+            </div>
+           
+        </div>
+
+    </div>
+</div>

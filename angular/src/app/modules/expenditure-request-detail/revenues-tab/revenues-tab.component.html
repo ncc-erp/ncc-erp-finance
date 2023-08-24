@@ -1,0 +1,98 @@
+<section class="content-header" *ngIf="isShowRevenuesTab()">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="text-right">
+        <div class="click-fluid">
+          <button
+            class="btn bg-primary ml-1"
+            (click)="linkToTransaction()"
+            *ngIf="isShowLinkToRevenuesBtn()"
+          >
+            <i class="fa fa-plus-square"></i>
+
+            {{ "m5_child2.linkToRevenues" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="content px-2">
+  <div class="container-fluid">
+    <div class="table-responsive">
+      <table
+        style="border-collapse: collapse"
+        class="table table-hover text-nowrap"
+        [busy]="isTableLoading"
+      >
+        <thead class="bg-light">
+          <tr>
+            <th>STT</th>
+            <th>{{ "m5_child2.name" | translate }}</th>
+            <th>Loại thu</th>
+            <th>{{ "m5_child2.value" | translate }}</th>
+            <th style="width: 150px">Hoàn tiền</th>
+            <th style="width: 100px; text-align: center">
+              {{ "action.actions" | translate }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of chill; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td style="white-space: normal; min-width: 200px">
+              <a
+                [routerLink]="['/app/revenue-record']"
+                [queryParams]="{ id: data.id }"
+              >
+                # {{ data.id }} {{ data.name }}
+              </a>
+            </td>
+            <td>
+              {{ data.incomingEntryTypeName }}
+              <i
+                [ngClass]="
+                  data?.revenueCounted
+                    ? 'fas fa-check-circle fa-lg text-primary'
+                    : 'fas fa-check-circle fa-lg text-secondary'
+                "
+                [matTooltip]="
+                  data?.revenueCounted
+                    ? 'Tính vào doanh thu'
+                    : 'Không tính vào doanh thu'
+                "
+              ></i>
+            </td>
+            <td class="text-center">{{ data.value | number : "1.0" }}</td>
+            <td class="text-center">
+              <mat-checkbox
+                [checked]="data.isRefund"
+                matTooltip="vd: - request chi 8M vnđ, xuất tiền 10M (thừa 2M) => ghi nhận thu 2M là hoàn tiền.
+                  - request chi bán 100 usd giá trị 2M vnđ, xuất tiền 100 usd => ghi nhận thu 2M vnđ KHÔNG phải là hoàn tiền"
+                (change)="setIsRefund(data.relationInOutId, $event.checked)"
+              ></mat-checkbox>
+            </td>
+            <td
+              style="
+                padding: 12px;
+                justify-content: center;
+                align-items: center;
+                vertical-align: middle;
+              "
+            >
+              <button
+                type="button"
+                class="btn btn-sm bg-danger ml-1"
+                (click)="deleteIncoming(data)"
+                *ngIf="isShowDeleteLinkToRevenuesBtn()"
+              >
+                <i class="fas fa-trash"></i>
+                {{ "action.delete" | translate }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

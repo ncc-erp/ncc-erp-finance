@@ -1,0 +1,9 @@
+::ng-deep #create-request-detail .mat-form-field-wrapper{
+    padding: 0;
+}
+::ng-deep #create-request-detail .mat-form-field-label-wrapper .mat-form-field-label{
+    font-weight: normal;
+    font-size: 14px;
+    margin-top: 12px;
+}
+::ng-deep #create-request-detail .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}

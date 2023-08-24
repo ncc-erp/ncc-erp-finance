@@ -1,0 +1,88 @@
+.wrapper table {
+  vertical-align: middle;
+}
+.table-title {
+  background: #014c6e;
+  color: white;
+  font-size: 18;
+  font-size: 18px;
+  border-radius: 6px 6px 0px 0px;
+}
+.thead {
+  background-color: #a6d8ef;
+  padding: 5px 10px;
+  vertical-align: middle;
+}
+.thead-gray {
+  background-color: #e4e4e4;
+  padding: 5px 10px;
+  vertical-align: middle;
+}
+
+.yellow-thead {
+  background-color: #ffeab2;
+}
+.green-thead {
+  background-color: #dfefc6;
+}
+.yellow-td {
+  background-color: #fffbec;
+}
+.green-td {
+  background-color: #f5fbf2;
+}
+tr,
+th,
+td {
+  vertical-align: middle;
+}
+.arrow {
+  display: flex;
+  padding-bottom: 3px;
+  flex-direction: row;
+}
+.link-primary:hover {
+  text-decoration: underline;
+}
+
+.banktrans-title {
+  white-space: nowrap;
+}
+
+.refund-title {
+  white-space: nowrap;
+}
+
+.refund-td{
+  background-color: #f3e8e3;
+}
+
+.purple-thead{
+  background-color: #F3CCFF;
+}
+
+.purple-td{
+  background-color: #F3CCFF;
+}
+
+.blue-td{
+  background-color: #f6fbff;
+}
+.gray-thead{
+  background-color: #e9e6e6;
+}
+
+::ng-deep .is-include-btrans-pending .mat-checkbox-layout{
+  margin: 0;
+}
+.text-chenh{
+  color: #f75c5c;
+  font-weight: bold;
+}
+.chenhlech-cells{
+  background-color: #fff4ea;
+}
+.chenhlech-cells-th{
+  background-color: #f9d0b2;
+  width: 135px;
+}

@@ -1,0 +1,21 @@
+.currency{
+    margin-top: 14px;
+}
+.f-size{
+    font-size: 1.2rem;
+}
+/* ::ng-deep .swal2-container{
+    z-index: 3000 !important;
+} */
+.level1{
+    padding-left: 0;
+}
+.level2{
+    padding-left: 2rem;
+}
+.level3{
+    padding-left: 4rem;
+}
+.level4{
+    padding-left: 6rem;
+}

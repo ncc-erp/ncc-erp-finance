@@ -1,0 +1,95 @@
+<form class="form-horizontal" autocomplete="off" #createRevenuesForm="ngForm" id="create-edit-revenue">
+    <abp-modal-header [title]="  title == 'edit'
+    ? ('m3_child5.editTitle' | translate)
+    : ('m3_child5.createTitle' | translate) " (onCloseClick)="dialogRef.close()"></abp-modal-header>
+
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="revenuesName">
+                {{ "m3_child5.name" | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="revenuesName" maxlength="128" [(ngModel)]="revenues.name"
+                    (ngModelChange)="handleChangeName()" required  #revenuesName="ngModel" #revenuesNameEl/>
+                    <abp-validation-summary [control]="revenuesName" [controlEl]="revenuesNameEl"></abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="name">
+                {{ "m3_child5.code" | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="name" id="name" maxlength="128"
+                    [(ngModel)]="revenues.code" required #revenueCode="ngModel" #revenueCodeEl/>
+                    <abp-validation-summary [control]="revenueCode" [controlEl]="revenueCodeEl"></abp-validation-summary>
+
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-md-3 col-form-label" for="connectionString">
+                Parent:
+            </label>
+            <div class="col-md-7">
+                <!-- <mat-form-field class="w-100" appearance="outline">
+                    <mat-select [(ngModel)]="revenues.parentId" name="parentSelect">
+                        <mat-form-field class="w-100 px-3" style="position: sticky; top: 0;; z-index: 2; background-color: white;">
+                            <input matInput  [(ngModel)]="searchRevenue"
+                            name="searchRevenue" placeholder="search">
+
+                        </mat-form-field>
+                        <mat-option hidden="true" [value]="null">none</mat-option>
+                        <ng-container *ngFor="let revenues of selectData |filter:searchRevenue">
+                            <mat-option [value]="revenues.id">{{ revenues.name }}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field> -->
+                <app-selection-tree-incoming-entry-type
+                  *ngIf="incomingEntryTypeOptions"
+                  [treeValue]="incomingEntryTypeOptions"
+                  placeholder="Loại thu"
+                  [selected]="revenues.parentId"
+                  [isRequired]="false"
+                  (selectChange)="revenues.parentId = $event"
+                  [isDisableParent]="false"
+                  space="1.5"
+                >
+                </app-selection-tree-incoming-entry-type>
+            </div>
+            <div class="col-md-2">
+                <mat-icon style="margin-top: 10px; cursor: pointer;" *ngIf="revenues.parentId != null" (click)="revenues.parentId= null">clear</mat-icon>
+                </div>
+        </div>
+
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label">
+                Status
+            </label>
+            <div class="col-md-4">
+                <mat-form-field  appearance="outline">
+                    <mat-select  [(ngModel)]="revenues.isActive" name="status" id="status" [disabled]="!isEdit">
+                        <mat-option [value]="true">
+                            Active
+                        </mat-option>
+                        <mat-option [value]="false">
+                            Inactive
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <mat-checkbox class="ml-1" [(ngModel)]="revenues.revenueCounted" name="reveCount">
+                {{ "m3_child5.count" | translate }}</mat-checkbox>
+        </div>
+        <div class="form-group row d-flex justify-content-between">
+            <button class="btn btn-default mx-2" mat-dialog-close>
+                {{ "action.cancel" | translate }}
+            </button>
+            <button class="btn btn-primary" cdkFocusInitial [disabled]="!createRevenuesForm.valid || isDisable"
+                (click)="saveAndClose()">
+                {{ "action.save" | translate }}
+            </button>
+        </div>
+    </div>
+</form>

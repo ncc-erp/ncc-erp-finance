@@ -1,0 +1,86 @@
+name: Deploy Finance_BE Dev
+on:
+  push:
+    branches:
+      - dev
+    paths:
+    - 'aspnet-core/**'
+    - '.github/workflows/deploy_server_dev_be.yml'
+
+jobs:
+  build:
+    runs-on: self-hosted
+    name: Build Finance_BE Dev
+    environment: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Backup Log
+        run: |
+          # cp -r /var/www/app_git/finfast/dev-dotnet-host-finfast/wwwroot/images/* /home/nccsoft/data_git/finfast/images/
+          # cp -r /var/www/app_git/finfast/dev-dotnet-host-finfast/wwwroot/outcomingentries/* /home/nccsoft/data_git/finfast/outcomingentries/
+          # cp -r /var/www/app_git/finfast/dev-dotnet-host-finfast/wwwroot/Uploads/* /home/nccsoft/data_git/finfast/Uploads/
+          cp -r /var/www/app_git/finfast/dev-dotnet-host-finfast/App_Data/Logs/* /home/nccsoft/data_git/finfast/Logs/
+
+      - name: Build Migrator
+        run: |
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core/src/FinanceManagement.Migrator
+          dotnet3 build
+          dotnet3 publish
+
+      - name: Copy New Migrator
+        run: |
+          cd aspnet-core/src/FinanceManagement.Migrator/bin/Debug/netcoreapp3.1/publish/
+          rm -rf appsettings.json
+          cp -r * /var/www/migrator_git/finfast/dev-dotnet-migrator-finfast/
+
+      - name: Build Host
+        run: |
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core
+          dotnet3 build
+          dotnet3 publish
+
+      - name: Copy New Host
+        run: |
+          cd aspnet-core/src/FinanceManagement.Web.Host/bin/Debug/netcoreapp3.1/publish/
+          rm -rf appsettings.json
+          cp -r * /var/www/app_git/finfast/dev-dotnet-host-finfast/
+  deploy:
+    runs-on: self-hosted
+    name: Deploy Finance_BE Dev
+    environment: dev
+    needs:
+      - build
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Up Data appsettings.json
+        run: |
+          cd aspnet-core/
+          echo '${{ secrets.APP_SETTING_DEV }}' > appsettings.json
+
+      - name: Migrate Database
+        run: |
+          sudo service erp-finfast-git stop
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core/
+          cp appsettings.json /var/www/migrator_git/finfast/dev-dotnet-migrator-finfast/
+          cd /var/www/migrator_git/finfast/dev-dotnet-migrator-finfast/
+          dotnet3 FinanceManagement.Migrator.dll -q
+
+      - name: Restart Server
+        run: |
+          cd aspnet-core/
+          cp appsettings.json /var/www/app_git/finfast/dev-dotnet-host-finfast/
+          cd /var/www/app_git/finfast/dev-dotnet-host-finfast/
+          mkdir -p /var/www/app_git/finfast/dev-dotnet-host-finfast/App_Data/Logs/
+          cp -r /home/nccsoft/data_git/finfast/Logs/* /var/www/app_git/finfast/dev-dotnet-host-finfast/App_Data/Logs/
+          chmod 777 -R App_Data/
+          # cp -r /home/nccsoft/data_git/finfast/* /var/www/app_git/finfast/dev-dotnet-host-finfast/wwwroot/
+          # chmod -R 777 /var/www/app_git/finfast/dev-dotnet-host-finfast/wwwroot/
+          sudo service erp-finfast-git start
+          sudo service erp-finfast-git status

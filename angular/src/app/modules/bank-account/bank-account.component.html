@@ -1,0 +1,213 @@
+<div id="bank-account">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h1>{{ 'm4_child1.bank account' | translate }}</h1>
+        </div>
+        <div class="col-6 text-right row justify-content-end">
+
+          <a *ngIf="permission.isGranted(Account_Directory_BankAccount_Create)" href="javascript:;" class="btn bg-blue"
+            (click)="creatBankAccount()">
+            <i class="fa fa-plus-square"></i>
+            {{ 'action.create' | translate }}
+          </a>
+          <div class="text-right ml-2">
+            <a href="javascript:;" class="btn btn-success" (click)="downloadFile()" *ngIf="permission.isGranted(Account_Directory_BankAccount_Export)">
+              <i class="fas fa-download mr-1"></i>
+              Export
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+  <section class="content px-2">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+
+          <div class="row">
+            <div class="input-group col-sm-12 col-md-4 col-xl-6">
+              <div class="input-group-prepend">
+                <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <input type="text" class="form-control" name="keyword" [placeholder]="'m4_child1.search' | translate"
+                [(ngModel)]="searchText" (keyup.enter)="getDataPage(1)" />
+
+            </div>
+
+            <div class="col-sm-12 col-md-2 col-xl-2">
+              <mat-form-field class="col-12" appearance="outline">
+                <mat-label>Loại đối tượng kế toán</mat-label>
+                <mat-select [(ngModel)]="searchAccountTypeEnum" (ngModelChange)="accountTypeEnumChange()">
+                  <ng-container *ngFor="let item of listAccountTypeEnum">
+                    <mat-option [value]="item.value">
+                      {{item.name}}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-sm-12 col-md-2 col-xl-2">
+              <custome-select (onSelect)="onAccountSelect($event)" className="col-12"
+                [defaultValue]="selectedAccountIds" [dropdownData]="listAccount" [label]="'Đối tượng kế toán'"
+                [placeholder]="'Đối tượng kế toán'"></custome-select>
+            </div>
+
+            <div class="col-sm-12 col-md-2 col-xl-1">
+              <mat-form-field class="col-12" appearance="outline">
+                <mat-label>Tiền tệ</mat-label>
+                <mat-select [(ngModel)]="searchCurrency" (selectionChange)="getDataPage(1)">
+                  <ng-container *ngFor="let item of listCurrency">
+                    <mat-option [value]="item.value">
+                      {{item.name}}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-sm-12 col-md-2 col-xl-1">
+              <mat-form-field class="col-12" appearance="outline">
+                <mat-label>Status</mat-label>
+                <mat-select [(ngModel)]="searchStatus" (selectionChange)="getDataPage(1)">
+                  <mat-option [value]="-1">
+                    All
+                  </mat-option>
+                  <mat-option [value]="1">
+                    Active
+                  </mat-option>
+                  <mat-option [value]="0">
+                    Inactive
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+
+          </div>
+        </div>
+
+        <div class="card-body table-responsive p-4">
+          <table style="border-collapse: collapse;"
+            class="table table-hover text-nowrap" [busy]="isTableLoading">
+            <thead class="bg-light">
+              <tr>
+                <th style="text-align: center;width: 80px !important;padding: 12px;">{{ 'm4_child1.no' |
+                  translate }}</th>
+                <th style="text-align: center;">Tên tài khoản / số tài khoản</th>
+                <th style="text-align: center; max-width: 200px;">{{ 'm4_child1.bank' | translate }}</th>
+                <th style="text-align: center;">{{ 'm4_child1.currency' | translate }}</th>
+                <th style="text-align: center;">{{ 'm4_child1.account' | translate }}</th>
+                <!-- <th style="text-align: center;" class="text-center"> Số dư đầu kì</th>
+                <th style="text-align: center;">Số dư hiện tại</th> -->
+                <th style="text-align: center;">IsActive</th>
+                <th
+                  *ngIf="permission.isGranted(Account_Directory_BankAccount_Delete) || permission.isGranted(Account_Directory_BankAccount_Edit)"
+                  style="width: 200px;">{{ 'm4_child1.action' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="elnino"
+                *ngFor="let data of accounts| paginate: {id: 'server',itemsPerPage: pageSize,currentPage: pageNumber,totalItems: totalItems},let index = index">
+                <td style="padding: 12px;" class="text-center">{{index + 1 + (pageNumber - 1)*pageSize}}
+                </td>
+                <td >
+                  <div class="hyperlink" (click)="showDetail(data.id)" *ngIf="permission.isGranted(Account_Directory_BankAccount_ViewDetail);else detail">
+                    {{data.holderName}}
+                    <br/>
+                    {{data.bankNumber}}
+                  </div>
+                  <ng-template #detail>
+                    {{data.holderName}}
+                    <br/>
+                    {{data.bankNumber}}
+                  </ng-template>
+
+
+                </td>
+                <td style="max-width: 200px; white-space: normal;">{{data.bankName}}</td>
+                <td>{{data.currencyName}}</td>
+                <td>{{data.accountName}}</td>
+                <!-- <td class="text-right">{{data.baseBalance | number:'1.0':'en-US'}} {{data.currencyName}}</td>
+                <td class="text-right">{{data.amount | number:'1.0':'en-US'}} {{data.currencyName}}</td> -->
+                <td class="text-center isActive">
+                  <div class="custom-control custom-checkbox" (click)="handleChangeStatus(data)" *ngIf="permission.isGranted(Account_Directory_BankAccount_ActiveDeactive);else notAllowActiveDeative">
+                    <input [checked]="data.isActive" type="checkbox" class="custom-control-input" disabled />
+                    <label class="custom-control-label"></label>
+                  </div>
+                  <ng-template #notAllowActiveDeative>
+                    <div  class="custom-control custom-checkbox">
+                      <input [checked]="data.isActive" type="checkbox" class="custom-control-input" disabled />
+                      <label class="custom-control-label"></label>
+                    </div>
+                  </ng-template>
+
+                </td>
+                <td class="text-center "
+                  *ngIf="permission.isGranted(Account_Directory_BankAccount_Delete) || permission.isGranted(Account_Directory_BankAccount_Edit)"
+                  style="padding: 12px;">
+                  <div style="display: inline-block; margin-top: 10px;">
+                    <button [disabled]="data.lockedStatus"
+                    *ngIf="permission.isGranted(Account_Directory_BankAccount_Edit)" type="button"
+                    class="btn btn-sm bg-secondary mr-1" (click)="editBankAccount(data);$event.stopPropagation()">
+                    <i class="fas fa-pencil-alt"></i>
+                    {{ 'action.edit' | translate }}
+                  </button>
+                  <button [disabled]="data.lockedStatus"
+                    *ngIf="permission.isGranted(Account_Directory_BankAccount_Delete)" type="button"
+                    class="btn btn-sm bg-danger ml-1" (click)="delete(data);$event.stopPropagation()">
+                    <i class="fas fa-trash"></i>
+                    {{ 'action.delete' | translate }}
+                  </button>
+                  </div>
+                  <i *ngIf="data.lockedStatus==true && permission.isGranted(Account_Directory_BankAccount_Unlock)"
+                    class="fas fa-lock ml-2" data-toggle="tooltip" title="Locked - click to unlock!"
+                    (click)="unlockBankAccount(data)"></i>
+                  <i *ngIf="data.lockedStatus==false && permission.isGranted(Account_Directory_BankAccount_Lock)"
+                    class="fas fa-lock-open ml-2" data-toggle="tooltip" title="Unlocked - click to lock!"
+                    (click)="lockBankAccount(data)"></i>
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-light border-top">
+          <div class="row">
+            <div class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center just">
+              <button class="btn btn-secondary" (click)="refresh()">
+                <i class="fas fa-redo-alt"></i>
+              </button>
+              <mat-form-field style=" width: 20%; margin-left: 30px">
+                <mat-label>Number items</mat-label>
+                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                  <mat-option [value]="5"> 5 </mat-option>
+                  <mat-option [value]="10"> 10 </mat-option>
+                  <mat-option [value]="20"> 20 </mat-option>
+                  <mat-option [value]="50"> 50 </mat-option>
+                  <mat-option [value]="100"> 100 </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-sm-4 col-12 justify-content-center d-flex align-items-center">
+              <p class="mb-0 ">Total: {{ totalItems }}</p>
+            </div>
+            <div class="col-sm-4 col-12 d-flex align-items-center justify-content-end">
+              <div class="float-sm-right">
+                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                </abp-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

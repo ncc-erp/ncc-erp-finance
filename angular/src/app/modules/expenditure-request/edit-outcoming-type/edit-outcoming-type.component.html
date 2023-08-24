@@ -1,0 +1,36 @@
+<div id="edit-report-date">
+    <h2 mat-dialog-title>Sửa loại yêu cầu: {{data.name}}</h2>
+
+    <div mat-dialog-content>
+        <div class="row">
+            <label class="col-4 mt-2" required>
+                Loại:
+            </label>
+
+            <div class="col-8">
+                    <mat-form-field class="col" appearance="outline">
+                      <mat-label>Loại chi</mat-label>
+                      <mat-select [(ngModel)]="outcomingEntry.outcomingEntryTypeId"
+                        (openedChange)="selectionOutcomingOpenChange($event)">
+                        <mat-form-field class="w-100 px-3 selection-input-seach-hanging-above">
+                          <input type="text" matInput placeholder="Loại chi" [(ngModel)]="searchOutcoming"
+                            name="searchOutcoming" (keydown)="$event.stopPropagation()" #inputSearchOutcoming />
+                        </mat-form-field>
+
+                        <mat-option *ngFor="let node of treeOutcomingEntries | filter:searchOutcoming"
+                          [disabled]="node.children.length>0" [value]="node.item.id">
+                          <span [innerHtml]="node.paddingLevel"></span><span [ngClass]="node.children.length>0?'parent':''">
+                            {{node.item.name}}
+                          </span>
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+            </div>
+        </div>
+    </div>
+
+    <div mat-dialog-actions class="d-flex justify-content-end mr-2">
+        <button class="btn btn-default mx-2" mat-dialog-close>{{ "action.cancel" | translate }}</button>
+        <button class="btn btn-primary" [disabled]="isSaving" (click)="onSave()">{{ "action.save" | translate }}</button>
+    </div>
+</div>

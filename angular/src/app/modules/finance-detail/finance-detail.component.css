@@ -1,0 +1,98 @@
+tr,
+th,
+td {
+  border: 0.2px solid rgba(204, 204, 204, 0.35);
+}
+::ng-deep #finance-detail .mat-tab-list .mat-tab-labels .mat-tab-label-active {
+  font-weight: bold;
+}
+.read-mode {
+  border: none !important;
+}
+/* :read-only{
+    background: none;
+} */
+.detail :read-only {
+  background: none;
+}
+.hyperlink:hover {
+  cursor: pointer;
+}
+.hyperlink {
+  color: #007bff;
+}
+::ng-deep #finance-detail .mat-form-field-flex > .mat-form-field-infix {
+  padding: 0.4em 0px !important;
+}
+::ng-deep #finance-detail .mat-form-field-label-wrapper {
+  top: -1.5em;
+}
+/* ::ng-deep #finance-detail .mat-form-field-flex {
+  background: white;
+} */
+::ng-deep #finance-detail
+  .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float
+  .mat-form-field-label {
+  transform: translateY(-1.1em) scale(0.75);
+  width: 133.33333%;
+}
+::ng-deep #finance-detail .mat-form-field-appearance-legacy {
+  height: 0;
+}
+::ng-deep #finance-detail .date-picker .mat-form-field-wrapper .mat-form-field-underline {
+  height: 0;
+}
+::ng-deep #finance-detail .date-picker .mat-form-field-infix {
+  border: 0;
+  margin: 3px 0 0 6px;
+}
+
+::ng-deep #request-payment .mat-form-field-appearance-legacy .mat-form-field-underline {
+  bottom: 0px !important;
+}
+
+::ng-deep #request-payment .mat-form-field-wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.background-color-gray{
+  background-color: #f8f9fa;
+};
+.readonly-block {
+  cursor: not-allowed;
+}
+
+.readonly-block .readonly-select {
+  pointer-events: none;
+}
+.textarea-height{
+  height: 35px;
+}
+.border-radius-right{
+  border-top-right-radius: 0.25rem !important; 
+  border-bottom-right-radius: 0.25rem !important;
+}
+.START {
+  color: #4646c7;
+}
+.PENDINGIT {
+  color: rgb(112, 133, 19);
+}
+.PENDINGCEO {
+  color: #da920f;
+}
+.REJECT {
+  color: red;
+}
+.APPROVED {
+  color: #39c339;
+}
+.END {
+  color: #a9a8a8;
+}
+.TRANSFERED {
+  color: #9c27b0;
+}
+.PENDINGCFO {
+  color: #009688;
+}

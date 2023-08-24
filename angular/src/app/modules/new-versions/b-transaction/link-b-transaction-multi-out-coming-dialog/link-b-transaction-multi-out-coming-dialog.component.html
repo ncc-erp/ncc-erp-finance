@@ -1,0 +1,260 @@
+<form
+  class="form-horizontal ui-form-new f-size"
+  autocomplete="off"
+  #linkOutcomingEntry="ngForm"
+  novalidate
+  id="linkOutcomingEntry"
+>
+  <div
+    class="modal-header"
+    cdkDrag
+    cdkDragRootElement=".cdk-overlay-pane"
+    cdkDragHandle
+  >
+    <h4 class="modal-title">
+      Link nhiều yêu cầu chi với Biến động số dư: #{{ data.bTransactionId }} (
+      <strong>
+        <span [style.color]="data.moneyColor">{{ data.money }}</span>
+        <span [style.color]="data.currencyColor"> {{ data.currencyName }}</span>
+      </strong>
+      )
+    </h4>
+    <button type="button" class="close" aria-label="Close" mat-dialog-close>
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="fixedBody">
+      <div class="form-group row required">
+        <label class="col-md-3 col-form-label">
+          {{ "Chọn nhiều request chi" | localize }}:
+        </label>
+        <div class="col-md-9">
+          <mat-form-field class="w-inherit" appearance="outline">
+            <mat-select
+              name="request-chi"
+              #matSelect
+              [placeholder]="
+                outcommingEntryOptions.length ? 'Request chi' : 'No data select'
+              "
+              (openedChange)="outcommingSelectOpenedChange($event)"
+              [(ngModel)]="outcomingEntryIds"
+              disableOptionCentering="true"
+              multiple
+            >
+              <mat-form-field
+                class="w-100 px-3 selection-input-seach-hanging-above"
+              >
+                <input
+                  type="text"
+                  matInput
+                  placeholder="Search request chi"
+                  [(ngModel)]="searchOutComming"
+                  name="searchOutComming"
+                  (keydown)="$event.stopPropagation()"
+                  (ngModelChange)="searchOutCommingChange()"
+                  #inputSearchRequestChi
+                />
+              </mat-form-field>
+              <mat-option
+                class="hide-checkbox"
+                data-toggle="tooltip"
+                title="{{ outcomming.name }}"
+                [value]="outcomming.value"
+                *ngFor="let outcomming of outcommingEntryOptions"
+                (click)="addRequestChi(outcomming)"
+              >
+                <ng-container *ngIf="outcomming.value && checkboxEnd">
+                  <span
+                    [ngClass]="
+                      APP_CONSTANT.StatusStyle[outcomming.statusCode.trim()]
+                    "
+                  >
+                    {{ outcomming.statusName }}
+                  </span>
+                </ng-container>
+                {{ outcomming.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- <div class="col-md-2 d-flex justify-content-end align-items-center">
+          <mat-checkbox
+            id="checkbox-end"
+            [(ngModel)]="checkboxEnd"
+            (ngModelChange)="checkboxEndChange()"
+            name="checkboxEnd"
+            >Hiện đã thực thi</mat-checkbox
+          >
+        </div> -->
+      </div>
+      <div
+        *ngIf="listOutcommingEntrySelected.length"
+        class="form-group row required fixTableHead col-md-12"
+      >
+        <tr class="w-100 tr-outcomming selection-input-seach-hanging-above">
+          <button class="btn btn-default" (click)="cancelAllSelectOutComming()">
+            Clear all
+          </button>
+
+          <strong class="ml-2">Tổng tiền request chi: {{totalSelectedOutcome | formatMoney}} {{data.currencyName}}</strong>
+        </tr>
+        <tr
+          class="w-100 tr-outcomming overflow-hidden white-space-nowrap"
+          *ngFor="let outcomming of listOutcommingEntrySelected"
+          data-toggle="tooltip"
+          [title]="outcomming.name"
+        >
+          <button
+            class="btn btn-default btn-sm mr-2"
+            (click)="cancelSelectOutComming(outcomming.value)"
+          >
+            <i class="fas fa-times text-danger"></i>
+          </button>
+          <ng-container *ngIf="outcomming.value && checkboxEnd">
+            <span
+              [ngClass]="APP_CONSTANT.StatusStyle[outcomming.statusCode.trim()]"
+            >
+              {{ outcomming.statusName }}
+            </span>
+          </ng-container>
+          <span class="ml-2">{{ outcomming.name }}</span>
+        </tr>
+      </div>
+      <div class="form-group row required padding-top-5px">
+        <label class="col-md-3 col-form-label">
+          {{ "Chọn tài khoản ngân hàng nhận" | localize }}:
+        </label>
+        <div class="col-md-9" style="padding: 0px">
+          <div class="col-md-12 item-group div-padding-bottom-5px">
+            <mat-form-field class="w-inherit" appearance="outline">
+              <mat-label>{{ "Loại Đối tượng kế toán" | localize }}</mat-label>
+              <mat-select
+                [(ngModel)]="accountTypeId"
+                name="accountTypeIdp"
+                #accountTypeControl="ngModel"
+                #accountTypeIdEl
+                (ngModelChange)="onAccountTypeChange()"
+              >
+                <mat-option
+                  *ngFor="let accountTypeOption of accountTypeOptions"
+                  [value]="accountTypeOption.value"
+                >
+                  {{ accountTypeOption.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-md-12 item-group div-padding-bottom-5px">
+            <mat-form-field class="w-inherit" appearance="outline">
+              <mat-label>{{ "Đối tượng kế toán" | localize }}</mat-label>
+              <mat-select
+                [(ngModel)]="accountId"
+                (ngModelChange)="onAccountChange()"
+                name="accountId"
+                #accountControl="ngModel"
+                #accountIdEl
+              >
+                <mat-option
+                  *ngFor="let accountOption of accountOptions"
+                  [value]="accountOption.value"
+                >
+                  {{ accountOption.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-md-12 item-group div-padding-bottom-5px">
+            <mat-form-field class="w-inherit" appearance="outline">
+              <mat-label *ngIf="linkMultipleOutcomingEntryWithBTransactionDto.toBankAccountId">{{ "Tài khoản ngân hàng" | localize }}</mat-label>
+              <mat-select
+                [(ngModel)]="
+                  linkMultipleOutcomingEntryWithBTransactionDto.toBankAccountId
+                "
+                (selectionChange)="onBankAccountChange()"
+                (openedChange)="bankAccountSelectOpenedChange($event)"
+                name="bankAccountId"
+                placeholder="Tài khoản ngân hàng"
+                #bankAccountControl="ngModel"
+                #bankAccountIdEl
+                required
+              >
+                <mat-form-field
+                  class="w-100 px-3 selection-input-seach-hanging-above"
+                >
+                  <input
+                    type="text"
+                    [(ngModel)]="searchBankAccoutName"
+                    (ngModelChange)="searchBankAccoutNameChange()"
+                    name="searchBankAccoutName"
+                    placeholder="Nhập tên tài khoản ngân hàng"
+                    #searchBankAccout="ngModel"
+                    (keydown)="$event.stopPropagation()"
+                    matInput
+                    #inputSearchBankAccount
+                  />
+                </mat-form-field>
+                <mat-option
+                  *ngFor="let transactionStatus of accountBankOptions"
+                  [value]="transactionStatus.value"
+                >
+                  {{ transactionStatus.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row col" *ngIf="isShowExchangeRate" style="margin-top: 1em">
+          <label class="col-md-3">{{ "Tỉ giá" | localize }}: </label>
+          <div class="col-md-9 exchange-rate">
+            <label class="col-2 exchange-rate">
+              1 {{ data.currencyName }} =
+            </label>
+            <div class="col-5">
+              <input
+                type="text"
+                mask="separator"
+                thousandSeparator=","
+                allowNegativeNumbers="true"
+                class="form-control"
+                name="exchangeRate"
+                [(ngModel)]="
+                  linkMultipleOutcomingEntryWithBTransactionDto.exchangeRate
+                "
+                required
+                #exchangeRate="ngModel"
+                #exchangeRateEl
+                placeholder="Nhập tỉ giá..."
+              />
+              <abp-validation-summary
+                [control]="exchangeRate"
+                [controlEl]="exchangeRateEl"
+              >
+              </abp-validation-summary>
+            </div>
+            <label class="col-1 exchange-rate"> {{defaultCurrencyCode}} </label>
+          </div>
+        </div>
+      </div>
+      <p *ngIf="errorMess" class="err-mess">
+        {{ errorMess }}
+      </p>
+      <div class="row d-flex justify-content-between mt-4 px-1">
+        <button mat-dialog-close class="btn btn-default">Hủy</button>
+        <button
+          (click)="process()"
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!isValidLinkOutcome ||
+            !linkMultipleOutcomingEntryWithBTransactionDto.toBankAccountId ||
+            !linkMultipleOutcomingEntryWithBTransactionDto.outcomingEntryIds ||
+            !linkMultipleOutcomingEntryWithBTransactionDto.outcomingEntryIds
+              .length
+          "
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

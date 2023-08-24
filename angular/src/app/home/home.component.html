@@ -1,0 +1,362 @@
+﻿<div id="home" *ngIf="isDisplayHomePage()">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <h1 class="d-inline">{{ "menu.menu1" | translate }}</h1>
+          <button class="btn btn-success float-right" *ngIf="isShowExportBtn()" (click)="exportReport()">
+            <i class="fas fa-download mr-1"></i>{{ "menu1.export" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content px-2">
+    <div class="container-fluid">
+      <div class="row" [busy]="isLoadingStatistic">
+        <div class="col-lg-9 col-md-12 col-sm-12 request">
+          <div class="card mr-2">
+            <div class="block-title mx-3 mt-3">
+              Request chi
+            </div>
+            <div class="row mx-2 my-3">
+              <div class="col-lg-2 col-md-4 col-sm-4 col-block mt-2" *ngFor="let item of outcomingEntryStatistics">
+                <div class="block my-1" [ngClass]="APP_CONSTANT.OverviewOutcomingEntry[item.statusCode.trim()]">
+                  <div class="block_item d-flex justify-content-between">
+                    <div class="count-request"><a [href]="getExpenditureRequestUrl(item)"
+                        target="_blank">{{item.count}}</a></div>
+                    <div class="text-right mr-2 remindCEO" *ngIf="checkSendPendingCEO(item)"><a (click)="sendKomuCEO()"
+                        class="text-white">
+                        <i class="fas fa-comment-dots"></i>
+                        {{ "menu1.action.remind" | translate }}
+                      </a></div>
+                    <div class="text-right mr-2 remindCEO" *ngIf="checkSendPendingCEORequestChange(item)"><a
+                        (click)="sendKomuCEORequestChange()" class="text-white">
+                        <i class="fas fa-comment-dots"></i>
+                        {{ "menu1.action.remind" | translate }}
+                      </a></div>
+                  </div>
+
+                  <div class="block_item statusName mt-3"><a [href]="getExpenditureRequestUrl(item)"
+                      target="_blank">{{item.statusName}}</a></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-12 col-sm-12">
+          <div class="card ml-2">
+            <div class="block-title mx-3 mt-3">
+              Biến động số dư
+            </div>
+            <div class="row mx-2 my-3">
+              <div class="col-lg-6 col-md-4 col-sm-4 col-xs-4 col-block  mt-2"
+                *ngFor="let item of bTransactionStatistics">
+                <div class="block my-1" [ngClass]="APP_CONSTANT.OverviewBTransactionStatus[item.statusName]">
+                  <div class="block_item count-request"><a [href]="getBtransactionUrl(item.statusName)"
+                      target="_blank">{{item.quantity}}</a></div>
+                  <div class="block_item statusName mt-3"><a [href]="getBtransactionUrl(item.statusName)"
+                      target="_blank">{{item.statusName}}</a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-9 col-sm-12">
+          <div class="card mr-2" [busy]="isLoadingStatistic">
+            <div class="row w-100">
+              <div class="col-lg-2 col-sm-12">
+                <div class="block-title mx-3 mt-3">
+                  Khách hàng nợ
+                </div>
+                <div class="row mx-2 my-3">
+                  <div class="col-lg-12 col-block">
+                    <div class="block my-1" style="background-color: #28A745;color: #fff;">
+                      <div class="block_item count-request">
+                        <a [href]="getInvoiceUrl()" target="_blank">{{invoiceStatistics.quantityInvoiceDebt}}</a>
+                      </div>
+                      <div class="block_item mt-3"><a [href]="getInvoiceUrl()" target="_blank">Khách hàng nợ</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-9 col-sm-12">
+                <div>
+                  <div class="block-title mx-3 mt-3">
+                    Theo Currency
+                  </div>
+                  <div class="mx-2 mb-3 d-flex currency" style="margin-top: 40px">
+                    <div class="block mr-3" style="background-color: #91CC75;"
+                      *ngFor="let item of invoiceStatistics.invoiceCurrencies">
+                      <div class="block_item count-request">{{item.currencyCode}}</div>
+                      <div class="block_item mt-2 mr-2 text-right">{{item.valueFormat}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-12 col-sm-12">
+          <div class="card ml-2">
+            <div class="block-title mx-3 mt-3">
+              Nhân viên nợ
+            </div>
+            <div class="row mx-2 my-3">
+              <div class="col-lg-6 col-md-4 col-sm-4 col-xs-4 col-block">
+                <div class="block my-1 bg-warning">
+                  <div class="block_item count-request"><a (click)="viewDetailNhanVienNo()"
+                      target="_blank">{{debtStatistic?.employeeCount}}</a></div>
+                  <div class="block_item statusName mt-3"><a target="_blank" (click)="viewDetailNhanVienNo()">Nhân viên
+                      nợ</a></div>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-4 col-sm-4 col-xs-4 col-block">
+                <div class="block my-1 bg-success">
+                  <div class="block_item count-request"><a (click)="viewDetailNhanVienNo()" style="font-size: 24px;"
+                      target="_blank">{{debtStatistic?.totalLoan | formatMoney}}</a></div>
+                  <div class="block_item statusName mt-3"><a target="_blank" (click)="viewDetailNhanVienNo()">Tổng
+                      nợ</a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row" [busy]="isLoadingChart">
+        <div class="col-md-12">
+          <div>
+            <div class="">
+
+              <div class="card pb-2">
+                <div class="px-4 mt-2 d-flex">
+                  <mat-form-field appearance="outline" MMYYDateFormat class="filter-date">
+                    <mat-label>từ tháng</mat-label>
+                    <input placeholder="Choose a date" matInput [matDatepicker]="pickerStartDate" name="startDate"
+                      [formControl]="startDate" (keyup.enter)="keyUpEnterStartDate(startDateString)" #startDateString />
+                    <mat-datepicker-toggle matSuffix [for]="pickerStartDate"></mat-datepicker-toggle>
+                    <mat-datepicker startView="multi-year" #pickerStartDate
+                      (monthSelected)="setStartDate($event, pickerStartDate)"></mat-datepicker>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" MMYYDateFormat class="filter-date ml-2">
+                    <mat-label>đến tháng</mat-label>
+                    <input placeholder="Choose a date" matInput [matDatepicker]="pickerEndDate" name="date"
+                      [formControl]="endDate" (keyup.enter)="keyUpEnterEndDate(endDateString)" #endDateString />
+                    <mat-datepicker-toggle matSuffix [for]="pickerEndDate"></mat-datepicker-toggle>
+                    <mat-datepicker startView="multi-year" #pickerEndDate
+                      (monthSelected)="setEndDate($event, pickerEndDate)"></mat-datepicker>
+                  </mat-form-field>
+                  <div class="example-section">
+                    <mat-checkbox [checked]="isByPeriod" (change)="onChangePeriod(viewByPeriod)" #viewByPeriod
+                      class="mt-3 ml-3">Chỉ lấy data theo kỳ</mat-checkbox>
+                  </div>
+                </div>
+
+                <div #lineChart1 id="main" style="height: 380px; width: 100%"></div>
+
+                <div class="detail card-body table-responsive">
+                  <table style="border-collapse: collapse" class="table table-hover text-nowrap table-striped">
+                    <thead class="bg-light">
+                      <th>Loại</th>
+                      <th *ngFor="let label of tableData?.labels; let i = index">
+                        {{label}}
+                      </th>
+                      <th class="text-center">Total</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of tableData?.data; let index = index">
+                        <td>
+                          <span
+                            [ngClass]="index == getIndexTotalIncome(tableData?.data) || index == getIndexTotalOutcome(tableData?.data) ? 'text-bold' : ''">
+                            {{item.name}}
+                          </span>
+                        </td>
+                        <td class="text-right" *ngFor="let data of item.data">
+                          <span
+                            [ngClass]="index == getIndexTotalIncome(tableData?.data) || index == getIndexTotalOutcome(tableData?.data) ? 'text-bold' : ''">
+                            {{
+                            data | number: "1.0":"en-US"
+                            }}
+                          </span>
+                        </td>
+                        <td class="text-right">
+                          <span
+                            [ngClass]="index == getIndexTotalIncome(tableData?.data) || index == getIndexTotalOutcome(tableData?.data) ? 'text-bold' : ''">{{item.total}}</span>
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <section class="baocao">
+              <div class="card px-4 py-2">
+                <div id="baocao-title" class="d-flex">
+                  <h2 class="block-title" style="line-height: 47px;">Báo cáo thu/chi: </h2>
+                  <mat-form-field appearance="outline" class="ml-3 filter-date">
+                    <mat-label>từ ngày</mat-label>
+                    <input matInput [matDatepicker]="pickerBCFromDate" [(ngModel)]="baoCaoFromDate"
+                      (ngModelChange)="onBaoCaoFilter()" name="baoCaoFromDate">
+                    <mat-datepicker-toggle matIconSuffix [for]="pickerBCFromDate"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerBCFromDate></mat-datepicker>
+                  </mat-form-field>
+                  <mat-form-field appearance="outline" class="filter-date ml-3">
+                    <mat-label>đến ngày</mat-label>
+                    <input matInput [matDatepicker]="pickerBCToDate" [(ngModel)]="baoCaoToDate"
+                      (ngModelChange)="onBaoCaoFilter()" name="baoCaoToDate">
+                    <mat-datepicker-toggle matIconSuffix [for]="pickerBCToDate"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerBCToDate></mat-datepicker>
+                  </mat-form-field>
+                </div>
+                <div class="table-responsive mt-2">
+                  <table class="table baocao-tbl">
+                    <thead>
+                      <tr>
+                        <th rowspan="2" class="gray-thead">Chi nhánh</th>
+                        <th colspan="3" class="blue-thead">Thu</th>
+                        <th colspan="3" class="yellow-thead">Chi</th>
+                        <th colspan="2" class="green-thead">Lợi nhuận</th>
+                      </tr>
+                      <tr>
+                        <th class="blue-thead">Tổng thu
+                          <div>(A)</div>
+                        </th>
+                        <th class="blue-thead">Thu thực
+                          <div>(A1)</div>
+                        </th>
+                        <th class="blue-thead">Thu không thực
+                          <div>(A)-(A1)</div>
+                        </th>
+                        <th class="yellow-thead">Tổng chi
+                          <div>(B)</div>
+                        </th>
+                        <th class="yellow-thead">Chi thực
+                          <div>(B1)</div>
+                        </th>
+                        <th class="yellow-thead">Chi không thực
+                          <div>(B)-(B1)</div>
+                        </th>
+                        <th class="green-thead">Tổng lợi nhuận
+                          <div>(C)=(A-B)</div>
+                        </th>
+                        <th class="green-thead">Tổng lợi nhuận thực
+                          <div>(C1)=(A1)-(B1)</div>
+                        </th>                        
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of baoCaoChung; let i = index">
+                        <td [ngClass]="isTotal(i) ? 'text-bold chenhlech-cells' : ''">{{data.branchName}}</td>
+                        <td [ngClass]="isTotal(i) ? 'text-bold chenhlech-cells' : ''"
+                         class="text-right blue-td"
+                          ><span (click)="viewBaoCaoThuDetail(null,null)"
+                          *ngIf="data.branchName === 'Tổng cộng'"
+                           class="link pointer"
+                              >{{data.tongThuFormat}}</span>
+                        </td>
+                        <td [ngClass]="isTotal(i) ? 'text-bold chenhlech-cells' : ''"
+                          class="text-right blue-td  ">
+                          <span (click)="viewBaoCaoThuDetail(true,true)"
+                          *ngIf="data.branchName === 'Tổng cộng'"
+                           class="link pointer"
+                            >{{data.tongThuThucFormat}}</span>
+                        </td>
+                        <td [ngClass]="isTotal(i) ? 'text-bold chenhlech-cells' : ''"
+                          class="text-bold blue-td">
+                          <span (click)="viewBaoCaoThuDetail(false,false)"
+                          *ngIf="data.branchName === 'Tổng cộng'"
+                          class="link pointer">{{data.thuKhongThucFormat}}</span>
+
+                        </td>
+                        <td [ngClass]="{'text-bold chenhlech-cells' : isTotal(i),'red-td': chiKhongThucColor(i, data.chiKhongThucFormat)}"
+                            class="text-right yellow-td "
+                            ><span (click)="viewBaoCaoChiDetail(data.branchName,data.branchId, -1)"
+                              class="link pointer">{{data.tongChiFormat}}</span></td>
+                          <td [ngClass]="{'text-bold chenhlech-cells' : isTotal(i),'red-td': chiKhongThucColor(i, data.chiKhongThucFormat)}"
+                            class="text-right yellow-td">
+                            <span (click)="viewBaoCaoChiDetail(data.branchName,data.branchId, 0)"
+                              class="link pointer ">{{data.tongChiThucFormat}}</span></td>
+                          <td [ngClass]="{'text-bold chenhlech-cells' : isTotal(i),'red-td': chiKhongThucColor(i, data.chiKhongThucFormat)}" 
+                            class="text-right yellow-td">                            
+                            <span (click)="viewBaoCaoChiDetail(data.branchName,data.branchId, 1)"
+                            class="link pointer">{{data.chiKhongThucFormat}}</span>
+                          </td>   
+                        <td [ngClass]="isTotal(i) ? 'text-bold chenhlech-cells' : ''" class="text-right green-td">
+                          <span *ngIf="data.branchName === 'Tổng cộng'">{{data.duFormat}}</span>
+                        </td>
+                        <td [ngClass]="isTotal(i) ? 'text-bold chenhlech-cells' : ''" class="text-right green-td">
+                          <span *ngIf="data.branchName === 'Tổng cộng'">{{data.duThucFormat}}</span>
+                        </td>
+                        
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+            <div class="text-center">
+              <div class="card mb-2">
+                <div class="row mx-3" style="height: 50px; justify-content: center">
+                  <div class="px-2" style="margin-top: 10px">
+                    <button class="btn btn-sm btn-primary mx-2" (click)="nextOrPre('pre')">
+                      <i class="fas fa-chevron-left mr-2"></i>prev
+                    </button>
+                    <button class="btn btn-sm btn-primary mx-2" (click)="nextOrPre('next')">
+                      <i class="fas fa-chevron-right mr-2"></i>next
+                    </button>
+                  </div>
+                  <span class="title-date mx-2" style="margin-top: 13px"><b *ngIf="distanceFromAndToDate != 'All Time'"
+                      style="font-size: 15px">{{ fromDate | date: "dd/MM/yyy" }} -
+                      {{ toDate | date: "dd/MM/yyy" }}</b>
+                    <b style="font-size: 15px" *ngIf="distanceFromAndToDate == 'All Time'">
+                      {{ distanceFromAndToDate }}</b>
+                  </span>
+                  <mat-form-field appearance="outline">
+                    <mat-select [formControl]="viewChange" (selectionChange)="changeView(true)">
+                      <mat-option *ngFor="let item of APP_CONFIG.TypeViewHomePage" [value]="item.value">
+                        <p *ngIf="
+                            item.value !=
+                            APP_CONSTANT.TypeViewHomePage.CustomTime
+                          ">
+                          {{ item.name }}
+                        </p>
+                        <p *ngIf="
+                            item.value ==
+                            APP_CONSTANT.TypeViewHomePage.CustomTime
+                          " (click)="showPopup()">
+                          {{ item.name }}
+                        </p>
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="card">
+                    <div class="py-2 text-center" id="incomeChart" style="height: 290px; max-width: 100%"></div>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="card">
+                    <div class="py-2 text-center" id="outcomeChart" style="height: 290px; max-width: 100%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

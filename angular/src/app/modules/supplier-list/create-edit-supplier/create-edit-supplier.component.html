@@ -1,0 +1,72 @@
+<form class="form-horizontal" autocomplete="off" #createSupplier="ngForm">
+    <abp-modal-header  title=" {{ (data.command=='create' || data.command=='link') ?('m5_child2.createSupplier' | translate):('m5_child2.editSupplier' | translate) }}" (onCloseClick)="dialogRef.close()" >
+    </abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" >
+                {{ 'm3_child7.name' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="supplierName"  minlength="2" maxlength="64"
+                    required [(ngModel)]="supplier.name" #supplierName="ngModel" #supplierNameEl />
+                <abp-validation-summary [control]="supplierName" [controlEl]="supplierNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" >
+                {{ 'm3_child7.phoneNumber' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="tel" pattern="[0-9]*" class="form-control" name="supplierPhone" id="supplierPhone" maxlength="64" required
+                    [(ngModel)]="supplier.phoneNumber" #supplierPhone="ngModel" #supplierPhoneEl />
+                <abp-validation-summary [control]="supplierPhone" [controlEl]="supplierPhoneEl"></abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-md-3 col-form-label" >
+                {{ 'm3_child7.address' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="supplierAddress" id="supplierAddress"  maxlength="64"
+                     [(ngModel)]="supplier.address" #supplierAddress="ngModel" #supplierAddressEl />
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-md-3 col-form-label" >
+                {{ 'm3_child7.contactPersonName' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="supplierPerson" id="supplierPerson"
+                    maxlength="64"  [(ngModel)]="supplier.contactPersonName" #supplierPerson="ngModel" #supplierPersonEl />
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-md-3 col-form-label" >
+                {{ 'm3_child7.contactPersonPhone' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="tel" pattern="[0-9]*" class="form-control" name="personPhone" id="personPhone"
+                     maxlength="64"  [(ngModel)]="supplier.contactPersonPhone" #personPhone="ngModel"
+                    #personPhoneEl />
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-md-3 col-form-label" >
+                {{ 'm3_child7.taxNumber' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="tax" id="tax"  maxlength="64"
+                     [(ngModel)]="supplier.taxNumber" #tax="ngModel" #taxEl />
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group row d-flex justify-content-between mt-2" >
+        <button class="btn btn-default mx-2"  mat-dialog-close>{{ 'action.cancel' | translate}}</button>
+        <button  class="btn btn-primary text-white" (click)="saveAndClose()"
+             [disabled]="!createSupplier.form.valid || isDisable">{{ 'action.save' | translate
+            }}</button>
+    </div>
+</form>
+

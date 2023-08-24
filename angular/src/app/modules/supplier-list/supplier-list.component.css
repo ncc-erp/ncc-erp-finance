@@ -1,0 +1,15 @@
+tr,th,td {
+    border: .2px solid rgba(204,204,204,.35);
+}
+table{
+    width: 100%;
+}
+
+::ng-deep #supplier-list .mat-form-field-appearance-legacy .mat-form-field-underline {
+    bottom: 0px !important;
+}
+
+::ng-deep #supplier-list .mat-form-field-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+}

@@ -1,0 +1,168 @@
+<div id="list-b-transaction-log">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h2>{{ "Lịch sử crawl giao dịch" | localize }}</h2>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content px-2">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+          <div class="row-group">
+            <div class="col-4 item-group item-group--search input-group">
+              <div class="input-group-prepend">
+              <button
+                type="button"
+                class="btn bg-blue"
+                (click)="getFirstPage()"
+              >
+                <i class="fas fa-search"></i>
+              </button>
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                name="keyword"
+                placeholder="Tìm kiếm theo nội dung..."
+                [(ngModel)]="searchText"
+                (keyup.enter)="getFirstPage()"
+              />
+            </div>
+            <div class="col-2 item-group">
+              <mat-form-field class="w-inherit" appearance="outline">
+                <mat-label>{{ "Trạng thái" | localize }}</mat-label>
+                <mat-select
+                  [(ngModel)]="searchDetail.isValid"
+                  (selectionChange)="getFirstPage()"
+                >
+                  <mat-option
+                    *ngFor="let item of logStatuses"
+                    [value]="item.value"
+                  >
+                    {{ item.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-5 item-group date-selector">
+              <app-date-selector
+                (onDateSelectorChange)="onDateChange($event)"
+                [type]="defaultDateFilterType"
+                [label]="'Ngày giao dịch'"
+              ></app-date-selector>
+            </div>
+          </div>
+        </div>
+        <div class="card-body table-responsive p-4">
+          <table
+            style="border-collapse: collapse"
+            class="table table-hover text-nowrap"
+            [busy]="isTableLoading"
+          >
+            <thead class="bg-light">
+              <tr>
+                <th
+                  style="
+                    text-align: center;
+                    width: 50px !important;
+                    padding: 12px;
+                  "
+                >
+                  {{ "STT" | localize }}
+                </th>
+                <th class="text-center">{{"Key" | localize}}</th>
+                <th class="text-center" style="width: 550px">
+                  {{ "Nội dung giao dịch" | localize }}
+                </th>
+
+                <th style="width: 130px; text-align: center">
+                  {{ "Ngày giao dịch" | localize }}
+                </th>
+                <th style="width: 200px; text-align: center">
+                  {{ "Trạng thái" | localize }}
+                </th>
+                <th style="width: 200px; text-align: center">
+                  {{ "Ngày tạo" | localize }}
+                </th>
+                <th style="text-align: center">
+                  {{ "Nội dung lỗi" | localize }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let item of bTransactionLogs
+                    | paginate
+                      : {
+                          id: 'server',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems
+                        };
+                  let index = index
+                "
+              >
+                <td style="padding: 12px" class="text-center">
+                  {{ index + 1 + (pageNumber - 1) * pageSize }}
+                </td>
+                <td class="text-center">
+                  {{ item.key }}
+                </td>
+                <td>
+                  <p style="white-space: break-spaces;">{{ item.content }}</p>
+                </td>
+                <td class="">
+                  {{ item.timeAt | date: "dd/MM/yyyy HH:mm" }}
+                </td>
+                <td class="text-center">
+                  <span class="tag" [class]="getColor(item.isValid)">
+                    {{ item.status }}
+                  </span>
+                </td>
+                <td>
+                  <p class="mb-0 text-center">
+                    {{ item.creationTime | date: "dd/MM/yyyy HH:mm" }}
+                  </p>
+                </td>
+                <td>{{ item.errorMessage }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-light border-top">
+          <div class="row">
+            <div class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center just">
+              <button class="btn btn-secondary" (click)="refresh()">
+                <i class="fas fa-redo-alt"></i>
+              </button>
+              <mat-form-field style=" width: 20%; margin-left: 30px">
+                <mat-label>Number items</mat-label>
+                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                  <mat-option [value]="5"> 5 </mat-option>
+                  <mat-option [value]="10"> 10 </mat-option>
+                  <mat-option [value]="20"> 20 </mat-option>
+                  <mat-option [value]="50"> 50 </mat-option>
+                  <mat-option [value]="100"> 100 </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-sm-4 col-12 justify-content-center d-flex align-items-center">
+              <p class="mb-0 ">Total: {{ totalItems }}</p>
+            </div>
+            <div class="col-sm-4 col-12 d-flex align-items-center justify-content-end">
+              <div class="float-sm-right">
+                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                </abp-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

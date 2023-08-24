@@ -1,0 +1,89 @@
+<form autocomplete="off" #createEditPeriodForm="ngForm">
+    <abp-modal-header title=" {{ title }}" (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+    <ng-container *ngIf="data.isEditting; else create">
+        <div class="modal-body mt-2">
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label"s>
+                    Tên kì:
+                </label>
+                <div class="col-md-9">
+                    <input type="text" name="periodName" [(ngModel)]="period.name" class="form-control" required placeholder="enter name"
+                        #periodName="ngModel" #periodNameEl>
+                    <abp-validation-summary [control]="periodName" [controlEl]="periodNameEl">
+                    </abp-validation-summary>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+    <ng-template #create>
+        <div class="modal-body">
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label">
+                    Tên kì:
+                </label>
+                <div class="col-md-9">
+                    <input type="text" name="periodName" [(ngModel)]="period.name" class="form-control" required placeholder="Nhập tên"
+                        #periodName="ngModel" #periodNameEl>
+                    <abp-validation-summary [control]="periodName" [controlEl]="periodNameEl">
+                    </abp-validation-summary>
+                </div>
+            </div>
+
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label">
+                    Ngày bắt đầu:
+                </label>
+                <div class="col-md-9">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <input matInput placeholder="Chọn ngày" [matDatepicker]="picker" name="startDate"
+                            #startDate="ngModel" [(ngModel)]="period.startDate" required>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                    </mat-form-field>
+                    <mat-error class="mt-1" *ngIf="startDate.hasError('required') && startDate.touched"
+                        style="font-size: 13px;">
+                        This field is required
+                    </mat-error>
+                </div>
+            </div>
+            <div>
+                <h5>Bank Accounts</h5>
+                <div class="table-responsive">
+                    <div class="fixHeader">
+                        <table class="table table-hover border-top">
+                            <thead class="bg-light">
+                                <th class="col-stt">#</th>
+                                <th class="col-name">Tên ngân hàng</th>
+                                <th class="col-status">Số dư hiện tại</th>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let account of listBankAccounts; let index = index">
+                                    <td class="text-center">{{index+1}}</td>
+                                    <td>{{account.name}}</td>
+                                    <td>
+                                        <mat-form-field class="w-100  center-flex" appearance="outline">
+                                            <input matInput [name]="index+1" [(ngModel)]="account.currentBalance" placeholder="Nhập số tiền *"
+                                                [allowNegativeNumbers]="false" mask="separator" thousandSeparator="," min=0 value=0
+                                                #money="ngModel"  #moneyEl required>
+                                        </mat-form-field>
+                                        <abp-validation-summary [control]="money" [controlEl]="moneyEl" style="text-align: left;">
+                                        </abp-validation-summary>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <div class="row d-flex justify-content-between mt-4 px-1">
+        <button class="btn btn-default mx-2" mat-dialog-close>
+            Cancel
+        </button>
+        <button class="btn btn-primary" [disabled]="!createEditPeriodForm.valid || isLoading" (click)="saveAndClose()">
+            Save
+        </button>
+    </div>
+</form>

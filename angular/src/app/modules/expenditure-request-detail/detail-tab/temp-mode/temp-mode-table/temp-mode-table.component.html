@@ -1,0 +1,983 @@
+<div [busy]="!getRequestChangeOutcomingEntryDetailDto" class="mt-2">
+  <div class="w-100" *ngIf="isShowTitle">
+    <strong id="lable-request-change-text">Request change</strong>
+    <label
+      *ngIf="getRequestChangeOutcomingEntryDetailDto?.statusCode"
+      [ngClass]="
+        APP_CONSTANT.StatusStyle[
+          getRequestChangeOutcomingEntryDetailDto.statusCode.trim()
+        ]
+      "
+    >
+      {{ getRequestChangeOutcomingEntryDetailDto.statusName }}
+    </label>
+  </div>
+  <button
+    *ngIf="canCRUD"
+    style="border: none"
+    [disabled]="!isAllowed && canCRUD && isShowCreateBtn()"
+    (click)="addMore()"
+    class="bg-blue mb-2 btn"
+  >
+    <i class="fa fa-plus-square"></i>
+  </button>
+  <div class="fix-table-head">
+    <table
+      style="border-collapse: collapse"
+      class="table text-nowrap"
+      [busy]="isTableLoading"
+    >
+      <thead class="bg-light">
+        <tr>
+          <th class="w-50">STT</th>
+          <th class="w-350 required col-form-label">
+            {{ "m5_child2.name" | translate }}
+          </th>
+          <th class="w-150 required col-form-label">
+            {{ "m5_child2.branch" | translate }}
+          </th>
+          <th *ngIf="isShowLinkAccount()">
+            {{ "m5_child2.linkAccount" | translate }}
+          </th>
+          <th class="w-150 required col-form-label">{{ "m5_child2.quantity" | translate }}</th>
+          <th class="w-150 required col-form-label">{{ "m5_child2.price" | translate }}</th>
+          <th>
+            Thành tiền
+            <span
+              >({{ getRequestChangeOutcomingEntryDetailDto?.totalMoney }})</span
+            >
+          </th>
+          <th *ngIf="!isViewHistory" class="text-center w-150">{{ "action.actions" | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container
+          *ngFor="
+            let item of getRequestChangeOutcomingEntryDetailDto?.requestChangeDetails;
+            let i = index
+          "
+          [ngTemplateOutlet]="
+            item.actionType == ActionType.NEW
+              ? newtype
+              : item.actionType == ActionType.UPDATE
+              ? updatetype
+              : item.actionType == ActionType.DELETE
+              ? deletetype
+              : none
+          "
+          [ngTemplateOutletContext]="{
+            mode: item.tempOutcomingEntryDetailDto?.createMode
+          }"
+        >
+          <ng-template #newtype let-mode="mode">
+            <tr [class]="mode ? '' : getClassAction(item.actionType)" matTooltip="Thêm mới">
+              <!-- STT -->
+              <td class="text-center w-50">
+                {{ i + 1 }}
+              </td>
+              <!-- Name Detail -->
+              <td class="w-350">
+                <ng-container *ngIf="!mode">
+                  <span> {{ item.tempOutcomingEntryDetailDto.name }}</span>
+                </ng-container>
+                <ng-container *ngIf="mode">
+                  <textarea
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.name"
+                    #inputName="ngModel"
+                    #inputNameEl
+                    required
+                    class="form-control"
+                    type="text"
+                    name="inputName"
+                    #name
+                  >
+                  </textarea>
+                  <abp-validation-summary
+                    [control]="inputName"
+                    [controlEl]="inputNameEl"
+                  >
+                  </abp-validation-summary>
+                </ng-container>
+              </td>
+              <!-- Branch -->
+              <td class="w-150 text-center border-none">
+                <span class="w-100 text-center" [hidden]="mode">
+                  {{ item.tempOutcomingEntryDetailDto.branchName }}
+                </span>
+                <mat-form-field
+                  appearance="outline"
+                  style="margin-top: -5px"
+                  *ngIf="mode"
+                  class="readonly-block w-100"
+                >
+                  <mat-select
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.branchId"
+                    required
+                    name="newTypeBranch"
+                    #newTypeBranch="ngModel"
+                    placeholder="Branch"
+                    (openedChange)="branchSelectOpenedChange($event)"
+
+                  >
+                    <mat-form-field
+                      class="w-100 px-3 selection-input-seach-hanging-above"
+                    >
+                      <input
+                        type="text"
+                        name="searchBranch"
+                        matInput
+                        placeholder="Search"
+                        [(ngModel)]="searchBranch"
+                        (ngModelChange)="filterBranch()"
+                        (keydown)="$event.stopPropagation()"
+                      />
+                    </mat-form-field>
+                    <mat-option hidden="true" [value]="null">none</mat-option>
+                    <ng-container *ngFor="let brach of branchList">
+                      <mat-option [value]="brach.id">{{
+                        brach.name
+                      }}</mat-option>
+                    </ng-container>
+                  </mat-select>
+                  <mat-error *ngIf="newTypeBranch.hasError('required') && newTypeBranch.touched" class="mt-3">
+                    This field is required
+                  </mat-error>
+                </mat-form-field>
+              </td>
+              <!-- AccountName -->
+              <td *ngIf="isShowLinkAccount()">
+                <span class="mt-2" *ngIf="!mode">
+                  {{ item.tempOutcomingEntryDetailDto.accountName }}
+                </span>
+
+                <mat-form-field
+                  style="margin-top: -5px"
+                  *ngIf="mode"
+                  appearance="outline"
+                >
+                  <mat-select
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.accountId"
+                    name="accountSelect"
+                    placeholder="select account"
+                    #inputAccount
+                    #account
+                  >
+                    <ng-container *ngFor="let account of accountList">
+                      <mat-option
+                        [value]="account.id"
+                        (click)="
+                          item.tempOutcomingEntryDetailDto.accountName =
+                            account.name
+                        "
+                      >
+                        {{ account.name }}</mat-option
+                      >
+                    </ng-container>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <!-- Quantity -->
+              <td class="text-center w-150">
+                <span class="mt-1" *ngIf="!mode">
+                  {{ item.tempOutcomingEntryDetailDto.quantity }}
+                </span>
+                <ng-container *ngIf="mode">
+                  <input
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.quantity"
+                    required
+                    #inputQuantity="ngModel"
+                    #inputQuantityEl
+                    class="form-control"
+                    name="detailQuantity"
+                    (ngModelChange)="
+                      item.tempOutcomingEntryDetailDto.total =
+                        calculateTempTotal(
+                          item.tempOutcomingEntryDetailDto.unitPrice,
+                          item.tempOutcomingEntryDetailDto.quantity
+                        )
+                    "
+                    #quantity
+                    type="text"
+                    [allowNegativeNumbers]="false"
+                    mask="separator"
+                    thousandSeparator=""
+                  />
+                  <abp-validation-summary
+                    [control]="inputQuantity"
+                    [controlEl]="inputQuantityEl"
+                  >
+                  </abp-validation-summary>
+                </ng-container>
+              </td>
+              <!-- UnitPrice -->
+              <td class="text-center w-150">
+                <span *ngIf="!mode">
+                  {{
+                    item.tempOutcomingEntryDetailDto.unitPrice
+                      | number: "1.0":"en-US"
+                  }}
+                </span>
+                <ng-container *ngIf="mode">
+                  <input
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.unitPrice"
+                    required
+                    #inputPice="ngModel"
+                    #inputPriceEl
+                    class="form-control"
+                    type="text"
+                    mask="separator':''"
+                    thousandSeparator=","
+                    allowNegativeNumbers="true"
+                    name="detailPrice"
+                    (ngModelChange)="
+                      item.tempOutcomingEntryDetailDto.total =
+                        calculateTempTotal(
+                          item.tempOutcomingEntryDetailDto.unitPrice,
+                          item.tempOutcomingEntryDetailDto.quantity
+                        )
+                    "
+                    #price
+                  />
+                  <abp-validation-summary
+                    [control]="inputPice"
+                    [controlEl]="inputPriceEl"
+                  >
+                  </abp-validation-summary>
+                </ng-container>
+              </td>
+              <!-- Thành tiền -->
+              <td class="text-center">
+                {{
+                  item.tempOutcomingEntryDetailDto.total | number: "1.0":"en-US"
+                }}
+              </td>
+              <!-- Action -->
+              <td class="text-center w-150" *ngIf="!mode && !isViewHistory">
+                <ng-container *ngIf="canCRUD">
+                  <button
+                  *ngIf="isShowEditBtn()"
+                    [disabled]="!isAllowed"
+                    class="btn btn-sm bg-secondary mr-1"
+                    (click)="
+                      clickBtnUpdate(item.tempOutcomingEntryDetailDto);
+                      $event.stopPropagation()
+                    "
+                  >
+                    <i class="fas fa-pencil-alt"></i>
+
+                    {{ "action.edit" | translate }}
+                  </button>
+                  <button
+                  *ngIf="isShowDeleteBtn()"
+                    class="btn btn-sm bg-danger ml-1"
+                    (click)="
+                      deleteTempOutcomingEntryDetail(
+                        item.tempOutcomingEntryDetailDto.id
+                      );
+                      $event.stopPropagation()
+                    "
+                    #deleteBtn
+                  >
+                    <i class="fas fa-trash"></i>
+                    {{ "action.delete" | translate }}
+                  </button>
+                </ng-container>
+              </td>
+              <!-- Save and Cancel -->
+              <td
+                *ngIf="mode"
+                class="text-center align-middle w-150"
+                style="border: none"
+              >
+                <button
+                  (click)="
+                    saveTempRequestDetail(item.tempOutcomingEntryDetailDto)
+                  "
+                  type="button"
+                  class="btn btn-primary mr-1 btn-sm"
+                  [disabled]="
+                    !item.tempOutcomingEntryDetailDto.name ||
+                    !item.tempOutcomingEntryDetailDto.unitPrice ||
+                    !item.tempOutcomingEntryDetailDto.quantity ||
+                    !item.tempOutcomingEntryDetailDto.branchId
+
+                  "
+                >
+                  Save
+                </button>
+                <button
+                  (click)="clickBtnCancel(item.tempOutcomingEntryDetailDto)"
+                  class="btn btn-default btn-sm"
+                >
+                  Cancel
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template #updatetype let-mode="mode">
+            <tr [class]="mode ? '' : getClassAction(item.actionType)" matTooltip="Sửa">
+              <!-- STT -->
+              <td class="text-center w-50">
+                {{ i + 1 }}
+              </td>
+              <!-- Name Detail -->
+              <td class="w-350">
+                <ng-container *ngIf="!mode">
+                  <span>{{ getCompareName(item) }}</span>
+                </ng-container>
+                <ng-container *ngIf="mode">
+                  <textarea
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.name"
+                    #inputName="ngModel"
+                    #inputNameEl
+                    required
+                    class="form-control"
+                    type="text"
+                    name="inputName"
+                    #name
+                    rows="1"
+                  >
+                  </textarea>
+                  <abp-validation-summary
+                    [control]="inputName"
+                    [controlEl]="inputNameEl"
+                  >
+                  </abp-validation-summary>
+                </ng-container>
+              </td>
+              <!-- Branch -->
+              <td class="w-150 text-center border-none">
+                <span class="w-100 text-center" *ngIf="!mode">
+                  <ng-container
+                    [ngTemplateOutlet]="
+                      item.tempOutcomingEntryDetailDto.branchName !=
+                      item.outcomingEntryDetail.branchName
+                        ? change
+                        : none
+                    "
+                  >
+                    <ng-template #change>
+                      <span
+                        [matTooltip]="
+                          item.tempOutcomingEntryDetailDto.branchName +
+                          '=>' +
+                          item.outcomingEntryDetail.branchName
+                        "
+                      >
+                        <span>
+                          {{ item.tempOutcomingEntryDetailDto.branchName }}
+                        </span>
+                        <br />
+                        <span class="text-danger" matTooltip="Giá trị cũ">
+                          {{ item.outcomingEntryDetail.branchName }}
+                        </span>
+                      </span>
+                    </ng-template>
+                    <ng-template #none>
+                      <span>
+                        {{ item.tempOutcomingEntryDetailDto.branchName }}
+                      </span>
+                    </ng-template>
+                  </ng-container>
+                </span>
+                <ng-container *ngIf="mode">
+                  <mat-form-field
+                    appearance="outline"
+                    style="margin-top: -5px"
+                    class="readonly-block w-100"
+                  >
+                    <mat-select
+                      [(ngModel)]="item.tempOutcomingEntryDetailDto.branchId"
+                      name="updateBranch"
+                      #updateBranch="ngModel"
+                      [placeholder]="branchList ? 'Branch' : 'No data'"
+                      (openedChange)="branchSelectOpenedChange()"
+                      required
+                    >
+                      <mat-form-field
+                        class="w-100 px-3 selection-input-seach-hanging-above"
+                      >
+                        <input
+                          type="text"
+                          name="searchBranch"
+                          matInput
+                          placeholder="Search"
+                          [(ngModel)]="searchBranch"
+                          (ngModelChange)="filterBranch()"
+                        />
+                      </mat-form-field>
+                      <ng-container *ngFor="let brach of branchList">
+                        <mat-option [value]="brach.id">{{
+                          brach.name
+                        }}</mat-option>
+                      </ng-container>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-error *ngIf="updateBranch.hasError('required') && updateBranch.touched">This field is required</mat-error>
+                </ng-container>
+              </td>
+              <!-- AccountName -->
+              <td *ngIf="isShowLinkAccount()">
+                <span class="mt-2" *ngIf="!mode">
+                  <ng-container
+                    [ngTemplateOutlet]="
+                      item.tempOutcomingEntryDetailDto.accountName !=
+                      item.outcomingEntryDetail.accountName
+                        ? change
+                        : none
+                    "
+                  >
+                    <ng-template #none>
+                      {{ item.outcomingEntryDetail.accountName }}
+                    </ng-template>
+                    <ng-template #change>
+                      {{ item.tempOutcomingEntryDetailDto.accountName }}
+                      <br />
+                      <span class="text-danger" matTooltip="Giá trị cũ">
+                        {{ item.outcomingEntryDetail.accountName }}
+                      </span>
+                    </ng-template>
+                  </ng-container>
+                </span>
+
+                <mat-form-field
+                  style="margin-top: -5px"
+                  *ngIf="mode"
+                  appearance="outline"
+                >
+                  <mat-select
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.accountId"
+                    name="accountSelect"
+                    placeholder="select account"
+                    #inputAccount
+                    required
+                    #account
+                  >
+                    <ng-container *ngFor="let account of accountList">
+                      <mat-option
+                        [value]="account.id"
+                        (click)="
+                          item.tempOutcomingEntryDetailDto.accountName =
+                            account.name
+                        "
+                      >
+                        {{ account.name }}</mat-option
+                      >
+                    </ng-container>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <!-- Quantity -->
+              <td class="text-center w-150">
+                <span class="mt-1" *ngIf="!mode">
+                  <ng-container
+                    [ngTemplateOutlet]="
+                      item.tempOutcomingEntryDetailDto.quantity !=
+                      item.outcomingEntryDetail.quantity
+                        ? change
+                        : none
+                    "
+                  >
+                    <ng-template #none>
+                      {{ item.outcomingEntryDetail.quantity }}
+                    </ng-template>
+
+                    <ng-template #change>
+                      <span>{{
+                        item.tempOutcomingEntryDetailDto.quantity
+                      }}</span>
+                      <br />
+                      <span class="text-danger" matTooltip="Giá trị cũ">{{
+                        item.outcomingEntryDetail.quantity
+                      }}</span>
+                    </ng-template>
+                  </ng-container>
+                </span>
+                <ng-container *ngIf="mode">
+                  <input
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.quantity"
+                    required
+                    #inputQuantity="ngModel"
+                    #inputQuantityEl
+                    class="form-control"
+                    name="detailQuantity"
+                    (ngModelChange)="
+                      item.tempOutcomingEntryDetailDto.total =
+                        calculateTempTotal(
+                          item.tempOutcomingEntryDetailDto.unitPrice,
+                          item.tempOutcomingEntryDetailDto.quantity
+                        )
+                    "
+                    #quantity
+                    type="text"
+                    [allowNegativeNumbers]="false"
+                    mask="separator"
+                    thousandSeparator=""
+                  />
+                  <abp-validation-summary
+                    [control]="inputQuantity"
+                    [controlEl]="inputQuantityEl"
+                  >
+                  </abp-validation-summary>
+                </ng-container>
+              </td>
+              <!-- UnitPrice -->
+              <td class="text-center w-150">
+                <span *ngIf="!mode">
+                  <ng-container
+                    [ngTemplateOutlet]="
+                      item.tempOutcomingEntryDetailDto.unitPrice !=
+                      item.outcomingEntryDetail.unitPrice
+                        ? change
+                        : none
+                    "
+                  >
+                    <ng-template #none>
+                      {{
+                        item.outcomingEntryDetail.unitPrice
+                          | number: "1.0":"en-US"
+                      }}
+                    </ng-template>
+
+                    <ng-template #change>
+                      <span>{{
+                        item.tempOutcomingEntryDetailDto.unitPrice
+                          | number: "1.0":"en-US"
+                      }}</span>
+                      <br />
+                      <span class="text-danger" matTooltip="Giá trị cũ">{{
+                        item.outcomingEntryDetail.unitPrice
+                          | number: "1.0":"en-US"
+                      }}</span>
+                    </ng-template>
+                  </ng-container>
+                </span>
+                <ng-container *ngIf="mode">
+                  <input
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.unitPrice"
+                    required
+                    #inputPice="ngModel"
+                    #inputPriceEl
+                    class="form-control"
+                    type="text"
+                    mask="separator':''"
+                    thousandSeparator=","
+                    allowNegativeNumbers="true"
+                    name="detailPrice"
+                    (ngModelChange)="
+                      item.tempOutcomingEntryDetailDto.total =
+                        calculateTempTotal(
+                          item.tempOutcomingEntryDetailDto.unitPrice,
+                          item.tempOutcomingEntryDetailDto.quantity
+                        )
+                    "
+                    #price
+                  />
+                  <abp-validation-summary
+                    [control]="inputPice"
+                    [controlEl]="inputPriceEl"
+                  >
+                  </abp-validation-summary>
+                </ng-container>
+              </td>
+              <!-- Thành tiền -->
+              <td class="text-center">
+                <span *ngIf="!mode">
+                  <ng-container
+                    [ngTemplateOutlet]="
+                      item.tempOutcomingEntryDetailDto.total !=
+                      item.outcomingEntryDetail.total
+                        ? change
+                        : none
+                    "
+                  >
+                    <ng-template #none>
+                      {{
+                        item.outcomingEntryDetail.total | number: "1.0":"en-US"
+                      }}
+                    </ng-template>
+
+                    <ng-template #change>
+                      <span>{{
+                        item.tempOutcomingEntryDetailDto.total
+                          | number: "1.0":"en-US"
+                      }}</span>
+                      <br />
+                      <span class="text-danger" matTooltip="Giá trị cũ">{{
+                        item.outcomingEntryDetail.total | number: "1.0":"en-US"
+                      }}</span>
+                    </ng-template>
+                  </ng-container>
+                </span>
+                <span *ngIf="mode">
+                  <span>{{
+                    item.tempOutcomingEntryDetailDto.total
+                      | number: "1.0":"en-US"
+                  }}</span>
+                </span>
+              </td>
+              <!-- Action -->
+              <td class="text-center w-150" *ngIf="!mode && !isViewHistory">
+                <ng-container *ngIf="canCRUD">
+                  <button
+                    [disabled]="!isAllowed"
+                    class="btn btn-sm bg-secondary mr-1"
+                    (click)="
+                      clickBtnUpdate(item.tempOutcomingEntryDetailDto);
+                      $event.stopPropagation()
+                    "
+                  >
+                    <i class="fas fa-pencil-alt"></i>
+
+                    {{ "action.edit" | translate }}
+                  </button>
+                  <button
+                    class="btn btn-sm bg-danger ml-1"
+                    (click)="
+                      deleteTempOutcomingEntryDetail(
+                        item.tempOutcomingEntryDetailDto.id
+                      );
+                      $event.stopPropagation()
+                    "
+                    #deleteBtn
+                  >
+                    <i class="fas fa-trash"></i>
+                    {{ "action.delete" | translate }}
+                  </button>
+                </ng-container>
+              </td>
+              <!-- Save and Cancel -->
+              <td *ngIf="mode" class="text-center w-150" style="border: none">
+                <button
+                  (click)="
+                    saveTempRequestDetail(item.tempOutcomingEntryDetailDto)
+                  "
+                  type="button"
+                  class="btn btn-primary mr-1 btn-sm"
+                  [disabled]="
+                    !item.tempOutcomingEntryDetailDto.name ||
+                    !item.tempOutcomingEntryDetailDto.unitPrice ||
+                    !item.tempOutcomingEntryDetailDto.quantity||
+                    !item.tempOutcomingEntryDetailDto.branchId
+                  "
+                >
+                  Save
+                </button>
+                <button
+                  (click)="clickBtnCancel(item.tempOutcomingEntryDetailDto)"
+                  class="btn btn-default btn-sm"
+                >
+                  Cancel
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template #deletetype>
+            <tr [class]="getClassAction(item.actionType)" matTooltip="Xóa">
+              <!-- STT -->
+              <td class="text-center w-50">
+                {{ i + 1 }}
+              </td>
+              <!-- Name Detail -->
+              <td class="w-350">
+                <ng-container>
+                  <span>{{ item.outcomingEntryDetail.name }}</span>
+                </ng-container>
+              </td>
+              <!-- Branch -->
+              <td class="w-150 text-center border-none">
+                <span class="w-100 text-center">
+                  {{ item.outcomingEntryDetail.branchName }}
+                </span>
+              </td>
+              <!-- AccountName -->
+              <td *ngIf="isShowLinkAccount()">
+                <span class="mt-2">
+                  {{ item.outcomingEntryDetail.accountName }}
+                </span>
+              </td>
+              <!-- Quantity -->
+              <td class="text-center w-150">
+                <span class="mt-1">
+                  {{ item.outcomingEntryDetail.quantity }}
+                </span>
+              </td>
+              <!-- UnitPrice -->
+              <td class="text-center w-150">
+                <span>
+                  {{
+                    item.outcomingEntryDetail.unitPrice | number: "1.0":"en-US"
+                  }}
+                </span>
+              </td>
+              <!-- Thành tiền -->
+              <td class="text-center">
+                <span>
+                  {{ item.outcomingEntryDetail.total | number: "1.0":"en-US" }}
+                </span>
+              </td>
+              <!-- Action -->
+              <td class="text-center w-150" *ngIf="!isViewHistory">
+                <button
+                  *ngIf="canCRUD && isShowRevertBtn()"
+                  [disabled]="!isAllowed && canCRUD"
+                  class="btn btn-sm btn-default mr-1"
+                  (click)="
+                    $event.stopPropagation();
+                    revertTempOutcomingDetailByRootId(
+                      item.outcomingEntryDetail
+                    );
+                    isAllowed = false
+                  "
+                >
+                  <i class="fas fa-history"></i>
+                  Revert
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template #none let-mode="mode">
+            <tr [class]="mode ? '' : getClassAction(item.actionType)">
+              <!-- STT -->
+              <td class="text-center w-50">
+                {{ i + 1 }}
+              </td>
+              <!-- Name Detail -->
+              <td class="w-350">
+                <ng-container *ngIf="item.tempOutcomingEntryDetailDto">
+                  <span *ngIf="!mode">{{
+                    item.tempOutcomingEntryDetailDto.name
+                  }}</span>
+                  <ng-container *ngIf="mode">
+                    <textarea
+                      [(ngModel)]="item.tempOutcomingEntryDetailDto.name"
+                      #inputName="ngModel"
+                      #inputNameEl
+                      [readonly]="!mode"
+                      required
+                      class="form-control"
+                      type="text"
+                      name="inputName"
+                      #name
+                    >
+                    </textarea>
+                    <abp-validation-summary
+                      [control]="inputName"
+                      [controlEl]="inputNameEl"
+                    >
+                    </abp-validation-summary>
+                  </ng-container>
+                </ng-container>
+              </td>
+              <!-- Branch -->
+              <td class="w-150 text-center border-none">
+                <span class="w-100 text-center" *ngIf="!mode">
+                  {{ item.tempOutcomingEntryDetailDto.branchName }}
+                </span>
+                <mat-form-field
+                  appearance="outline"
+                  style="margin-top: -5px"
+                  *ngIf="mode"
+                  class="readonly-block w-100"
+                >
+                  <mat-select
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.branchId"
+                    name="noneBranch"
+                    #noneBranch="ngModel"
+                    [placeholder]="branchList ? 'Branch' : 'No data'"
+                    (openedChange)="branchSelectOpenedChange()"
+                    required
+                  >
+                    <mat-form-field
+                      class="w-100 px-3 selection-input-seach-hanging-above"
+                    >
+                      <input
+                        type="text"
+                        name="searchBranch"
+                        matInput
+                        placeholder="Search"
+                        [(ngModel)]="searchBranch"
+                        (ngModelChange)="filterBranch()"
+                      />
+                    </mat-form-field>
+                    <ng-container *ngFor="let brach of branchList">
+                      <mat-option [value]="brach.id">{{
+                        brach.name
+                      }}</mat-option>
+                    </ng-container>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <!-- AccountName -->
+              <td *ngIf="isShowLinkAccount()">
+                <span class="mt-2" *ngIf="!mode">
+                  {{ item.tempOutcomingEntryDetailDto.accountName }}
+                </span>
+                <mat-form-field
+                  style="margin-top: -5px"
+                  *ngIf="mode"
+                  appearance="outline"
+                >
+                  <mat-select
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.accountId"
+                    name="accountSelect"
+                    placeholder="select account"
+                    #inputAccount
+                    required
+                    #account
+                  >
+                    <ng-container *ngFor="let account of accountList">
+                      <mat-option
+                        [value]="account.id"
+                        (click)="
+                          item.tempOutcomingEntryDetailDto.accountName =
+                            account.name
+                        "
+                      >
+                        {{ account.name }}</mat-option
+                      >
+                    </ng-container>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <!-- Quantity -->
+              <td class="text-center w-150">
+                <span class="mt-1" *ngIf="!mode">
+                  {{ item.tempOutcomingEntryDetailDto.quantity }}
+                </span>
+                <ng-container *ngIf="item.tempOutcomingEntryDetailDto && mode">
+                  <input
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.quantity"
+                    required
+                    #inputQuantity="ngModel"
+                    #inputQuantityEl
+                    class="form-control"
+                    name="detailQuantity"
+                    (ngModelChange)="
+                      item.tempOutcomingEntryDetailDto.total =
+                        calculateTempTotal(
+                          item.tempOutcomingEntryDetailDto.unitPrice,
+                          item.tempOutcomingEntryDetailDto.quantity
+                        )
+                    "
+                    #quantity
+                    type="text"
+                    [allowNegativeNumbers]="false"
+                    mask="separator"
+                    thousandSeparator=""
+                  />
+                  <abp-validation-summary
+                    [control]="inputQuantity"
+                    [controlEl]="inputQuantityEl"
+                  >
+                  </abp-validation-summary>
+                </ng-container>
+              </td>
+              <!-- UnitPrice -->
+              <td class="text-center w-150">
+                <span *ngIf="!mode">
+                  {{
+                    item.tempOutcomingEntryDetailDto.unitPrice
+                      | number: "1.0":"en-US"
+                  }}
+                </span>
+                <ng-container *ngIf="item.tempOutcomingEntryDetailDto && mode">
+                  <input
+                    [(ngModel)]="item.tempOutcomingEntryDetailDto.unitPrice"
+                    required
+                    #inputPice="ngModel"
+                    #inputPriceEl
+                    class="form-control"
+                    type="text"
+                    mask="separator':''"
+                    thousandSeparator=","
+                    allowNegativeNumbers="true"
+                    name="detailPrice"
+                    (ngModelChange)="
+                      item.tempOutcomingEntryDetailDto.total =
+                        calculateTempTotal(
+                          item.tempOutcomingEntryDetailDto.unitPrice,
+                          item.tempOutcomingEntryDetailDto.quantity
+                        )
+                    "
+                    #price
+                  />
+                  <abp-validation-summary
+                    [control]="inputPice"
+                    [controlEl]="inputPriceEl"
+                  >
+                  </abp-validation-summary>
+                </ng-container>
+              </td>
+              <!-- Thành tiền -->
+              <td class="text-center">
+                {{
+                  item.tempOutcomingEntryDetailDto.total | number: "1.0":"en-US"
+                }}
+              </td>
+              <!-- Action -->
+              <td class="text-center w-150" *ngIf="!mode && !isViewHistory">
+                <ng-container *ngIf="canCRUD">
+                  <button
+                    [disabled]="!isAllowed"
+                    class="btn btn-sm bg-secondary mr-1"
+                    (click)="
+                      clickBtnUpdate(item.tempOutcomingEntryDetailDto);
+                      $event.stopPropagation()
+                    "
+                  >
+                    <i class="fas fa-pencil-alt"></i>
+
+                    {{ "action.edit" | translate }}
+                  </button>
+                  <button
+                    class="btn btn-sm bg-danger ml-1"
+                    (click)="
+                      deleteTempOutcomingEntryDetail(
+                        item.tempOutcomingEntryDetailDto.id
+                      );
+                      $event.stopPropagation()
+                    "
+                    #deleteBtn
+                  >
+                    <i class="fas fa-trash"></i>
+                    {{ "action.delete" | translate }}
+                  </button>
+                </ng-container>
+              </td>
+              <!-- Save and Cancel -->
+              <td
+                *ngIf="mode"
+                class="text-center align-middle w-150"
+                style="border: none"
+              >
+                <button
+                  (click)="
+                    saveTempRequestDetail(item.tempOutcomingEntryDetailDto)
+                  "
+                  type="button"
+                  class="btn btn-primary mr-1 btn-sm"
+                  [disabled]="
+                    !item.tempOutcomingEntryDetailDto.name ||
+                    !item.tempOutcomingEntryDetailDto.unitPrice ||
+                    !item.tempOutcomingEntryDetailDto.quantity||
+                    !item.tempOutcomingEntryDetailDto.branchId
+                  
+                  "
+                >
+                  Save
+                </button>
+                <button
+                  (click)="clickBtnCancel(item.tempOutcomingEntryDetailDto)"
+                  class="btn btn-default btn-sm"
+                >
+                  Cancel
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,698 @@
+<div class="" id="main-tab" *ngIf="isShowMainTab()">
+  <div class="row">
+    <div class="col-12 text-right">
+      <ng-container *ngIf="readMode && isShowActionChangeStatus()">
+        <button
+          *ngFor="let action of expenditureRequest.action"
+          [disabled]="isLoading"
+          href="javascript:;"
+          class="btn bg-blue mt-3 mr-2"
+          (click)="changeStatus(action.statusTransitionId)"
+        >
+          <i class="fas fa-edit"></i>
+          {{ action.name }}
+        </button>
+
+        <button
+          *ngIf="isShowCloneBtn()"
+          [disabled]="isLoading"
+          href="javascript:;"
+          class="btn bg-blue mt-3 mr-2"
+          (click)="cloneRequest()"
+        >
+          <i class="fas fa-clone"></i>
+          Clone
+        </button>
+      </ng-container>
+
+      <a
+        *ngIf="
+          isShowExportPDFBtn() &&
+          expenditureRequest.requestInBankTransaction != null
+        "
+        class="btn bg-secondary mt-3 mr-2"
+        (click)="exportPdf(expenditureRequest.id)"
+      >
+        <i class="fas fa-file-pdf"></i>
+        Xuất file PDF
+      </a>
+      <a
+        *ngIf="
+          expenditureRequest.workflowStatusCode == 'START' && isShowEditBtn()
+        "
+        href="javascript:;"
+        class="btn bg-secondary mt-3 mr-2"
+        [hidden]="!readMode"
+        (click)="editRequest()"
+      >
+        <i class="fas fa-edit"></i>
+        {{ "action.edit" | translate }}
+      </a>
+      <a
+        class="btn bg-green mt-3 mr-2"
+        *ngIf="readMode && expenditureRequest.isShowButtonRequestChange"
+        (click)="clickRequestChangeBtn()"
+      >
+        <i class="fas fa-window-restore"></i>
+        Yêu cầu thay đổi
+      </a>
+      <a
+        class="btn bg-green mt-3 mr-2"
+        *ngIf="readMode && expenditureRequest.isShowButtonViewRequestChange"
+        (click)="checkTempOutCommingEntryHasDetail()"
+      >
+        <i class="fas fa-window-restore"></i>
+        Xem yêu cầu thay đổi
+      </a>
+    </div>
+  </div>
+  <div class="card-body" [busy]="isLoading">
+    <div class="row">
+      <div class="col-5">
+        <form
+          class="form-horizontal"
+          autocomplete="off"
+          #requestDetail="ngForm"
+        >
+          <!-- Name -->
+          <div
+            class="form-group row detail"
+            [ngClass]="readMode == false ? 'required' : ''"
+          >
+            <label class="col-md-3 col-form-label" for="requestName">
+              {{ "m5_child2.name" | translate }}:
+            </label>
+            <textarea
+              class="form-control col-md-6 ml-2"
+              *ngIf="readMode"
+              readonly
+              style="border: none !important"
+              [value]="
+                '#' + expenditureRequest.id + ' ' + expenditureRequest.name
+              "
+            ></textarea>
+            <textarea
+              class="form-control col-md-6 ml-2"
+              name="requestName"
+              *ngIf="!readMode"
+              [(ngModel)]="expenditureRequest.name"
+            >
+            </textarea>
+          </div>
+          <!-- Người Request -->
+          <div class="form-group row detail">
+            <label class="col-md-3 col-form-label" for="requester">
+              {{ "m5_child2.author" | translate }}:
+            </label>
+            <div class="col-md-6">
+              <input
+                type="text"
+                class="form-control read-mode"
+                name="requester"
+                readonly="true"
+                maxlength="1024"
+                [(ngModel)]="expenditureRequest.requester"
+              />
+            </div>
+          </div>
+          <!-- Chi nhánh -->
+          <div class="form-group row detail" [ngClass]="!readMode ? 'required' : ''">
+            <label class="col-md-3 col-form-label" for="branchName">
+              {{ "m5_child2.branch" | translate }}:
+            </label>
+            <div class="col-md-6">
+              <div *ngIf="readMode" style="display: flex;margin-left: 10px">
+              <span>{{expenditureRequest.branchName}}</span>
+              <span style="flex: right">
+                <i
+                *ngIf="
+                isShowUpdateBranchBtn() && readMode && !isUpdateBranchMode
+                "
+                class="fas fa-edit ml-2 pointer"
+                (click)="onUpdateBranch()"
+              ></i>
+              </span>
+              </div>
+              <mat-form-field
+                [hidden]="readMode"
+                appearance="outline"
+                class="readonly-block w-100"
+              >
+                <mat-select
+                  [(ngModel)]="expenditureRequest.branchId"
+                  name="branchId"
+                  class="readonly-select"
+                  #branchId="ngModel"
+                  placeholder="Select branch"
+                  (openedChange)="branchSelectOpenedChange()"
+                  required
+                >
+                  <mat-form-field
+                    class="w-100 px-3"
+                    style="
+                      position: sticky;
+                      top: 0;
+                      z-index: 2;
+                      background-color: white;
+                    "
+                  >
+                    <input
+                      type="text"
+                      name="searchBranch"
+                      id=""
+                      matInput
+                      placeholder="Search"
+                      (keydown)="$event.stopPropagation()"
+                      [(ngModel)]="searchBranch"
+                      (ngModelChange)="filterBranch()"
+                    />
+                  </mat-form-field>
+                  <mat-option hidden="true" [value]="null">none</mat-option>
+                  <ng-container *ngFor="let brach of branchList">
+                    <mat-option [value]="brach.id">{{ brach.name }}</mat-option>
+                  </ng-container>
+                </mat-select>
+                <mat-error *ngIf="branchId.hasError('required') && branchId.touched" class="mt-3 mr-3">This field is required</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-md-3" [hidden]="readMode">
+              <mat-icon
+                style="margin-top: 10px; cursor: pointer"
+                *ngIf="expenditureRequest.branchId != null && !isUpdateBranchMode"
+                (click)="expenditureRequest.branchId = null"
+              >
+                clear</mat-icon
+              >
+            </div>
+          </div>
+          <!-- Tài khoản ngân hàng -->
+          <div
+            class="form-group row detail"
+            [ngClass]="readMode == false ? 'required' : ''"
+          >
+            <label class="col-md-3 col-form-label" for="accountName">
+              {{ "m5_child2.account" | translate }}:
+            </label>
+            <div class="col-md-6">
+              <input
+                type="text"
+                class="form-control"
+                name="accountName"
+                readonly="true"
+                [ngClass]="readMode == true ? 'read-mode' : ''"
+                maxlength="1024"
+                [hidden]="!readMode"
+                [(ngModel)]="expenditureRequest.accountName"
+              />
+              <mat-form-field
+                [hidden]="readMode"
+                appearance="outline"
+                class="readonly-block w-100"
+              >
+                <mat-select
+                  [(ngModel)]="expenditureRequest.accountId"
+                  name="accountSelect"
+                  required
+                  class="readonly-select"
+                  #formAccount
+                >
+                  <mat-form-field
+                    class="w-100 px-3"
+                    style="
+                      position: sticky;
+                      top: 0;
+                      z-index: 2;
+                      background-color: white;
+                    "
+                  >
+                    <input
+                      type="text"
+                      name="searchFrom"
+                      id=""
+                      matInput
+                      placeholder="Search"
+                      [(ngModel)]="searchAccount"
+                      (keydown)="$event.stopPropagation()"
+                      (ngModelChange)="filterAccount()"
+                    />
+                  </mat-form-field>
+                  <mat-option hidden="true" [value]="null">none</mat-option>
+                  <ng-container *ngFor="let account of accountList">
+                    <mat-option
+                      *ngIf="account.accountTypeName == 'COMPANY'"
+                      [value]="account.id"
+                      >{{ account.name }}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <!-- Tiền -->
+          <div class="form-group row detail">
+            <label class="col-md-3 col-form-label" for="outcomeValue">
+              {{ "m5_child2.value" | translate }}:
+            </label>
+            <div class="col-md-6 mt-2 ml-2" [hidden]="!readMode">
+              <p>
+                {{ expenditureRequest.value | number : "1.0" : "en-US" }}
+                {{ expenditureRequest.currencyName }}
+              </p>
+            </div>
+            <div class="col-md-6" [hidden]="readMode">
+              <p [hidden]="!readMode" class="mt-2 ml-2">
+                {{ expenditureRequest.value }}
+                {{ expenditureRequest.currencyName }}
+              </p>
+              <input
+                style="margin-top: 4px"
+                type="text"
+                mask="separator':''"
+                thousandSeparator=","
+                allowNegativeNumbers="true"
+                [hidden]="readMode"
+                class="form-control"
+                name="outcomeValue"
+                [readonly]="readMode"
+                maxlength="1024"
+                [(ngModel)]="expenditureRequest.value"
+                [ngClass]="readMode == true ? 'read-mode' : ''"
+                #requestValue="ngModel"
+                #requestValueEl
+                required
+              />
+              <abp-validation-summary
+                [control]="requestValue"
+                [controlEl]="requestValueEl"
+              >
+              </abp-validation-summary>
+            </div>
+            <div class="col-md-2" [hidden]="readMode">
+              <app-selection-customs
+                class="w-100"
+                [hasLable]="false"
+                [input]="currencyList"
+                [value]="expenditureRequest.currencyId"
+                [required]="true"
+                placeholder="Chọn loại tiền"
+                placeholderSearchText="Search loại tiền"
+                (ngModelChange)="expenditureRequest.currencyId = $event"
+              >
+              </app-selection-customs>
+              <!-- <mat-form-field
+                class="w-100 readonly-wrapper"
+                appearance="outline"
+              >
+                <mat-select
+                  class="font-weight-bold readonly-block"
+                  [(ngModel)]="expenditureRequest.currencyId"
+                  name="currencySelect"
+                  [disabled]="!isEnableMultiCurrency"
+                  required
+                  #currency="ngModel"
+                >
+                  <mat-form-field
+                    class="w-100 px-3"
+                    style="
+                      position: sticky;
+                      top: 0;
+                      z-index: 2;
+                      background-color: white;
+                    "
+                  >
+                    <input
+                      matInput
+                      [(ngModel)]="searchCurrency"
+                      name="searchCurrency"
+                      placeholder="search"
+                      (keydown)="$event.stopPropagation()"
+                    />
+                  </mat-form-field>
+                  <mat-option hidden="true" [value]="null">none</mat-option>
+                  <ng-container
+                    *ngFor="
+                      let currency of currencyList | filter : searchCurrency
+                    "
+                  >
+                    <mat-option [value]="currency.value">{{
+                      currency.name
+                    }}</mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field> -->
+            </div>
+          </div>
+          <!-- Loại Request -->
+          <div
+            class="form-group row detail"
+            [ngClass]="readMode == false ? 'required' : ''"
+          >
+            <label class="col-md-3 col-form-label" for="status">
+              {{ "m5_child2.requestType" | translate }}:
+            </label>
+            <div [class]="!readMode ? '' : 'col-md-6'" class="mx-2">
+              <span *ngIf="readMode" class="col-md-12">
+                {{ expenditureRequest.outcomingEntryTypeName }}
+              </span>
+              <i
+                *ngIf="isShowEditType() && readMode"
+                class="fas fa-edit mt-2 ml-2 pointer"
+                (click)="onUpdateOutcomingType()"
+              ></i>
+              <app-selection-tree-incoming-entry-type
+                *ngIf="outcomingEntryTypeOptions && !readMode"
+                [treeValue]="outcomingEntryTypeOptions"
+                placeholder="Loại chi"
+                [selected]="expenditureRequest.outcomingEntryTypeId"
+                (selectChange)="
+                  expenditureRequest.outcomingEntryTypeId = $event
+                "
+                space="1.5"
+              >
+              </app-selection-tree-incoming-entry-type>
+              <!-- <mat-form-field [hidden]="readMode" appearance="outline" class="readonly-block w-100">
+                <mat-select [(ngModel)]="expenditureRequest.outcomingEntryTypeId" name="fromBankAccount"
+                  class="readonly-select" #formAccount="ngModel" placeholder="Select type request">
+                  <mat-form-field class="w-100 px-3" style="
+                      position: sticky;
+                      top: 0;
+                      z-index: 2;
+                      background-color: white;
+                    ">
+                    <input type="text" name="searchBranch" id="" matInput placeholder="Search"
+                    (keydown)="$event.stopPropagation()"
+                      [(ngModel)]="searchRequestType" (ngModelChange)="filterRequestType()" />
+                  </mat-form-field>
+                  <mat-option hidden="true" [value]="null">none</mat-option>
+                  <ng-container *ngFor="let type of requestTypeList">
+                    <mat-option [value]="type.id">{{ type.name }}</mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field> -->
+            </div>
+          </div>
+          <div class="form-group row detail">
+            <label class="col-md-3 col-form-label" for="status">
+              Payment code:
+            </label>
+            <p class="mt-2" style="margin-left: 17px">
+              {{ expenditureRequest.paymentCode }}
+            </p>
+          </div>
+          <div class="form-group row detail">
+            <label class="col-md-3 col-form-label" for="status">
+              Has file:
+            </label>
+            <p class="mt-2 col-md-7" style="margin-left: 17px">
+              {{
+                expenditureRequest.isAcceptFile == 0
+                  ? "No File Yet"
+                  : expenditureRequest.isAcceptFile == 1
+                  ? "Not Yet Confirmed"
+                  : "Confirmed "
+              }}
+            </p>
+          </div>
+          <!-- Status -->
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="status">
+              {{ "m5_child2.status" | translate }}:
+            </label>
+            <p
+              class="mt-2"
+              style="margin-left: 17px"
+              *ngIf="expenditureRequest.workflowStatusId"
+              [ngClass]="
+                APP_CONSTANT.StatusStyle[
+                  expenditureRequest.workflowStatusCode.trim()
+                ]
+              "
+            >
+              {{ expenditureRequest.workflowStatusName }}
+            </p>
+          </div>
+          <div class="form-group row detail">
+            <label class="col-md-3 col-form-label" for="accreditation">
+              Uỷ nhiệm chi :
+            </label>
+            <p [hidden]="!readMode" class="mt-2" style="margin-left: 17px">
+              {{ expenditureRequest.accreditation ? "Yes" : "No" }}
+            </p>
+            <div
+              [hidden]="readMode"
+              class="col-md-6 mt-2"
+              style="margin-left: 17px"
+            >
+              <mat-checkbox
+                class="example-margin"
+                name="accreditation"
+                [(ngModel)]="expenditureRequest.accreditation"
+                (change)="filterAccreditation($event)"
+              ></mat-checkbox>
+            </div>
+          </div>
+          <div class="form-group row detail">
+            <label class="col-md-3 col-form-label" for="accreditation">
+              Ngày báo cáo:
+            </label>
+            <p [hidden]="!readMode" class="mt-2" style="margin-left: 17px">
+              {{ expenditureRequest.reportDate | dmyDateFormat }}
+            </p>
+            <i
+              *ngIf="isShowEditReportDateBtn()"
+              class="fas fa-edit mt-2 ml-2 pointer"
+              (click)="onUpdateReportDate()"
+            ></i>
+          </div>
+          <div class="form-group row" [hidden]="readMode">
+            <div class="form-group row d-flex justify-content-between">
+              <button class="btn btn-default mx-2" (click)="cancelEdit()">
+                {{ "action.cancel" | translate }}
+              </button>
+              <button
+                class="btn btn-primary"
+                (click)="saveRequest()"
+                [disabled]="!requestDetail.valid"
+              >
+                {{ "action.save" | translate }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col-7">
+        <div class="">
+          <button
+            *ngIf="isAttachFileBtn()"
+            class="btn btn-sm bg-success mb-1"
+            (click)="importExcel()"
+            #importFileBtn
+          >
+            <i class="fas fa-paperclip"></i>
+            Attach File
+          </button>
+          <span
+            class="ml-3"
+            style="vertical-align: bottom"
+            *ngIf="permission.isGranted(Finance_OutcomingEntry_UploadFile)"
+          >
+            <mat-checkbox
+              [checked]="expenditureRequest.isAcceptFile == 2 ? true : false"
+              style="vertical-align: middle; margin-right: 20px"
+              (click)="AcceptFile(accept)"
+              #accept
+              >Accept File
+            </mat-checkbox>
+          </span>
+          <i
+            style="cursor: pointer"
+            class="fas fa-redo-alt fa-lg ml-3"
+            (click)="getOutcomeFiles()"
+          ></i>
+
+          <table>
+            <thead>
+              <tr>
+                <th class="text-left" style="padding-left: 20px">File List</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let file of outcomingFileList">
+                <td style="padding: 10px 20px">
+                  <a
+                    style="color: blue; cursor: pointer"
+                    (click)="downloadFile(file)"
+                    >{{ file.fileName }}
+                  </a>
+                  <span
+                    class="file"
+                    style="cursor: pointer"
+                    *ngIf="isDeleteFileBtn()"
+                    (click)="deleteFile(file)"
+                    ><i class="fas fa-times fa-lg ml-1"></i
+                  ></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="card card-status-history"
+          *ngIf="statusHistorys && statusHistorys.length"
+        >
+          <span class="text-primary text-status-history-font-family text-bold"
+            >History
+          </span>
+          <div
+            class="box-status-history header-view-scroll header-status-history-view-scroll"
+          >
+            <ng-container
+              *ngFor="
+                let statusHistory of statusHistorys;
+                let indexStatus = index
+              "
+              [ngTemplateOutlet]="statusHistory.isRoot ? root : temp"
+            >
+              <div>
+                <ng-template #root>
+                  <label
+                    [ngClass]="
+                      APP_CONSTANT.StatusStyle[
+                        statusHistory.workflowStatusCode.trim()
+                      ]
+                    "
+                    class="lable-history-status m-0"
+                    >{{ statusHistory.workflowStatusName }}</label
+                  >
+                  &nbsp;
+                  <label class="m-0"
+                    >{{ statusHistory.value }}
+                    {{ statusHistory.currencyName }}</label
+                  >
+                  &nbsp;
+                  <span>{{
+                    statusHistory.creationTime | date : "dd/MM/yyyy HH:mm:ss"
+                  }}</span>
+                  by
+                  <b>{{ statusHistory.creationUser }}</b>
+                </ng-template>
+                <ng-template #temp>
+                  <a
+                    href="javascript:void(0);"
+                    (click)="
+                      viewDetailHistory(indexStatus, statusHistory.tempId);
+                      $event.stopPropagation()
+                    "
+                    matTooltip="Xem chi tiết thay đổi"
+                    class="link-view-history"
+                  >
+                    <b>[YCTĐ]</b>
+                    &nbsp;
+                    <label
+                      [ngClass]="
+                        APP_CONSTANT.StatusStyle[
+                          statusHistory.workflowStatusCode.trim()
+                        ]
+                      "
+                      class="lable-history-status m-0"
+                      >{{ statusHistory.workflowStatusName }}</label
+                    >
+                    &nbsp;
+                    <b class="m-0">{{
+                      statusHistory.value + " " + statusHistory.currencyName
+                    }}</b>
+                    &nbsp;
+                    <span>{{
+                      statusHistory.creationTime | date : "dd/MM/yyyy HH:mm:ss"
+                    }}</span>
+                    by
+                    <b>{{ statusHistory.creationUser }}</b>
+                  </a>
+                </ng-template>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div class="card-body" style="border-top: 1px solid rgba(0,0,0,.125);" *ngIf="tempMode && expenditureRequest">
+  <ng-container >
+    <app-temp-mode-table [expenditureRequest]="expenditureRequest" [isShowTitle]="false" (readMode)="readModeChange($event)">
+    </app-temp-mode-table>
+  </ng-container>
+</div> -->
+<div class="p-2" [hidden]="!readMode">
+  <h4>Discussion</h4>
+  <div *ngIf="isShowAddAndEditDiscussion() || isAllowAddMyDisuss()">
+    <angular-editor
+      [config]="configEditor"
+      [(ngModel)]="commentContent"
+      (keydown.enter)="saveComment($event)"
+    >
+    </angular-editor>
+  </div>
+  <div *ngIf="!isShowAddAndEditDiscussion() && !isAllowAddMyDisuss()">
+    <angular-editor [config]="configEditor" [(ngModel)]="commentContent">
+    </angular-editor>
+  </div>
+
+  <a
+    style="cursor: pointer"
+    (click)="cancelEditComment()"
+    *ngIf="isEditing == true"
+    >cancel</a
+  >
+  <div *ngFor="let item of commentList" class="d-flex mt-2">
+    <div class="user-avatar mt-2 mx-2">
+      <img
+        style="border-radius: 50%"
+        width="40"
+        src="../../../../assets/img/user.png"
+        alt=""
+      />
+    </div>
+    <div
+      class="d-flex p-2 bg-white w-100 border"
+      style="position: relative; border-radius: 5px"
+    >
+      <div class="ml-3">
+        <div>
+          <strong style="font-size: 18px">{{ item.userName }}</strong>
+
+          <i
+            style="font-size: 14px; color: #5c5554"
+            class="ml-2"
+            [title]="item.createTime | date : 'dd/MM/yyy h:mm:ss a'"
+            >{{ getCommentDate(item.createTime) }}</i
+          >
+          <div
+            class="test"
+            style="font-size: 15px; color: #171616; margin: 0; max-width: 100%"
+            [innerHTML]="item.content"
+          ></div>
+        </div>
+        <div
+          class="w-25 float-right mt-2 text-center"
+          style="position: absolute; top: 0; right: 0"
+        >
+          <button
+            *ngIf="isShowAddAndEditDiscussion() || isShowAddAndEditMyDiscussion(item.userId)"
+            class="btn bg-white"
+            (click)="editComment(item.content, item.id)"
+          >
+            <mat-icon style="float: right"> edit </mat-icon>
+          </button>
+          <button
+            *ngIf="isShowDeleteDiscussion() || isShowDeleteMyDiscussion(item.userId)"
+            class="btn bg-white mt-1"
+            (click)="deleteComment(item)"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

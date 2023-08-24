@@ -1,0 +1,128 @@
+<form class="form-horizontal" autocomplete="off" #bankForm="ngForm" id="create-edit-accountant-account">
+    <div class="card-header" cdkDrag cdkDragRootElement=".modal-content, .cdk-overlay-pane" cdkDragHandle>
+        <h3 *ngIf="!isEdit">{{'m4_child2.createTitle' | translate}}</h3>
+        <h3 *ngIf="isEdit">{{'m4_child2.editTitle' | translate}} </h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-4 col-form-label" for="tenancyName">
+                {{ 'm4_child2.name' | translate }}
+            </label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" name="tenancyName" id="tenancyName" minlength="2" maxlength="64"
+                    required [(ngModel)]="account.name" #tenancyNameModel="ngModel" #tenancyNameEl (ngModelChange)="nameChange()" />
+                <abp-validation-summary [control]="tenancyNameModel" [controlEl]="tenancyNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-4 col-form-label" for="code">
+                {{ 'm4_child2.code' | translate }}
+            </label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" name="code" id="code" minlength="2" maxlength="64" required
+                    [(ngModel)]="account.code" #codeModel="ngModel" #codeEl />
+                <abp-validation-summary [control]="codeModel" [controlEl]="codeEl"></abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required" style="align-items: center;">
+            <label class="col-md-4 col-form-label" for="code">
+                {{ 'm4_child2.accountType' | translate }}
+            </label>
+            <div class="col-md-8">
+                <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                    <mat-select [(ngModel)]="account.accountTypeId" placeholder="Select account type" (ngModelChange)="accountTypeChange()" name="accountTypeId" id="accountTypeId">
+                        <mat-option *ngFor="let type of accountTypes " [value]="type.id">
+                            {{type.name}} (<span>{{type.code}}</span>)
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row required" style="align-items: center;">
+            <label class="col-md-4 col-form-label" for="code">
+                {{ 'Type' | localize }}
+            </label>
+            <div class="col-md-8">
+                <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                    <mat-select [(ngModel)]="account.type" placeholder="Select account type" name="type" id="type">
+                        <mat-option *ngFor="let item of listAccounTypeEnum " [value]="item.value">
+                            {{item.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="form-group row mb-0">
+            <label class="col-md-4 col-form-label">
+                {{ 'm4_child2.default' | translate }}
+            </label>
+            <div class="col-md-8">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="default" id="default"
+                        [(ngModel)]="account.default" />
+                    <label class="custom-control-label mt-2" for="default"></label>
+                </div>
+            </div>
+        </div>
+    <div *ngIf="isShowBankAccount()">
+        <h4>Tài khoản ngân hàng</h4>
+        <div class="form-group row required" style="align-items: center;">
+            <label class="col-md-4 col-form-label" for="code">
+                Tên tài khoản
+            </label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" name="holderName" id="holderName" minlength="2" maxlength="64"
+                    required [(ngModel)]="account.holderName" #holderNameModel="ngModel" #holderNameEl />
+                <abp-validation-summary [control]="holderNameModel" [controlEl]="holderNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required" style="align-items: center;">
+            <label class="col-md-4 col-form-label" for="code">
+                Số tài khoản
+            </label>
+            <div class="col-md-8">
+                <input type="text" class="form-control" name="bankNumber" id="bankNumber" minlength="2" maxlength="64"
+                    required [(ngModel)]="account.bankNumber" #bankNumberModel="ngModel" #bankNumberEl mask="separator" thousandSeparator="" />
+                <abp-validation-summary [control]="bankNumberModel" [controlEl]="bankNumberEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required" style="align-items: center;">
+            <label class="col-md-4 col-form-label" for="code">
+                Ngân hàng
+            </label>
+            <div class="col-md-8">
+                <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                    <mat-select [(ngModel)]="account.bankId" placeholder="Select bank" name="bankAccount" id="bankAccount">
+                        <mat-option *ngFor="let item of bankAccount " [value]="item.value">
+                            {{item.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="form-group row required" style="align-items: center;">
+            <label class="col-md-4 col-form-label" for="code">
+                Tiền tệ
+            </label>
+            <div class="col-md-8">
+                <mat-form-field style="width: 100%; height: 38px;" appearance="outline">
+                    <mat-select [(ngModel)]="account.currencyId" placeholder="Select currency" name="currencyId" id="currencyId">
+                        <mat-option *ngFor="let item of currency " [value]="item.value">
+                            {{item.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+</div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-default cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button class="saving-btn btn btn-primary ml-2" [disabled]="!bankForm.form.valid"
+            (click)="saveAndClose()">Save</button>
+    </div>
+</form>

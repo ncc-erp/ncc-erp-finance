@@ -1,0 +1,145 @@
+<div class="" id="currency-convert">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h1>Tỉ giá</h1>
+        </div>
+        <div class="col-6 text-right">
+          <a href="javascript:;" class="btn bg-blue" (click)="onCreateCurrencyConvert()" *ngIf="isShowCreateBtn()">
+            <i class="fa fa-plus-square"></i>
+            {{ 'action.create' | translate }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content px-2">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-8 center-y">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+                <input type="text" class="form-control" name="keyword" [placeholder]="'m3_child1.search' | translate"
+                  [(ngModel)]="searchText" (keyup.enter)="getDataPage(1)" />
+              </div>
+            </div>
+            <div class="col-4 row">
+              <div class="col-4 item-group">
+                <mat-form-field appearance="outline" class="w-inherit">
+                  <mat-label>Tiền tệ</mat-label>
+                  <mat-select name="currency" placeholder="Tiền tệ" [(ngModel)]="searchDetail.currencyId"
+                    (selectionChange)="getDataPage(1);">
+                    <mat-option value="">Tất cả</mat-option>
+                    <mat-option [value]="c.id" *ngFor="let c of listCurrencies">
+                      {{ c.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-4">
+                <mat-form-field class="w-inherit" appearance="outline">
+                  <mat-label>Tháng</mat-label>
+                  <mat-select name="month" placeholder="Month" [(value)]="selectedMonth"
+                    (selectionChange)="onPageFilter('month', this.selectedMonth)"><mat-option value="">Tất cả</mat-option>
+                    <mat-option *ngFor="let month of listMonths" [value]="month">
+                      {{ month }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div class="col-4">
+                <mat-form-field class="w-inherit" appearance="outline">
+                  <mat-label>Năm</mat-label>
+                  <mat-select name="year" placeholder="Năm" [(value)]="selectedYear"
+                    (selectionChange)="onPageFilter('year', this.selectedYear)"><mat-option value="">Tất cả</mat-option>
+                    <mat-option *ngFor="let year of listYears" [value]="year">
+                      {{ year }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body table-responsive p-4">
+          <table style="border-collapse: collapse;" class="table table-hover text-nowrap" [busy]="isTableLoading">
+            <thead class="bg-light">
+              <tr>
+                <th class="col-stt">#</th>
+                <th class="col-date" (click)="onSortChange('dateAt')">
+                  Tháng/năm
+                  <sortable [name]="'dateAt'" [sortProperty]="sortProperty"
+                  [sortDirection]="sortDirection"></sortable></th>
+                <th (click)="onSortChange('currencyId')">
+                  Tiền tệ
+                  <sortable [name]="'currencyId'" [sortProperty]="sortProperty"
+                  [sortDirection]="sortDirection"></sortable></th>
+                <th class="col-money">Tỉ giá sang {{defaultCurrencyCode}}</th>
+                <th class="col-action">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="
+                            let data of listCurrencyConvert  | paginate
+                            : {
+                                id: 'server',
+                                itemsPerPage: pageSize,
+                                currentPage: pageNumber,
+                                totalItems: totalItems
+                              }
+                              ,let index = index
+
+                          ">
+                <td style="padding: 12px;" class="text-center">{{index + 1 + (pageNumber - 1) * pageSize}}</td>
+                <td class="text-center">{{ data.dateAt | date: 'MM/yyyy'}}</td>
+                <td>{{ data.currencyName}}</td>
+                <td class="text-right"> {{data.valueFormat}}</td>
+                <td class="d-flex justify-content-center border-0" style="padding: 12px;">
+                  <button type="button" class="btn btn-sm bg-secondary mr-1" (click)="editCurrencyConvert(data)" *ngIf="isShowEditBtn()">
+                    <i class="fas fa-pencil-alt"></i>
+                    {{ 'action.edit' | translate }}
+                  </button>
+                  <button type="button" class="btn btn-sm bg-danger ml-1" (click)="onDelete(data)" *ngIf="isShowDeleteBtn()">
+                    <i class="fas fa-trash"></i>
+                    {{ 'action.delete' | translate }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-light border-top">
+          <div class="row">
+            <div class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center just">
+              <button class="btn btn-secondary" (click)="refresh()">
+                <i class="fas fa-redo-alt"></i>
+              </button>
+              <mat-form-field style=" width: 20%; margin-left: 30px">
+                <mat-label>Number items</mat-label>
+                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                  <mat-option *ngFor="let option of LIST_PAGE_SIZE_OPTIONS" [value]="option">{{ option }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-sm-4 col-12 justify-content-center d-flex align-items-center">
+              <p class="mb-0 ">Total: {{ totalItems }}</p>
+            </div>
+            <div class="col-sm-4 col-12 d-flex align-items-center justify-content-end">
+              <div class="float-sm-right">
+                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                </abp-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,47 @@
+.mat-expansion-panel {
+    color: white;
+    box-shadow: none;
+  }
+  .mat-expansion-panel-header {
+    max-height: 48px;
+
+    background-color: #5f656b;
+  }
+
+  .mat-expansion-panel-header:visited,
+  .mat-expansion-panel-header {
+    background-color: #5f656b!important;
+    margin-bottom: 10px;
+    max-height: 48px;
+  }
+  .mat-expanded .mat-expansion-panel-header {
+    max-height: 70x;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  .mat-expansion-panel-spacing,
+  .mat-expanded {
+    border: 1px solid #5f656b;
+    border-collapse: collapse;
+    border-radius: 0 !important;
+  }
+
+  .final {
+    border: none !important;
+  }
+
+  /* .parent {
+    margin-left: 30px;
+  } */
+  button{
+    border:none;
+    background: none;
+    outline: none;
+  }
+  .mat-icon{
+    color: white;
+  }
+  .child{
+    margin-top: 5px;
+  }

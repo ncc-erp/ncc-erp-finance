@@ -1,0 +1,135 @@
+<div cdkDrag
+cdkDragRootElement=".cdk-overlay-pane"
+cdkDragHandle>
+    <div class="row justify-content-between">
+        <div class="col-8">
+            <h3>{{title}}</h3>
+        </div>
+        <div class="col-4 text-right">
+            <i class="fas fa-times fa-lg pointer" mat-dialog-close></i>
+        </div>
+    </div>
+    <div class="card-body" style="padding: 12px;">
+        <form #createSettingForm="ngForm" *ngIf="isEdit"></form>
+    </div>
+</div>
+
+
+<ng-template [ngIf]="isEdit">
+    <form #createSettingForm="ngForm" id="setting-wrapper">
+        <div>
+            <div class="form-edit form-group required row">
+                <label for="name" class="col-1 col-form-label">Tên:</label>
+                    <mat-form-field appearance="outline" class="col-5">
+                        <input name="name" type="text" matInput [(ngModel)]="chartSetting.name" required>
+                    </mat-form-field>
+                <label for="color" class="col-1 mt-3">Màu:</label>
+                <input name="color" style="margin-top: 12px;" type="color" [(ngModel)]="chartSetting.color">
+            </div>
+            <div class="form-edit row form-group required">
+                <label for="type" class="col-1 col-form-label">Loại:</label>
+                    <mat-form-field appearance="outline" class="col-2">
+                        <mat-select name="settingType" [(ngModel)]="chartSetting.type" required
+                            (ngModelChange)="onSelectActiveType(); onSelectType()">
+                            <mat-option [value]="chartType.Income">
+                                Loại thu
+                            </mat-option>
+                            <mat-option [value]="chartType.Outcome">
+                                Loại chi
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                <label for="status" class="col-1 col-form-label">Status:</label>
+                <mat-form-field class="w-100 col-2" appearance="outline">
+                    <mat-select
+                      name="type"
+                      [(ngModel)]="inputFilter.isActive"
+                      placeholder="Select status"
+                      (selectionChange)="onSelectType()"
+                    >
+                      <mat-option value="">All</mat-option>
+                      <mat-option [value]="true">Active</mat-option>
+                      <mat-option [value]="false">Inactive</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+            </div>
+        </div>
+
+        <div class="w-100">
+
+            <div class="row">
+                <div class="col-6 p-1">
+                    <h5 class="text-center text-bold">Danh sách Loại {{chartSetting.type == chartType.Income?'Thu' : 'Chi'}}
+                    </h5>
+                    <div class="list-reference py-3 pr-2 pl-1">
+                        <mat-accordion [togglePosition]="'before'">
+                            <ng-container *ngFor="let item of referenceList">
+                                <app-selection-tree [existList]="existReferenceIds" [chartId]="data.id"
+                                    [data]="item" (onSelectedItem)="onSelect($event)"
+                                    (onRemoveItem)="onRemove()"></app-selection-tree>
+                            </ng-container>
+                        </mat-accordion>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <h5 class="text-center text-bold">Selected</h5>
+                    <div class="list-reference py-3 pr-2 pl-1">
+                        <mat-accordion [togglePosition]="'before'">
+                            <ng-container *ngFor="let item of seletedReferences">
+                                <app-selection-tree [existList]="existReferenceIds" [chartId]="data.id"
+                                    [selected]="true" [data]="item" (onSelectedItem)="onSelect()"
+                                    (onRemoveItem)="onRemove()"></app-selection-tree>
+                            </ng-container>
+                        </mat-accordion>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-default mr-2" mat-dialog-close>Cancel</button>
+            <button class="btn btn-primary" [disabled]="!createSettingForm.valid" (click)="onSave()">Save</button>
+        </div>
+    </form>
+</ng-template>
+
+<ng-template [ngIf]="!isEdit">
+    <form #createSettingForm="ngForm" id="setting-wrapper">
+        <div class="form-group required row">
+            <label for="name" class="col-2 mt-3 col-form-label">Tên:</label>
+            <div class="col-10 required">
+                <mat-form-field appearance="outline" class="col-12">
+                    <input name="name" type="text" matInput [(ngModel)]="chartSetting.name" required>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="form-group required row mt-3">
+            <label for="type" class="col-2 mt-3 col-form-label">Loại:</label>
+
+            <div class="col-10 required">
+                <mat-form-field appearance="outline" class="col-12">
+                    <mat-select name="settingType" [(ngModel)]="chartSetting.type" required
+                        (selectionChange)="onSelectType()">
+                        <mat-option [value]="chartType.Income">
+                            Loại thu
+                        </mat-option>
+                        <mat-option [value]="chartType.Outcome">
+                            Loại chi
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <label for="color" class="col-2 mt-2">Màu:</label>
+            <input name="color" style="margin-top: 7px; margin-left: 16px;" type="color" [(ngModel)]="chartSetting.color">
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-default mr-2" mat-dialog-close>Cancel</button>
+            <button class="btn btn-primary" [disabled]="!createSettingForm.valid" (click)="onSave()">Save</button>
+        </div>
+    </form>
+</ng-template>

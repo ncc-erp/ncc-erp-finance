@@ -1,0 +1,146 @@
+<form
+  class="form-horizontal ui-form-new f-size"
+  autocomplete="off"
+  novalidate
+  id="request-change-dialog"
+  [busy]="isLoadding"
+>
+  <div
+    class="modal-header"
+    cdkDrag
+    cdkDragRootElement=".cdk-overlay-pane"
+    cdkDragHandle
+  >
+    <ng-template #change [ngIf]="!isViewHistory" [ngIfElse]="history">
+      <h4>Yêu cầu thay đổi cho request chi: {{ expenditureRequest?.name }}</h4>
+      <label
+        [ngClass]="APP_CONSTANT.StatusStyle[status?.Code.trim()]"
+        class="status-label ml-2"
+      >
+        {{ status?.Name }}</label
+      >
+
+      <h4 *ngIf="valueDifference" class="ml-2" [ngClass]="valueDifference > 0 ? 'text-danger' : 'text-primary' ">Giá trị mới - cũ : {{valueDifference | number: "1.0":"en-US"}}</h4>
+    </ng-template>
+    <ng-template #history>
+      <section style="font-size: 1.2em">
+        <b>{{ currentRequestChange.isOriginal ? "" : "[YCTĐ]" }}</b>
+        &nbsp;
+        <label
+          [ngClass]="
+            APP_CONSTANT.StatusStyle[currentRequestChange.statusCode.trim()]
+          "
+          class="lable-history-status m-0"
+          >{{ currentRequestChange.statusName }}</label
+        >
+        &nbsp;
+        <label class="m-0">{{ currentRequestChange.value  + " " + currentRequestChange.currencyName }}</label>
+        <span
+          >&nbsp;
+          {{
+            currentRequestChange.dateTime | date: "dd/MM/yyyy HH:mm:ss"
+          }}</span
+        >
+        by
+        <b>{{ currentRequestChange.createdBy }}</b>
+
+        <span>&nbsp; so với</span>
+
+        <b> &nbsp;{{ previousRequestChange.isOriginal ? "" : "[YCTĐ]" }}</b>
+        &nbsp;
+        <label
+          [ngClass]="
+            APP_CONSTANT.StatusStyle[previousRequestChange.statusCode.trim()]
+          "
+          class="lable-history-status m-0"
+          >{{ previousRequestChange.statusName }}</label
+        >
+        &nbsp;
+        <label class="m-0">{{ previousRequestChange.value + " " + previousRequestChange.currencyName }}</label>
+        <span
+          >&nbsp;{{
+            previousRequestChange.dateTime | date: "dd/MM/yyyy HH:mm:ss"
+          }}</span
+        >
+        by
+        <b>{{ previousRequestChange.createdBy }}</b>
+      </section>
+    </ng-template>
+
+    <button type="button" class="close" aria-label="Close" mat-dialog-close>
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="fixedBody">
+      <div class="col-12">
+        <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedIndex">
+          <mat-tab label="Thông tin chung">
+            <div style="max-height: 600px">
+              <app-request-change-main-tab
+                #requestChangeMain
+                [isViewHistory]="isViewHistory"
+                [tempId]="tempId"
+                [expenditureRequest]="expenditureRequest"
+                (isEditing)="setMainEditMode($event)"
+                (status)="changeStatus($event)"
+                (isClose)="isCloseChange($event)"
+                (isLoadingRequest)="isLoadding = $event"
+                (getDifferenceValue)="getDifferenceValue($event)"
+              >
+              </app-request-change-main-tab>
+            </div>
+          </mat-tab>
+          <mat-tab label="Thông tin chi tiết">
+            <app-temp-mode-table
+              [canCRUD]="canCRUD"
+              [isViewHistory]="isViewHistory"
+              [tempId]="tempId"
+              [expenditureRequest]="expenditureRequest"
+              (changeDetail)="reloadRequestChange()"
+              (readMode)="setDetailEditMode($event)"
+              [isShowTitle]="false"
+
+              (isClose)="isCloseChange($event)"
+            >
+            </app-temp-mode-table>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+    </div>
+  </div>
+  <div
+    class="row d-flex justify-content-end px-1 card-footer footer-request-change"
+  >
+    <ng-container *ngIf="!isEditMode()">
+      <button mat-dialog-close class="btn btn-default">Cancel</button>
+      <button
+        type="submit"
+        class="btn btn-primary ml-2"
+        *ngIf="data.isShowButtonSendRequestChange"
+        (click)="sendRequestChange()"
+        [disabled]="isLoadding"
+      >
+        Send
+      </button>
+      <button
+        type="submit"
+        class="btn btn-success ml-2"
+        *ngIf="data.isShowButtonApproveRequestChange"
+        (click)="approveRequestChange()"
+        [disabled]="isLoadding"
+      >
+        Approve
+      </button>
+      <button
+        type="submit"
+        class="btn btn-danger ml-2"
+        *ngIf="data.isShowButtonRejectRequestChange"
+        (click)="rejectRequestChange()"
+        [disabled]="isLoadding"
+      >
+        Reject
+      </button>
+    </ng-container>
+  </div>
+</form>

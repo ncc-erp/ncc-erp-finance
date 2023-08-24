@@ -1,0 +1,175 @@
+<div id="accountant-account">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h1>{{ 'm4_child2.accounts' | translate }}</h1>
+        </div>
+        <div class="col-6 text-right">
+          <a href="javascript:;" class="btn bg-blue" *ngIf="permission.isGranted(Account_Directory_Account_Create)"
+            (click)="createAccount()">
+            <i class="fa fa-plus-square"></i>
+            {{ 'action.create' | translate }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content px-2" >
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+         <div class="row">
+          <div class="input-group d-flex  col-sm-12 col-md-4 col-xl-6">
+            <div class="input-group-prepend">
+              <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+            <input type="text" class="form-control" name="keyword" [placeholder]="'m4_child2.search' | translate"
+              [(ngModel)]="searchText" (keyup.enter)="handleSearch()" />
+          </div>
+          <div class="col-sm-12 col-md-4 col-xl-2">
+              <mat-form-field class="col-12" appearance="outline">
+                <mat-label>Loại đối tượng</mat-label>
+                <mat-select disableOptionCentering="true" (selectionChange)="handleSearch()" [(ngModel)]="selectedAccountType">
+                  <mat-option [value]="accountType.code" *ngFor="let accountType of accountTypes">{{accountType.name}} <ng-container *ngIf="accountType.code">[{{accountType.code}}]</ng-container></mat-option>
+                </mat-select>
+              </mat-form-field>
+          </div>
+          <div class="col-sm-12 col-md-2 col-xl-2">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>Trạng thái đối tượng kế toán</mat-label>
+              <mat-select [(ngModel)]="searchStatus" (selectionChange)="handleSearch()">
+                <mat-option [value]="-1" >
+                  All
+                </mat-option>
+                <mat-option [value]="1" >
+                  Active
+                </mat-option>
+                <mat-option [value]="0" >
+                  Inactive
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-sm-12 col-md-2 col-xl-2">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>Trạng thái tài khoản ngân hàng</mat-label>
+              <mat-select [(ngModel)]="searchBankAccountStatus" (selectionChange)="handleSearch()">
+                <mat-option [value]="-1" >
+                  All
+                </mat-option>
+                <mat-option [value]="1" >
+                  Active
+                </mat-option>
+                <mat-option [value]="0" >
+                  Inactive
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+         </div>
+        </div>
+        <div class="card-body table-responsive p-4">
+          <table class="table table-hover text-nowrap dataTable" [busy]="isTableLoading">
+            <thead class="bg-light">
+              <tr>
+                <th class="text-center no">{{ 'm4_child2.no' | translate }}
+                </th>
+                <th class="text-center name">{{ 'm4_child2.name' | translate }}</th>
+                <th class="text-center code">{{ 'm4_child2.code' | translate }}</th>
+                <th class="text-center accountType">{{ 'm4_child2.accountType' | translate }}</th>
+                <th class="text-center accountType">{{ 'Type' | localize }}</th>
+                <th class="text-center banks">{{ 'm4_child2.banks' | translate }}</th>
+                <th class="text-center default">{{ 'm4_child2.default' | translate }}</th>
+                <th class="text-center isActive">{{ 'IsActive' }}</th>
+                <th class="text-center actions"
+                  *ngIf="permission.isGranted(Account_Directory_Account_Edit) || permission.isGranted(Account_Directory_Account_Delete)"
+                >{{ 'action.actions' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let data of accounts| paginate: {id: 'server',itemsPerPage: pageSize,currentPage: pageNumber,totalItems: totalItems},let index = index">
+                <td class="text-center no">{{index + 1 + (pageNumber - 1) * pageSize}}</td>
+                <td class="name"><a>{{ data.name }}</a></td>
+                <td class="code">{{ data.code }}</td>
+                <td class="accountTypeName">{{ data.accountTypeName }}</td>
+                <td class="accountTypeName">{{ data.typeName }}</td>
+                <td class="banks">
+                  <div class="banks-wrapper" *ngFor="let bank of data.banks">
+                    <a class="elnino" (click)="showDetail(bank.id)">
+                      <span *ngIf="bank.holderName != null">{{bank.holderName + "-"}}</span>
+                      <span *ngIf="bank.bankNumber != null">{{bank.bankNumber + "-"}}</span>
+                      <span *ngIf="bank.bankCode != null">{{bank.bankCode + "-"}}</span>
+                      <span *ngIf="bank.currencyCode != null">{{bank.currencyCode}}</span>
+                      <span class="ml-2 badge" [ngClass]="bank?.status ? 'badge badge-primary' : 'badge badge-secondary'">{{ bank?.statusName}}</span>
+                    </a>
+                  </div>
+                </td>
+                <td class="text-center default">
+                  <div class="custom-control custom-checkbox">
+                    <input [checked]="data.default" type="checkbox" class="custom-control-input" disabled />
+                    <label class="custom-control-label"></label>
+                  </div>
+                </td>
+                <td class="text-center isActive">
+                  <div class="custom-control custom-checkbox" (click)="handleChangeStatus(data)" *ngIf="isShowActiveDeactiveAction()">
+                    <input [checked]="data.isActive" type="checkbox" class="custom-control-input" disabled />
+                    <label class="custom-control-label"></label>
+                  </div>
+                  <div class="custom-control custom-checkbox" *ngIf="!isShowActiveDeactiveAction()">
+                    <input [checked]="data.isActive" type="checkbox" class="custom-control-input" disabled />
+                    <label class="custom-control-label"></label>
+                  </div>
+                </td>
+                <td class="actions"
+                  *ngIf="permission.isGranted(Account_Directory_Account_Edit) || permission.isGranted(Account_Directory_Account_Delete)">
+                  <button *ngIf="permission.isGranted(Account_Directory_Account_Edit)" type="button"
+                    class="btn btn-sm bg-secondary mr-1" (click)="editAccount(data)">
+                    <i class="fas fa-pencil-alt"></i>
+                    {{ 'action.edit' | translate }}
+                  </button>
+                  <button *ngIf="permission.isGranted(Account_Directory_Account_Delete)" type="button"
+                    class="btn btn-sm bg-danger ml-1" (click)="delete(data)">
+                    <i class="fas fa-trash"></i>
+                    {{ 'action.delete' | translate }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-light border-top">
+          <div class="row">
+            <div class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center just">
+              <button class="btn btn-secondary" (click)="refresh()">
+                <i class="fas fa-redo-alt"></i>
+              </button>
+              <mat-form-field style=" width: 20%; margin-left: 30px">
+                <mat-label>Number items</mat-label>
+                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                  <mat-option [value]="5"> 5 </mat-option>
+                  <mat-option [value]="10"> 10 </mat-option>
+                  <mat-option [value]="20"> 20 </mat-option>
+                  <mat-option [value]="50"> 50 </mat-option>
+                  <mat-option [value]="100"> 100 </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-sm-4 col-12 justify-content-center d-flex align-items-center">
+              <p class="mb-0 ">Total: {{ totalItems }}</p>
+            </div>
+            <div class="col-sm-4 col-12 d-flex align-items-center justify-content-end">
+              <div class="float-sm-right">
+                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                </abp-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

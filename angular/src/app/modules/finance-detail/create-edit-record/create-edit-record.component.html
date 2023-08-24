@@ -1,0 +1,134 @@
+<form class="form-horizontal" autocomplete="off" #createRecord="ngForm" style="width: 100% !important"
+    id="create-edit-record">
+    <abp-modal-header
+        title="{{ data.command=='create' ?('m5_child1.create' | translate):('m5_child1.edit' | translate) }}"
+        (onCloseClick)="dialogRef.close()"></abp-modal-header>
+
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="recordName">
+                {{ 'm5_child1.name' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="recordName" id="recordName"
+                    [(ngModel)]="revenueRecord.name" required #name="ngModel" #nameEl minlength="2" />
+                <abp-validation-summary [control]="name" [controlEl]="nameEl"></abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="typeSelect">
+                {{ 'm5_child1.incomeType' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select [(ngModel)]="revenueRecord.incomingEntryTypeId" name="typeSelect" required
+                        #incomeType="ngModel">
+                        <mat-form-field class="w-100 px-3 "
+                            style="position: sticky; top: 0;; z-index: 100; background: white;">
+                            <input type="text" name="type" id="" matInput placeholder="search"
+                                [(ngModel)]="searchIncomingType" (keydown)="$event.stopPropagation()">
+                        </mat-form-field>
+                        <ng-container *ngFor="let incomeType of finalIncomeTypeList | filter:searchIncomingType">
+                            <mat-option [disabled]="incomeType.children.length>0" [value]="incomeType.id"><span
+                                    [innerHtml]="incomeType.paddingLevel"></span>
+                                <span [ngClass]="incomeType.children.length>0?'parent':''"> {{ incomeType.name }}
+                                </span>
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="incomeType.hasError('required') && incomeType.touched" style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="accountSelect">
+                {{ 'm5_child1.account' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select [(ngModel)]="revenueRecord.accountId" name="accountName" #accountName="ngModel"
+                        required>
+                        <mat-form-field class="w-100 px-3 ">
+                            <input type="text" name="account" id="" matInput placeholder="search"
+                                [(ngModel)]="searchAccountName" (ngModelChange)="filterAccountName()">
+                        </mat-form-field>
+                        <ng-container *ngFor="let account of accountList">
+                            <mat-option *ngIf="account.accountTypeName=='COMPANY'" [value]="account.id">{{ account.name
+                                }}
+                            </mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="accountName.hasError('required') && accountName.touched" style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+        </div>
+        <div class="form-group row ">
+            <label class="col-md-3 col-form-label" for="branchSelect">
+                {{ 'm5_child1.branch' | translate }}:
+            </label>
+            <div class="col-md-7">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-select [(ngModel)]="revenueRecord.branchId" name="branchSelect" #branch="ngModel">
+                        <mat-form-field class="w-100 px-3 ">
+                            <input type="text" name="branch" id="" matInput placeholder="search"
+                                [(ngModel)]="searchBranch" (ngModelChange)="filterBranch()">
+                        </mat-form-field>
+                        <mat-option hidden=true [value]="null">none </mat-option>
+                        <ng-container *ngFor="let branch of branchList">
+                            <mat-option [value]="branch.id">{{ branch.name }}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="branch.hasError('required') && branch.touched" style="font-size: 13px;">
+                    This field is required
+                </mat-error>
+            </div>
+            <div class="col-md-2">
+                <mat-icon style="margin-top: 10px; cursor: pointer;" *ngIf="revenueRecord.branchId != null"
+                    (click)="revenueRecord.branchId = null;revenueRecord.branchName = '' ">clear</mat-icon>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="value">
+                {{ 'm5_child1.value' | translate }}:
+            </label>
+            <div class="col-md-7">
+                <input style="margin-top: 4px;" type="text" mask="separator':''" thousandSeparator=","
+                    allowNegativeNumbers="true" class="form-control" name="value" id="value" maxlength="1024"
+                    [(ngModel)]="revenueRecord.value" required #value="ngModel" #valueEl />
+                <abp-validation-summary [control]="value" [controlEl]="valueEl"></abp-validation-summary>
+
+            </div>
+            <div class="col-md-2">
+                <mat-form-field class="w-100  " appearance="outline">
+                    <mat-select class="font-weight-bold" [(ngModel)]="revenueRecord.currencyId" name="currencySelect"
+                        required #currency="ngModel">
+                        <mat-form-field class="w-100 px-3 "
+                            style="position: sticky; top: 0;; z-index: 2; background-color: white;">
+                            <input matInput [(ngModel)]="searchCurrency" name="searchCurrency" placeholder="search">
+
+                        </mat-form-field>
+                        <ng-container *ngFor="let currency of currencyList |filter:searchCurrency">
+                            <mat-option [value]="currency.id">{{
+                                currency.code
+                                }}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </div>
+    <div class="form-group row d-flex justify-content-between">
+        <button class="btn btn-default mx-2" mat-dialog-close>
+            {{ "action.cancel" | translate }}
+        </button>
+        <button class="btn btn-primary" cdkFocusInitial [disabled]="!createRecord.valid || isDisable"
+            (click)="saveAndClose()">
+            {{ "action.save" | translate }}
+        </button>
+    </div>
+</form>

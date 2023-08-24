@@ -1,0 +1,9 @@
+::ng-deep #link-transaction .mat-form-field-label-wrapper .mat-form-field-label {
+    font-weight: normal;
+    font-size: 14px;
+    margin-top: 12px;
+}
+
+::ng-deep #link-transaction .mat-form-field-flex>.mat-form-field-infix {
+    padding: 0.4em 0px !important;
+}

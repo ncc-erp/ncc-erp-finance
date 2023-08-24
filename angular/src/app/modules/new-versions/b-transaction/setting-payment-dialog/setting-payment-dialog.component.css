@@ -1,0 +1,16 @@
+.notify-input-check {
+    padding-left: 6px;
+    font-size: 13px;
+}
+
+.error {
+    color: red;
+}
+
+.active {
+    color: green;
+}
+
+.inactive {
+    color: gray;
+}

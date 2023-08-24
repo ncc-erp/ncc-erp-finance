@@ -1,0 +1,169 @@
+<form
+  class="form-horizontal"
+  autocomplete="off"
+  #createmultiincomingentry="ngForm"
+  novalidate
+  id="create-multi-incoming-entry"
+>
+  <div
+    class="modal-header"
+    cdkDrag
+    cdkDragRootElement=".cdk-overlay-pane"
+    cdkDragHandle
+  >
+    <h4 class="modal-title">
+      Tạo nhiều ghi nhận thu từ biến động số dư: #{{ data.bTransactionId }} (
+      <strong>
+        <span [style.color]="data.moneyColor">{{ data.money }}</span>
+        <span [style.color]="data.currencyColor"> {{ data.currencyName }}</span>
+      </strong>
+      )
+    </h4>
+    <button type="button" class="close" aria-label="Close" mat-dialog-close>
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="fixedBody">
+      <div class="form-group row required align-items-center">
+        <label class="col-form-label mr-3">
+          {{ "Từ bank gửi" | localize }}:
+        </label>
+        <div class="col">
+          <div class="col-md-12">
+            <div class="item-group">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-select
+                  [(ngModel)]="createMultiIncomingEntryDto.fromBankAccountId"
+                  (openedChange)="bankAccountSelectOpenedChange($event)"
+                  name="fromBankAccountId"
+                  placeholder="Tài khoản ngân hàng"
+                  required
+                  #bankAccount="ngModel"
+                >
+                  <mat-form-field
+                    class="w-100 px-3"
+                    style="
+                      position: sticky;
+                      top: 0;
+                      z-index: 100;
+                      background: white;
+                    "
+                  >
+                    <input
+                      type="text"
+                      name="type"
+                      matInput
+                      placeholder="Chọn tài khoản ngân hàng"
+                      #searchBankAccountInput
+                      [(ngModel)]="searchBankAccount"
+                      (keydown)="$event.stopPropagation()"
+                      (ngModelChange)="filterBankAccount()"
+                    />
+                  </mat-form-field>
+                  <ng-container *ngFor="let item of bankAccountFilters">
+                    <mat-option [value]="item.value"
+                      >{{ item.name }}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button style="border: none" (click)="addMore()" class="bg-blue btn mb-2" type="button">
+        <i class="fa fa-plus-square"></i>
+      </button>
+      <div class="fixTableHead">
+        <table
+          style="border-collapse: collapse"
+          class="table table-hover text-nowrap"
+          [busy]="false"
+        >
+          <thead class="bg-light">
+            <tr>
+              <th class="hard-width-200">Tên ghi nhận thu</th>
+              <th class="hard-width-150">Loại ghi nhận thu</th>
+              <th class="hard-width-100">
+                Số tiền
+                <span *ngIf="totalMoney()"
+                  >({{ _utilities.formatMoneyCustom(totalMoney()) }})</span
+                >
+              </th>
+              <th class="hard-width-50">Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let item of createMultiIncomingEntryDto.incomingEntries;
+                let i = index
+              "
+            >
+              <td class="hard-width-200">
+                <input
+                  type="text"
+                  [ngModelOptions]="{standalone: true}"
+                  (keydown)="$event.stopPropagation()"
+                  (keyup.enter)="$event.stopPropagation()"
+                  [(ngModel)]="item.name"
+                  class="form-control"
+                  placeholder="Tên ghi nhận thu"
+                />
+              </td>
+              <td class="hard-width-150">
+                <app-selection-tree-incoming-entry-type
+                  *ngIf="incomingEntryTypeOptions"
+                  [treeValue]="incomingEntryTypeOptions"
+                  placeholder="Loại ghi nhận thu"
+                  [selected]="item.incomingEntryTypeId"
+                  (selectChange)="item.incomingEntryTypeId = $event"
+                  space="3"
+                >
+                </app-selection-tree-incoming-entry-type>
+              </td>
+              <td class="hard-width-100">
+                <input
+                  required
+                  class="form-control"
+                  type="text"
+                  [ngModelOptions]="{standalone: true}"
+                  [(ngModel)]="item.value"
+                  placeholder="Số tiền"
+                  [allowNegativeNumbers]="false"
+                  (ngModelChange)="setValueIncoming(i)"
+                  mask="separator"
+                  thousandSeparator=","
+                />
+              </td>
+              <td style="text-align: center;" class="hard-width-50">
+                <button
+                  style="border: none"
+                  type="button"
+                  (click)="remove(i)"
+                  class="bg-red btn"
+                >
+                  <i class="fa fa-minus-square"></i>
+                  Xóa
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row d-flex justify-content-between mt-4 px-1">
+      <button mat-dialog-close class="btn btn-default">Hủy</button>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="isDisable()"
+        (click)="check()"
+      >
+        Thực hiện
+      </button>
+    </div>
+  </div>
+</form>

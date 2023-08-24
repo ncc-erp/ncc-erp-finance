@@ -1,0 +1,357 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-6">
+        <h1>{{ "m5_child1.title" | translate }}</h1>
+      </div>
+      <div class="col-6 text-right" style="margin-top: auto">
+        <button
+          *ngIf="permission.isGranted(Finance_IncomingEntry_ExportExcel)"
+          class="btn btn-success mx-2"
+          (click)="downloadFile()"
+        >
+          <i class="fas fa-download mr-1"></i> Export
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="content px-2" id="revenue-recording">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-4">
+            <mat-form-field appearance="outline" class="col-12">
+              <input
+                type="text"
+                matInput
+                class="form-control height-maxcontent"
+                name="revenue-count"
+                placeholder="Tìm kiếm theo nội dung..."
+                [(ngModel)]="searchText"
+                (keyup.enter)="onSearch(); $event.stopPropagation()"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-2 d-flex align-items-center">
+            <!-- <mat-form-field class="col" appearance="outline">
+                            <mat-label>Loại thu</mat-label>
+                            <mat-select [(ngModel)]="incomingEntryTypeId" (selectionChange)="onIncomeTypeFilter()" name="incomeTypeFilter"
+                                (openedChange)="selectionIncomingOpenChange($event)">
+                                <mat-form-field class="w-100 px-3 selection-input-seach-hanging-above">
+                                    <input type="text"  matInput placeholder="Loại thu"
+                                        [(ngModel)]="searchIncoming" name="searchIncoming"
+                                        (keydown)="$event.stopPropagation()" #inputSearchIncoming />
+                                </mat-form-field>
+
+                                <mat-option *ngFor="let node of treeIncomingEntries | filter:searchIncoming"
+                                    [disabled]="node.children.length>0" [value]="node.item.id">
+                                    <span [innerHtml]="node.paddingLevel"></span><span
+                                        [ngClass]="node.children.length>0?'parent':''">
+                                        {{node.item.name}}
+                                    </span>
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field> -->
+            <app-tree-in-out-type
+              [filter]="treeInOutTypeOption"
+              [ngClass]="incomingEntryTypeId != -1 ? 'col-11' : 'col-12'"
+              [selected]="incomingEntryTypeId"
+              (selectChange)="incomingEntryTypeId = $event; onIncomeTypeFilter()"
+              placeholderSearch="Search loại thu"
+              [isRequired]="false"
+              placeholder="Loại thu"
+              undefinedValue="-1"
+              label="Loại thu"
+            >
+            </app-tree-in-out-type>
+            <i
+              class="fas fa-times fa-lg pointer"
+              *ngIf="incomingEntryTypeId != -1"
+              (click)="onCancelFilterOutcomeType()"
+            ></i>
+          </div>
+          <div class="col-6">
+            <app-date-selector
+              (onDateSelectorChange)="onDateChange($event)"
+              [type]="defaultDateFilterType"
+              [defaultDateFilter]="searchWithDateTime"
+              [label]="'Ngày giao dịch'"
+            ></app-date-selector>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>Id</mat-label>
+              <input
+                type="text"
+                matInput
+                class="form-control height-maxcontent"
+                name="id"
+                mask="separator"
+                placeholder="Tìm kiếm theo Id"
+                thousandSeparator=""
+                [(ngModel)]="searchId"
+                (keyup.enter)="onfillterId()"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-2">
+            <custome-select
+              (onSelect)="onClientSelect($event)"
+              className="col-12"
+              [dropdownData]="listClient"
+              [label]="'Khách hàng'"
+              [defaultValue]="selectedClient"
+              [placeholder]="'Khách hàng'"
+            ></custome-select>
+          </div>
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>Số tiền bằng</mat-label>
+              <input
+                type="text"
+                matInput
+                class="form-control height-maxcontent"
+                name="money"
+                placeholder="Nhập số tiền"
+                [(ngModel)]="searchMoney"
+                mask="separator"
+                thousandSeparator=","
+                (keyup.enter)="onfillterMoney()"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-2">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>Tính vào doanh thu</mat-label>
+              <mat-select
+                [(ngModel)]="searchRevenueCounted"
+                (selectionChange)="onRevenueCountedFilter()"
+              >
+                <mat-option [value]="-1"> All </mat-option>
+                <mat-option [value]="1"> Có tính vào doanh thu </mat-option>
+                <mat-option [value]="0"> Không tính vào doanh thu </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>Loại tiền</mat-label>
+              <mat-select
+                [(ngModel)]="searchCurrency"
+                (selectionChange)="onCurrencyFilter()"
+                name="currencyFilter"
+              >
+                <ng-container *ngFor="let item of listCurrency">
+                  <mat-option [value]="item.id">
+                    {{ item.name }}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="col-2 d-flex align-items-center">
+            <div class="action-revenue-recording col-12">
+              <button
+                class="action-item"
+                mat-raised-button
+                (click)="handleClearFilter()"
+              >
+                Clear
+              </button>
+              <button
+                class="action-item bg-blue"
+                mat-raised-button
+                (click)="getDataPage(1)"
+                color="primary"
+              >
+                Search
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row px-4 pt-2">
+        <div class="col-12">
+          <div class="d-flex revenua-summary">
+            <div
+              *ngFor="let item of totalValue"
+              style="border: none"
+              class="revenua-summary-item"
+            >
+              <div style="border: none">
+                <strong
+                  >{{ "m5_child2.Incometype" | translate }}
+                  {{ item.currencyName }}:
+                </strong>
+                {{ item.totalValue | number : "1.0" : "en-US" }}
+                <strong [style.color]="CurrencyColor[item.currencyCode]">{{
+                  item.currencyName
+                }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body table-responsive p-4">
+        <table
+          style="border-collapse: collapse"
+          class="table table-hover text-nowrap"
+          [busy]="isTableLoading"
+        >
+          <thead class="bg-light">
+            <tr>
+              <th>STT</th>
+              <th>{{ "m5_child1.name" | translate }}</th>
+              <th>{{ "filterRevenueRecord.incomeType" | translate }}</th>
+              <th (click)="sortDate('value')" style="cursor: pointer">
+                <span class="mr-2">{{ "m5_child1.value" | translate }}</span>
+                <i [ngClass]="iconSort" *ngIf="iconCondition === 'value'"></i>
+                <i *ngIf="iconCondition !== 'value'" class="fas fa-sort"></i>
+              </th>
+              <!-- <th>{{ 'm5_child1.account' | translate }}</th>
+                            <th>{{ 'm5_child1.branch' | translate }}</th> -->
+              <th>{{ "filterRevenueRecord.clientName" | translate }}</th>
+              <th (click)="sortDate('date')" style="cursor: pointer">
+                <span class="mr-2">{{
+                  "filterRevenueRecord.createDate" | translate
+                }}</span>
+                <i [ngClass]="iconSort" *ngIf="iconCondition === 'date'"></i>
+                <i *ngIf="iconCondition !== 'date'" class="fas fa-sort"></i>
+              </th>
+              <th
+                (click)="sortDate('lastModifiedTime')"
+                style="cursor: pointer"
+              >
+                <span class="mr-2">{{
+                  "filterRevenueRecord.UpdatedTime" | translate
+                }}</span>
+                <i
+                  [ngClass]="iconSort"
+                  *ngIf="iconCondition === 'lastModifiedTime'"
+                ></i>
+                <i
+                  *ngIf="iconCondition !== 'lastModifiedTime'"
+                  class="fas fa-sort"
+                ></i>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="
+                let item of recordList
+                  | paginate
+                    : {
+                        id: 'server',
+                        itemsPerPage: pageSize,
+                        currentPage: pageNumber,
+                        totalItems: totalItems
+                      };
+                let i = index
+              "
+            >
+              <td style="text-align: center">
+                <span>{{ i + 1 + pageSize * (pageNumber - 1) }}</span>
+              </td>
+              <td style="max-width: 250px; white-space: normal">
+                <a
+                  *ngIf="isShowDetail()"
+                  class="hyperlink"
+                  [routerLink]="['/app/detail']"
+                  [queryParams]="{ id: item.bankTransactionId, index: 1 }"
+                >
+                  <b>#{{ item.id }}</b> {{ item.name }}
+                </a>
+                <span *ngIf="!isShowDetail()">
+                  <b>#{{ item.id }}</b> {{ item.name }}
+                </span>
+              </td>
+              <td class="text-center">
+                <div class="d-flex align-items-center">
+                  {{ item.incomingEntryTypeName }}
+
+                  <i
+                    class="far fa-check-circle fa-lg"
+                    [ngClass]="
+                      item.revenueCounted
+                        ? 'text-primary ml-2 pointer'
+                        : 'text-secondary ml-2 pointer'
+                    "
+                    [matTooltip]="
+                      item.revenueCounted
+                        ? 'Có tính vào doanh thu'
+                        : 'Không tính vào doanh thu'
+                    "
+                  ></i>
+                </div>
+              </td>
+
+              <td class="text-right">
+                <span>
+                  {{ item.value | number : "1.0" : "en-US" }}
+                  <strong [style.color]="CurrencyColor[item.currencyCode]">
+                    {{ item.currencyName }}
+                  </strong>
+                </span>
+              </td>
+              <!-- <td class="text-center"><span>{{ item.accountName }}</span></td>
+                            <td class="text-center"><span>{{ item.branchName }}</span></td> -->
+              <td>{{ item.clientName }}</td>
+              <td class="text-center">{{ item.date | date : "dd/MM/yyyy" }}</td>
+              <td class="text-center">
+                {{ item.updatedTime | date : "dd/MM/yyyy hh:mm" }}
+                <!-- <br/> -->
+                <span *ngIf="item.updatedBy">by {{ item.updatedBy }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-light border-top">
+        <div class="row">
+          <div
+            class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center"
+          >
+            <button class="btn btn-secondary" (click)="refresh()">
+              <i class="fas fa-redo-alt"></i>
+            </button>
+            <mat-form-field style="width: 20%; margin-left: 30px">
+              <mat-label>Number items</mat-label>
+              <mat-select
+                [(ngModel)]="pageSizeType"
+                (ngModelChange)="changePageSize()"
+              >
+                <mat-option [value]="5"> 5 </mat-option>
+                <mat-option [value]="10"> 10 </mat-option>
+                <mat-option [value]="20"> 20 </mat-option>
+                <mat-option [value]="50"> 50 </mat-option>
+                <mat-option [value]="100"> 100 </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div
+            class="col-sm-4 col-12 justify-content-center d-flex align-items-center"
+          >
+            <p class="mb-0">Total: {{ totalItems }}</p>
+          </div>
+          <div
+            class="col-sm-4 col-12 d-flex align-items-center justify-content-end"
+          >
+            <div class="float-sm-right">
+              <abp-pagination-controls
+                id="server"
+                (pageChange)="getDataPage($event)"
+              >
+              </abp-pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

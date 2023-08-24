@@ -1,0 +1,139 @@
+<div id="branch">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h1>{{ 'm3_child4.branches' | translate }}</h1>
+        </div>
+        <div class="col-6 text-right">
+          <a href="javascript:;" class="btn bg-blue" *ngIf="permission.isGranted(Directory_Branch_Create)"
+            (click)="createBranch()">
+            <i class="fa fa-plus-square"></i>
+            {{ 'action.create' | translate }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content px-2">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+            <input type="text" class="form-control" name="keyword" [placeholder]="'m3_child4.search' | translate"
+              [(ngModel)]="searchText" (keyup.enter)="getDataPage(1)" />
+            <!-- <div class="input-group-append">
+              <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                  [class.fa-angle-down]="!advancedFiltersVisible"></i>
+              </button>
+            </div> -->
+          </div>
+        </div>
+        <!-- <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+          <div class="card-body">
+            <form class="form-horizontal">
+              <div class="row">
+                <div class="col-md-12 col-xl-12">
+                  <div class="mb-0">
+                    <div>
+                      <div *ngFor="let item of filterItems; let i = index">
+                        <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                          (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG"></app-filter>
+                      </div>
+                      <i style="padding: 0;" class="fas fa-plus-circle ml-3" (click)="addFilter()"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div> -->
+        <div class="card-body table-responsive p-4">
+          <table style="border-collapse: collapse;" class="table table-hover text-nowrap" [busy]="isTableLoading">
+            <thead class="bg-light">
+              <tr>
+                <th style="text-align: center;width: 80px !important;padding: 12px;">{{ 'm4_child2.no' | translate }}
+                </th>
+                <th style="text-align: center;">{{ 'm4_child2.name' | translate }}</th>
+                <th style="text-align: center;" class="text-center">{{ 'm4_child2.code' | translate }}</th>
+                <th style="text-align: center;">{{ 'm4_child2.default' | translate }}</th>
+                <th *ngIf="permission.isGranted(Directory_Branch_Edit) || permission.isGranted(Directory_Branch_Delete)"
+                  style="width: 200px; text-align: center;">{{ 'action.actions' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="
+                      let data of branches  | paginate
+                      : {
+                          id: 'server',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems
+                        }
+                        ,let index = index
+
+                    ">
+                <td style="padding: 12px;" class="text-center">{{index + 1 + (pageNumber - 1) * pageSize}}</td>
+                <td><a>{{ data.name }}</a></td>
+                <td>{{ data.code }}</td>
+                <td class="text-center">
+                  <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" disabled [checked]="data.default" />
+                    <label class="custom-control-label"></label>
+                  </div>
+                </td>
+                <td class="d-flex justify-content-center border-0" style="padding: 12px;"
+                  *ngIf="permission.isGranted(Directory_Branch_Edit) || permission.isGranted(Directory_Branch_Delete)">
+                  <button *ngIf="permission.isGranted(Directory_Branch_Edit)" type="button"
+                    class="btn btn-sm bg-secondary mr-1" (click)="editBranch(data)">
+                    <i class="fas fa-pencil-alt"></i>
+                    {{ 'action.edit' | translate }}
+                  </button>
+                  <button *ngIf="permission.isGranted(Directory_Branch_Delete)" type="button"
+                    class="btn btn-sm bg-danger ml-1" (click)="delete(data)">
+                    <i class="fas fa-trash"></i>
+                    {{ 'action.delete' | translate }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-light border-top">
+          <div class="row">
+            <div class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center just">
+              <button class="btn btn-secondary" (click)="refresh()">
+                <i class="fas fa-redo-alt"></i>
+              </button>
+              <mat-form-field style=" width: 20%; margin-left: 30px">
+                <mat-label>Number items</mat-label>
+                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                  <mat-option [value]="5"> 5 </mat-option>
+                  <mat-option [value]="10"> 10 </mat-option>
+                  <mat-option [value]="20"> 20 </mat-option>
+                  <mat-option [value]="50"> 50 </mat-option>
+                  <mat-option [value]="100"> 100 </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-sm-4 col-12 justify-content-center d-flex align-items-center">
+              <p class="mb-0 ">Total: {{ totalItems }}</p>
+            </div>
+            <div class="col-sm-4 col-12 d-flex align-items-center justify-content-end">
+              <div class="float-sm-right">
+                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                </abp-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

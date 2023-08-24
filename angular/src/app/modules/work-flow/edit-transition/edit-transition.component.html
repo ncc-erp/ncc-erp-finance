@@ -1,0 +1,181 @@
+<form class="form-horizontal" autocomplete="off" #workFlowForm="ngForm">
+  <div class="card-header" cdkDrag cdkDragRootElement=".modal-content, .cdk-overlay-pane" cdkDragHandle>
+    <h3>{{ "m2_child4.editTitleStatusTransition" | translate }}</h3>
+  </div>
+  <div class="modal-body col-12">
+    <mat-tab-group (selectedTabChange)="onTabChanged($event)">
+      <mat-tab label="{{ 'm2_child4.workFlowStatusMain' | translate }}">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group row required" style="align-items: center">
+              <label class="col-md-4 col-form-label" for="code">
+                {{ "m2_child4.workFlowStatusTransitionName" | translate }}
+              </label>
+              <div class="col-md-8">
+                <input
+                  placeholder="name"
+                  type="text"
+                  class="form-control"
+                  name=" holdername "
+                  id="holdername "
+                  minlength="2"
+                  maxlength="64"
+                  required
+                  [(ngModel)]="transition.name"
+                />
+              </div>
+            </div>
+            <div class="form-group row required" style="align-items: center">
+              <label class="col-md-4 col-form-label" for="code">
+                {{ "m2_child4.workFlowStatusTransitionFrom" | translate }}
+              </label>
+              <div class="col-md-8">
+                <mat-form-field
+                  style="width: 100%; height: 38px"
+                  appearance="outline"
+                >
+                  <mat-select
+                    placeholder="{{
+                      'm2_child4.workFlowStatusTransitionFrom' | translate
+                    }}"
+                    [(value)]="transition.fromStatusId"
+                  >
+                    <mat-option
+                      *ngFor="let type of workFlowStatus"
+                      [value]="type.id"
+                    >
+                      {{ type.name }} (<span>{{ type.code }}</span
+                      >)
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="form-group row required" style="align-items: center">
+              <label class="col-md-4 col-form-label" for="code">
+                {{ "m2_child4.workFlowStatusTransitionTo" | translate }}
+              </label>
+              <div class="col-md-8">
+                <mat-form-field
+                  style="width: 100%; height: 38px"
+                  appearance="outline"
+                >
+                  <mat-select
+                    placeholder="{{
+                      'm2_child4.workFlowStatusTransitionTo' | translate
+                    }}"
+                    [(value)]="transition.toStatusId"
+                  >
+                    <mat-option
+                      *ngFor="let type of workFlowStatus"
+                      [value]="type.id"
+                    >
+                      {{ type.name }} (<span>{{ type.code }}</span
+                      >)
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab
+        label="{{ 'm2_child4.workFlowStatusTransitionPermission' | translate }}"
+      >
+        <section class="content-header">
+          <div class="container-fluid">
+            <div class="row">
+              <div *ngIf="!isAdding" class="ml-2">
+                <button class="btn bg-blue" (click)="isAdding = true">
+                  <i class="fa fa-plus-square"></i>
+                  <span class="ml-2" >Add</span>
+                </button>
+              </div>
+              <ng-container *ngIf="isAdding">
+                <div class="d-flex">
+                  <app-selection-customs
+                    class="w-100"
+                    [input]="roles"
+                    [hasLable]="false"
+                    [value]="obj.roleId"
+                    [searchable]="false"
+                    label="Role"
+                    placeholder="Chọn Role"
+                    placeholderSearchText="Search Role .."
+                    (ngModelChange)="obj.roleId = $event"
+                  >
+                  </app-selection-customs>
+                  <div class="d-flex ml-3">
+                    <button
+                      class="btn px-0"
+                      [disabled]="!obj.roleId || isDisable"
+                      (click)="addRole()"
+                    >
+                      <i
+                        class="fas fa-check text-success mr-2"
+                        style="font-size: 28px"
+                      ></i>
+                    </button>
+                    <button class="btn px-0" (click)="cancel()">
+                      <i
+                        class="fas fa-times text-danger"
+                        style="font-size: 28px"
+                      ></i>
+                    </button>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </section>
+        <section class="content px-2">
+        <div class="container-fluid">
+          <div class="card">
+            <div class="card-body table-responsive p-0 mb-0">
+              <div class="fixedHeader mb-0">
+                <table class="table table-hover text-nowrap mb-0">
+                  <thead class="bg-light">
+                    <tr>
+                      <th style="width: 50px">STT</th>
+                      <th>Role</th>
+                      <th style="width: 150px;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      <tr *ngFor="let permission of roleByTransition.permission;let ind = index">
+                        <td class="text-center">{{ind+1}}</td>
+                        <td><span class="ml-2">{{permission.roleDisplayName}}</span></td>
+                        <td class="text-center">
+                          <button class="btn btn-danger"(click)="clearRole(permission)" [disabled]="isDisable">
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      </mat-tab>
+    </mat-tab-group>
+    <div *ngIf="tabIndex != 1" align="end" class="mat-dialog-actions" mat-dialog-actions="">
+      <button
+        class="btn btn-default cancel-banks"
+        mat-raised-button
+        mat-dialog-close
+      >
+        Cancel
+      </button>
+      <button
+        class="saving-btn btn btn-primary ml-2"
+        [disabled]="!workFlowForm.form.valid"
+        (click)="saveAndClose()"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</form>

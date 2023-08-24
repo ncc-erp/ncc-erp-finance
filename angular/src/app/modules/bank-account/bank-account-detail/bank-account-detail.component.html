@@ -1,0 +1,253 @@
+<section class="content-header" id="bank-account-detail">
+  <div class="row" style="padding-right: 15px">
+    <div class="col-md-4 col-form-label">
+      <h3>Chi tiết tài khoản ngân hàng </h3>
+    </div>
+    <div class="col-md-8 pt-1">
+      <div class="text-right ml-2">
+        <a
+          href="javascript:;"
+          *ngIf="bankDetailTransaction?.bankTransaction?.length > 0"
+          class="btn btn-success"
+          (click)="ExportExcelDetail()"
+        >
+          <i class="fas fa-download mr-1"></i>
+          Export
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="content px-2">
+  <div class="container-fluid">
+    <div class="card">
+      <table style="border-collapse: collapse" class="table table-hover">
+        <tr>
+          <td style="width: 30%">
+            <b>{{ "m4_child1.hoder name" | translate }}:</b>
+          </td>
+          <td>{{ bankDetail?.holderName }}</td>
+        </tr>
+        <tr>
+          <td>
+            <b>{{ "m4_child1.bank number" | translate }}:</b>
+          </td>
+          <td>{{ bankDetail?.bankNumber }}</td>
+        </tr>
+        <tr>
+          <td>
+            <b>{{ "m4_child1.bank" | translate }}:</b>
+          </td>
+          <td>{{ bankDetail?.bankName }}</td>
+        </tr>
+        <tr>
+          <td>
+            <b>{{ "m4_child1.currency" | translate }}:</b>
+          </td>
+          <td>{{ bankDetail?.currencyName }}</td>
+        </tr>
+        <tr>
+          <td>
+            <b>{{ "m4_child1.account" | translate }}:</b>
+          </td>
+          <td>{{ bankDetail?.accountName }}</td>
+        </tr>
+        <tr>
+          <td>
+            <b>{{ "m4_child1.currentAmount" | translate }}:</b>
+          </td>
+          <td>{{ bankDetail?.amount | number : "1.0" : "en-US" }}</td>
+        </tr>
+        <tr>
+          <td><b>Trạng thái:</b></td>
+          <td>
+            <span
+              style="margin-right: 3px"
+              [ngClass]="bankDetail?.isActive ? 'bg-active' : 'bg-inactive'"
+              *ngIf="bankDetail"
+            >
+              {{ bankDetail?.isActive ? "Active" : "Inactive" }}</span
+            >
+          </td>
+        </tr>
+        <tr>
+          <td><b>Trạng thái trong kì:</b></td>
+          <td>
+            <span
+              style="margin-right: 3px"
+              [ngClass]="
+                bankDetail?.isActiveInPeriod ? 'bg-active' : 'bg-inactive'
+              "
+              *ngIf="bankDetail"
+            >
+              {{ bankDetail?.isActiveInPeriod ? "Active" : "Inactive" }}</span
+            >
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</section>
+<section class="content px-2">
+  <div class="container-fluid">
+    <div class="card">
+      <form class="form-horizontal" autocomplete="off" #editTenantForm="ngForm">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-md-3 col-form-label">
+              <h3>{{ "m4_child1.checkBalance" | translate }}</h3>
+            </div>
+            <div class="col-md-9 text-right row">
+              <div class="col-11 p-0">
+                <label for="">From:</label>
+                <mat-form-field appearance="outline" class="mx-1">
+                  <input
+                    matInput
+                    name="dateStart"
+                    [(ngModel)]="startDate"
+                    [matDatepicker]="picker1"
+                    placeholder="Start at"
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="picker1"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+                <label class="ml-4" for="">To:</label>
+
+                <mat-form-field appearance="outline" class="ml-1">
+                  <input
+                    matInput
+                    name="dateEnd"
+                    [(ngModel)]="endDate"
+                    [matDatepicker]="picker2"
+                    placeholder="End at"
+                  />
+                  <mat-datepicker-toggle
+                    matSuffix
+                    [for]="picker2"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #picker2></mat-datepicker>
+                </mat-form-field>
+              </div>
+              <div class="col-1 mt-2">
+                <button
+                  mat-raised-button
+                  (click)="getBankAcountTransactionDetail()"
+                  color="primary"
+                >
+                  View
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="row">
+                        <div class="col-md-4">
+                            <label for="">{{'m4_child1.balanceCheckResults' |translate}}</label>
+                        </div>
+                    </div> -->
+          <div class="row">
+            <div class="col-md-4">
+              <label for="from">Số dư đầu kì: </label>
+              <span>
+                {{
+                  bankDetailTransaction.beginningBalance
+                    | number : "1.0" : "en-US"
+                }}</span
+              >
+              <span
+                class="ml-1 pointer"
+                style="float: right"
+                *ngIf="!bankDetailTransaction?.bankTransaction?.length  &&
+                  permission.isGranted(
+                    Account_Directory_BankAccount_EditBaseBalanace
+                  )
+                "
+              >
+                <i
+                  class="fas fa-edit"
+                  (click)="updateBaseBalanace()"
+                ></i>
+              </span>
+            </div>
+            <div class="col-md-4">
+              <label for="from">Số dư hiện tại: </label>
+              <span> {{ afterBalance | number : "1.0" : "en-US" }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body">
+          <div style="position: relative; overflow-y: auto; max-height: 500px">
+            <table
+              style="border-collapse: collapse"
+              class="table table-hover"
+              style="width: 100%"
+              [busy]="isTableLoading"
+            >
+              <thead class="bg-light mt-1">
+                <tr>
+                  <th
+                    class="bg-light"
+                    style="position: sticky; top: 0; z-index: 1"
+                  >
+                    {{ "m4_child1.transactionDate" | translate }}
+                  </th>
+                  <th
+                    class="bg-light"
+                    style="position: sticky; top: 0; z-index: 1"
+                  >
+                    {{ "m4_child1.bankTransactionName" | translate }}
+                  </th>
+                  <th
+                    class="bg-light"
+                    style="position: sticky; top: 0; z-index: 1"
+                  >
+                    {{ "m4_child1.increase" | translate }}
+                    <span *ngIf="totalPlus()"
+                      ><br />({{
+                        totalPlus() | number : "1.0" : "en-US"
+                      }})</span
+                    >
+                  </th>
+                  <th
+                    class="bg-light"
+                    style="position: sticky; top: 0; z-index: 1"
+                  >
+                    {{ "m4_child1.reduce" | translate }}
+                    <span *ngIf="totalMinus()"
+                      ><br />({{
+                        totalMinus() | number : "1.0" : "en-US"
+                      }})</span
+                    >
+                  </th>
+                  <th
+                    class="bg-light"
+                    style="position: sticky; top: 0; z-index: 1"
+                  >
+                    {{ "m4_child1.afterBalance" | translate }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="mt-1">
+                <tr *ngFor="let item of bankDetailTransaction.bankTransaction">
+                  <td>{{ item.transactionDate | date : "dd/MM/yyyy" }}</td>
+                  <td
+                    style="word-wrap: break-word; max-width: 300px"
+                    class="hyperlink"
+                    (click)="showDetail(item.id)"
+                  >
+                    {{ item.bankTransactionName }}
+                  </td>
+                  <td>{{ item.increase | number : "1.0" : "en-US" }}</td>
+                  <td>{{ item.reduce | number : "1.0" : "en-US" }}</td>
+                  <td>{{ item.afterBalance | number : "1.0" : "en-US" }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,64 @@
+mat-button-toggle {
+    width: 30px;
+    height: 30px;
+    border: none;
+
+}
+
+mat-icon {
+    margin-bottom: 20px;
+}
+
+::ng-deep #date-selector .mat-button-toggle-group {
+    border: none;
+}
+
+::ng-deep #date-selector .mat-button-toggle-label-content {
+
+    border: none;
+
+    padding-left: 0;
+    padding-right: 0;
+}
+
+::ng-deep #date-selector .mat-form-field-infix.ng-tns-c99-2 {
+    padding: 0;
+    /*width: 150px;*/
+}
+
+::ng-deep #date-selector .mat-select-min-line {
+    text-align: center;
+}
+
+::ng-deep #date-selector .mat-select-value {
+    padding: 0;
+}
+
+::ng-deep #date-selector .date-selector .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: .5rem 0 .5rem 0 !important;
+}
+
+::ng-deep #date-selector .date-selector .mat-form-field-appearance-outline .mat-form-field-wrapper {
+    margin: 0 !important;
+}
+
+::ng-deep #date-selector-date-picker>.mat-form-field {
+    width: 190px;
+}
+
+::ng-deep #date-selector .mat-raised-button {
+    min-width: 38px;
+    box-shadow: none;
+}
+
+.select-datepicker--action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.select-datepicker--label {
+    font-weight: 400;
+    font-size: 1rem;
+}

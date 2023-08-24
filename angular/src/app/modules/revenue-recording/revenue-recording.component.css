@@ -1,0 +1,80 @@
+tr,
+th,
+td {
+    border: .2px solid rgba(204, 204, 204, .35);
+}
+
+.hyperlink:hover {
+    cursor: pointer;
+    text-decoration: underline !important;
+}
+
+.hyperlink {
+    color: #007bff;
+}
+
+.revenua-summary {
+    gap: 10px;
+    flex: 1;
+}
+
+.revenua-summary-item {
+    width: 25%;
+}
+
+.date-selector-revenue {
+    margin-right: -7px;
+    margin-left: 7px;
+}
+
+.action-revenue-recording {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.action-item {
+    flex: 1;
+}
+
+::ng-deep #revenue-recording .mat-form-field-appearance-legacy .mat-form-field-underline {
+    bottom: 0px !important;
+}
+
+::ng-deep #revenue-recording .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(0.75);
+    width: 133.33333%;
+}
+
+::ng-deep #revenue-recording .mat-form-field-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+::ng-deep #revenue-recording .mat-form-field-flex>.mat-form-field-infix {
+    padding: 0.4em 0px !important;
+}
+
+::ng-deep #revenue-recording .mat-form-field-label-wrapper {
+    top: -1.5em;
+}
+
+::ng-deep #revenue-recording .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+
+
+::ng-deep #revenue-recording .mat-form-field-label-wrapper .mat-form-field-label {
+    font-weight: normal;
+    font-size: 14px;
+    margin-top: 0.25em;
+}
+
+::ng-deep #revenue-recording .height-maxcontent {
+    height: max-content;
+}
+
+.parent {
+    font-weight: bold;
+}

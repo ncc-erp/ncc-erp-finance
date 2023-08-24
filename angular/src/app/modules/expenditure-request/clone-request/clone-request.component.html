@@ -1,0 +1,42 @@
+<form class="form-horizontal" autocomplete="off" #cloneOutcomingForm="ngForm" id="clone-request">
+
+<div class="card-header p-2">
+    <h5>Clone từ request: {{data.name}}</h5>
+</div>
+<div class="card-body">
+<div class="from-group row require" [busy]="isLoading">
+    <label class="col-3 col-form-label">Nội dung:</label>
+    <div class="form-control col-9">
+        <input matInput type="text" [(ngModel)]="newOutcomingEntry.name" name="newOutcomingEntry.name"/>
+    </div>
+    <ng-container *ngIf="isShowMoney">
+        <label class="col-3 col-form-label margin-top">Số tiền:</label>
+        <div class="form-control col-7 margin-top">
+          <input
+            matInput
+            type="text"
+            [(ngModel)]="newOutcomingEntry.value"
+            name="newOutcomingEntry.value"
+            [allowNegativeNumbers]="false"
+            mask="separator"
+            thousandSeparator=","
+            min="0"
+        />
+        </div>
+        <select class="col-2 margin-top" [(ngModel)]="newOutcomingEntry.currencyId" name="newOutcomingEntry.currencyId">
+          <option *ngFor="let currency of currencyList" [value]="currency.id">
+            {{ currency.name }}
+          </option>
+        </select>
+    </ng-container>
+</div>
+</div>
+<div class="d-flex justify-content-end">
+    <button class="btn btn-secondary mr-1" mat-dialog-close="">
+        Cancel
+    </button>
+    <button [disabled]="!cloneOutcomingForm.valid || isLoading" (click)="clone()" class="btn btn-primary">
+        Clone
+    </button>
+</div>
+</form>

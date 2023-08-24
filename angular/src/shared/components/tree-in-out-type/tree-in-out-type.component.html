@@ -1,0 +1,75 @@
+<div class="col-md-12 tree-select" style="padding: 0px">
+  <div class="col-md-12 d-flex align-items-center" [style.padding]="0">
+    <div
+      class="col-md-12 item-group"
+      style="padding-bottom: 5px; padding-left: 0; padding-right: 0"
+    >
+      <mat-form-field class="w-inherit" appearance="outline">
+        <mat-label *ngIf="label && selected">
+          {{ label }}
+        </mat-label>
+        <mat-select
+          [(ngModel)]="selected"
+          name="selection_tree"
+          (ngModelChange)="selectdChange();"
+          [required]="isRequired"
+          [disabled]="isDisable"
+          [placeholder]="placeholder"
+          #selection="ngModel"
+          (openedChange)="selectedOpenedChange($event)"
+        >
+          <div class="search-input">
+            <mat-form-field class="w-100 px-3">
+              <input
+                type="text"
+                name="searchText"
+                (keydown)="$event.stopPropagation()"
+                id="search"
+                matInput
+                [placeholder]="placeholderSearch"
+                [(ngModel)]="searchText"
+                #input
+                (ngModelChange)="searchTextChange()"
+              />
+            </mat-form-field>
+          </div>
+          <div class="check-box-show-all" *ngIf="isShowAll">
+            <mat-checkbox
+              class="px-3"
+              [(ngModel)]="filter.isShowAll"
+              (ngModelChange)="getData()"
+            >
+              Show All
+            </mat-checkbox>
+          </div>
+          <div class="options">
+            <mat-option
+              *ngIf="!options || !options.length"
+              disabled
+              class="text-center"
+            >
+              No data
+              <span *ngIf="searchText"> by "{{ searchText }}"</span>
+            </mat-option>
+            <ng-container *ngFor="let option of options">
+              <mat-option
+                *ngIf="option.value"
+                [disabled]="option.hasChildren && isDisableParent"
+                [value]="option.value"
+                [hidden]="option.hidden"
+                [matTooltip]="option.name"
+              >
+                <span
+                  [style]="'padding-left: ' + option.level * space + 'rem;'"
+                >
+                  {{ option.name }}
+                </span>
+                <span *ngIf="!option.isActive"> - inActive</span>
+              </mat-option>
+            </ng-container>
+          </div>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</div>

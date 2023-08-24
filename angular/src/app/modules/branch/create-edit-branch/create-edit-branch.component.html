@@ -1,0 +1,47 @@
+<form class="form-horizontal" autocomplete="off" #bankForm="ngForm" novalidate>
+    <div class="card-header">
+        <h3 *ngIf="!isEdit">{{'m3_child4.createTitle' | translate}}</h3>
+        <h3 *ngIf="isEdit">{{'m3_child4.editTitle' | translate}} </h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="tenancyName">
+                {{ 'm3_child4.name' | translate }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="tenancyName" id="tenancyName" minlength="2" maxlength="64"
+                    required [(ngModel)]="branch.name" #tenancyNameModel="ngModel" #tenancyNameEl />
+                <abp-validation-summary [control]="tenancyNameModel" [controlEl]="tenancyNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="code">
+                {{ 'm3_child4.code' | translate }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="code" id="code" minlength="2" maxlength="64" required
+                    [(ngModel)]="branch.code" #codeModel="ngModel" #codeEl />
+                <abp-validation-summary [control]="codeModel" [controlEl]="codeEl"></abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row mb-0">
+            <label class="col-md-3 col-form-label">
+                {{ 'm3_child4.default' | translate }}
+            </label>
+            <div class="col-md-9">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="default" id="default"
+                        [(ngModel)]="branch.default" />
+                    <label class="custom-control-label mt-2" for="default"></label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div align="end" class="mat-dialog-actions" mat-dialog-actions="">
+        <button class="btn btn-default cancel-banks" mat-raised-button mat-dialog-close>Cancel</button>
+        <button class="saving-btn btn btn-primary ml-2"
+        [disabled]="!bankForm.form.valid" (click)="saveAndClose()">Save</button>
+    </div>
+</form>
+<!-- style="background-color: #007bff; color: #ffffff;" npm i ... --force-->

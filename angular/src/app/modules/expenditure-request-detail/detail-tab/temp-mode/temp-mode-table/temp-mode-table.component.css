@@ -1,0 +1,76 @@
+.read-mode{
+    border: none !important;
+}
+textarea:read-only{
+    background: none;
+    border: none;
+}
+.temp-delete{
+    position: relative;
+    text-decoration-line: line-through;
+    background-color: rgb(255 160 160 / 50%);
+}
+.temp-delete > td:first{
+    text-decoration-line: none;
+}
+/* .temp-delete:after{
+    content: "";
+    width: 100%;
+    position: absolute;
+    height: 1px;
+    left: 0;
+    top: 50%;
+
+} */
+.temp-update{
+    background-color: #f1eed5;
+}
+.temp-new{
+    background-color: #edffed;
+}
+td {
+    vertical-align: middle;
+}
+tr {
+    vertical-align: middle;
+}
+.read-mode{
+    border: none !important;
+    background-color: none;
+}
+#lable-request-change-text:after{
+    content: '\00a0';
+}
+.w-150{
+    width: 150px !important;
+}
+.w-250{
+    width: 250px !important;
+}
+.w-350{
+    width: 350px !important;
+}
+.w-50{
+    width: 50px !important;
+}
+::ng-deep .w-150 .mat-form-field-flex {
+    width: 150px !important;
+}
+.fix-table-head {
+    overflow-y: auto;
+    max-height: 60vh;
+}
+.fix-table-head thead {
+    position: sticky;
+    top: -1px;
+    z-index: 2;
+}
+.fix-table-head table tbody:nth-of-type(1) tr:nth-of-type(1) td {
+    border-top: none !important;
+}
+.required.col-form-label::after{
+    content: "*";
+    color: #d00;
+    position: absolute;
+    margin-left: 3px;
+}

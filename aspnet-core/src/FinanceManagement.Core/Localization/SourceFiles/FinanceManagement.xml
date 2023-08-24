@@ -1,0 +1,169 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<localizationDictionary culture="en">
+  <texts>
+	 <!--Home-->
+    <text name="Home" value="Home" />
+	<text name="StatusDashBoard" value="Status DashBoard" />
+	<text name="CashFlowDashBoard" value="CashFlow DashBoard" />
+	<text name="PercentEntryType" value="PercentEntryType DashBoard" />
+	  <!--Admin-->
+	<text name="Admin" value="Admin" />
+	<text name="Tenants" value="Tenants" />
+	<text name="User" value="User" />
+	<text name="Role" value="Role" />
+		<!--WorkFlow-->
+		<text name="WorkFlow" value="WorkFlow" />
+		<text name="CreateWorkFlow" value="Create New WorkFlow" />
+		<text name="EditWorkFlow" value="Edit WorkFlow" />
+		<text name="DeleteWorkFlow" value="Delete WorkFlow" />
+		<text name="ViewAllWorkFlow" value="View All WorkFlow" />
+		<text name="ViewDetailWorkFlow" value="View Detail WorkFlow" />
+		<!--WorkFlow Status-->
+		<text name="WorkFlowStatus" value="WorkFlow Status" />
+		<text name="CreateWorkFlowStatus" value="Create New WorkFlow Status" />
+		<text name="EditWorkFlowStatus" value="Edit WorkFlow Status" />
+		<text name="DeleteWorkFlowStatus" value="Delete WorkFlow Status" />
+		<text name="ViewAllWorkFlowStatus" value="View All WorkFlow Status" />
+		<text name="ViewDetailWorkFlowStatus" value="View Detail WorkFlow Status" />
+		<!--WorkFlow Status Transaction-->
+		<text name="WorkFlowStatusTransaction" value="WorkFlow Status Transaction" />
+		<text name="CreateWorkFlowStatusTransaction" value="Create New WorkFlow Status Transaction" />
+		<text name="EditWorkFlowStatusTransaction" value="Edit WorkFlow Status Transaction" />
+		<text name="DeleteWorkFlowStatusTransaction" value="Delete WorkFlow Status Transaction" />
+		<text name="ViewAllWorkFlowStatusTransaction" value="View All WorkFlow Status Transaction" />
+		<text name="ViewDetailWorkFlowStatusTransaction" value="View Detail WorkFlow Status Transaction" />
+		<!--Transition Permission-->
+		<text name="TransitionPermission" value="Transition Permission" />
+		<text name="CreateTransitionPermission" value="Create New Transition Permission" />
+		<text name="DeleteTransitionPermission" value="Delete Transition Permission" />
+		<text name="ViewAllTransitionPermission" value="View All Transition Permission" />
+	<!--Directory-->
+	<text name="Directory" value="Directory" />
+		<!--Currency-->
+		<text name="Currency" value="Currency" />
+		<text name="CreateCurrency" value="Create New Currency" />
+		<text name="EditCurrency" value="Edit Currency" />
+		<text name="DeleteCurrency" value="Delete Currency" />
+		<text name="ViewAllCurrency" value="View All Currency" />
+		<text name="ViewDetailCurrency" value="View Detail Currency" />
+		<!--Bank-->
+		<text name="Bank" value="Bank" />
+		<text name="CreateBank" value="Create New Bank" />
+		<text name="EditBank" value="Edit Bank" />
+		<text name="DeleteBank" value="Delete Bank" />
+		<text name="ViewAllBank" value="View All Bank" />
+		<text name="ViewDetailBank" value="View Detail Bank" />
+		<!--AccountType-->
+		<text name="AccountType" value="AccountType" />
+		<text name="CreateAccountType" value="Create New AccountType" />
+		<text name="EditAccountType" value="Edit AccountType" />
+		<text name="DeleteAccountType" value="Delete AccountType" />
+		<text name="ViewAllAccountType" value="View All AccountType" />
+		<text name="ViewDetailAccountType" value="View Detail AccountType" />
+		<!--Branch-->
+		<text name="Branch" value="Branch" />
+		<text name="CreateBranch" value="Create New Branch" />
+		<text name="EditBranch" value="Edit Branch" />
+		<text name="DeleteBranch" value="Delete Branch" />
+		<text name="ViewAllBranch" value="View All Branch" />
+		<text name="ViewDetailBranch" value="View Detail Branch" />
+		<!--Incoming Entry Type-->
+		<text name="IncomingEntryType" value="Incoming Entry Type" />
+		<text name="CreateIncomingEntryType" value="Create New Incoming Entry Type" />
+		<text name="EditIncomingEntryType" value="Edit Incoming Entry Type" />
+		<text name="DeleteIncomingEntryType" value="Delete Incoming Entry Type" />
+		<text name="ViewAllIncomingEntryType" value="View All Incoming Entry Type" />
+		<text name="ViewDetailIncomingEntryType" value="View Detail Incoming Entry Type" />
+		<!--OutcomingEntryType-->
+		<text name="OutcomingEntryType" value="Outcoming Entry Type" />
+		<text name="CreateOutcomingEntryType" value="Create New Outcoming Entry Type" />
+		<text name="EditOutcomingEntryType" value="Edit Outcoming Entry Type" />
+		<text name="DeleteOutcomingEntryType" value="Delete Outcoming Entry Type" />
+		<text name="ViewAllOutcomingEntryType" value="View All Outcoming Entry Type" />
+		<text name="ViewDetailOutcomingEntryType" value="View Detail Outcoming Entry Type" />
+		<!--Supplier-->
+		<text name="Supplier" value="Supplier" />
+		<text name="ViewAllSupplier" value="View All Supplier" />
+		<text name="ViewAllPagingSupplier" value="View All Paging Supplier" />
+		<text name="ViewDetailSupplier" value="View Detail Supplier" />
+		<text name="CreateSupplier" value="Create New Supplier" />
+		<text name="EditSupplier" value="Edit Supplier" />
+		<text name="DeleteSupplier" value="Delete Supplier" />
+		<text name="ViewAllSupplierByoutcomingEntry" value="View All Supplier By OutcomingEntry" />
+	<!--Account Directory-->
+	<text name="AccountDirectory" value="Account Directory" />
+		<!--Account-->
+		<text name="Account" value="Account" />
+		<text name="CreateAccount" value="Create New Account" />
+		<text name="EditAccount" value="Edit Account" />
+		<text name="DeleteAccount" value="Delete Account" />
+		<text name="ViewAllAccount" value="View All Account" />
+		<text name="ViewDetailAccount" value="View Detail Account" />
+		<!--Bank Account-->
+		<text name="BankAccount" value="Bank Account" />
+		<text name="CreateBankAccount" value="Create New Bank Account" />
+		<text name="EditBankAccount" value="Edit Bank Account" />
+		<text name="DeleteBankAccount" value="Delete Bank Account" />
+		<text name="ViewAllBankAccount" value="View All Bank Account" />
+		<text name="ViewDetailBankAccount" value="View Detail Bank Account" />
+	<!--Finance-->
+	<text name="Finance" value="Finance" />
+		<!--Bank Transaction-->
+		<text name="BankTransaction" value="Bank Transaction" />
+		<text name="CreateBankTransaction" value="Create New Bank Transaction" />
+		<text name="EditBankTransaction" value="Edit Bank Transaction" />
+		<text name="DeleteBankTransaction" value="Delete Bank Transaction" />
+		<text name="ViewBankTransaction" value="View All Bank Transaction" />
+		<text name="ViewDetailBankTransaction" value="View Detail New Bank Transaction" />
+		<text name="SaveMultipleRequestOutcomingBankTransaction" value="Save Multiple Request Outcoming Entry Bank Transaction" />
+		<text name="ViewAllOutcomingEntryByBankTransaction" value="View All Outcoming Entry By Bank Transaction" />
+		<text name="ViewAllOutcomingEntryByStatusEND" value="View All Outcoming Entry By Status END" />
+		<!--Incoming Entry-->
+		<text name="IncomingEntry" value="Incoming Entry" />
+		<text name="CreateIncomingEntry" value="Create New Incoming Entry" />
+		<text name="EditIncomingEntry" value="Edit IncomingEntry" />
+		<text name="DeleteIncomingEntry" value="Delete Incoming Entry" />
+		<text name="ViewAllIncomingEntry" value="View All Incoming Entry" />
+		<text name="ViewDetailIncomingEntry" value="View Detail Incoming Entry" />
+		<text name="ViewAllIncomingByBankTransaction" value="View All Incoming Entry By Bank Transaction" />
+		<!--Outcoming Entry-->
+		<text name="OutcomingEntry" value="Outcoming Entry" />
+		<text name="CreateOutcomingEntry" value="Create New Outcoming Entry" />
+		<text name="EditOutcomingEntry" value="Edit Outcoming Entry" />
+		<text name="DeleteOutcomingEntry" value="Delete Outcoming Entry" />
+		<text name="ViewAllOutcomingEntry" value="View All Outcoming Entry" />
+		<text name="ViewDetailOutcomingEntry" value="View Detail Outcoming Entry" />
+		<text name="ChangeStausOfOutcomingEntry" value="Change Status Of Outcoming Entry" />
+		<text name="ViewOnlyMe" value="View Only Me" />
+		<text name="ViewAllComment" value="View All Comment" />
+		<text name="EditAllComment" value="Edit Comment" />
+		<text name="CreateAllComment" value="Create Comment" />
+		<text name="DeleteAllComment" value="Delete Comment" />
+		<text name="RemindCEO" value="Remind CEO" />
+		<text name="TransferToEnd" value="Transfer To End" />
+		<text name="GetTotalValueOutcoming" value="Get Total Value Outcoming Entry" />
+			<!--Outcoming Entry Detail-->
+			<text name="OutcomingEntryDetail" value="Outcoming Entry Detail" />
+			<text name="CreateOutcomingEntryDetail" value="Create New Outcoming Entry Detail" />
+			<text name="EditOutcomingEntryDetail" value="Edit Outcoming Entry Detail" />
+			<text name="DeleteOutcomingEntryDetail" value="Delete Outcoming Entry Detail" />
+			<text name="ViewAllOutcomingDetailByOutcoming" value="View All Outcoming Entry Detail By Outcoming Entry" />
+			<text name="ViewDetailOutcomingEntryDetail" value="View Detail Outcoing Entry Detail" />
+			<text name="LinkToATransaction" value="Link To a Transaction" />
+			<text name="Add New Transaction" value="Add New Transaction" />
+			<text name="Add Multiple Transaction" value="Add Multiple Transaction" />
+			<text name="ViewAllTransactionDetail" value="View All Transaction Detail" />
+			<text name="DeleteLinkedTransaction" value="Delete Linked Transaction" />
+		<!--Relation In Out Entry-->
+			<text name="RelationInOutEntry" value="Relation In Out Entry" />
+			<text name="ViewAllRelationInOutEntry" value="View All Relation In Out Entry" />
+			<text name="ViewInOutFromRelationInOutEntry" value="View In Out From Relation In Out Entry" />
+			<text name="CreateRelationInOutEntry" value="Create Relation In Out Entry" />
+			<text name="DeleteRelationInOutEntry" value="Delete Relation In Out Entry" />
+		<!--Outcoming Entry Supplier-->
+			<text name="OutcomingEntrySupplier" value="Outcoming Entry Supplier" />
+			<text name="CreateOutcomingEntrySupplier" value="Create New Outcoming Entry Supplier" />
+			<text name="EditOutcomingEntrySupplier" value="Edit Outcoming Entry Supplier" />
+			<text name="RemoveSupplierFromOutcomingEntry" value="Remove Supplier From Outcoming Entry" />
+  </texts>
+</localizationDictionary>

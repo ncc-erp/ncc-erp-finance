@@ -1,0 +1,654 @@
+<div
+  class=""
+  id="request-change"
+  [busy]="isLoading"
+  *ngIf="tempExpenditureRequest"
+>
+  <div class="row">
+    <div class="col-2"></div>
+    <div class="col-10 text-right my-4">
+      <a
+        *ngIf="readMode && expenditureRequest.isShowButtonSendRequestChange"
+        href="javascript:;"
+        class="btn bg-secondary mr-2"
+        [hidden]="!readMode"
+        (click)="editRequest()"
+      >
+        <i class="fas fa-edit"></i>
+        {{ "action.edit" | translate }}
+      </a>
+      <ng-container *ngIf="!readMode">
+        <div>
+          <button class="btn btn-default mx-2" (click)="cancelEdit()">
+            {{ "action.cancel" | translate }}
+          </button>
+          <button
+            class="btn btn-primary"
+            (click)="saveTempOutCommingEntry()"
+            [disabled]="!requestDetail.valid"
+          >
+            {{ "action.save" | translate }}
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-6">
+        <form
+          class="form-horizontal"
+          autocomplete="off"
+          #requestDetail="ngForm"
+        >
+          <!-- Name -->
+          <div
+            class="form-group row detail"
+            [ngClass]="!readMode ? 'required' : ''"
+          >
+            <label
+              class="col-md-3 col-form-label"
+              for="requestName"
+              [ngClass]="
+                tempExpenditureRequest.name != expenditureRequest.name
+                  ? 'text-bold'
+                  : ''
+              "
+            >
+              {{ "m5_child2.name" | translate }}:
+            </label>
+
+            <textarea
+              class="form-control col-md-9"
+              name="requestName"
+              [ngClass]="readMode ? 'read-mode' : ''"
+              [readonly]="readMode"
+              [(ngModel)]="tempExpenditureRequest.name"
+            >
+            </textarea>
+          </div>
+          <div
+            class="form-group row detail"
+            [ngClass]="!readMode ? 'required' : ''"
+            *ngIf="tempExpenditureRequest.name != expenditureRequest.name"
+          >
+            <label class="col-md-3 col-form-label"> Nội dung cũ: </label>
+            <textarea
+              class="form-control col-md-9 text-danger"
+              readonly
+              style="border: none !important"
+              [value]="expenditureRequest.name"
+            ></textarea>
+          </div>
+
+          <!-- Người Request -->
+          <div class="form-group row detail">
+            <label class="col-md-3 col-form-label" for="requester">
+              {{ "m5_child2.author" | translate }}:
+            </label>
+            <div class="col-md-6">
+              <input
+                type="text"
+                class="form-control read-mode"
+                name="requester"
+                readonly="true"
+                maxlength="1024"
+                [(ngModel)]="expenditureRequest.requester"
+              />
+            </div>
+          </div>
+          <!-- Chi nhánh -->
+          <div class="form-group row detail" [ngClass]="!readMode ? 'required' : ''">
+            <label class="col-md-3 col-form-label" for="branchName"
+              [ngClass]="expenditureRequest.branchId != tempExpenditureRequest.branchId ? 'text-bold' : ''">
+              {{ "m5_child2.branch" | translate }}:
+            </label>
+            <div class="col-md-6">
+              <input type="text" class="form-control read-mode" name="branchName" readonly maxlength="1024"
+                [hidden]="!readMode" [(ngModel)]="tempExpenditureRequest.branchName" />
+              <mat-form-field [hidden]="readMode" appearance="outline" class="readonly-block w-100">
+                <mat-select [(ngModel)]="tempExpenditureRequest.branchId" name="branchId" class="readonly-select"
+                  #branch="ngModel" required placeholder="Select branch" (openedChange)="branchSelectOpenedChange()">
+                  <mat-form-field class="w-100 px-3" style="
+                        position: sticky;
+                        top: 0;
+                        z-index: 2;
+                        background-color: white;
+                      ">
+                    <input type="text" name="searchBranch" id="" matInput placeholder="Search"
+                      [(ngModel)]="searchBranch" (ngModelChange)="filterBranch()" />
+                  </mat-form-field>
+                  <ng-container *ngFor="let brach of branchList">
+                    <mat-option [value]="brach.id">{{ brach.name }}</mat-option>
+                  </ng-container>
+                </mat-select>
+                <mat-error *ngIf="branch.hasError('required') && branch.touched" class="mt-3 mr-3">This field is required</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-md-3" [hidden]="readMode">
+              <mat-icon
+                style="margin-top: 10px; cursor: pointer"
+                *ngIf="tempExpenditureRequest.branchId != null"
+                (click)="tempExpenditureRequest.branchId = null"
+              >
+                clear</mat-icon
+              >
+            </div>
+          </div>
+
+          <div
+            class="form-group row detail"
+            *ngIf="
+              expenditureRequest.branchId != tempExpenditureRequest.branchId
+            "
+          >
+            <label class="col-md-3 col-form-label"> Chi nhánh cũ: </label>
+            <div class="col-md-6">
+              <input
+                type="text"
+                class="form-control text-danger read-mode"
+                name="branchNameRoot"
+                readonly
+                maxlength="1024"
+                [(ngModel)]="expenditureRequest.branchName"
+              />
+            </div>
+          </div>
+
+          <!-- Tài khoản ngân hàng -->
+          <div
+            class="form-group row detail"
+            [ngClass]="!readMode ? 'required' : ''"
+          >
+            <label
+              class="col-md-3 col-form-label"
+              for="accountName"
+              [ngClass]="
+                tempExpenditureRequest.accountId != expenditureRequest.accountId
+                  ? 'text-bold'
+                  : ''
+              "
+            >
+              {{ "m5_child2.account" | translate }}:
+            </label>
+            <div class="col-md-6">
+              <input
+                type="text"
+                class="form-control"
+                name="accountName"
+                readonly="true"
+                [ngClass]="readMode ? 'read-mode' : ''"
+                maxlength="1024"
+                [hidden]="!readMode"
+                [(ngModel)]="tempExpenditureRequest.accountName"
+              />
+              <mat-form-field
+                [hidden]="readMode"
+                appearance="outline"
+                class="readonly-block w-100"
+              >
+                <mat-select
+                  [(ngModel)]="tempExpenditureRequest.accountId"
+                  name="accountSelect"
+                  required
+                  class="readonly-select"
+                  #formAccount
+                >
+                  <mat-form-field
+                    class="w-100 px-3"
+                    style="
+                      position: sticky;
+                      top: 0;
+                      z-index: 2;
+                      background-color: white;
+                    "
+                  >
+                    <input
+                      type="text"
+                      name="searchFrom"
+                      id=""
+                      matInput
+                      placeholder="Search"
+                      [(ngModel)]="searchAccount"
+                      (ngModelChange)="filterAccount()"
+                    />
+                  </mat-form-field>
+                  <ng-container *ngFor="let account of accountList">
+                    <mat-option
+                      *ngIf="account.accountTypeName == 'COMPANY'"
+                      [value]="account.id"
+                      >{{ account.name }}
+                    </mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <div
+            class="form-group row detail"
+            *ngIf="
+              tempExpenditureRequest.accountId != expenditureRequest.accountId
+            "
+          >
+            <label class="col-md-3 col-form-label"> Công ty cũ: </label>
+            <div class="col-md-9">
+              <input
+                type="text"
+                class="form-control read-mode text-danger"
+                name="accountNameRoot"
+                readonly
+                maxlength="1024"
+                [(ngModel)]="expenditureRequest.accountName"
+              />
+            </div>
+          </div>
+          <!-- Tiền -->
+          <div class="form-group row detail">
+            <label
+              class="col-md-3 col-form-label"
+              for="outcomeValue"
+              [ngClass]="
+                expenditureRequest.value != tempExpenditureRequest.value ||
+                expenditureRequest.currencyId !=
+                  tempExpenditureRequest.currencyId
+                  ? 'text-bold'
+                  : ''
+              "
+            >
+              {{ "m5_child2.value" | translate }}:
+            </label>
+            <div class="col-md-6 mt-2 ml-2" [hidden]="!readMode">
+              <p>
+                {{ tempExpenditureRequest.value | number : "1.0" : "en-US" }}
+                {{ tempExpenditureRequest.currencyName }}
+              </p>
+            </div>
+            <div class="col-md-6" [hidden]="readMode">
+              <p [hidden]="!readMode" class="mt-2 ml-2">
+                {{ tempExpenditureRequest.value }}
+                {{ tempExpenditureRequest.currencyName }}
+              </p>
+              <input
+                style="margin-top: 4px"
+                type="text"
+                mask="separator':''"
+                thousandSeparator=","
+                allowNegativeNumbers="true"
+                [hidden]="readMode"
+                class="form-control"
+                name="outcomeValue"
+                [readonly]="readMode"
+                maxlength="1024"
+                [(ngModel)]="tempExpenditureRequest.value"
+                [ngClass]="readMode == true ? 'read-mode' : ''"
+                #requestValue="ngModel"
+                #requestValueEl
+                required
+              />
+              <abp-validation-summary
+                [control]="requestValue"
+                [controlEl]="requestValueEl"
+              >
+              </abp-validation-summary>
+            </div>
+            <div class="col-md-2" [hidden]="readMode">
+              <!-- <mat-form-field class="w-100" appearance="outline">
+                <mat-select class="font-weight-bold" [(ngModel)]="tempExpenditureRequest.currencyId"
+                  name="currencySelect" required #currency="ngModel">
+                  <mat-form-field class="w-100 px-3" style="
+                      position: sticky;
+                      top: 0;
+                      z-index: 2;
+                      background-color: white;
+                    ">
+                    <input matInput [(ngModel)]="searchCurrency" name="searchCurrency" placeholder="search" />
+                  </mat-form-field>
+                  <ng-container *ngFor="
+                      let currency of currencyList | filter: searchCurrency
+                    ">
+                    <mat-option [value]="currency.value">{{
+                      currency.name
+                      }}</mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field> -->
+              <app-selection-customs
+                class="w-100"
+                [hasLable]="false"
+                [input]="currencyList"
+                [value]="tempExpenditureRequest.currencyId"
+                [required]="true"
+                placeholder="Chọn loại tiền"
+                placeholderSearchText="Search loại tiền"
+                (ngModelChange)="tempExpenditureRequest.currencyId = $event"
+              >
+              </app-selection-customs>
+            </div>
+          </div>
+          <div
+            class="form-group row detail"
+            *ngIf="
+              expenditureRequest.value != tempExpenditureRequest.value ||
+              expenditureRequest.currencyId != tempExpenditureRequest.currencyId
+            "
+          >
+            <label class="col-md-3 col-form-label"> Giá trị cũ: </label>
+            <div class="col-md-3 mt-2 ml-2 text-danger">
+              <p>
+                {{ expenditureRequest.value | number : "1.0" : "en-US" }}
+                {{ expenditureRequest.currencyName }}
+              </p>
+            </div>
+            <ng-container
+              *ngIf="
+                tempExpenditureRequest.currencyId ==
+                expenditureRequest.currencyId
+              "
+            >
+              <label class="col-md-2 col-form-label"> Mới - cũ: </label>
+              <div
+                class="col-md-3 mt-2"
+                [ngClass]="
+                  tempExpenditureRequest.value - expenditureRequest.value > 0
+                    ? 'text-danger'
+                    : 'text-primary'
+                "
+              >
+                <p>
+                  {{
+                    tempExpenditureRequest.value - expenditureRequest.value
+                      | number : "1.0" : "en-US"
+                  }}
+                  {{ expenditureRequest.currencyName }}
+                </p>
+              </div>
+            </ng-container>
+          </div>
+          <!-- Loại Request -->
+          <div
+            class="form-group row detail"
+            [ngClass]="readMode == false ? 'required' : ''"
+          >
+            <label
+              class="col-md-3 col-form-label"
+              for="status"
+              [ngClass]="
+                expenditureRequest.outcomingEntryTypeCode !=
+                tempExpenditureRequest.outcomingEntryTypeCode
+                  ? 'text-bold'
+                  : ''
+              "
+            >
+              {{ "m5_child2.requestType" | translate }}:
+            </label>
+            <div class="col-md-6">
+              <input
+                type="text"
+                class="form-control"
+                name="requestType"
+                readonly="true"
+                [ngClass]="readMode == true ? 'read-mode' : ''"
+                maxlength="1024"
+                [hidden]="!readMode"
+                [(ngModel)]="tempExpenditureRequest.outcomingEntryTypeCode"
+              />
+              <mat-form-field
+                [hidden]="readMode"
+                appearance="outline"
+                class="readonly-block w-100"
+              >
+                <mat-select
+                  [(ngModel)]="tempExpenditureRequest.outcomingEntryTypeId"
+                  name="fromBankAccount"
+                  class="readonly-select"
+                  #formAccount="ngModel"
+                  placeholder="Select type request"
+                >
+                  <mat-form-field
+                    class="w-100 px-3"
+                    style="
+                      position: sticky;
+                      top: 0;
+                      z-index: 2;
+                      background-color: white;
+                    "
+                  >
+                    <input
+                      type="text"
+                      name="searchBranch"
+                      id=""
+                      matInput
+                      placeholder="Search"
+                      [(ngModel)]="searchRequestType"
+                      (ngModelChange)="filterRequestType()"
+                    />
+                  </mat-form-field>
+                  <ng-container *ngFor="let type of requestTypeList">
+                    <mat-option [value]="type.id">{{ type.name }}</mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <div
+            class="form-group row detail"
+            *ngIf="
+              expenditureRequest.outcomingEntryTypeCode !=
+              tempExpenditureRequest.outcomingEntryTypeCode
+            "
+          >
+            <label class="col-md-3 col-form-label"> Yêu cầu cũ: </label>
+            <div class="col-md-6">
+              <input
+                type="text"
+                class="form-control read-mode text-danger"
+                name="requestTypeRoot"
+                readonly
+                maxlength="1024"
+                [(ngModel)]="expenditureRequest.outcomingEntryTypeCode"
+              />
+            </div>
+          </div>
+          <!-- Payment code -->
+          <div class="form-group row detail">
+            <label class="col-md-3 col-form-label" for="status">
+              Payment code:
+            </label>
+            <p class="mt-2" style="margin-left: 17px">
+              {{ expenditureRequest.paymentCode }}
+            </p>
+          </div>
+          <!-- Has file -->
+          <div class="form-group row detail">
+            <label class="col-md-3 col-form-label" for="status">
+              Has file:
+            </label>
+            <p class="mt-2 col-md-7" style="margin-left: 17px">
+              {{
+                expenditureRequest.isAcceptFile == 0
+                  ? "No File Yet"
+                  : expenditureRequest.isAcceptFile == 1
+                  ? "Not Yet Confirmed"
+                  : "Confirmed "
+              }}
+            </p>
+          </div>
+          <!-- Status -->
+          <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="status">
+              {{ "m5_child2.status" | translate }}:
+            </label>
+            <p
+              class="mt-2"
+              style="margin-left: 17px"
+              *ngIf="expenditureRequest.workflowStatusId"
+              [ngClass]="
+                APP_CONSTANT.StatusStyle[
+                  expenditureRequest.workflowStatusCode.trim()
+                ]
+              "
+            >
+              {{ expenditureRequest.workflowStatusName }}
+            </p>
+          </div>
+          <!-- Uỷ nhiệm chi -->
+          <div class="form-group row detail">
+            <label class="col-md-3 col-form-label" for="accreditation">
+              Uỷ nhiệm chi :
+            </label>
+            <p [hidden]="!readMode" class="mt-2" style="margin-left: 17px">
+              {{ tempExpenditureRequest.accreditation ? "Yes" : "No" }}
+            </p>
+            <div
+              [hidden]="readMode"
+              class="col-md-6 mt-2"
+              style="margin-left: 17px"
+            >
+              <mat-checkbox
+                class="example-margin"
+                name="accreditation"
+                [(ngModel)]="tempExpenditureRequest.accreditation"
+              ></mat-checkbox>
+            </div>
+          </div>
+
+          <div
+            class="form-group row detail"
+            *ngIf="
+              expenditureRequest.accreditation !=
+              tempExpenditureRequest.accreditation
+            "
+          >
+            <label class="col-md-3 col-form-label"> Uỷ nhiệm chi : </label>
+            <p class="mt-2 text-danger" style="margin-left: 17px">
+              {{ expenditureRequest.accreditation ? "Yes" : "No" }}
+            </p>
+          </div>
+        </form>
+      </div>
+      <div class="col-6">
+        <div class="">
+          <!-- <button
+            *ngIf="permission.isGranted(Finance_OutcomingEntry_UploadFile)"
+            class="btn btn-sm bg-success mb-1"
+            (click)="importExcel()"
+            #importFileBtn
+          >
+            <i class="fas fa-paperclip"></i>
+            Attach File
+          </button>
+          <i
+            style="cursor: pointer"
+            class="fas fa-redo-alt fa-lg ml-3"
+            (click)="getOutcomeFiles()"
+          ></i> -->
+
+          <table>
+            <thead>
+              <tr>
+                <th class="text-left" style="padding-left: 20px">File List</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let file of outcomingFileList">
+                <td style="padding: 10px 20px">
+                  <a
+                    style="color: blue; cursor: pointer"
+                    (click)="downloadFile(file)"
+                    >{{ file.fileName }}
+                  </a>
+                  <span
+                    class="file"
+                    style="cursor: pointer"
+                    *ngIf="isDeleteFileBtn()"
+                    (click)="deleteFile(file)"
+                    ><i class="fas fa-times fa-lg ml-1"></i
+                  ></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="card card-status-history"
+          *ngIf="statusHistorys && statusHistorys.length"
+        >
+          <span class="text-primary text-status-history-font-family text-bold"
+            >History
+          </span>
+          <div
+            class="box-status-history header-view-scroll header-status-history-view-scroll"
+          >
+            <ng-container
+              *ngFor="
+                let statusHistory of statusHistorys;
+                let indexStatus = index
+              "
+              [ngTemplateOutlet]="statusHistory.isRoot ? root : temp"
+            >
+              <div>
+                <ng-template #root>
+                  <label
+                    [ngClass]="
+                      APP_CONSTANT.StatusStyle[
+                        statusHistory.workflowStatusCode.trim()
+                      ]
+                    "
+                    class="lable-history-status m-0"
+                    >{{ statusHistory.workflowStatusName }}</label
+                  >
+                  &nbsp;
+                  <label class="m-0">{{
+                    statusHistory.value + " " + (statusHistory.currencyName ? statusHistory.currencyName : defaultCurrencyCode)
+                  }}</label>
+                  &nbsp;
+                  <span>{{
+                    statusHistory.creationTime | date : "dd/MM/yyyy HH:mm:ss"
+                  }}</span>
+                  by
+                  <b>{{ statusHistory.creationUser }}</b>
+                </ng-template>
+                <ng-template #temp>
+                  <span>
+                    <b>[YCTĐ]</b>
+                    &nbsp;
+                    <label
+                      [ngClass]="
+                        APP_CONSTANT.StatusStyle[
+                          statusHistory.workflowStatusCode.trim()
+                        ]
+                      "
+                      class="lable-history-status m-0"
+                      >{{ statusHistory.workflowStatusName }}</label
+                    >
+                    &nbsp;
+                    <b class="m-0">{{
+                      statusHistory.value + " " + (statusHistory.currencyName ? statusHistory.currencyName : defaultCurrencyCode)
+                    }}</b>
+                    &nbsp;
+                    <span>{{
+                      statusHistory.creationTime | date : "dd/MM/yyyy HH:mm:ss"
+                    }}</span>
+                    by
+                    <b>{{ statusHistory.creationUser }}</b>
+                  </span>
+                </ng-template>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="col-12 form-group detail">
+          <label class="col-md-3 col-form-label"> Lí do thay đổi: </label>
+          <textarea
+            class="form-control col-md-12"
+            [readonly]="readMode"
+            rows="3"
+            [(ngModel)]="tempExpenditureRequest.reason"
+            [ngClass]="readMode ? 'read-mode' : ''"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

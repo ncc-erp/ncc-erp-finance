@@ -1,0 +1,48 @@
+<form class="form-horizontal" autocomplete="off" #invoiceForm="ngForm">
+    <abp-modal-header
+        title=" {{ data.command=='create' ?'Thêm mới invoice':'Update invoice' }}"
+        (onCloseClick)="dialogRef.close()">
+    </abp-modal-header>
+
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="connectionString">
+                {{ 'm5_child4.name' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="outcomeName" maxlength="1024" minlength="2"
+                    [(ngModel)]="invoice.name" required #requestName="ngModel" #requestNameEl />
+                <abp-validation-summary [control]="requestName" [controlEl]="requestNameEl"></abp-validation-summary>
+
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="connectionString">
+                {{ 'm5_child4.client' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="invoiceCode" [(ngModel)]="invoice.accountCode" required
+                    #invoiceCode="ngModel" #invoiceCodeEl />
+                <abp-validation-summary [control]="invoiceCode" [controlEl]="invoiceCodeEl"></abp-validation-summary>
+
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="connectionString">
+                {{ 'm5_child4.total' | translate }}:
+            </label>
+            <div class="col-md-9">
+                <input class="form-control" name="totalPrice" type="text" mask="separator':''" thousandSeparator=","
+                    allowNegativeNumbers="true" [(ngModel)]="invoice.totalPrice" required #totalPrice="ngModel"
+                    #totalPriceEl />
+                <abp-validation-summary [control]="totalPrice" [controlEl]="totalPriceEl"></abp-validation-summary>
+
+            </div>
+        </div>
+        <div class="form-group row d-flex justify-content-between mt-4">
+            <button class="btn btn-default mx-2" mat-dialog-close>{{ "action.cancel" | translate }}</button>
+            <button class="btn btn-primary" [disabled]="!invoiceForm.valid || isDisable" (click)="saveAndClose() ">{{
+                "action.save" | translate }}</button>
+        </div>
+    </div>
+</form>

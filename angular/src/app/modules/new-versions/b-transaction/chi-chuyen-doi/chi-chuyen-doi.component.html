@@ -1,0 +1,255 @@
+<form
+  class="form-horizontal ui-form-new f-size"
+  autocomplete="off"
+  novalidate
+  #chi_chuyen_doi="ngForm"
+  id="chi-chuyen-doi"
+>
+  <div
+    class="modal-header"
+    cdkDrag
+    cdkDragRootElement=".cdk-overlay-pane"
+    cdkDragHandle
+  >
+    <h4 class="modal-title">Chi chuyển đổi:</h4>
+    <button type="button" class="close" aria-label="Close" mat-dialog-close>
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="fixedBody">
+      <div class="form-group row required col-md-12" *ngIf="linkDone">
+        <ng-container>
+          <span style="color: limegreen">
+            <i class="far fa-check-circle"></i> Thành công</span
+          >
+        </ng-container>
+      </div>
+      <div class="form-group row required">
+        <div class="col-md-6">
+          <app-selection-customs
+            class="w-100"
+            [disable]="linkDone"
+            label="Yêu cầu chi"
+            [input]="outcommingEntryOptions"
+            [value]="chiChuyenDoiDto.outcomingEntryId"
+            [required]="true"
+            placeholder="Chọn yêu cầu chi"
+            placeholderSearchText="Search yêu cầu chi .."
+            (ngModelChange)="chiChuyenDoiDto.outcomingEntryId = $event"
+          >
+          </app-selection-customs>
+        </div>
+        <div class="col-md-6" [style.padding]="0">
+          <div class="col-md-12 d-flex justify-content-between">
+            <label class="col-md-8 col-form-label"> Loại ghi nhận thu: </label>
+            <div
+              class="col-md-4 d-flex justify-content-end align-items-center"
+              [style.margin-right]="0"
+            >
+              <mat-checkbox
+                class="float-right"
+                [checked]="isDefaultIncomingEntryTypes"
+                [disabled]="
+                  linkDone ||
+                  (!chiChuyenDoiDto.incomingEntryTypeId &&
+                    !isDefaultIncomingEntryTypes)
+                "
+                (change)="defaultIncomingEntryTypeChange($event)"
+                #defaultIncomingEntryId
+                >Default</mat-checkbox
+              >
+            </div>
+          </div>
+          <div class="col-md-12" style="padding: 0px">
+            <div
+              class="col-md-12 d-flex align-items-center"
+              [style.padding]="0"
+            >
+              <div class="col-md-12 item-group" style="padding-bottom: 5px">
+                <app-selection-tree-incoming-entry-type
+                  *ngIf="incomingEntryTypeTreeOptions"
+                  [treeValue]="incomingEntryTypeTreeOptions"
+                  placeholder="Loại ghi nhận thu"
+                  [disabled]="linkDone"
+                  [selected]="chiChuyenDoiDto.incomingEntryTypeId"
+                  (selectChange)="
+                    chiChuyenDoiDto.incomingEntryTypeId = $event;
+                    incomingEntryTypeIdChange()
+                  "
+                  space="3"
+                >
+                </app-selection-tree-incoming-entry-type>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row required">
+        <div class="col-md-6" [style.padding]="0">
+          <div class="col-md-12 d-flex justify-content-between">
+            <app-selection-customs
+              class="w-100"
+              label="Tài khoản công ty chuyển tới tài khoản"
+              [input]="toBankAccounts"
+              labelTooltip="Tài khoản ngân hàng NHẬN tiền của biến động số dư âm"
+              [disable]="linkDone"
+              [value]="chiChuyenDoiDto.toBankAccountId"
+              [required]="true"
+              placeholder="Chọn tài khoản ngân hàng nhận"
+              placeholderSearchText="Search tài khoản ngân hàng .."
+              (ngModelChange)="chiChuyenDoiDto.toBankAccountId = $event"
+            >
+            </app-selection-customs>
+          </div>
+        </div>
+        <div class="col-md-6" [style.padding]="0">
+          <div class="col-md-12 d-flex justify-content-between">
+            <app-selection-customs
+              class="w-100"
+              label="Tài khoản công ty nhận từ tài khoản"
+              [input]="fromBankAccounts"
+              labelTooltip="Tài khoản ngân hàng GỬI tiền của biến động số dư dương"
+              [disable]="linkDone"
+              [value]="chiChuyenDoiDto.fromBankAccountId"
+              [required]="true"
+              placeholder="Chọn tài khoản ngân hàng gửi"
+              placeholderSearchText="Search tài khoản ngân hàng .."
+              (ngModelChange)="chiChuyenDoiDto.fromBankAccountId = $event"
+            >
+            </app-selection-customs>
+          </div>
+          <div class="col-md-12 required">
+            <label class="col-form-label"> Tên ghi nhận thu: </label>
+            <input
+            type="text"
+            required
+            [ngModelOptions]="{ standalone: true }"
+            (keydown)="$event.stopPropagation()"
+            [disabled]="linkDone"
+            (keyup.enter)="$event.stopPropagation()"
+            [(ngModel)]="chiChuyenDoiDto.inComingEntryName"
+            class="form-control w-100"
+            placeholder="Tên ghi nhận thu"
+          />
+        </div>
+        </div>
+      </div>
+      <div class="form-group row fixTableHead">
+        <div
+          class="col-md-6"
+          [style.padding]="0"
+          *ngIf="bTransactionMinus && bTransactionMinus.length"
+        >
+          <label class="col-md-12 col-form-label">
+            {{ "Biến động số dư âm" | localize }}: [
+            <span [style.color]="'red'">
+              -{{ _utilities.formatMoneyCustom(totalBTransactionMinus) }}
+            </span>
+            <strong
+              [style.color]="
+                _utilities.getColorByCurrency(bTransactionMinus[0].currencyName)
+              "
+              >{{ bTransactionMinus[0].currencyName }}</strong
+            >
+            ] <strong  *ngIf="currencyIdBTransactionPlus != currencyIdBTransactionMinus">{{getTiGia()}}</strong>
+          </label>
+          <div class="col-md-12 row">
+            <tr
+              class="w-100 tr-outcomming overflow-hidden white-space-nowrap mt-2 col-md-12"
+              *ngFor="let bTransaction of bTransactionMinus; let i = index"
+            >
+              <button
+                class="btn btn-default btn-sm mr-2"
+                type="button"
+                [id]="
+                  'bTransaction_bTransactionId_' + bTransaction.bTransactionId
+                "
+                (click)="removeBTransactionMinus(bTransaction.bTransactionId)"
+                *ngIf="!linkDone"
+              >
+                <i class="fas fa-times" style="color: #524f4f"></i>
+              </button>
+              <span>#{{ bTransaction.bTransactionId }}</span>
+              [<span class="text-bold">{{ bTransaction.moneyCurrency }} </span
+              >] TK
+              {{
+                bTransaction.bankAccountNumber
+              }}
+              At:
+              {{
+                bTransaction.timeAt | date : "dd/MM/yyyy"
+              }}
+            </tr>
+          </div>
+        </div>
+        <div
+          class="col-md-6"
+          [style.padding]="0"
+          *ngIf="bTransactionPlus && bTransactionPlus.length"
+        >
+          <label class="col-md-12 col-form-label">
+            {{ "Biến động số dư dương" | localize }}: [{{
+              _utilities.formatMoneyCustom(totalBTransactionPlus)
+            }}
+            <strong
+              [style.color]="
+                _utilities.getColorByCurrency(bTransactionPlus[0].currencyName)
+              "
+              >{{ bTransactionPlus[0].currencyName }}</strong
+            >
+            ]
+          </label>
+          <div class="col-md-12 row">
+            <tr
+              class="w-100 tr-outcomming overflow-hidden white-space-nowrap mt-2 col-md-12"
+              *ngFor="let bTransaction of bTransactionPlus; let i = index"
+            >
+              <button
+                class="btn btn-default btn-sm mr-2"
+                type="button"
+                [id]="
+                  'bTransaction_bTransactionId_' + bTransaction.bTransactionId
+                "
+                (click)="removeBTransactionPlus(bTransaction.bTransactionId)"
+                *ngIf="!linkDone"
+              >
+                <i class="fas fa-times" style="color: #524f4f"></i>
+              </button>
+              <span>#{{ bTransaction.bTransactionId }}</span>
+              [<span class="text-bold">{{ bTransaction.moneyCurrency }} </span
+              >] TK
+              {{
+                bTransaction.bankAccountNumber
+              }}
+              At:
+              {{
+                bTransaction.timeAt | date : "dd/MM/yyyy"
+              }}
+            </tr>
+          </div>
+        </div>
+      </div>
+      <div class="row d-flex justify-content-between mt-4 px-1">
+        <button mat-dialog-close class="btn btn-default">Hủy</button>
+        <button
+          (click)="process()"
+          type="submit"
+          class="btn btn-primary"
+          *ngIf="!linkDone"
+          [disabled]="isDisable()"
+        >
+          Thực hiện
+        </button>
+        <button
+          (click)="openOutcomingEntry()"
+          type="submit"
+          *ngIf="linkDone"
+          class="btn btn-primary"
+        >
+          Đến Request chi
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

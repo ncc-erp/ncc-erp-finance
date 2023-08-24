@@ -1,0 +1,142 @@
+<div id="invoice">
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-6">
+          <h2>{{ 'm5_child4.title' | translate }}</h2>
+        </div>
+        <div *ngIf="permission.isGranted(Finance_Invoice_Create)" class=" col-6 text-right">
+          <a href="javascript:;" class="btn bg-blue" (click)="createInvoice()">
+            <i class="fa fa-plus-square"></i>
+            {{ 'action.create' | translate }}
+          </a>
+          <!-- <button class="btn btn-success mx-2" (click)="downloadFile()">
+            <i class="fas fa-download mr-1"></i> Export
+        </button> -->
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content px-2">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+            <input type="text" class="form-control" name="keyword" placeholder="search" [(ngModel)]="searchText"
+              (keyup.enter)="getDataPage(1)" />
+            <div class="input-group-append">
+              <button type="button" class="btn btn-default" (click)="checkAddFilter()">
+                <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
+                  [class.fa-angle-down]="!advancedFiltersVisible"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="advancedFiltersVisible" class="mb-0 mt-1">
+          <div class="card-body">
+            <form class="form-horizontal">
+              <div class="row">
+                <div class="col-md-12 col-xl-12">
+                  <div class="mb-0">
+                    <div>
+                      <div *ngFor="let item of filterItems; let i = index">
+                        <app-filter [item]="item" (emitChange)="onEmitChange($event, i)"
+                          (deleteDataFilter)="deleteFilterItem(i)" [inputFilters]="FILTER_CONFIG"></app-filter>
+                      </div>
+                      <i style="padding: 0;" class="fas fa-plus-circle ml-3" (click)="addFilter()"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="card-body table-responsive p-4">
+          <table style="border-collapse: collapse;" class="table table-hover text-nowrap" [busy]="isTableLoading">
+            <thead class="bg-light">
+              <tr>
+                <th style="text-align: center; width: 80px !important;padding: 12px;">{{ 'm3_child2.no' | translate }}
+                </th>
+                <th style="text-align: center;">{{ 'm5_child4.name' | translate }}</th>
+                <th>{{ 'm5_child4.client' | translate }}</th>
+                <th>{{ 'm5_child4.date' | translate }}</th>
+                <th>{{ 'm5_child4.project' | translate }}</th>
+                <th>{{ 'm5_child4.total' | translate }}</th>
+                <th>{{ 'm5_child4.status' | translate }}</th>
+                <th class="text-center">{{ 'action.actions' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="
+                      let invoice of invoiceList  | paginate
+                      : {
+                          id: 'server',
+                          itemsPerPage: pageSize,
+                          currentPage: pageNumber,
+                          totalItems: totalItems
+                        }
+                        ,let index = index
+                      
+                    ">
+                <td class="text-center" style="padding: 12px;">{{index + 1 + (pageNumber - 1) * pageSize}}</td>
+                <td style="white-space: normal; min-width: 150px;" class="hyperlink">
+                  <span (click)="viewDetail(invoice)">  {{ invoice.name }}</span>  
+                </td>
+                <td>{{invoice.clientName }}</td>
+                <td>{{ invoice.timeAt | date: "dd/MM/yyyy"}}</td>
+                <td>{{invoice.project}}</td>
+                <td class="text-center">{{ invoice.totalPrice | number:'1.0':'en-US' }}</td>
+                <td class="text-center">{{ APP_CONSTANT.InvoiceStatus[invoice.status ] }}</td>
+                <td class="text-center">
+                  <button *ngIf="permission.isGranted(Finance_Invoice_Update)"  
+                  type="button" class="btn btn-sm bg-secondary mr-1" (click)="editInvoice(invoice)">
+                    <i class="fas fa-pencil-alt"></i>
+                    {{ 'action.edit' | translate }}
+                  </button>
+                  <button  *ngIf="permission.isGranted(Finance_Invoice_Delete)" 
+                  type="button" class="btn btn-sm bg-danger ml-1" (click)="delete(invoice)">
+                    <i class="fas fa-trash"></i>
+                    {{ 'action.delete' | translate }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer bg-light border-top">
+          <div class="row">
+            <div class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center just">
+              <button class="btn btn-secondary" (click)="refresh()">
+                <i class="fas fa-redo-alt"></i>
+              </button>
+              <mat-form-field style=" width: 20%; margin-left: 30px">
+                <mat-label>Number items</mat-label>
+                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                  <mat-option [value]="5"> 5 </mat-option>
+                  <mat-option [value]="10"> 10 </mat-option>
+                  <mat-option [value]="20"> 20 </mat-option>
+                  <mat-option [value]="50"> 50 </mat-option>
+                  <mat-option [value]="100"> 100 </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-sm-4 col-12 justify-content-center d-flex align-items-center">
+              <p class="mb-0 ">Total: {{ totalItems }}</p>
+            </div>
+            <div class="col-sm-4 col-12 d-flex align-items-center justify-content-end">
+              <div class="float-sm-right">
+                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
+                </abp-pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,20 @@
+td{
+    vertical-align: middle;
+}
+.col-stt{
+    width: 50px
+}
+.col-action{
+    width: 150px;
+}
+.col-status{
+    width: 150px;
+}
+.col-date{
+    width: 200px;
+}
+.select_pageSize {
+    margin-top: -10px;
+    width: 20%;
+    margin-left: 30px;
+  }

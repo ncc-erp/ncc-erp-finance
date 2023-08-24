@@ -1,0 +1,99 @@
+<div id="revenue">
+  <section class="content px-2 pt-2 filter-incomingentry-type">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header row m-0">
+          <div class="col-6">
+            <h4>{{ "m3_child5.title" | translate }}</h4>
+          </div>
+
+          <div class="col-6 text-right">
+            <a
+              *ngIf="isShowCreateBtn()"
+              href="javascript:;"
+              class="btn bg-blue"
+              (click)="createRevenues()"
+            >
+              <i class="fa fa-plus-square"></i>
+              {{ "action.create" | translate }}
+            </a>
+          </div>
+        </div>
+
+        <div class="card-body table-responsive p-4">
+          <div class="row mb-4">
+            <div class="col-7">
+              <div class="search-bar" style="position: relative">
+                <div class="input-group-prepend">
+                  <button
+                    type="button"
+                    class="btn bg-blue"
+                    style="border-radius: 3px 0 0 3px"
+                    (click)="getAllData()"
+                  >
+                    <i class="fas fa-search"></i>
+                  </button>
+                  <input
+                    type="text"
+                    (keyup.enter)="getAllData()"
+                    matInput
+                    placeholder="{{ 'action.search' | translate }}"
+                    #txtVal
+                    class="form-control"
+                    [(ngModel)]="inputFilter.searchText"
+                    style="
+                      width: 100%;
+                      padding-left: 10px;
+                      border: 1px solid lightgrey !important;
+                      line-height: 30px;
+                      border-radius: 0 4px 4px 0 !important;
+                      margin-top: 0;
+                    "
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-select
+                  name="type"
+                  [(ngModel)]="inputFilter.revenueCounted"
+                  placeholder="Select type"
+                  (selectionChange)="getAllData()"
+                >
+                  <mat-option value="">Tất cả</mat-option>
+                  <mat-option value="true"
+                    >Tính vào doanh thu </mat-option
+                  >
+                  <mat-option value="false">
+                    Không tính vào doanh thu</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-2">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Status</mat-label>
+                <mat-select
+                  name="type"
+                  [(ngModel)]="inputFilter.isActive"
+                  placeholder="Select status"
+                  (selectionChange)="getAllData()"
+                >
+                  <mat-option value="">All</mat-option>
+                  <mat-option [value]="true">Active</mat-option>
+                  <mat-option [value]="false">Inactive</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+          <mat-accordion>
+            <ng-container *ngFor="let item of data.children">
+              <app-revenue-list [items]="item"></app-revenue-list>
+            </ng-container>
+          </mat-accordion>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

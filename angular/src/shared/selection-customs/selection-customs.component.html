@@ -1,0 +1,70 @@
+<div class="w-100 app-selection-customs">
+    <div
+      class="row align-items-center"
+      [class]="required ? 'required' : ''"
+    >
+      <label
+        class="col-form-label"
+        [matTooltip]="labelTooltip"
+        [matTooltipDisabled]="!labelTooltip"
+        *ngIf="hasLable"
+        [class]=" labelClass ? labelClass : (isLableOnTop() ? 'col-md-12 ' : ' ')"
+        [style.width]="'fit-content'"
+      >
+        {{ label }}:
+      </label>
+      <!-- <div [class]="isLableOnTop() ? 'col-md-12' : 'col-md-9'"> -->
+      <div [class]=" selectionClass ? selectionClass : (isLableOnTop() ? ' ' : 'ml-4 ') ">
+        <mat-form-field appearance="outline" class="w-100" >
+          <mat-label *ngIf="!hasLable && value && label">{{ label }}</mat-label>
+          <mat-select
+            [(ngModel)]="value"
+            (openedChange)="openChange($event)"
+            [disabled]="disable"
+            name="selection-searchable"
+            [placeholder]="placeholder"
+            [required]="required"
+            (ngModelChange)="selectedChange()"
+          >
+            <mat-form-field
+              class="w-100 px-3"
+              style="
+                position: sticky;
+                top: 0;
+                z-index: 2;
+                background-color: white;
+              "
+              *ngIf="searchable"
+            >
+              <input
+                type="text"
+                matInput
+                class="search-input"
+                [placeholder]="placeholderSearchText"
+                [(ngModel)]="searchText"
+                name="searchText"
+                (ngModelChange)="searchChange()"
+                (keydown)="$event.stopPropagation()"
+                #search
+              />
+            </mat-form-field>
+            <mat-option
+              disabled
+              class="text-center"
+              *ngIf="!options || !options.length"
+            >
+              No data! <span *ngIf="searchText"> by "{{ searchText }}"</span>
+            </mat-option>
+            <mat-option
+              [matTooltip]="item.name"
+              *ngFor="let item of options"
+              [value]="item.value"
+            >
+              <span *ngIf="isHtml" [innerHTML]="item.name" ></span>
+              <span *ngIf="!isHtml" >{{item.name}}</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
