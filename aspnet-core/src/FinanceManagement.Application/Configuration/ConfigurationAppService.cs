@@ -33,7 +33,7 @@ namespace FinanceManagement.Configuration
         {
             return new LoginSettingDto
             {
-                GoogleClientId = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.GoogleClientId),
+                GoogleClientId = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ClientAppId),
                 EnableNormalLogin = bool.Parse(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.EnableNormalLogin)),
             };
         }
