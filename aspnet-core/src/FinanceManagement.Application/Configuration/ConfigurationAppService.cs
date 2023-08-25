@@ -27,6 +27,16 @@ namespace FinanceManagement.Configuration
             _appConfiguration = configuration;
         }
 
+        [AbpAllowAnonymous]
+        [AbpAuthorize(PermissionNames.Admin_Configuration_View)]
+        public async Task<LoginSettingDto> GetLoginSetting()
+        {
+            return new LoginSettingDto
+            {
+                GoogleClientId = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.GoogleClientId),
+                EnableNormalLogin = bool.Parse(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.EnableNormalLogin)),
+            };
+        }
         public async Task ChangeUiTheme(ChangeUiThemeInput input)
         {
             await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettingNames.UiTheme, input.Theme);
@@ -133,7 +143,7 @@ namespace FinanceManagement.Configuration
         }
         [AbpAuthorize(PermissionNames.Admin_Configuration_EditGoogleSetting)]
         public async Task ChangeClientAppId(ClienAppDto input)
-        { 
+        {
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.ClientAppId, input.ClientAppId);
         }
         [AbpAuthorize(PermissionNames.Admin_Configuration_EditSecretKey)]
@@ -167,11 +177,11 @@ namespace FinanceManagement.Configuration
         public async Task<OutputEspecialIncomingEntryTypeDto> SetEspecialIncomingEntryType(InputEspecialIncomingEntryTypeDto input)
         {
             var listEspecialIncomingEntryTypeStatus = await GetListEspecialIncomingEntryTypeStatus(input);
-           
+
             await MySettingManager.SetValueSettingAsync(AppSettingNames.HostIncommingTypeCodeForPayingInvoice, AppSettingNames.TenantIncommingTypeCodeForPayingInvoice, input.DebtIncomingEntryTypeCode);
             await MySettingManager.SetValueSettingAsync(AppSettingNames.HostIncommingTypeCodeForClientPrePaid, AppSettingNames.TenantIncommingTypeCodeForClientPrePaid, input.BalanceIncomingEntryTypeCode);
             await MySettingManager.SetValueSettingAsync(AppSettingNames.HostIncomingTypeCodeForClientPayDeviant, AppSettingNames.TenantIncomingTypeCodeForClientPayDeviant, input.DeviantIncomingEntryTypeCode);
-            
+
             return listEspecialIncomingEntryTypeStatus;
         }
         private async Task<OutputEspecialIncomingEntryTypeDto> GetListEspecialIncomingEntryTypeStatus(InputEspecialIncomingEntryTypeDto input)
@@ -220,7 +230,7 @@ namespace FinanceManagement.Configuration
         public async Task<bool> GetAllowChangeEntityInPeriodClosed()
         {
             await Task.CompletedTask;
-            return MySettingManager.GetAllowChangeEntityInPeriodClosed();   
+            return MySettingManager.GetAllowChangeEntityInPeriodClosed();
         }
         public async Task SetAllowChangeEntityInPeriodClosed(string config)
         {

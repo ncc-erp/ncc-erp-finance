@@ -164,7 +164,7 @@ namespace FinanceManagement.Web.Host.Startup
                         //check remain money detection
                         if (remainMoneyDetection.IsValid)
                         {
-                            currentBalanceNumber = GetCurrentBalanance(bTransaction.PeriodId, bTransaction.BankAccountId, bTransaction.TimeAt);
+                            currentBalanceNumber = GetCurrentBalanance(bTransaction.PeriodId, bTransaction.BankAccountId);
                         }
                         else
                         {
@@ -196,7 +196,7 @@ namespace FinanceManagement.Web.Host.Startup
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError($"Key: {key}, Exception: "+ex.InnerException);
+                        _log.LogError($"Key: {key}, Exception: " + ex.InnerException);
                     }
                 }
                 _context.SaveChanges();
@@ -283,11 +283,12 @@ namespace FinanceManagement.Web.Host.Startup
                 sb.AppendLine("```");
             return sb.ToString();
         }
-        private double GetCurrentBalanance(long periodId, long bankAccountId, DateTime timeAt)
+        private double GetCurrentBalanance(long periodId, long bankAccountId)
         {
             var duDauKy = _context.PeriodBankAccounts
                 .Where(x => !x.IsDeleted)
                 .Where(x => x.IsActive)
+                .Where(x => x.PeriodId == periodId)
                 .Where(s => s.BankAccountId == bankAccountId)
                 .Select(x => x.BaseBalance)
                 .FirstOrDefault();
@@ -296,7 +297,6 @@ namespace FinanceManagement.Web.Host.Startup
                 .Where(x => !x.IsDeleted)
                 .Where(x => x.PeriodId == periodId)
                 .Where(x => x.BankAccountId == bankAccountId)
-                .Where(x => x.TimeAt <= timeAt)
                 .Sum(x => x.Money);
             var duHienTai = duDauKy + bienDongTangGiam;
             return duHienTai;
