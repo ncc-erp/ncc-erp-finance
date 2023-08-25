@@ -2,7 +2,6 @@
 {
     public static class AppSettingNames
     {
-        public const string GoogleClientId = "App.GoogleClientId";
         public const string EnableNormalLogin = "App.EnableNormalLogin";
         public const string UiTheme = "App.UiTheme";
         public const string ClientAppId = "App.ClientAppId";
