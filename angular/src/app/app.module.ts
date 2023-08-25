@@ -158,6 +158,7 @@ import { UpdateBranchComponent } from './modules/expenditure-request-detail/main
 import { DetailBaocaoThuComponent } from './home/detail-baocao-thu/detail-baocao-thu.component';
 import { DetailBaocaoChiComponent } from './home/detail-baocao-chi/detail-baocao-chi.component';
 import { DetailNhanvienNoComponent } from './home/detail-nhanvien-no/detail-nhanvien-no.component';
+import { AppConsts } from '@shared/AppConsts';
 @NgModule({
   declarations: [
     AppComponent,
@@ -358,7 +359,9 @@ import { DetailNhanvienNoComponent } from './home/detail-nhanvien-no/detail-nhan
         providers: [
           {
             id: GoogleLoginProvider.PROVIDER_ID,
-            provider: new GoogleLoginProvider(''),
+            provider: new GoogleLoginProvider(
+              AppConsts.googleClientId
+            ),
           },
         ],
       } as SocialAuthServiceConfig,

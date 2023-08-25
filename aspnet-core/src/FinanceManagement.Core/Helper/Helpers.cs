@@ -119,7 +119,7 @@ namespace FinanceManagement.Helper
         }
         public static string RemoveNewLine(string content)
         {
-            return content.Replace("\n", " ").Replace("\r", " ");
+            return content.Replace("\r\n", " ").Replace("\n", " ");
         }
         public static ResultDetectionMoney DetectionMoney(Regex regex, string content)
         {
@@ -135,11 +135,11 @@ namespace FinanceManagement.Helper
             moneyString = moneyString.Replace(",", "");
             try
             {
-                var moneyOfTransaction = double.Parse(moneyString.Trim());
+                var money = double.Parse(moneyString.Trim());
                 return new ResultDetectionMoney
                 {
                     IsValid = true,
-                    Result = moneyOfTransaction
+                    Result = money
                 };
             }
             catch (Exception ex)
@@ -315,7 +315,7 @@ namespace FinanceManagement.Helper
         {
             return $"{verifier} ***[{statusCode}]*** **YÊU CẦU THAY ĐỔI** request chi **#{outcomingEntryId} {outcomingEntryName}** số tiền từ **{FormatMoneyVND(oldMoney)} {oldCurrencyCode}** => **{FormatMoneyVND(money)} {currencyCode}** "
                 + (string.IsNullOrEmpty(reason) ? "" : $"``` Lý do thay đổi:\n {reason} ```")
-                + (string.IsNullOrEmpty(reason) ? "\n" : "") + 
+                + (string.IsNullOrEmpty(reason) ? "\n" : "") +
                 $"{url}";
         }
         /// <summary>

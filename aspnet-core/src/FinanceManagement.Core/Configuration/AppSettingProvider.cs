@@ -11,10 +11,15 @@ namespace FinanceManagement.Configuration
     /// </summary>
     public class AppSettingProvider : SettingProvider
     {
+        public static string RegexSTKDetectionValue = "";
+        public static string RegexMoneyDetectionValue = "";
+        public static string RegexRemainMoneyDetectionValue = "";
         public override IEnumerable<SettingDefinition> GetSettingDefinitions(SettingDefinitionProviderContext context)
         {
             return new[]
             {
+                new SettingDefinition(AppSettingNames.GoogleClientId,"yourGooleClientId",scopes:SettingScopes.Application| SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.EnableNormalLogin,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.UiTheme, "red", scopes: SettingScopes.Application | SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
                 new SettingDefinition(AppSettingNames.ClientAppId,"",scopes:SettingScopes.Application| SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.SecretKey, "", scopes: SettingScopes.Application | SettingScopes.Tenant, isVisibleToClients: true),
@@ -32,8 +37,9 @@ namespace FinanceManagement.Configuration
                 new SettingDefinition(AppSettingNames.HostIncommingTypeCodeForClientPrePaid,FinanceManagementConsts.BalanceClientCode,scopes:SettingScopes.Application),
                 new SettingDefinition(AppSettingNames.TenantIncommingTypeCodeForPayingInvoice,"",scopes:SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.TenantIncommingTypeCodeForClientPrePaid,"",scopes:SettingScopes.Tenant),
-                new SettingDefinition(AppSettingNames.RegexSTKDetection,"",scopes:SettingScopes.Application |SettingScopes.Tenant),
-                new SettingDefinition(AppSettingNames.RegexMoneyDetection,"",scopes:SettingScopes.Application |SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.RegexSTKDetection,RegexSTKDetectionValue,scopes:SettingScopes.Application |SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.RegexMoneyDetection,RegexMoneyDetectionValue,scopes:SettingScopes.Application |SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.RegexRemainMoneyDetection, RegexRemainMoneyDetectionValue, scopes: SettingScopes.Application |SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.FirebaseScretKey,"",scopes:SettingScopes.Application |SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.FirebaseUrl,"",scopes:SettingScopes.Application |SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.HostIncomingTypeCodeForClientPayDeviant,"",scopes:SettingScopes.Application),

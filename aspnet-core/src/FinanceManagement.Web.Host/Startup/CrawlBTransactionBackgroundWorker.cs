@@ -76,6 +76,7 @@ namespace FinanceManagement.Web.Host.Startup
 
             var regexMoneyDetection = new Regex(SettingManager.GetSettingValueForApplication(AppSettingNames.RegexMoneyDetection));
             var regexSTKDetection = new Regex(SettingManager.GetSettingValueForApplication(AppSettingNames.RegexSTKDetection));
+            var regexRemainMoneyDetection = new Regex(SettingManager.GetSettingValueForApplication(AppSettingNames.RegexRemainMoneyDetection));
 
             using (var uow = _context.Database.BeginTransaction())
             {
@@ -93,8 +94,6 @@ namespace FinanceManagement.Web.Host.Startup
                             Key = key
                         };
 
-                        var messageClean = Helpers.RemoveNewLine(dics[key]);
-
                         //get datetime of transaction
                         var convertTimestamp = Helpers.ConvertTimestampToLong(key);
                         if (!convertTimestamp.IsValid)
@@ -107,15 +106,17 @@ namespace FinanceManagement.Web.Host.Startup
                         var timeAt = Helpers.ConvertFromUnixTimestamp(convertTimestamp.Result);
                         logger.TimeAt = timeAt;
 
+                        var messageClean = Helpers.RemoveNewLine(dics[key]);
+
                         var moneyDetection = Helpers.DetectionMoney(regexMoneyDetection, messageClean);
                         var bankNumberDetection = Helpers.DetectionBankNumber(regexSTKDetection, messageClean);
+                        var remainMoneyDetection = Helpers.DetectionMoney(regexRemainMoneyDetection, messageClean);
 
                         //check money of transaction
                         if (!moneyDetection.IsValid)
                         {
                             logger.ErrorMessage = moneyDetection.ErrorMessage;
                             _context.Add(logger);
-
                             continue;
                         }
 
@@ -158,6 +159,18 @@ namespace FinanceManagement.Web.Host.Startup
                         _context.Add(bTransaction);
                         _context.SaveChanges();
 
+                        double currentBalanceNumber = -1;
+
+                        //check remain money detection
+                        if (remainMoneyDetection.IsValid)
+                        {
+                            currentBalanceNumber = GetCurrentBalanance(bTransaction.PeriodId, bTransaction.BankAccountId);
+                        }
+                        else
+                        {
+                            logger.ErrorMessage = remainMoneyDetection.ErrorMessage;
+                        }
+
                         var config = await MySettingManager.GetEnableCrawlBTransactionNoti(tenantId);
 
                         if (bool.Parse(config))
@@ -168,7 +181,9 @@ namespace FinanceManagement.Web.Host.Startup
                                 bankAccountName: bankAccount.Result.BankAccountName,
                                 money: moneyDetection.Result,
                                 currencyName: bankAccount.Result.CurrencyName,
-                                timeAt.ToString("dd/MM/yyyy HH:mm")
+                                timeAt.ToString("dd/MM/yyyy HH:mm"),
+                                duTheoMessage: remainMoneyDetection.Result,
+                                duSo: currentBalanceNumber
                             );
 
                             _komuNotification.NotifyWithMessage(contentNotify, tenantId);
@@ -181,7 +196,7 @@ namespace FinanceManagement.Web.Host.Startup
                     }
                     catch (Exception ex)
                     {
-                        _log.LogError($"Key: {key}, Exception: "+ex.InnerException);
+                        _log.LogError($"Key: {key}, Exception: " + ex.InnerException);
                     }
                 }
                 _context.SaveChanges();
@@ -254,13 +269,37 @@ namespace FinanceManagement.Web.Host.Startup
             string bankAccountName = "",
             double money = 0,
             string currencyName = "",
-            string timeAt = ""
+            string timeAt = "",
+            double duTheoMessage = 0,
+            double duSo = 0
         )
         {
-            return new StringBuilder()
-                    .AppendLine($"**BĐSD** TK: {bankAccountName} ({bankNumber}) **{(money > 0 ? "+" : "")}{Helpers.FormatMoney(money)}** {currencyName} lúc {timeAt}")
-                    .AppendLine($"```{message}```")
-                    .ToString();
+            var sb = new StringBuilder()
+                        .AppendLine($"**BĐSD** TK: {bankAccountName} ({bankNumber}) **{(money > 0 ? "+" : "")}{Helpers.FormatMoney(money)}** {currencyName} lúc {timeAt}")
+                        .AppendLine($"```{message}");
+            if (duSo >= 0)
+                sb.AppendLine($"\nDư sổ(A): {Helpers.FormatMoney(duSo)} {(duSo == duTheoMessage ? "" : "KHÁC")} dư theo BĐSD(B): {Helpers.FormatMoney(duTheoMessage)} => Chênh lệch(B-A): {Helpers.FormatMoney(duTheoMessage - duSo)}```");
+            else
+                sb.AppendLine("```");
+            return sb.ToString();
+        }
+        private double GetCurrentBalanance(long periodId, long bankAccountId)
+        {
+            var duDauKy = _context.PeriodBankAccounts
+                .Where(x => !x.IsDeleted)
+                .Where(x => x.IsActive)
+                .Where(x => x.PeriodId == periodId)
+                .Where(s => s.BankAccountId == bankAccountId)
+                .Select(x => x.BaseBalance)
+                .FirstOrDefault();
+
+            var bienDongTangGiam = _context.BTransactions
+                .Where(x => !x.IsDeleted)
+                .Where(x => x.PeriodId == periodId)
+                .Where(x => x.BankAccountId == bankAccountId)
+                .Sum(x => x.Money);
+            var duHienTai = duDauKy + bienDongTangGiam;
+            return duHienTai;
         }
     }
 }

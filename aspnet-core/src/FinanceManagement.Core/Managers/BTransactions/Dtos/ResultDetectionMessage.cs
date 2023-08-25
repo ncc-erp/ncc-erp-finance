@@ -4,28 +4,25 @@ using System.Text;
 
 namespace FinanceManagement.Managers.BTransactions.Dtos
 {
-    public class ResultDetectionMoney
+    public class NotiResult
     {
         public bool IsValid { get; set; }
         public string ErrorMessage { get; set; }
+    }
+    public class ResultDetectionMoney : NotiResult
+    {
         public double Result { get; set; }
     }
-    public class ResultDetectionBankAccount
+    public class ResultDetectionBankAccount : NotiResult
     {
-        public bool IsValid { get; set; }
-        public string ErrorMessage { get; set; }
         public string Result { get; set; }
     }
-    public class ResultConvertTimestamp
+    public class ResultConvertTimestamp : NotiResult
     {
-        public bool IsValid { get; set; }
-        public string ErrorMessage { get; set; }
         public long Result { get; set; }
     }
-    public class ResultCheckBankAccount
+    public class ResultCheckBankAccount : NotiResult
     {
-        public bool IsValid { get; set; }
-        public string ErrorMessage { get; set; }
         public BankAccountCrawl Result { get; set; }
     }
     public class BankAccountCrawl

@@ -2,6 +2,8 @@
 {
     public static class AppSettingNames
     {
+        public const string GoogleClientId = "App.GoogleClientId";
+        public const string EnableNormalLogin = "App.EnableNormalLogin";
         public const string UiTheme = "App.UiTheme";
         public const string ClientAppId = "App.ClientAppId";
         public const string StorageLocation = "StorageLocation";
@@ -22,6 +24,7 @@
         public const string TenantIncommingTypeCodeForPayingInvoice = "TenantDebtClientCode";
         public const string TenantIncommingTypeCodeForClientPrePaid = "TenantBalanceClientCode";
         public const string RegexSTKDetection = "RegexSTKDetection";
+        public const string RegexRemainMoneyDetection = "RegexRemainMoneyDetection";
         public const string RegexMoneyDetection = "RegexMoneyDetection";
         public const string RegexContentDetection = "RegexContentDetection";
         public const string FirebaseScretKey = "FirebaseSecretKey";

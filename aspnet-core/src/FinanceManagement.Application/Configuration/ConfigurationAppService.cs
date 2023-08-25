@@ -27,6 +27,16 @@ namespace FinanceManagement.Configuration
             _appConfiguration = configuration;
         }
 
+        [AbpAllowAnonymous]
+        [AbpAuthorize(PermissionNames.Admin_Configuration_View)]
+        public async Task<LoginSettingDto> GetLoginSetting()
+        {
+            return new LoginSettingDto
+            {
+                GoogleClientId = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.GoogleClientId),
+                EnableNormalLogin = bool.Parse(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.EnableNormalLogin)),
+            };
+        }
         public async Task ChangeUiTheme(ChangeUiThemeInput input)
         {
             await SettingManager.ChangeSettingForUserAsync(AbpSession.ToUserIdentifier(), AppSettingNames.UiTheme, input.Theme);

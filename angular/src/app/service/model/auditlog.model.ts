@@ -14,3 +14,7 @@ export class EmailAddressInAuditLog {
     UserId: number;
     EmailAddress: string;
 }
+export interface LoginConfigDto {
+    googleClientId: string
+    enableNormalLogin: boolean
+}
