@@ -18,6 +18,7 @@ import { AccountFooterComponent } from './layout/account-footer.component';
 // tenants
 import { TenantChangeComponent } from './tenant/tenant-change.component';
 import { TenantChangeDialogComponent } from './tenant/tenant-change-dialog.component';
+import { AppConsts } from '@shared/AppConsts';
 
 @NgModule({
     imports: [
@@ -50,7 +51,8 @@ import { TenantChangeDialogComponent } from './tenant/tenant-change-dialog.compo
             providers: [
               {
                 id: GoogleLoginProvider.PROVIDER_ID,
-                provider: new GoogleLoginProvider('GoogleClientID' 
+                provider: new GoogleLoginProvider(
+                  AppConsts.googleClientId
                 ),
               },
             ],

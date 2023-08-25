@@ -164,8 +164,15 @@ export class AppInitializer {
         AppConsts.appBaseUrl = response.appBaseUrl;
         AppConsts.remoteServiceBaseUrl = response.remoteServiceBaseUrl;
         AppConsts.localeMappings = response.localeMappings;
-
+        this.getStartUpConfig(AppConsts.remoteServiceBaseUrl);
         callback();
       });
+  }
+
+  private getStartUpConfig(baseUrl: string) {
+    this._httpClient.get<any>(baseUrl + '/api/services/app/Configuration/GetLoginSetting').subscribe(rs => {
+      AppConsts.googleClientId = rs.result.googleClientId
+      AppConsts.enableNormalLogin = rs.result.enableNormalLogin
+    })
   }
 }
