@@ -18,7 +18,6 @@ namespace FinanceManagement.Configuration
         {
             return new[]
             {
-                new SettingDefinition(AppSettingNames.GoogleClientId,"yourGooleClientId",scopes:SettingScopes.Application| SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.EnableNormalLogin,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.UiTheme, "red", scopes: SettingScopes.Application | SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
                 new SettingDefinition(AppSettingNames.ClientAppId,"ClientAppId",scopes:SettingScopes.Application| SettingScopes.Tenant),
