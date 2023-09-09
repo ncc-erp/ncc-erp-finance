@@ -27,6 +27,7 @@ jobs:
         run: |
           cd aspnet-core/src/FinanceManagement.Migrator/bin/Debug/netcoreapp3.1/publish/
           rm -rf appsettings.json
+          rm -rf /var/www/migrator_git/finfast/dev-dotnet-migrator-finfast/*
           cp -r * /var/www/migrator_git/finfast/dev-dotnet-migrator-finfast/
 
       - name: Build Host
