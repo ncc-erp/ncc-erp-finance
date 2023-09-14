@@ -1,0 +1,76 @@
+<ng-container>
+  <abp-modal-header [title]="'Thu hồi khách hàng thanh toán'" (onCloseClick)="onClose()"></abp-modal-header>
+  <div class="modal-body">
+    <div class="btransactionInfo row">
+      <div class="col-2"><strong>Biến động số dư: </strong></div>
+      <div class="col-10 row">
+        <span
+          class="col-1 text-right">#{{model.bTransactionInfo.bTransactionId}}</span>
+        <div>
+          <span class="ml-1">TK: <strong>{{model.bTransactionInfo.bankNumber}}</strong></span>
+          <span class="ml-1">Số tiền GD:
+            <strong>{{model.bTransactionInfo.moneyFormat}}&nbsp;{{model.bTransactionInfo.currencyName}}</strong></span>
+          <span class="ml-1"> lúc <strong>{{model.bTransactionInfo.timeAt| date:"dd/MM/yyyy HH:mm:ss"}}</strong></span>
+        </div>
+      </div>
+    </div>
+    <div class="banktransactionInfo row mt-5">
+      <div class="col-2"><strong>Giao dịch ngân hàng: </strong></div>
+      <div class="col-10 row">
+        <a [href]="getUrlLinkTransaction(model.bankTransactionInfo.bankTransactionId)" target="_blank"
+          class="text-primary col-1 text-right">#{{model.bankTransactionInfo.bankTransactionId}}</a>
+          <div class="col-4">
+          <p><strong>Bên gửi</strong></p>
+          <p>{{model.bankTransactionInfo.fromBankAccountName}}</p>
+          <p>{{model.bankTransactionInfo.fromValueFormat}}&nbsp;{{model.bankTransactionInfo.fromCurrencyName}}</p>
+        </div>
+        <div class="col-4">
+          <p><strong>Bên nhận</strong></p>
+          <p>{{model.bankTransactionInfo.toBankAccountName}}</p>
+          <p>{{model.bankTransactionInfo.toValueFormat}}&nbsp;{{model.bankTransactionInfo.toCurrencyName}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="rollbackIncomingEntryInfos">
+      <div style="font-weight: 600;">Ghi nhận thu ({{model.rollbackIncomingEntryInfos.length}})</div>
+      <div class="table-responsive" *ngIf="model.rollbackIncomingEntryInfos.length > 0">
+        <div class="fixedHeader">
+          <table class="table table-hover border-top">
+            <thead>
+              <th>#</th>
+              <th>Tên</th>
+              <th>Số tiền</th>
+              <th>Từ khoản thu</th>
+              <th>Ngày tạo</th>
+              <th class="col-status">Trạng thái</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of model.rollbackIncomingEntryInfos;let i = index">
+                <td class="text-center">{{i+1}}</td>
+                <td>{{item.IncomingEntryName}}</td>
+                <td class="text-right">{{item.MoneyFormat}}</td>
+                <td>{{ item.InvoiceName}}</td>
+                <td>{{item.InvoiceDateMonth}}/{{item.InvoiceDateYear}}</td>
+                <td class="text-center" >
+                  <label [ngClass]="
+                              APP_CONSTANT.StatusStyle[
+                                item.workflowStatusCode.trim()
+                              ]
+                            " class="lable-history-status m-0">{{item.InvoiceStatusName}}</label>
+              </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-between mx-3">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="onClose()">
+      Close
+    </button>
+    <button class="btn btn-primary" (click)="rollBackClientPaidConfirm()">
+      Thu hồi
+    </button>
+  </div>
+</ng-container>

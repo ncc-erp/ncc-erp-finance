@@ -312,7 +312,7 @@ import { AppConsts } from '@shared/AppConsts';
 
     DetailBaocaoChiComponent,
 
-    DetailNhanvienNoComponent
+    DetailNhanvienNoComponent,
   ],
   imports: [
     CommonModule,

@@ -112,5 +112,10 @@ export class BtransactionService extends BaseApiService {
   chiChuyenDoi(payload: ChiChuyenDoiDto): Observable<ApiResponse<any>> {
     return this.http.post<any>(this.rootUrl + `/ChiChuyenDoi`, payload);
   }
-
+  GetInfoRollbackClientPaid(id: any):Observable<ApiResponse<any>>{
+    return this.http.get<ApiResponse<any>>(this.rootUrl +  `/GetInfoRollbackClientPaid?bTransactionId=${id}`);
+  }
+  rollBackClientPaid(id: any): Observable<ApiResponse<any>>{
+    return this.http.get<any>(this.rootUrl + `/RollbackClientPaid?bTransactionId=${id}`);
+  }
 }

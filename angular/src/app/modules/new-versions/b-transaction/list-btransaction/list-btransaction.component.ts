@@ -64,6 +64,7 @@ import * as moment from "moment";
 import { AppConfigurationService } from "@app/service/api/app-configuration.service";
 import { MatMenuTrigger } from "@angular/material/menu";
 import * as FileSaver from "file-saver";
+import { RollbackClientPaidComponent } from "../rollback-client-paid/rollback-client-paid.component";
 
 @Component({
   selector: "app-list-btransaction",
@@ -425,6 +426,19 @@ export class ListBtransactionComponent
     });
   }
 
+  rollBackClientPaid(id: any): void {
+    const _ref = this.dialog.open(RollbackClientPaidComponent, {
+      data: id,
+      width: "1100px",
+      disableClose: true,
+    });
+
+    _ref.afterClosed().subscribe((result) => {
+      if (!result) return;
+      this.refresh();
+    });
+  }
+
   settingPayment() {
     let dialogRef = this.dialog.open(SettingPaymentDialogComponent, {
       data: {},
@@ -515,7 +529,8 @@ export class ListBtransactionComponent
       this.isShowBtnGhiNhanThu(item) ||
       this.isShowBtnEdit(item) ||
       this.isShowBtnDelete(item) ||
-      this.isShowBtnRollBackBTransaction(item)
+      this.isShowBtnRollBackBTransaction(item) ||
+      this.isShowBtnRollbackClientPaid(item)
     );
   }
   isShowBtnKhachHangThanhToan(item: BTransaction) {
@@ -527,6 +542,11 @@ export class ListBtransactionComponent
   isShowBtnRollBackBTransaction(item: BTransaction) {
     return (
       item.bTransactionStatus == BTransactionStatus.DONE && item.moneyNumber < 0
+    );
+  }
+  isShowBtnRollbackClientPaid(item: BTransaction) {
+    return (
+      item.bTransactionStatus == BTransactionStatus.DONE && item.moneyNumber >= 0
     );
   }
   isShowBtnRequestChi(item: BTransaction) {

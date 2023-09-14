@@ -35,5 +35,7 @@ namespace FinanceManagement.Managers.BTransactions
         Task CheckCurrencyBTransactionWithOutCome(long bTransactionId, long outcomingEntryId);
         Task CheckCurrencyBTransactionWithBankAccount(long bTransactionId, long bankAccountId);
         Task<bool> CheckChiChuyenDoi(ChiChuyenDoiDto conversionTransactionDto);
+        Task<GetInfoRollbackClientPaidDto> GetInfoRollbackClientPaid(long bTransactionId);
+        Task RollbackClientPaid(long bTransactionId);
     }
 }

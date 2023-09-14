@@ -6,52 +6,27 @@
           <h2>{{ "Biến động số dư tài khoản công ty" | localize }}</h2>
         </div>
         <div class="col-8 text-right">
-          <a
-          *ngIf="isShowCreateBtn()"
-            href="javascript:;"
-            class="btn bg-blue mr-1"
-            (click)="createTransaction()"
-          >
+          <a *ngIf="isShowCreateBtn()" href="javascript:;" class="btn bg-blue mr-1" (click)="createTransaction()">
             <i class="fa fa-plus-square"></i>
             {{ "Thêm mới" | localize }}
           </a>
-          <button
-          *ngIf="isShowChiLuongBtn()"
-            [disabled]="isDisableBtnChiLuong()"
-            class="btn btn-info mr-1"
-            (click)="openDialogChiLuong()"
-            id="btn_chi_luong"
-          >
+          <button *ngIf="isShowChiLuongBtn()" [disabled]="isDisableBtnChiLuong()" class="btn btn-info mr-1"
+            (click)="openDialogChiLuong()" id="btn_chi_luong">
             <i class="fas fa-coins mr-1"></i>Link tới request chi
           </button>
-          <button
-          *ngIf="isShowBanNgoaiTeBtn()"
-            [disabled]="isDisableBtnBanNgoaiTe()"
-            class="btn bg-blue mr-1"
-            (click)="openDialogBanNgoaiTe()"
-            id="btn_ban_ngoai_te"
-          >
+          <button *ngIf="isShowBanNgoaiTeBtn()" [disabled]="isDisableBtnBanNgoaiTe()" class="btn bg-blue mr-1"
+            (click)="openDialogBanNgoaiTe()" id="btn_ban_ngoai_te">
             <i class="fas fa-coins mr-1"></i>Bán ngoại tệ
           </button>
-          <button
-          *ngIf="isShowMuaNgoaiTeBtn()"
-            [disabled]="isDisableBtnMuaNgoaiTe()"
-            class="btn mr-1 bg-orange"
-            (click)="openDialogMuaNgoaiTe()"
-            id="btn_mua_ngoai_te"
-          >
+          <button *ngIf="isShowMuaNgoaiTeBtn()" [disabled]="isDisableBtnMuaNgoaiTe()" class="btn mr-1 bg-orange"
+            (click)="openDialogMuaNgoaiTe()" id="btn_mua_ngoai_te">
             <i class="fas fa-coins mr-1"></i>Mua ngoại tệ
           </button>
           <div class="d-inline-block" [matTooltip]="tooltipChiChuyenDoi">
-            <button
-            *ngIf="isShowChiChuyenDoi()"
-            [disabled]="isDisableBtnChiChuyenDoi()"
-            class="btn mr-1 bg-blue"
-            (click)="openDialogChiChuyenDoi()"
-            id="btn_mua_ngoai_te"
-          >
-            <i class="fas fa-coins mr-1"></i>Chi chuyển đổi
-          </button>
+            <button *ngIf="isShowChiChuyenDoi()" [disabled]="isDisableBtnChiChuyenDoi()" class="btn mr-1 bg-blue"
+              (click)="openDialogChiChuyenDoi()" id="btn_mua_ngoai_te">
+              <i class="fas fa-coins mr-1"></i>Chi chuyển đổi
+            </button>
           </div>
           <button class="btn btn-success mr-1" (click)="openDialogSelectFile()" *ngIf="isShowImportBtn()">
             <i class="fa fa-upload mr-1"></i>Import
@@ -70,48 +45,23 @@
           <div class="row-group">
             <div class="col-2 item-group item-group--search input-group">
               <div class="input-group-prepend">
-              <button
-                type="button"
-                class="btn bg-blue"
-                (click)="onSearch()"
-              >
-                <i class="fas fa-search"></i>
-              </button>
-            </div>
-              <input
-                type="text"
-                class="form-control"
-                name="keyword"
-                placeholder="Tìm kiếm theo nội dung..."
-                [(ngModel)]="searchText"
-                (keyup.enter)="onSearch()"
-              />
+                <button type="button" class="btn bg-blue" (click)="onSearch()">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm theo nội dung..."
+                [(ngModel)]="searchText" (keyup.enter)="onSearch()" />
             </div>
             <div class="col-1">
-              <input
-                type="text"
-                mask="separator"
-                placeholder="Id"
-                thousandSeparator=""
-                class="form-control"
-                name="bTransactionId"
-                placeholder="Id"
-                [(ngModel)]="id"
-                (keyup.enter)="onFilterId()"
-              />
+              <input type="text" mask="separator" placeholder="Id" thousandSeparator="" class="form-control"
+                name="bTransactionId" placeholder="Id" [(ngModel)]="id" (keyup.enter)="onFilterId()" />
             </div>
             <div class="col-1 item-group">
               <mat-form-field class="w-inherit" appearance="outline">
                 <mat-label>{{ "Tài khoản" | localize }}</mat-label>
-                <mat-select
-                  [(ngModel)]="searchDetail.bankAccountId"
-                  (selectionChange)="onFilterBankAccount()"
-                >
-                <mat-option [value]="-1">All</mat-option>
-                  <mat-option
-                    *ngFor="let account of accountOptions"
-                    [value]="account.value"
-                  >
+                <mat-select [(ngModel)]="searchDetail.bankAccountId" (selectionChange)="onFilterBankAccount()">
+                  <mat-option [value]="-1">All</mat-option>
+                  <mat-option *ngFor="let account of accountOptions" [value]="account.value">
                     {{ account.name }}
                   </mat-option>
                 </mat-select>
@@ -120,15 +70,10 @@
             <div class="col-1 item-group">
               <mat-form-field class="w-inherit" appearance="outline">
                 <mat-label>{{ "Trạng thái" | localize }}</mat-label>
-                <mat-select
-                  [(ngModel)]="searchDetail.bTransactionStatus"
-                  (selectionChange)="onFilterStatus()"
-                >
+                <mat-select [(ngModel)]="searchDetail.bTransactionStatus" (selectionChange)="onFilterStatus()">
                   <mat-option [value]="-1">All</mat-option>
-                  <mat-option
-                    *ngFor="let transactionStatus of transactionStatusOptions"
-                    [value]="transactionStatus.value"
-                  >
+                  <mat-option *ngFor="let transactionStatus of transactionStatusOptions"
+                    [value]="transactionStatus.value">
                     {{ transactionStatus.name }}
                   </mat-option>
                 </mat-select>
@@ -136,74 +81,39 @@
             </div>
             <div class="col-3 item-group">
               <div class="d-flex col-12">
-                <div class="p-0"  [class]="slExpression == ExpressionEnum.NO_FILTER?'col-12' : 'col-4'">
+                <div class="p-0" [class]="slExpression == ExpressionEnum.NO_FILTER?'col-12' : 'col-4'">
                   <mat-form-field class="w-inherit" appearance="outline">
                     <mat-label>{{ "Tiền" | localize }}</mat-label>
                     <mat-select [(ngModel)]="slExpression">
-                      <mat-option
-                        *ngFor="let expression of expressionOptions"
-                        [value]="expression.value"
-                      >
+                      <mat-option *ngFor="let expression of expressionOptions" [value]="expression.value">
                         {{ expression.name }}
                       </mat-option>
                     </mat-select>
                   </mat-form-field>
                 </div>
-                <ng-template
-                  #moneyFTFilter
-                  [ngIf]="slExpression == ExpressionEnum.FT"
-                  [ngIfElse]="moneyExFilter"
-                >
+                <ng-template #moneyFTFilter [ngIf]="slExpression == ExpressionEnum.FT" [ngIfElse]="moneyExFilter">
                   <div class="col ml-2 d-flex">
-                    <input
-                      type="text"
-                      class="form-control"
-                      name="keyword"
-                      placeholder="Từ ..."
-                      [(ngModel)]="searchMoney.fromMoney"
-                      (keyup.enter)="onChangeFilter()"
-                    />
-                    <input
-                      type="text"
-                      class="form-control ml-1"
-                      name="keyword"
-                      placeholder="Đến ..."
-                      [(ngModel)]="searchMoney.toMoney"
-                      (keyup.enter)="onChangeFilter()"
-                    />
+                    <input type="text" class="form-control" name="keyword" placeholder="Từ ..."
+                      [(ngModel)]="searchMoney.fromMoney" (keyup.enter)="onChangeFilter()" />
+                    <input type="text" class="form-control ml-1" name="keyword" placeholder="Đến ..."
+                      [(ngModel)]="searchMoney.toMoney" (keyup.enter)="onChangeFilter()" />
                   </div>
                 </ng-template>
                 <ng-template #moneyExFilter>
-                  <div
-                    class="col item-group--search"
-                    *ngIf="slExpression != ExpressionEnum.NO_FILTER"
-                  >
-                    <input
-                      type="text"
-                      class="form-control"
-                      name="keyword"
-                      placeholder="Nhập số tiền ..."
-                      [(ngModel)]="searchMoney.fromMoney"
-                      (keyup.enter)="onChangeFilter()"
-                    />
+                  <div class="col item-group--search" *ngIf="slExpression != ExpressionEnum.NO_FILTER">
+                    <input type="text" class="form-control" name="keyword" placeholder="Nhập số tiền ..."
+                      [(ngModel)]="searchMoney.fromMoney" (keyup.enter)="onChangeFilter()" />
                   </div>
                 </ng-template>
               </div>
             </div>
             <div class="col item-group date-selector">
-              <app-date-selector
-                (onDateSelectorChange)="onDateChange($event)"
-                [type]="defaultDateFilterType"
-                [label]="'Ngày giao dịch'"
-                [defaultDateFilter]="searchWithDateTime"
-              ></app-date-selector>
+              <app-date-selector (onDateSelectorChange)="onDateChange($event)" [type]="defaultDateFilterType"
+                [label]="'Ngày giao dịch'" [defaultDateFilter]="searchWithDateTime"></app-date-selector>
             </div>
             <div class="text-right item-group">
-              <a *ngIf="isShowCaiDatKhachHangThanhToanBtn()"
-                title="Setting khách hàng trả nợ"
-                class="setting-payment"
-                (click)="settingPayment()"
-              >
+              <a *ngIf="isShowCaiDatKhachHangThanhToanBtn()" title="Setting khách hàng trả nợ" class="setting-payment"
+                (click)="settingPayment()">
                 <i class="fa-cog fas nav-icon"></i>
               </a>
             </div>
@@ -211,20 +121,14 @@
         </div>
         <div class="card-body table-responsive p-4">
           <div class="fixTableHead">
-            <table
-              style="border-collapse: collapse"
-              class="table table-hover text-nowrap"
-              [busy]="isTableLoading"
-            >
+            <table style="border-collapse: collapse" class="table table-hover text-nowrap" [busy]="isTableLoading">
               <thead class="bg-light">
                 <tr>
-                  <th
-                    style="
+                  <th style="
                       text-align: center;
                       width: 50px !important;
                       padding: 12px;
-                    "
-                  >
+                    ">
                     {{ "STT" | localize }}
                   </th>
                   <th style="text-align: center" class="px-0">
@@ -239,53 +143,29 @@
                   <th class="text-center" style="min-width: 270px">
                     {{ "Giao dịch ngân hàng" | localize }}
                   </th>
-                  <th
-                    style="text-align: center; width: 155px"
-                    (click)="sort(SORTABLE_FIELD.Money)"
-                  >
+                  <th style="text-align: center; width: 155px" (click)="sort(SORTABLE_FIELD.Money)">
                     {{ "Số tiền" | localize }}
-                    <i
-                      *ngIf="currentSortField !== SORTABLE_FIELD.Money"
-                      class="fas fa-sort"
-                    ></i>
-                    <i
-                      *ngIf="
+                    <i *ngIf="currentSortField !== SORTABLE_FIELD.Money" class="fas fa-sort"></i>
+                    <i *ngIf="
                         currentSortOption === SORT_DIRECTION.DESCENDING &&
                         currentSortField === SORTABLE_FIELD.Money
-                      "
-                      class="fas fa-sort-amount-down"
-                    ></i>
-                    <i
-                      *ngIf="
+                      " class="fas fa-sort-amount-down"></i>
+                    <i *ngIf="
                         currentSortOption === SORT_DIRECTION.ASCENDING &&
                         currentSortField === SORTABLE_FIELD.Money
-                      "
-                      class="fas fa-sort-amount-up"
-                    ></i>
+                      " class="fas fa-sort-amount-up"></i>
                   </th>
-                  <th
-                    style="width: 80px; text-align: center"
-                    (click)="sort(SORTABLE_FIELD.TimeAt)"
-                  >
+                  <th style="width: 80px; text-align: center" (click)="sort(SORTABLE_FIELD.TimeAt)">
                     {{ "Ngày GD" | localize }}
-                    <i
-                      *ngIf="currentSortField !== SORTABLE_FIELD.TimeAt"
-                      class="fas fa-sort"
-                    ></i>
-                    <i
-                      *ngIf="
+                    <i *ngIf="currentSortField !== SORTABLE_FIELD.TimeAt" class="fas fa-sort"></i>
+                    <i *ngIf="
                         currentSortOption === SORT_DIRECTION.DESCENDING &&
                         currentSortField === SORTABLE_FIELD.TimeAt
-                      "
-                      class="fas fa-sort-amount-down"
-                    ></i>
-                    <i
-                      *ngIf="
+                      " class="fas fa-sort-amount-down"></i>
+                    <i *ngIf="
                         currentSortOption === SORT_DIRECTION.ASCENDING &&
                         currentSortField === SORTABLE_FIELD.TimeAt
-                      "
-                      class="fas fa-sort-amount-up"
-                    ></i>
+                      " class="fas fa-sort-amount-up"></i>
                   </th>
                   <th style="width: 110px; text-align: center">
                     {{ "Trạng thái" | localize }}
@@ -299,8 +179,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  *ngFor="
+                <tr *ngFor="
                     let item of btransactions
                       | paginate
                         : {
@@ -310,100 +189,71 @@
                             totalItems: totalItems
                           };
                     let index = index
-                  "
-                >
+                  ">
                   <td style="padding: 12px" class="text-center">
                     {{ index + 1 + (pageNumber - 1) * pageSize }}
                     <p>#{{ item.bTransactionId }}</p>
-                    <mat-checkbox
-                      [(ngModel)]="item.check"
-                      [id]="'checkbox-item-bTransactionId-' + item.bTransactionId"
-                      *ngIf="isShowCheckboxFromChiLuong(item)"
-                    ></mat-checkbox>
+                    <mat-checkbox [(ngModel)]="item.check" [id]="'checkbox-item-bTransactionId-' + item.bTransactionId"
+                      *ngIf="isShowCheckboxFromChiLuong(item)"></mat-checkbox>
                   </td>
                   <td class="text-center px-0">
                     <div *ngIf="isShowBtnMenu(item)">
-                      <button
-                        mat-button
-                        [matMenuTriggerFor]="menu"
-                        (click)="$event.stopPropagation()"
-                        #menuTrigger="matMenuTrigger"
-                      >
+                      <button mat-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()"
+                        #menuTrigger="matMenuTrigger">
                         <mat-icon>menu</mat-icon>
                       </button>
                       <mat-menu #menu="matMenu" class="p-2" class="max-width-300">
-                        <button
-                          class="mat-menu-item w-100"
-                          (click)="payment(item)"
-                          matTooltip="Khách hàng thanh toán"
-                          *ngIf="isShowBtnKhachHangThanhToan(item) && isShowKhachHangThanhToanBtn()"
-                        >
+                        <button class="mat-menu-item w-100" (click)="payment(item)" matTooltip="Khách hàng thanh toán"
+                          *ngIf="isShowBtnKhachHangThanhToan(item) && isShowKhachHangThanhToanBtn()">
                           <i class="fas fa-money-check-alt"></i>
                           {{ "Khách hàng thanh toán" | localize }}
                         </button>
-                        <button
-                          class="mat-menu-item w-100"
-                          (click)="linkOutcomingEntryWithBTransaction(item)"
+                        <button class="mat-menu-item w-100" (click)="linkOutcomingEntryWithBTransaction(item)"
                           matTooltip="Link 1 request chi"
-                          *ngIf="isShowBtnRequestChi(item) && isShowLinkToRequestChiBtn()"
-                        >
-                        <i class="fas fa-link"></i>
+                          *ngIf="isShowBtnRequestChi(item) && isShowLinkToRequestChiBtn()">
+                          <i class="fas fa-link"></i>
                           {{ "Link 1 request chi" | localize }}
                         </button>
-                        <button
-                          class="mat-menu-item w-100 text-success"
-                          (click)="linkMultitiOutcomingEntry(item)"
+                        <button class="mat-menu-item w-100 text-success" (click)="linkMultitiOutcomingEntry(item)"
                           matTooltip="Link nhiều request chi"
-                          *ngIf="isShowBtnRequestChi(item) && isShowLinkToMultipleRequestChiBtn()"
-                        >
-                        <i class="fas fa-link"></i>
+                          *ngIf="isShowBtnRequestChi(item) && isShowLinkToMultipleRequestChiBtn()">
+                          <i class="fas fa-link"></i>
                           {{ "Link nhiều request chi" | localize }}
                         </button>
-                        <button
-                          class="mat-menu-item w-100"
-                          (click)="
+                        <button class="mat-menu-item w-100" (click)="
                             rollbackLinkOutcomingEntry(item.bTransactionId)
-                          "
-                          matTooltip="Thu hồi link 1 request chi hoặc nhiều request chi"
-                          *ngIf="isShowBtnRollBackBTransaction(item) && isShowThuHoiLinkToRequestChi()"
-                        >
+                          " matTooltip="Thu hồi link 1 request chi hoặc nhiều request chi"
+                          *ngIf="isShowBtnRollBackBTransaction(item) && isShowThuHoiLinkToRequestChi()">
                           <i class="fas fa-unlink nav-icon"></i>
                           {{ "Thu hồi link request chi" | localize }}
                         </button>
-                        <button
-                          class="mat-menu-item w-100"
-                          (click)="revenueRecognition(item)"
-                          matTooltip="Tạo 1 ghi nhận thu"
-                          *ngIf="isShowBtnGhiNhanThu(item) && isShowCreateIncomingEntryBtn()"
+                        <button class="mat-menu-item w-100" *ngIf="isShowBtnRollbackClientPaid(item)"
+                          matTooltip="Thu hồi 1 hoặc nhiều ghi nhận thu trong biến động số dư đấy"
+                          (click)="rollBackClientPaid(item.bTransactionId)"
                         >
+                          <i class="fas fa-unlink nav-icon"></i>
+                          {{ "Thu hồi khách hàng thanh toán" | localize }}
+                        </button>
+                        <button class="mat-menu-item w-100" (click)="revenueRecognition(item)"
+                          matTooltip="Tạo 1 ghi nhận thu"
+                          *ngIf="isShowBtnGhiNhanThu(item) && isShowCreateIncomingEntryBtn()">
                           <i class="fas fa-plus"></i>
                           {{ "Tạo 1 ghi nhận thu" | localize }}
                         </button>
-                        <button
-                          class="mat-menu-item w-100 text-success"
-                          (click)="CreateMultiIncomingEntry(item)"
+                        <button class="mat-menu-item w-100 text-success" (click)="CreateMultiIncomingEntry(item)"
                           matTooltip="Tạo nhiều ghi nhận thu"
-                          *ngIf="isShowBtnGhiNhanThu(item) && isShowCreateMultiIncomingEntryBtn()"
-                        >
+                          *ngIf="isShowBtnGhiNhanThu(item) && isShowCreateMultiIncomingEntryBtn()">
                           <i class="fas fa-plus"></i>
                           {{ "Tạo nhiều ghi nhận thu" | localize }}
                         </button>
                         <ng-containter>
-                          <button
-                            class="menu-button"
-                            mat-menu-item
-                            (click)="editTransaction(item)"
-                            *ngIf="isShowBtnEdit(item) && isShowEditBtn()"
-                          >
+                          <button class="menu-button" mat-menu-item (click)="editTransaction(item)"
+                            *ngIf="isShowBtnEdit(item) && isShowEditBtn()">
                             <i class="fas fa-pencil-alt"></i>
                             {{ "Edit" | localize }}
                           </button>
-                          <button
-                            class="menu-button"
-                            mat-menu-item
-                            (click)="delete(item); $event.stopPropagation()"
-                            *ngIf="isShowBtnDelete(item) && isShowDeleteBtn()"
-                          >
+                          <button class="menu-button" mat-menu-item (click)="delete(item); $event.stopPropagation()"
+                            *ngIf="isShowBtnDelete(item) && isShowDeleteBtn()">
                             <i class="fas fa-trash"></i>
                             {{ "Delete" | localize }}
                           </button>
@@ -424,29 +274,20 @@
                     </p>
                   </td>
                   <td style="max-width: 270px">
-                    <a
-                      style="white-space: normal"
-                      class="hyperlink"
-                      *ngIf="item.bankTransactionId"
-                      [routerLink]="['/app/bank-transaction']"
-                      [queryParams]="{ id: item.bankTransactionId }"
-                    >
+                    <a style="white-space: normal" class="hyperlink" *ngIf="item.bankTransactionId"
+                      [routerLink]="['/app/bank-transaction']" [queryParams]="{ id: item.bankTransactionId }">
                       #{{ item.bankTransactionId }}
                       {{ item.bankTransactionName }}
                     </a>
                   </td>
                   <td class="">
-                    <ng-containter
-                      [style.color]="item.moneyNumber > 0 ? 'black' : 'red'"
-                    >
+                    <ng-containter [style.color]="item.moneyNumber > 0 ? 'black' : 'red'">
                       <strong>{{ item.money }}</strong>
                       <!-- <strong> {{_utilities.formatMoneyCustom(item.money) }}</strong>  -->
                     </ng-containter>
-                    <ng-containter
-                      [style.color]="
+                    <ng-containter [style.color]="
                         _utilities.getColorByCurrency(item.currencyName)
-                      "
-                    >
+                      ">
                       <strong> {{ item.currencyName }}</strong>
                     </ng-containter>
                   </td>
@@ -459,14 +300,11 @@
                     </p>
                   </td>
                   <td class="text-center">
-                    <span
-                      class="tag"
-                      [style.backgroundColor]="
+                    <span class="tag" [style.backgroundColor]="
                         _utilities.getBgTagBTransactionStatusColor(
                           item.bTransactionStatusName
                         )
-                      "
-                    >
+                      ">
                       {{ item.bTransactionStatusName }}
                     </span>
                     <p class="mb-0" *ngIf="item.lastModifiedTime">
@@ -494,18 +332,13 @@
         </div>
         <div class="card-footer bg-light border-top">
           <div class="row">
-            <div
-              class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center just"
-            >
+            <div class="col-sm-4 col-12 text-sm-left text-center d-flex align-items-center just">
               <button class="btn btn-secondary" (click)="refresh()">
                 <i class="fas fa-redo-alt"></i>
               </button>
               <mat-form-field style="width: 20%; margin-left: 30px">
                 <mat-label>Number items</mat-label>
-                <mat-select
-                  [(ngModel)]="pageSizeType"
-                  (ngModelChange)="changePageSize()"
-                >
+                <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
                   <mat-option [value]="5"> 5 </mat-option>
                   <mat-option [value]="10"> 10 </mat-option>
                   <mat-option [value]="20"> 20 </mat-option>
@@ -514,19 +347,12 @@
                 </mat-select>
               </mat-form-field>
             </div>
-            <div
-              class="col-sm-4 col-12 justify-content-center d-flex align-items-center"
-            >
+            <div class="col-sm-4 col-12 justify-content-center d-flex align-items-center">
               <p class="mb-0">Total: {{ totalItems }}</p>
             </div>
-            <div
-              class="col-sm-4 col-12 d-flex align-items-center justify-content-end"
-            >
+            <div class="col-sm-4 col-12 d-flex align-items-center justify-content-end">
               <div class="float-sm-right">
-                <abp-pagination-controls
-                  id="server"
-                  (pageChange)="getDataPage($event)"
-                >
+                <abp-pagination-controls id="server" (pageChange)="getDataPage($event)">
                 </abp-pagination-controls>
               </div>
             </div>

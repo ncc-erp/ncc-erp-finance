@@ -881,6 +881,7 @@ namespace FinanceManagement.APIs.BTransactions
             };
 
         }
+
         [HttpPost]
         public async Task<bool> CheckChiChuyenDoi(ChiChuyenDoiDto chiChuyenDoiDto)
         {
@@ -938,6 +939,24 @@ namespace FinanceManagement.APIs.BTransactions
                     IncomingEntryId = resultCreateIncoming.IncomingEntryId,
                     OutcomingEntryId = chiChuyenDoiDto.OutcomingEntryId.Value,
                 });
+            }
+        }
+
+        [HttpGet]
+        public async Task<GetInfoRollbackClientPaidDto> GetInfoRollbackClientPaid(long bTransactionId)
+        {
+            using (CurrentUnitOfWork.DisableFilter(nameof(IMustHavePeriod)))
+            {
+                return await _btransactionManager.GetInfoRollbackClientPaid(bTransactionId);
+            }
+        }
+
+        [HttpGet]
+        public async Task RollbackClientPaid(long bTransactionId)
+        {
+            using (CurrentUnitOfWork.DisableFilter(nameof(IMustHavePeriod)))
+            {
+                await _btransactionManager.RollbackClientPaid(bTransactionId);
             }
         }
     }

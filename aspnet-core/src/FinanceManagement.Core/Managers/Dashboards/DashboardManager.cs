@@ -920,10 +920,7 @@ namespace FinanceManagement.Managers.Dashboards
             //lay theo chi
             var qrequestChi = IQOutcomingEntryForDashboard(statusEndId)
                 .Where(x => x.ReportDate.HasValue ? (startDate.Date <= x.ReportDate.Value.Date && x.ReportDate.Value.Date <= endDate.Date) : false);
-            if (branchId > 0)
-            {
-                qrequestChi = qrequestChi.Where(x => x.BranchId == branchId);
-            }
+            
             if (isExpense.HasValue)
             {
                
@@ -969,7 +966,14 @@ namespace FinanceManagement.Managers.Dashboards
                 })
                 .ToList();
 
-            return requestChiHasDetail.Union(requestChiHasNotDetail).OrderBy(x => x.BranchName).ThenBy(x => x.ReportDate);
+            var requestChiUnio = requestChiHasDetail.Union(requestChiHasNotDetail).OrderBy(x => x.BranchName).ThenBy(x => x.ReportDate);
+
+            if (branchId > 0)
+            {
+                return requestChiUnio.Where(x => x.BranchId == branchId);
+            }
+
+            return requestChiUnio;
         }
         private IQueryable<GetThongTinRequestChi> IQOutcomingEntryForDashboard(long? statusEndId = null)
         {

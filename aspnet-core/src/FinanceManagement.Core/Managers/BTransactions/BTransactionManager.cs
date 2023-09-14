@@ -26,6 +26,9 @@ using FinanceManagement.Managers.OutcomingEntries;
 using Abp.Collections.Extensions;
 using FinanceManagement.Managers.OutcomingEntries.Dtos;
 using FinanceManagement.Managers.Commons;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.AspNetCore.Mvc;
+using AutoMapper.Internal;
 
 namespace FinanceManagement.Managers.BTransactions
 {
@@ -329,7 +332,7 @@ namespace FinanceManagement.Managers.BTransactions
                 await _ws.UpdateAsync(invoice);
 
                 return 0;
-            } 
+            }
 
             await _ws.InsertAsync<IncomingEntry>(new IncomingEntry
             {
@@ -876,7 +879,7 @@ namespace FinanceManagement.Managers.BTransactions
                         WorkflowStatusId = outcomingEntry.WorkflowStatusId,
                         Value = outcomingEntry.Value,
                         CurrencyName = outcomingEntry.Currency.Name
-                        
+
                     }, currentPeriodId);
 
                 }
@@ -1102,7 +1105,7 @@ namespace FinanceManagement.Managers.BTransactions
             {
                 throw new UserFriendlyException("Không có biến động số dư dương");
             }
-            if(await IsAllowOutcomingEntryByMultipleCurrency())
+            if (await IsAllowOutcomingEntryByMultipleCurrency())
             {
                 throw new UserFriendlyException("Tính năng không còn được hỗ trợ");
             }
@@ -1224,7 +1227,7 @@ namespace FinanceManagement.Managers.BTransactions
             var bTransactionCurrency = await _ws.GetAll<BTransaction>().Where(s => s.Id == bTransactionId).Select(s => s.BankAccount.CurrencyId).FirstOrDefaultAsync();
             var outcomingEntryCurrency = await _ws.GetAll<OutcomingEntry>().Where(s => s.Id == outcomingEntryId).Select(s => s.CurrencyId).FirstOrDefaultAsync();
 
-            if(bTransactionCurrency != outcomingEntryCurrency)
+            if (bTransactionCurrency != outcomingEntryCurrency)
             {
                 throw new UserFriendlyException("Tiền của biến động số dư khác tiền của request chi");
             }
@@ -1340,5 +1343,125 @@ namespace FinanceManagement.Managers.BTransactions
 
         }
 
+        public async Task<GetInfoRollbackClientPaidDto> GetInfoRollbackClientPaid(long bTransactionId)
+        {
+            var qBankAccInfo = _ws.GetAll<BankAccount>().Select(x => x);
+
+            var query = from b in _ws.GetAll<BTransaction>().Where(b => b.Id == bTransactionId)
+                        join bt in _ws.GetAll<BankTransaction>() on b.Id equals bt.BTransactionId
+                        select new GetInfoRollbackClientPaidDto
+                        {
+                            BTransactionInfor = new BTransactionInforDto
+                            {
+                                BTransactionId = b.Id,
+                                BankAccountId = b.BankAccountId,
+                                BankAccountName = b.BankAccount.HolderName,
+                                BankNumber = b.BankAccount.BankNumber,
+                                Note = b.Note,
+                                TimeAt = b.TimeAt,
+                                Money = b.Money,
+                                CurrencyName = b.BankAccount.Currency.Name,
+                                CurrencyId = b.BankAccount.CurrencyId,
+                                Status = b.Status
+                            },
+                            BankTransactionInfor = new BankTransactionInforDto
+                            {
+                                BankTransactionId = bt.Id,
+                                BankTransactionName = bt.Name,
+                                FromBankAccountId = bt.FromBankAccountId,
+                                FromBankAccountName = qBankAccInfo.Where(ba => ba.Id == bt.FromBankAccountId).FirstOrDefault().HolderName,
+                                FromValue = bt.FromValue,
+                                FromCurrencyId = qBankAccInfo.Where(ba => ba.Id == bt.FromBankAccountId).FirstOrDefault().CurrencyId,
+                                FromCurrencyName = qBankAccInfo.Where(ba => ba.Id == bt.FromBankAccountId).FirstOrDefault().Currency.Name,
+                                ToBankAccountId = bt.ToBankAccountId,
+                                ToBankAccountName = qBankAccInfo.Where(ba => ba.Id == bt.ToBankAccountId).FirstOrDefault().HolderName,
+                                ToCurrencyId = qBankAccInfo.Where(ba => ba.Id == bt.ToBankAccountId).FirstOrDefault().CurrencyId,
+                                ToCurrencyName = qBankAccInfo.Where(ba => ba.Id == bt.ToBankAccountId).FirstOrDefault().Currency.Name,
+                                ToValue = bt.ToValue,
+                                Fee = bt.Fee,
+                            },
+                            IncomingEntrieInfors = bt.IncomingEntries.Join(_ws.GetAll<Invoice>(), inc => inc.InvoiceId, inv => inv.Id, (inc, inv) => new IncomingEntryInforDto
+                            {
+                                IncomingEntryId = inc.Id,
+                                IncomingEntryName = inc.Name,
+                                Money = inc.ExchangeRate == null ? inc.Value : inc.Value * inc.ExchangeRate.Value,
+                                CurrencyId = inc.CurrencyId,
+                                CurrencyName = inc.Currency.Name,
+                                ExchangeRate = inc.ExchangeRate,
+                                BankTransactionId = inc.BankTransactionId,
+                                InvoiceId = inc.InvoiceId,
+                                InvoiceName = inv.NameInvoice,
+                                InvoiceDateMonth = inv.Month,
+                                InvoiceDateYear = inv.Year,
+                                InvoiceCurrencyName = inv.Currency.Name,
+                                InvoiceStatus = inv.Status,
+                            }).ToList()
+                        };
+
+            var result = await query.FirstOrDefaultAsync();
+            if (result == null)
+                throw new UserFriendlyException($"Không tìm thấy Biến động số dư {bTransactionId}");
+            if (result.BankTransactionInfor == null)
+                return result;
+
+  
+
+            return result;
+        }
+
+        public async Task RollbackClientPaid(long bTransactionId)
+        {
+            // get btransaction to update status, fromaccountId
+            var bTransaction = await _ws.GetAll<BTransaction>().Where(b => b.Id == bTransactionId).FirstOrDefaultAsync();
+
+            if (bTransaction == null)
+                throw new UserFriendlyException(string.Format("BTransaction Id {0} is not fould", bTransactionId));
+
+            if (bTransaction.Status == BTransactionStatus.PENDING)
+                throw new UserFriendlyException(string.Format("BTransaction Id {0} is Pending", bTransactionId));
+
+            // get banktransaction to delete
+            var bankTransaction = await _ws.GetAll<BankTransaction>().Where(bnt => bnt.BTransactionId == bTransactionId).FirstOrDefaultAsync();
+
+            var invoiceOfAccountHasIncom = _ws.GetAll<Invoice>()
+                .Where(inv => inv.AccountId == bTransaction.FromAccountId && inv.IncomingEntries.Count() > 0)
+                .Include(inv => inv.IncomingEntries)
+                .ToList();
+
+            foreach (var invoice in invoiceOfAccountHasIncom)
+            {
+                // delete incom in invoice 
+                var incomInInvoice = invoice.IncomingEntries.Where(inv => inv.BTransactionId == bTransaction.Id).ToList(); // get incom by btransactionid
+                incomInInvoice.ForEach(async inc =>
+                {
+                    var countIncom = invoice.IncomingEntries.Count();
+
+                    inc.IsDeleted = true;
+                    await _ws.UpdateAsync(inc);
+
+                    if (countIncom < 2)
+                    {
+                        invoice.Status = NInvoiceStatus.CHUA_TRA;
+                    }
+                    else
+                    {
+                        invoice.Status = NInvoiceStatus.TRA_1_PHAN;
+                    }
+                    await _ws.UpdateAsync(invoice);
+                });
+            }
+
+            // delete banktransaction
+            bankTransaction.IsDeleted = true;
+            await _ws.UpdateAsync(bankTransaction);
+
+            // update fromAccountId and Status of BTransaction
+            bTransaction.FromAccountId = null;
+            bTransaction.Status = BTransactionStatus.PENDING;
+            await _ws.UpdateAsync(bTransaction);
+
+            // Update database
+            await CurrentUnitOfWork.SaveChangesAsync();
+        }
     }
 }
