@@ -98,33 +98,26 @@ export class DetailBaocaoChiComponent implements OnInit {
     return buf;
   }
 
-  exportBBC(){
-    abp.message.confirm(
-      "Bạn có chắc muốn xuất danh sách chi của " + (this.data.branchName == 'Tổng cộng' ? 'Toàn công ty' : this.data.branchName) + " ?", 
-      "Xác nhận", 
-      (result) => {
-      if (result) { 
-          this.dashBoardService.exportExcelBBC(this.startDate, this.endDate, this.branchId).subscribe(data => {
-            const file = new Blob([this.convertFile(atob(data.result))], {
-              type: "application/vnd.ms-excel;charset=utf-8"
-            });
-            let type = "";
-            if(this.data.expenseType === -1){
-              type = "Tổng_Chi_";
-            }
-            else if(this.data.expenseType === 0){
-              type = "Chi_Thực_";
-            }
-            else if(this.data.expenseType === 1){
-              type = "Chi_Không_Thực_";
-            }
-            var branchNameReplace = this.data.branchName.replace(/ /g, "_");
-            FileSaver.saveAs(file, `Báo_Cáo_${type}Chi_Nhánh_${branchNameReplace}.xlsx`);
-            abp.notify.success("export successful")
-            this.dialogRef.close()
-          })
-        }
-    });
+  exportBBC() {
+    this.dashBoardService.exportExcelBBC(this.startDate, this.endDate, this.branchId).subscribe(data => {
+      const file = new Blob([this.convertFile(atob(data.result))], {
+        type: "application/vnd.ms-excel;charset=utf-8"
+      });
+      let type = "";
+      if (this.data.expenseType === -1) {
+        type = "Tổng_Chi_";
+      }
+      else if (this.data.expenseType === 0) {
+        type = "Chi_Thực_";
+      }
+      else if (this.data.expenseType === 1) {
+        type = "Chi_Không_Thực_";
+      }
+      var branchNameReplace = this.data.branchName.replace(/ /g, "_");
+      FileSaver.saveAs(file, `Báo_Cáo_${type}Chi_Nhánh_${branchNameReplace}.xlsx`);
+      abp.notify.success("export successful")
+      this.dialogRef.close()
+    })
   }
-  
+
 }

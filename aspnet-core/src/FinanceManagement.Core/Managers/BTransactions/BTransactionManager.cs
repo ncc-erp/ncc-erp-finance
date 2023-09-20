@@ -1346,10 +1346,12 @@ namespace FinanceManagement.Managers.BTransactions
 
         public async Task<GetInfoIncomingEntryDto> GetInfoIncomingEntries(long bTransactionId)
         {
-            var qBankAccInfo = _ws.GetAll<BankAccount>().Select(x => x);
+            var qBankAccInfo = _ws.GetAll<BankAccount>();
 
-            var query = from b in _ws.GetAll<BTransaction>().Where(b => b.Id == bTransactionId)
-                        join bt in _ws.GetAll<BankTransaction>().Include(bt => bt.IncomingEntries).ThenInclude(inc => inc.RelationInOutEntries).ThenInclude(relationIO => relationIO.OutcomingEntry).ThenInclude(outc => outc.OutcomingEntryType)  on b.Id equals bt.BTransactionId
+            var query = from b in _ws.GetAll<BTransaction>()
+                        .Where(b => b.Id == bTransactionId)
+                        join bt in _ws.GetAll<BankTransaction>()
+                        on b.Id equals bt.BTransactionId
                         select new GetInfoIncomingEntryDto
                         {
                             BTransactionInfor = new BTransactionInforDto
@@ -1381,7 +1383,8 @@ namespace FinanceManagement.Managers.BTransactions
                                 ToValue = bt.ToValue,
                                 Fee = bt.Fee,
                             },
-                            IncomingEntrieInfors = bt.IncomingEntries.Join(_ws.GetAll<Invoice>(), inc => inc.InvoiceId, inv => inv.Id, (inc, inv) => new IncomingEntryInforDto
+                            IncomingEntrieInfors = bt.IncomingEntries
+                            .Join(_ws.GetAll<Invoice>(), inc => inc.InvoiceId, inv => inv.Id, (inc, inv) => new IncomingEntryInforDto
                             {
                                 IncomingEntryId = inc.Id,
                                 IncomingEntryName = inc.Name,
@@ -1399,7 +1402,9 @@ namespace FinanceManagement.Managers.BTransactions
                                 AccountId = inv.AccountId,
                                 AccountName = inv.Account.Name,
                             }).ToList(),
-                            OutComingEntryInfors = bt.IncomingEntries.SelectMany(inc => inc.RelationInOutEntries).Select(relationIO => new OutComingEntryInforDto
+                            OutComingEntryInfors = bt.IncomingEntries
+                            .SelectMany(inc => inc.RelationInOutEntries)
+                            .Select(relationIO => new OutComingEntryInforDto
                             {
                                 OutcomingEntryId = relationIO.OutcomingEntryId,
                                 OutcomingEntryName = relationIO.OutcomingEntry.Name,
@@ -1428,35 +1433,33 @@ namespace FinanceManagement.Managers.BTransactions
         public async Task RollbackIncomingEntries(long bTransactionId)
         {
             // get btransaction to update status, fromaccountId
-            var bTransaction = await _ws.GetAll<BTransaction>().Where(b => b.Id == bTransactionId).FirstOrDefaultAsync();
-
-            if (bTransaction == null)
-                throw new UserFriendlyException(string.Format("BTransaction Id {0} is not fould", bTransactionId));
+            var bTransaction = await _ws.GetAsync<BTransaction>(bTransactionId);
 
             if (bTransaction.Status == BTransactionStatus.PENDING)
                 throw new UserFriendlyException(string.Format("BTransaction Id {0} is Pending", bTransactionId));
 
             // get banktransaction to delete
-            var bankTransaction = await _ws.GetAll<BankTransaction>().Include(bankT => bankT.IncomingEntries).ThenInclude(inc => inc.RelationInOutEntries)
-                .ThenInclude(rel => rel.OutcomingEntry).Where(bnt => bnt.BTransactionId == bTransactionId).FirstOrDefaultAsync();
+            var bankTransaction = await _ws.GetAll<BankTransaction>()
+                .Where(bnt => bnt.BTransactionId == bTransactionId)
+                .FirstOrDefaultAsync();
 
-            var invoiceOfAccountHasIncom = _ws.GetAll<Invoice>()
+            // get list invoice of account and has incoming (có nghĩa là lấy các khoản nợ có ghi nhận thu, ta sẽ không quan tâm các ghi nhận thu chưa có ghi nhận thu nào)
+            var invoices = _ws.GetAll<Invoice>()
                 .Where(inv => inv.AccountId == bTransaction.FromAccountId && inv.IncomingEntries.Count() > 0)
                 .Include(inv => inv.IncomingEntries)
                 .ToList();
 
-            if(invoiceOfAccountHasIncom.Count > 0)
+            if(invoices.Count > 0)
             {
-                foreach (var invoice in invoiceOfAccountHasIncom)
+                foreach (var invoice in invoices)
                 {
-                    // delete incom in invoice 
-                    var incomInInvoice = invoice.IncomingEntries.Where(inv => inv.BTransactionId == bTransaction.Id).ToList(); // get incom by btransactionid
-                    incomInInvoice.ForEach(async inc =>
+
+                    var incomInInvoiceBeLongBTransaction = invoice.IncomingEntries.Where(inv => inv.BTransactionId == bTransaction.Id).ToList(); // get và delete incom in invoice and belong to BTransactionID
+                    incomInInvoiceBeLongBTransaction.ForEach(inc => // tại đây ta tiến hành xóa ghi nhận thu thuộc biến động số dư đấy
                     {
-                        var countIncom = invoice.IncomingEntries.Count();
+                        var countIncom = invoice.IncomingEntries.Count(); // xem invoice đấy có tồn tại nhiều hơn 1 incoming không
 
                         inc.IsDeleted = true;
-                        await _ws.UpdateAsync(inc);
 
                         if (countIncom < 2)
                         {
@@ -1466,7 +1469,6 @@ namespace FinanceManagement.Managers.BTransactions
                         {
                             invoice.Status = NInvoiceStatus.TRA_1_PHAN;
                         }
-                        await _ws.UpdateAsync(invoice);
                     });
                 }
             }
@@ -1475,60 +1477,39 @@ namespace FinanceManagement.Managers.BTransactions
                 // get list outcomingentry to select WorkFlowStatus
                 var outComings = bankTransaction.IncomingEntries.SelectMany(inc => inc.RelationInOutEntries).Select(relationIO => new
                 {
-                    OutcomingEntryId = relationIO.OutcomingEntryId,
-                    OutcomingEntryName = relationIO.OutcomingEntry.Name,
-                    BranchId = relationIO.OutcomingEntry.BranchId,
-                    BranchName = relationIO.OutcomingEntry.Branch.Name,
-                    Value = relationIO.OutcomingEntry.Value,
-                    CurrencyId = relationIO.OutcomingEntry.CurrencyId,
-                    CurrencyName = relationIO.OutcomingEntry.Currency.Name,
-                    OutcomingEntryTypeId = relationIO.OutcomingEntry.OutcomingEntryTypeId,
-                    OutcomingEntryTypeCode = relationIO.OutcomingEntry.OutcomingEntryType.Code,
-                    OutcomingEntryTypeName = relationIO.OutcomingEntry.OutcomingEntryType.Name,
-                    WorkflowStatusId = relationIO.OutcomingEntry.WorkflowStatusId,
                     WorkflowStatusCode = relationIO.OutcomingEntry.WorkflowStatus.Code,
-                    WorkflowStatusName = relationIO.OutcomingEntry.WorkflowStatus.Name,
-                    CreatedAt = relationIO.OutcomingEntry.CreationTime.Date,
                 }).ToList();
 
-                if(outComings.Count <= 0)
+                if (outComings.Count <= 0) // kiểm tra xem biến động số dư ấy có có ghi nhận thu nào thuộc request chi nào không
                 {
                     throw new UserFriendlyException(string.Format("Không có ghi nhận thu cho request chi có biến động số dư {0}", bTransactionId));
                 }
 
-                if (outComings.Any(outC => outC.WorkflowStatusCode == "END"))
+                if (outComings.Any(outC => outC.WorkflowStatusCode == FinanceManagementConsts.WORKFLOW_STATUS_END))
                 {
-                    throw new UserFriendlyException(string.Format("Tồn tại equest chi đã thực thi, không thể thu hồi biến động số dư {0}", bTransactionId));
+                    throw new UserFriendlyException(string.Format("Tồn tại request chi đã thực thi, không thể thu hồi biến động số dư {0}", bTransactionId));
                 }
 
-                // get list incom of btransaction
-                var incomOfBTrans = _ws.GetAll<IncomingEntry>().Where(inc => inc.BTransactionId == bTransactionId && inc.BankTransactionId == bankTransaction.Id).ToList();
-                foreach(var incom in incomOfBTrans)
+                // delete incom of BTransaction
+                foreach (var item in bTransaction.IncomingEntries)
                 {
-                    incom.IsDeleted = true;
+                    item.IsDeleted = true;
                 }
 
                 // get list relelationIO of BankTransaction
                 var relelationIOs = bankTransaction.IncomingEntries.SelectMany(inc => inc.RelationInOutEntries).ToList();
-                foreach(var item in relelationIOs)
+                foreach (var item in relelationIOs)
                 {
                     item.IsDeleted = true;
-                    await _ws.UpdateAsync(item);
-                } 
-                
-                
-
+                }
             }
             
-
             // delete banktransaction
             bankTransaction.IsDeleted = true;
-            await _ws.UpdateAsync(bankTransaction);
 
             // update fromAccountId and Status of BTransaction
             bTransaction.FromAccountId = null;
             bTransaction.Status = BTransactionStatus.PENDING;
-            await _ws.UpdateAsync(bTransaction);
 
             // Update database
             await CurrentUnitOfWork.SaveChangesAsync();
