@@ -16,3 +16,11 @@
 a:hover{
     text-decoration: underline;
 }
+
+.blue-thead{
+    background-color: #cdefff;
+}
+
+.yellow-thead{
+    background-color: #ffeab2;
+}

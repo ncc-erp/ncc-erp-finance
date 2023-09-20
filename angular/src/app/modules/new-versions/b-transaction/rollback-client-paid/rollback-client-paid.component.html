@@ -1,63 +1,100 @@
 <ng-container>
-  <abp-modal-header [title]="'Thu hồi khách hàng thanh toán'" (onCloseClick)="onClose()"></abp-modal-header>
+  <abp-modal-header [title]="'Thu hồi biến động số dư dương'" (onCloseClick)="onClose()"></abp-modal-header>
   <div class="modal-body">
     <div class="btransactionInfo row">
       <div class="col-2"><strong>Biến động số dư: </strong></div>
       <div class="col-10 row">
-        <span
-          class="col-1 text-right">#{{model.bTransactionInfo.bTransactionId}}</span>
+        <span class="col-1 text-right">#{{model.bTransactionInfor.bTransactionId}}</span>
         <div>
-          <span class="ml-1">TK: <strong>{{model.bTransactionInfo.bankNumber}}</strong></span>
+          <span class="ml-1">TK: <strong>{{model.bTransactionInfor.bankNumber}}</strong></span>
           <span class="ml-1">Số tiền GD:
-            <strong>{{model.bTransactionInfo.moneyFormat}}&nbsp;{{model.bTransactionInfo.currencyName}}</strong></span>
-          <span class="ml-1"> lúc <strong>{{model.bTransactionInfo.timeAt| date:"dd/MM/yyyy HH:mm:ss"}}</strong></span>
+            <strong>{{model.bTransactionInfor.moneyFormat}}&nbsp;{{model.bTransactionInfor.currencyName}}</strong></span>
+          <span class="ml-1"> lúc <strong>{{model.bTransactionInfor.timeAt| date:"dd/MM/yyyy HH:mm:ss"}}</strong></span>
         </div>
       </div>
     </div>
     <div class="banktransactionInfo row mt-5">
       <div class="col-2"><strong>Giao dịch ngân hàng: </strong></div>
       <div class="col-10 row">
-        <a [href]="getUrlLinkTransaction(model.bankTransactionInfo.bankTransactionId)" target="_blank"
-          class="text-primary col-1 text-right">#{{model.bankTransactionInfo.bankTransactionId}}</a>
-          <div class="col-4">
+        <a [href]="getUrlLinkTransaction(model.bankTransactionInfor.bankTransactionId)" target="_blank"
+          class="text-primary col-1 text-right">#{{model.bankTransactionInfor.bankTransactionId}}</a>
+        <div class="col-4">
           <p><strong>Bên gửi</strong></p>
-          <p>{{model.bankTransactionInfo.fromBankAccountName}}</p>
-          <p>{{model.bankTransactionInfo.fromValueFormat}}&nbsp;{{model.bankTransactionInfo.fromCurrencyName}}</p>
+          <p>{{model.bankTransactionInfor.fromBankAccountName}}</p>
+          <p>{{model.bankTransactionInfor.fromValueFormat}}&nbsp;{{model.bankTransactionInfor.fromCurrencyName}}</p>
         </div>
         <div class="col-4">
           <p><strong>Bên nhận</strong></p>
-          <p>{{model.bankTransactionInfo.toBankAccountName}}</p>
-          <p>{{model.bankTransactionInfo.toValueFormat}}&nbsp;{{model.bankTransactionInfo.toCurrencyName}}</p>
+          <p>{{model.bankTransactionInfor.toBankAccountName}}</p>
+          <p>{{model.bankTransactionInfor.toValueFormat}}&nbsp;{{model.bankTransactionInfor.toCurrencyName}}</p>
         </div>
       </div>
     </div>
-    <div class="rollbackIncomingEntryInfos">
-      <div style="font-weight: 600;">Ghi nhận thu ({{model.rollbackIncomingEntryInfos.length}})</div>
-      <div class="table-responsive" *ngIf="model.rollbackIncomingEntryInfos.length > 0">
+    <div class="rollbackIncomingEntryInfos" *ngIf="model.incomingEntrieInfors.length > 0">
+      <div style="font-weight: 600;">Danh sách ghi nhận thu liên quan ({{model.incomingEntrieInfors.length}})</div>
+      <div class="table-responsive" *ngIf="model.incomingEntrieInfors.length > 0">
         <div class="fixedHeader">
           <table class="table table-hover border-top">
             <thead>
-              <th>#</th>
-              <th>Tên</th>
-              <th>Số tiền</th>
-              <th>Từ khoản thu</th>
-              <th>Ngày tạo</th>
-              <th class="col-status">Trạng thái</th>
+              <tr>
+                <th colspan="3" class="blue-thead">Ghi nhận thu</th>
+                <th colspan="3" class="yellow-thead">Khoản phải thu</th>
+              </tr>
+              <tr>
+                <th>#</th>
+                <th>Tên ghi nhận thu</th>
+                <th>Số tiền</th>
+                <th>Tên khoản thu</th>
+                <th>Ngày tạo</th>
+                <th class="col-status">Trạng thái</th>
+              </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of model.rollbackIncomingEntryInfos;let i = index">
+              <tr *ngFor="let item of model.incomingEntrieInfors;let i = index">
                 <td class="text-center">{{i+1}}</td>
-                <td>{{item.IncomingEntryName}}</td>
-                <td class="text-right">{{item.MoneyFormat}}</td>
-                <td>{{ item.InvoiceName}}</td>
-                <td>{{item.InvoiceDateMonth}}/{{item.InvoiceDateYear}}</td>
-                <td class="text-center" >
-                  <label [ngClass]="
-                              APP_CONSTANT.StatusStyle[
-                                item.workflowStatusCode.trim()
-                              ]
-                            " class="lable-history-status m-0">{{item.InvoiceStatusName}}</label>
-              </td>
+                <td>#{{ item.incomingEntryId }}-{{item.incomingEntryName}}</td>
+                <td class="text-right">{{item.moneyFormat}}</td>
+                <td>#{{ item.invoiceId }}-{{ item.invoiceName}}</td>
+                <td>{{item.invoiceDateMonth}}/{{item.invoiceDateYear}}</td>
+                <td class="text-center">
+                  <label [style.backgroundColor]="
+                  _utilities.getBgTagInvoiceStatus(item.invoiceStatus)"
+                    class="label-status center-status">{{item.invoiceStatusName}}</label>
+                  <!-- <label [ngClass]="
+                  APP_CONSTANT.StatusStyle[
+                    item.invoiceStatusName.trim()
+                  ]
+                " class="lable-history-status m-0">{{item.invoiceStatusName}}</label> -->
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="rollbackOutcomingEntryInfor" *ngIf="model.outComingEntryInfors.length > 0">
+      <div style="font-weight: 600;">Danh sách request chi liên quan ({{model.outComingEntryInfors.length}})</div>
+      <div class="table-responsive" *ngIf="model.outComingEntryInfors.length > 0">
+        <div class="fixedHeader">
+          <table class="table table-hover border-top">
+            <thead>
+              <th>Nội dung</th>
+              <th>Chi nhánh</th>
+              <th>Giá trị</th>
+              <th>Loại yêu cầu</th>
+              <th class="col-status">Trạng thái</th>
+              <th>Ngày tạo</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of model.outComingEntryInfors; let i = index">
+                <td class="text-center">#<strong>{{item.outcomingEntryId}}</strong>&nbsp;{{item.outcomingEntryName}}</td>
+                <td class="text-center">{{item.branchName}}</td>
+                <td class="text-center">{{item.value}}&nbsp;{{item.currencyName}}</td>
+                <td class="text-center">{{item.outcomingEntryTypeName}}</td>
+                <td class="text-center" ><lable [ngClass]="
+                  APP_CONSTANT.StatusStyle[item.workflowStatusCode.trim()]">{{item.workflowStatusName}}</lable>
+                </td>
+                <td class="text-center">{{item.createdAt}}</td>
               </tr>
             </tbody>
           </table>

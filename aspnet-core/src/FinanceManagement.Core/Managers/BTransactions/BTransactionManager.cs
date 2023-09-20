@@ -29,6 +29,7 @@ using FinanceManagement.Managers.Commons;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper.Internal;
+using DocumentFormat.OpenXml.Drawing;
 
 namespace FinanceManagement.Managers.BTransactions
 {
@@ -1343,13 +1344,13 @@ namespace FinanceManagement.Managers.BTransactions
 
         }
 
-        public async Task<GetInfoRollbackClientPaidDto> GetInfoRollbackClientPaid(long bTransactionId)
+        public async Task<GetInfoIncomingEntryDto> GetInfoIncomingEntries(long bTransactionId)
         {
             var qBankAccInfo = _ws.GetAll<BankAccount>().Select(x => x);
 
             var query = from b in _ws.GetAll<BTransaction>().Where(b => b.Id == bTransactionId)
-                        join bt in _ws.GetAll<BankTransaction>() on b.Id equals bt.BTransactionId
-                        select new GetInfoRollbackClientPaidDto
+                        join bt in _ws.GetAll<BankTransaction>().Include(bt => bt.IncomingEntries).ThenInclude(inc => inc.RelationInOutEntries).ThenInclude(relationIO => relationIO.OutcomingEntry).ThenInclude(outc => outc.OutcomingEntryType)  on b.Id equals bt.BTransactionId
+                        select new GetInfoIncomingEntryDto
                         {
                             BTransactionInfor = new BTransactionInforDto
                             {
@@ -1395,21 +1396,36 @@ namespace FinanceManagement.Managers.BTransactions
                                 InvoiceDateYear = inv.Year,
                                 InvoiceCurrencyName = inv.Currency.Name,
                                 InvoiceStatus = inv.Status,
-                            }).ToList()
+                                AccountId = inv.AccountId,
+                                AccountName = inv.Account.Name,
+                            }).ToList(),
+                            OutComingEntryInfors = bt.IncomingEntries.SelectMany(inc => inc.RelationInOutEntries).Select(relationIO => new OutComingEntryInforDto
+                            {
+                                OutcomingEntryId = relationIO.OutcomingEntryId,
+                                OutcomingEntryName = relationIO.OutcomingEntry.Name,
+                                BranchId = relationIO.OutcomingEntry.BranchId,
+                                BranchName = relationIO.OutcomingEntry.Branch.Name,
+                                Value = relationIO.OutcomingEntry.Value,
+                                CurrencyId = relationIO.OutcomingEntry.CurrencyId,
+                                CurrencyName = relationIO.OutcomingEntry.Currency.Name,
+                                OutcomingEntryTypeId = relationIO.OutcomingEntry.OutcomingEntryTypeId,
+                                OutcomingEntryTypeCode = relationIO.OutcomingEntry.OutcomingEntryType.Code,
+                                OutcomingEntryTypeName = relationIO.OutcomingEntry.OutcomingEntryType.Name,
+                                WorkflowStatusId = relationIO.OutcomingEntry.WorkflowStatusId,
+                                WorkflowStatusCode = relationIO.OutcomingEntry.WorkflowStatus.Code,
+                                WorkflowStatusName = relationIO.OutcomingEntry.WorkflowStatus.Name,
+                                CreatedAt = relationIO.OutcomingEntry.CreationTime,
+                            }).ToList(),
                         };
 
             var result = await query.FirstOrDefaultAsync();
             if (result == null)
                 throw new UserFriendlyException($"Không tìm thấy Biến động số dư {bTransactionId}");
-            if (result.BankTransactionInfor == null)
-                return result;
-
-  
 
             return result;
         }
 
-        public async Task RollbackClientPaid(long bTransactionId)
+        public async Task RollbackIncomingEntries(long bTransactionId)
         {
             // get btransaction to update status, fromaccountId
             var bTransaction = await _ws.GetAll<BTransaction>().Where(b => b.Id == bTransactionId).FirstOrDefaultAsync();
@@ -1421,35 +1437,89 @@ namespace FinanceManagement.Managers.BTransactions
                 throw new UserFriendlyException(string.Format("BTransaction Id {0} is Pending", bTransactionId));
 
             // get banktransaction to delete
-            var bankTransaction = await _ws.GetAll<BankTransaction>().Where(bnt => bnt.BTransactionId == bTransactionId).FirstOrDefaultAsync();
+            var bankTransaction = await _ws.GetAll<BankTransaction>().Include(bankT => bankT.IncomingEntries).ThenInclude(inc => inc.RelationInOutEntries)
+                .ThenInclude(rel => rel.OutcomingEntry).Where(bnt => bnt.BTransactionId == bTransactionId).FirstOrDefaultAsync();
 
             var invoiceOfAccountHasIncom = _ws.GetAll<Invoice>()
                 .Where(inv => inv.AccountId == bTransaction.FromAccountId && inv.IncomingEntries.Count() > 0)
                 .Include(inv => inv.IncomingEntries)
                 .ToList();
 
-            foreach (var invoice in invoiceOfAccountHasIncom)
+            if(invoiceOfAccountHasIncom.Count > 0)
             {
-                // delete incom in invoice 
-                var incomInInvoice = invoice.IncomingEntries.Where(inv => inv.BTransactionId == bTransaction.Id).ToList(); // get incom by btransactionid
-                incomInInvoice.ForEach(async inc =>
+                foreach (var invoice in invoiceOfAccountHasIncom)
                 {
-                    var countIncom = invoice.IncomingEntries.Count();
-
-                    inc.IsDeleted = true;
-                    await _ws.UpdateAsync(inc);
-
-                    if (countIncom < 2)
+                    // delete incom in invoice 
+                    var incomInInvoice = invoice.IncomingEntries.Where(inv => inv.BTransactionId == bTransaction.Id).ToList(); // get incom by btransactionid
+                    incomInInvoice.ForEach(async inc =>
                     {
-                        invoice.Status = NInvoiceStatus.CHUA_TRA;
-                    }
-                    else
-                    {
-                        invoice.Status = NInvoiceStatus.TRA_1_PHAN;
-                    }
-                    await _ws.UpdateAsync(invoice);
-                });
+                        var countIncom = invoice.IncomingEntries.Count();
+
+                        inc.IsDeleted = true;
+                        await _ws.UpdateAsync(inc);
+
+                        if (countIncom < 2)
+                        {
+                            invoice.Status = NInvoiceStatus.CHUA_TRA;
+                        }
+                        else
+                        {
+                            invoice.Status = NInvoiceStatus.TRA_1_PHAN;
+                        }
+                        await _ws.UpdateAsync(invoice);
+                    });
+                }
             }
+            else
+            {
+                // get list outcomingentry to select WorkFlowStatus
+                var outComings = bankTransaction.IncomingEntries.SelectMany(inc => inc.RelationInOutEntries).Select(relationIO => new
+                {
+                    OutcomingEntryId = relationIO.OutcomingEntryId,
+                    OutcomingEntryName = relationIO.OutcomingEntry.Name,
+                    BranchId = relationIO.OutcomingEntry.BranchId,
+                    BranchName = relationIO.OutcomingEntry.Branch.Name,
+                    Value = relationIO.OutcomingEntry.Value,
+                    CurrencyId = relationIO.OutcomingEntry.CurrencyId,
+                    CurrencyName = relationIO.OutcomingEntry.Currency.Name,
+                    OutcomingEntryTypeId = relationIO.OutcomingEntry.OutcomingEntryTypeId,
+                    OutcomingEntryTypeCode = relationIO.OutcomingEntry.OutcomingEntryType.Code,
+                    OutcomingEntryTypeName = relationIO.OutcomingEntry.OutcomingEntryType.Name,
+                    WorkflowStatusId = relationIO.OutcomingEntry.WorkflowStatusId,
+                    WorkflowStatusCode = relationIO.OutcomingEntry.WorkflowStatus.Code,
+                    WorkflowStatusName = relationIO.OutcomingEntry.WorkflowStatus.Name,
+                    CreatedAt = relationIO.OutcomingEntry.CreationTime.Date,
+                }).ToList();
+
+                if(outComings.Count <= 0)
+                {
+                    throw new UserFriendlyException(string.Format("Không có ghi nhận thu cho request chi có biến động số dư {0}", bTransactionId));
+                }
+
+                if (outComings.Any(outC => outC.WorkflowStatusCode == "END"))
+                {
+                    throw new UserFriendlyException(string.Format("Tồn tại equest chi đã thực thi, không thể thu hồi biến động số dư {0}", bTransactionId));
+                }
+
+                // get list incom of btransaction
+                var incomOfBTrans = _ws.GetAll<IncomingEntry>().Where(inc => inc.BTransactionId == bTransactionId && inc.BankTransactionId == bankTransaction.Id).ToList();
+                foreach(var incom in incomOfBTrans)
+                {
+                    incom.IsDeleted = true;
+                }
+
+                // get list relelationIO of BankTransaction
+                var relelationIOs = bankTransaction.IncomingEntries.SelectMany(inc => inc.RelationInOutEntries).ToList();
+                foreach(var item in relelationIOs)
+                {
+                    item.IsDeleted = true;
+                    await _ws.UpdateAsync(item);
+                } 
+                
+                
+
+            }
+            
 
             // delete banktransaction
             bankTransaction.IsDeleted = true;

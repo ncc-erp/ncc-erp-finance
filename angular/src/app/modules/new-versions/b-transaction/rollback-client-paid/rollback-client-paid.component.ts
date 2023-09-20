@@ -2,6 +2,7 @@ import { AppComponentBase } from 'shared/app-component-base';
 import { Component, Inject, Injector, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BtransactionService } from '@app/service/api/new-versions/btransaction.service';
+import { UtilitiesService } from '@app/service/api/new-versions/utilities.service';
 
 @Component({
   selector: 'rollback-client-paid',
@@ -9,13 +10,14 @@ import { BtransactionService } from '@app/service/api/new-versions/btransaction.
   styleUrls: ['./rollback-client-paid.component.css']
 })
 export class RollbackClientPaidComponent extends AppComponentBase implements OnInit {
-  public model= {} as GetInfoRollBackClientPaidDto;
+  public model= {} as GetInfoIncomingEntryDto;
   // public bTransactionId: number = 0;
   constructor(
     injector: Injector,
     public dialogRef: MatDialogRef<RollbackClientPaidComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private _bTransaction: BtransactionService
+    private _bTransaction: BtransactionService,
+    public _utilities: UtilitiesService,
   ) {
     super(injector);
   }
@@ -25,12 +27,10 @@ export class RollbackClientPaidComponent extends AppComponentBase implements OnI
   }
 
   private setModel(): void {
-    this._bTransaction.GetInfoRollbackClientPaid(this.data)
+    this._bTransaction.getInfoIncomingEntries(this.data)
       .subscribe((response) => {
-        if (!response.success) return;
-        console.log(this.model);
+        if (!response.success) return;;
         this.model = response.result;
-        console.log(this.model);
       });
   }
   onClose(){
@@ -39,14 +39,14 @@ export class RollbackClientPaidComponent extends AppComponentBase implements OnI
 
   public rollBackClientPaidConfirm(){
     abp.message.confirm(
-      "Bạn có muốn thu hồi khách hàng thanh toán?",
+      "Bạn có muốn thu hồi ghi nhận thu?",
       '',
       (result: boolean) => {
         if (result) {
-          this._bTransaction.rollbackLinkOutcomingEntry(this.data.id)
+          this._bTransaction.rollbackIncomingEntries(this.data)
           .subscribe((rs)=>{
             if(rs){
-              abp.notify.success("Thu hồi link request chi thành công")
+              abp.notify.success("Thu hồi ghi nhận thu thành công")
               this.dialogRef.close(true);
             }
           })
@@ -61,10 +61,11 @@ export class RollbackClientPaidComponent extends AppComponentBase implements OnI
   }
 }
 
-export interface GetInfoRollBackClientPaidDto{
-  bTransactionInfo: BTransactionInforDto;
-  bankTransactionInfo: BankTransactionInforDto;
-  rollbackIncomingEntryInfos: GetInfoRollbackIncomingEntryInforDto[];
+export interface GetInfoIncomingEntryDto{
+  bTransactionInfor: BTransactionInforDto;
+  bankTransactionInfor: BankTransactionInforDto;
+  incomingEntrieInfors: GetInfoRollbackIncomingEntryInforDto[];
+  outComingEntryInfors: OutComingEntryInforDto[];
 }
 
 export interface BankTransactionInforDto{
@@ -92,19 +93,36 @@ export interface BTransactionInforDto{
   currencyName: string
 }
 export interface GetInfoRollbackIncomingEntryInforDto {
-  IncomingEntryId: number;
-  IncomingEntryName: string;
-  Money: number;
-  MoneyFormat: string;
-  CurrencyId: number;
-  CurrencyName: string;
-  ExchangeRate: number;
-  BankTransactionId: number;
-  InvoiceId: number;
-  InvoiceName: string;
-  InvoiceDateMonth: number;
-  InvoiceDateYear: number;
-  InvoiceCurrencyName: string;
-  InvoiceStatus: number;
-  InvoiceStatusName: string;
+  incomingEntryId: number;
+  incomingEntryName: string;
+  money: number;
+  moneyFormat: string;
+  currencyId: number;
+  currencyName: string;
+  exchangeRate: number;
+  bankTransactionId: number;
+  invoiceId: number;
+  invoiceName: string;
+  invoiceDateMonth: number;
+  invoiceDateYear: number;
+  invoiceCurrencyName: string;
+  invoiceStatus: number;
+  invoiceStatusName: string;
+}
+
+export interface OutComingEntryInforDto {
+  outcomingEntryId: number;
+  outcomingEntryName: string;
+  branchId: number;
+  branchName: string;
+  value: number;
+  outcomingEntryTypeId: number;
+  outcomingEntryTypeCode: string;
+  outcomingEntryTypeName: string;
+  currencyId: number;
+  currencyName: string;
+  workflowStatusId: number;
+  workflowStatusName: string;
+  workflowStatusCode: string;
+  createdAt: string;
 }
