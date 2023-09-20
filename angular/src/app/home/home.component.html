@@ -24,7 +24,7 @@
                 <div class="block my-1" [ngClass]="APP_CONSTANT.OverviewOutcomingEntry[item.statusCode.trim()]">
                   <div class="block_item d-flex justify-content-between">
                     <div class="count-request"><a [href]="getExpenditureRequestUrl(item)"
-                        target="_blank">{{item.count}}</a></div>
+                        >{{item.count}}</a></div>
                     <div class="text-right mr-2 remindCEO" *ngIf="checkSendPendingCEO(item)"><a (click)="sendKomuCEO()"
                         class="text-white">
                         <i class="fas fa-comment-dots"></i>
@@ -38,7 +38,7 @@
                   </div>
 
                   <div class="block_item statusName mt-3"><a [href]="getExpenditureRequestUrl(item)"
-                      target="_blank">{{item.statusName}}</a></div>
+                      >{{item.statusName}}</a></div>
                 </div>
               </div>
             </div>
@@ -55,9 +55,9 @@
                 *ngFor="let item of bTransactionStatistics">
                 <div class="block my-1" [ngClass]="APP_CONSTANT.OverviewBTransactionStatus[item.statusName]">
                   <div class="block_item count-request"><a [href]="getBtransactionUrl(item.statusName)"
-                      target="_blank">{{item.quantity}}</a></div>
+                      >{{item.quantity}}</a></div>
                   <div class="block_item statusName mt-3"><a [href]="getBtransactionUrl(item.statusName)"
-                      target="_blank">{{item.statusName}}</a></div>
+                      >{{item.statusName}}</a></div>
                 </div>
               </div>
             </div>
@@ -77,9 +77,9 @@
                   <div class="col-lg-12 col-block">
                     <div class="block my-1" style="background-color: #28A745;color: #fff;">
                       <div class="block_item count-request">
-                        <a [href]="getInvoiceUrl()" target="_blank">{{invoiceStatistics.quantityInvoiceDebt}}</a>
+                        <a [href]="getInvoiceUrl()" >{{invoiceStatistics.quantityInvoiceDebt}}</a>
                       </div>
-                      <div class="block_item mt-3"><a [href]="getInvoiceUrl()" target="_blank">Khách hàng nợ</a>
+                      <div class="block_item mt-3"><a [href]="getInvoiceUrl()" >Khách hàng nợ</a>
                       </div>
                     </div>
                   </div>
@@ -111,16 +111,16 @@
               <div class="col-lg-6 col-md-4 col-sm-4 col-xs-4 col-block">
                 <div class="block my-1 bg-warning">
                   <div class="block_item count-request"><a (click)="viewDetailNhanVienNo()"
-                      target="_blank">{{debtStatistic?.employeeCount}}</a></div>
-                  <div class="block_item statusName mt-3"><a target="_blank" (click)="viewDetailNhanVienNo()">Nhân viên
+                      >{{debtStatistic?.employeeCount}}</a></div>
+                  <div class="block_item statusName mt-3"><a  (click)="viewDetailNhanVienNo()">Nhân viên
                       nợ</a></div>
                 </div>
               </div>
               <div class="col-lg-6 col-md-4 col-sm-4 col-xs-4 col-block">
                 <div class="block my-1 bg-success">
                   <div class="block_item count-request"><a (click)="viewDetailNhanVienNo()" style="font-size: 24px;"
-                      target="_blank">{{debtStatistic?.totalLoan | formatMoney}}</a></div>
-                  <div class="block_item statusName mt-3"><a target="_blank" (click)="viewDetailNhanVienNo()">Tổng
+                      >{{debtStatistic?.totalLoan | formatMoney}}</a></div>
+                  <div class="block_item statusName mt-3"><a  (click)="viewDetailNhanVienNo()">Tổng
                       nợ</a></div>
                 </div>
               </div>
