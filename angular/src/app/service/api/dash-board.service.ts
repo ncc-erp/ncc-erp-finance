@@ -59,9 +59,6 @@ constructor( http: HttpClient) {
   exportExcelStatistics(fromDate, toDate): Observable<any> {
     return this.http.get<any>(this.rootUrl + `/ExportComparativeStatistics?startDate=${fromDate}&endDate=${toDate}`);
   }
-  exportExcelBBC(startDate, endDate, branchId){
-    return this.http.get<any>(this.rootUrl + `/ExportToTalChi?startDate=${startDate}&endDate=${endDate}&branchId=${branchId}`);
-  }
   public getChart(year):Observable<any>{
     return this.http.get(this.rootUrl + `/GetChart?year=${year}`)
 

@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://10.10.73.198:21021/",
+      "applicationUrl": "http://localhost:21021/",
       "sslPort": 0
     }
   },
@@ -18,11 +18,11 @@
     "FinanceManagement.Web.Host": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "http://10.10.73.198:21021",
+      "launchUrl": "http://localhost:21021",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://10.10.73.198:21021/"
+      "applicationUrl": "http://localhost:21021/"
     }
   }
 }
