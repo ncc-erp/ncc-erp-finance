@@ -8,7 +8,12 @@
         <div>
           <span class="ml-1">TK: <strong>{{model.bTransactionInfor.bankNumber}}</strong></span>
           <span class="ml-1">Số tiền GD:
-            <strong>{{model.bTransactionInfor.moneyFormat}}&nbsp;{{model.bTransactionInfor.currencyName}}</strong></span>
+            <strong>{{model.bTransactionInfor.moneyFormat}}&nbsp;
+              <label [style.color]="_utilities.getColorByCurrency(model.bTransactionInfor.currencyName)">
+                {{model.bTransactionInfor.currencyName}}
+              </label>
+            </strong>
+          </span>
           <span class="ml-1"> lúc <strong>{{model.bTransactionInfor.timeAt| date:"dd/MM/yyyy HH:mm:ss"}}</strong></span>
         </div>
       </div>
@@ -43,28 +48,29 @@
               <tr>
                 <th>#</th>
                 <th>Tên ghi nhận thu</th>
-                <th>Số tiền</th>
+                <th class="col-money">Số tiền</th>
                 <th>Tên khoản thu</th>
-                <th>Ngày tạo</th>
+                <th>Khách hàng</th>
                 <th class="col-status">Trạng thái</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let item of model.incomingEntrieInfors;let i = index">
                 <td class="text-center">{{i+1}}</td>
-                <td>#{{ item.incomingEntryId }}-{{item.incomingEntryName}}</td>
-                <td class="text-right">{{item.moneyFormat}}</td>
-                <td>#{{ item.invoiceId }}-{{ item.invoiceName}}</td>
-                <td>{{item.invoiceDateMonth}}/{{item.invoiceDateYear}}</td>
+                <td>
+                  <a [href]="getUrlLinkRevenue(model.bankTransactionInfor.bankTransactionId)" target="_blank">#{{ item.incomingEntryId }}
+                  </a> - {{item.incomingEntryName}}</td>
+                <td class="text-right">{{item.moneyFormat}} 
+                  <label [style.color]="_utilities.getColorByCurrency(item.invoiceCurrencyName)">
+                    {{ item.invoiceCurrencyName }}
+                  </label>
+                </td>
+                <td>#{{ item.invoiceId }} - {{ item.invoiceName}} - {{item.invoiceDateMonth}}/{{item.invoiceDateYear}}</td>
+                <td>{{item.accountName}}</td>
                 <td class="text-center">
                   <label [style.backgroundColor]="
                   _utilities.getBgTagInvoiceStatus(item.invoiceStatus)"
                     class="label-status center-status">{{item.invoiceStatusName}}</label>
-                  <!-- <label [ngClass]="
-                  APP_CONSTANT.StatusStyle[
-                    item.invoiceStatusName.trim()
-                  ]
-                " class="lable-history-status m-0">{{item.invoiceStatusName}}</label> -->
                 </td>
               </tr>
             </tbody>
@@ -83,13 +89,21 @@
               <th>Giá trị</th>
               <th>Loại yêu cầu</th>
               <th class="col-status">Trạng thái</th>
-              <th>Ngày tạo</th>
+              <th>Ngày Tạo</th>
             </thead>
             <tbody>
               <tr *ngFor="let item of model.outComingEntryInfors; let i = index">
-                <td class="text-center">#<strong>{{item.outcomingEntryId}}</strong>&nbsp;{{item.outcomingEntryName}}</td>
-                <td class="text-center">{{item.branchName}}</td>
-                <td class="text-center">{{item.value}}&nbsp;{{item.currencyName}}</td>
+                <td class="text-left">
+                  <a [href]="getUrlLinkRequestDetail(item.outcomingEntryId)" target="_blank">
+                    #<strong>{{item.outcomingEntryId}}</strong>
+                  </a>
+                  &nbsp;{{item.outcomingEntryName}}</td>
+                <td class="text-center">{{item.branchName}}</td>  
+                <td class="text-center">{{item.valueFormat}}&nbsp;
+                  <label [style.color]="_utilities.getColorByCurrency(item.currencyName)">
+                    {{item.currencyName}}
+                  </label>
+                </td>
                 <td class="text-center">{{item.outcomingEntryTypeName}}</td>
                 <td class="text-center" ><lable [ngClass]="
                   APP_CONSTANT.StatusStyle[item.workflowStatusCode.trim()]">{{item.workflowStatusName}}</lable>

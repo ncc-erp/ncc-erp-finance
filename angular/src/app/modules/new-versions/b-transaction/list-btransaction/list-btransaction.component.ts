@@ -429,7 +429,7 @@ export class ListBtransactionComponent
   rollBackClientPaid(id: any): void {
     const _ref = this.dialog.open(RollbackClientPaidComponent, {
       data: id,
-      width: "1100px",
+      width: "1300px",
       disableClose: true,
     });
 

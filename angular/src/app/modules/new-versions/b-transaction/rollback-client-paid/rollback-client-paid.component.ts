@@ -59,6 +59,16 @@ export class RollbackClientPaidComponent extends AppComponentBase implements OnI
   public getUrlLinkTransaction(id: number){
     return "app/detail?id=" + id;
   }
+
+  public getUrlLinkRevenue(id: number){
+    return "app/detail?id=" + id + "&index=1";
+  }
+
+  public getUrlLinkRequestDetail(id: number){
+    return "app/requestDetail/main?id=" +id;
+  }
+
+  
 }
 
 export interface GetInfoIncomingEntryDto{
@@ -108,6 +118,8 @@ export interface GetInfoRollbackIncomingEntryInforDto {
   invoiceCurrencyName: string;
   invoiceStatus: number;
   invoiceStatusName: string;
+  accountId: number;
+  accountName: string;
 }
 
 export interface OutComingEntryInforDto {
@@ -116,6 +128,7 @@ export interface OutComingEntryInforDto {
   branchId: number;
   branchName: string;
   value: number;
+  valueFormat: string;
   outcomingEntryTypeId: number;
   outcomingEntryTypeCode: string;
   outcomingEntryTypeName: string;
