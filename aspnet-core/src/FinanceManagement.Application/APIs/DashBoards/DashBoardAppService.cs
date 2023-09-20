@@ -1,6 +1,7 @@
 ﻿using Abp.Authorization;
 using Abp.UI;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office2016.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
 using FinanceManagement.APIs.ComparativeStatistics;
 using FinanceManagement.APIs.DashBoards.Dto;
@@ -28,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.IO.Packaging;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -1100,6 +1102,41 @@ namespace FinanceManagement.APIs.DashBoards
                 }
             }
         }
+
+        [HttpGet]
+        public async Task<byte[]> ExportToTalChi(DateTime startDate, DateTime endDate, long branchId)
+        {
+            var file = Helpers.GetInfoFileTemplate(new string[] { _env.WebRootPath, "Template_BaoCaoChi.xlsx" });
+            var currencyDefault = await GetCurrencyDefaultAsync();
+
+            var dataChi = await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, branchId, null);
+
+            using (ExcelPackage epck = new ExcelPackage(file.OpenRead()))
+            {
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                var sheetBCChi = epck.Workbook.Worksheets[0];
+
+                var cellRangeToStartIndex = sheetBCChi.Cells["A6"];
+                var cellRangeToRangeDate = sheetBCChi.Cells["B1"];
+                var cellRangeToTotal = sheetBCChi.Cells["B3"];
+
+                // Đặt tên cho dãy cell
+                sheetBCChi.Names.Add("StartRow", cellRangeToStartIndex);
+                sheetBCChi.Names.Add("RangeDate", cellRangeToRangeDate);
+                sheetBCChi.Names.Add("Total", cellRangeToTotal);
+
+
+                AssignDataForSheetBCTotalChi(dataChi,ref sheetBCChi, currencyDefault?.Name, startDate, endDate);
+
+                using(var stream = new MemoryStream())
+                {
+                    epck.SaveAs(stream);
+                    var content = stream.ToArray();
+                    return content;
+                }
+            }
+        }
         private void AssignDataForSheetBCChung(
             List<BaoCaoChungDto> data, 
             ref ExcelWorksheet sheetBCChung, 
@@ -1221,7 +1258,43 @@ namespace FinanceManagement.APIs.DashBoards
             sheetBCChi.Names["TONG_CHI_THUC"].Value = Helpers.FormatMoney(tongChiThuc);
             sheetBCChi.Names["THANH_TIEN"].Value = $"Thành tiền ({currencyDefaultName})";
         }
-        
+
+        private void AssignDataForSheetBCTotalChi(
+            IEnumerable<GetThongTinRequestChi> data,
+            ref ExcelWorksheet sheetBCChi,
+            string currencyDefaultName,
+            DateTime startDate,
+            DateTime endDate)
+        {
+            var startRow = sheetBCChi.Names["StartRow"].Start.Row;
+            int rowIndex = startRow;
+            int stt = 0;
+            double tongChi = 0;
+
+            foreach (var item in data)
+            {
+                sheetBCChi.Cells[rowIndex, 1].Value = ++stt;
+                sheetBCChi.Cells[rowIndex, 2].Value = item.Id;
+                sheetBCChi.Cells[rowIndex, 3].Value = item.BranchName;
+                sheetBCChi.Cells[rowIndex, 4].Value = item.Name;
+                sheetBCChi.Cells[rowIndex, 5].Value = item.DetailName;
+                sheetBCChi.Cells[rowIndex, 6].Value = item.ReportDate.HasValue ? item.ReportDate.Value.ToString("dd/MM/yyyy") : string.Empty;
+                sheetBCChi.Cells[rowIndex, 7].Value = item.TotalFormat;
+                sheetBCChi.Cells[rowIndex, 8].Value = item.CurrencyName;
+                sheetBCChi.Cells[rowIndex, 9].Value = item.ExchangeRate;
+                sheetBCChi.Cells[rowIndex, 10].Value = item.TotalVNDFormat;
+                sheetBCChi.Cells[rowIndex, 11].Value = item.OutcomingEntryType;
+                sheetBCChi.Cells[rowIndex, 12].Value = item.LaChiPhi;
+                tongChi += item.TotalVND;
+                rowIndex++;
+            }
+            var range = sheetBCChi.Cells[startRow, 1, (rowIndex-1), 12];
+            range.SetBorderRangeCells();
+
+            sheetBCChi.Names["RangeDate"].Value = String.Format("{0} - {1}",startDate.ToString("dd/MM/yyyy"), endDate.ToString("dd/MM/yyyy"));
+            sheetBCChi.Names["Total"].Value = Helpers.FormatMoney(tongChi);
+        }
+
         [HttpGet]
         public async Task<List<BaoCaoChungDto>> GetDataBaoCaoChung(DateTime startDate, DateTime endDate, long branchId, ExpenseType? isExpense)
         {
