@@ -10,11 +10,12 @@ using System.Text;
 
 namespace FinanceManagement.Managers.BTransactions.Dtos
 {
-    public class GetInfoRollbackClientPaidDto
+    public class GetInfoIncomingEntryDto
     {
         public BTransactionInforDto BTransactionInfor { get; set; }
         public BankTransactionInforDto BankTransactionInfor { get; set; }
         public List<IncomingEntryInforDto> IncomingEntrieInfors { get; set; }
+        public List<OutComingEntryInforDto> OutComingEntryInfors { get; set; }
     }
 
     public class BTransactionInforDto
@@ -68,5 +69,27 @@ namespace FinanceManagement.Managers.BTransactions.Dtos
         public string InvoiceCurrencyName { get; set; }
         public NInvoiceStatus? InvoiceStatus { get; set; }
         public string InvoiceStatusName => InvoiceStatus.HasValue ? Helpers.ListInvoiceStatuses.Where(x => x.Value == InvoiceStatus.Value.GetHashCode()).Select(s => s.Name).FirstOrDefault() : string.Empty;
+        public long AccountId { get; set; }
+        public string AccountName { get; set; }
+    }
+
+    public class OutComingEntryInforDto
+    {
+        public long OutcomingEntryId { get; set; }
+        public string OutcomingEntryName { get; set; }
+        public long? BranchId { get; set; }
+        public string BranchName { get; set; }
+        public double Value { get; set; }
+        public string ValueFormat => Helpers.FormatMoney(Value);
+        public long OutcomingEntryTypeId { get; set; }
+        public string OutcomingEntryTypeCode { get; set; }
+        public string OutcomingEntryTypeName { get; set; }
+        public long? CurrencyId { get; set; }
+        public string CurrencyName { get; set; }
+        public long WorkflowStatusId { get; set; }
+        public string WorkflowStatusName { get; set; }
+        public string WorkflowStatusCode { get; set; }
+        public DateTime CreatedAt { get; set; }
+
     }
 }
