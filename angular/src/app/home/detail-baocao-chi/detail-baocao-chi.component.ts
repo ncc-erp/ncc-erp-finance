@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DashBoardService } from '@app/service/api/dash-board.service';
 import { BaoCaoChiDto, baoCaoFilterOption, BaoCaoThuDto } from '../home.component';
 import { ExpenseType } from '@shared/AppEnums';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-detail-baocao-chi',
@@ -89,4 +90,41 @@ export class DetailBaocaoChiComponent implements OnInit {
   sortDesc(sortColumn: string){
     this.sortedBaoCaoChi.sort((a,b) => (typeof a[sortColumn] === "number") ? b[sortColumn]-a[sortColumn] : (b[sortColumn] ?? "").localeCompare(a[sortColumn] ?? ""));
   }
+
+  convertFile(fileData) {
+    var buf = new ArrayBuffer(fileData.length);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i != fileData.length; ++i) view[i] = fileData.charCodeAt(i) & 0xFF;
+    return buf;
+  }
+
+  exportBBC(){
+    abp.message.confirm(
+      "Bạn có chắc muốn xuất danh sách chi của " + (this.data.branchName == 'Tổng cộng' ? 'Toàn công ty' : this.data.branchName) + " ?", 
+      "Xác nhận", 
+      (result) => {
+      if (result) { 
+          this.dashBoardService.exportExcelBBC(this.startDate, this.endDate, this.branchId).subscribe(data => {
+            const file = new Blob([this.convertFile(atob(data.result))], {
+              type: "application/vnd.ms-excel;charset=utf-8"
+            });
+            let type = "";
+            if(this.data.expenseType === -1){
+              type = "Tổng_Chi_";
+            }
+            else if(this.data.expenseType === 0){
+              type = "Chi_Thực_";
+            }
+            else if(this.data.expenseType === 1){
+              type = "Chi_Không_Thực_";
+            }
+            var branchNameReplace = this.data.branchName.replace(/ /g, "_");
+            FileSaver.saveAs(file, `Báo_Cáo_${type}Chi_Nhánh_${branchNameReplace}.xlsx`);
+            abp.notify.success("export successful")
+            this.dialogRef.close()
+          })
+        }
+    });
+  }
+  
 }
