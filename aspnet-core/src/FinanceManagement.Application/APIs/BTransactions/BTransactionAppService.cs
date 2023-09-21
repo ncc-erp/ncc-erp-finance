@@ -943,20 +943,21 @@ namespace FinanceManagement.APIs.BTransactions
         }
 
         [HttpGet]
-        public async Task<GetInfoIncomingEntryDto> GetInfoIncomingEntries(long bTransactionId)
+        public async Task<GetInfoIncomingEntryDto> GetInfoRollbackBTransactionHasIncomingEntry(long bTransactionId)
         {
             using (CurrentUnitOfWork.DisableFilter(nameof(IMustHavePeriod)))
             {
-                return await _btransactionManager.GetInfoIncomingEntries(bTransactionId);
+                return await _btransactionManager.GetInfoRollbackBTransactionHasIncomingEntry(bTransactionId);
             }
         }
 
         [HttpGet]
-        public async Task RollbackIncomingEntries(long bTransactionId)
+        public async Task RollbackBTransactionHasIncomingEntry(long bTransactionId)
         {
             using (CurrentUnitOfWork.DisableFilter(nameof(IMustHavePeriod)))
             {
-                await _btransactionManager.RollbackIncomingEntries(bTransactionId);
+                var currentPeriodId = await _periodManager.GetCurrentPeriodId();
+                await _btransactionManager.RollbackBTransactionHasIncomingEntry(bTransactionId, currentPeriodId);
             }
         }
     }

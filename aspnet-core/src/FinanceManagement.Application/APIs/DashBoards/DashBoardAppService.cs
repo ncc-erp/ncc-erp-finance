@@ -1104,12 +1104,12 @@ namespace FinanceManagement.APIs.DashBoards
         }
 
         [HttpGet]
-        public async Task<byte[]> ExportToTalChi(DateTime startDate, DateTime endDate, long branchId)
+        public async Task<byte[]> ExportBCC(DateTime startDate, DateTime endDate, long branchId, ExpenseType? isExpense)
         {
             var file = Helpers.GetInfoFileTemplate(new string[] { _env.WebRootPath, "Template_BaoCaoChi.xlsx" });
             var currencyDefault = await GetCurrencyDefaultAsync();
 
-            var dataChi = await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, branchId, null);
+            var dataChi = await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, branchId, isExpense);
 
             using (ExcelPackage epck = new ExcelPackage(file.OpenRead()))
             {
@@ -1127,7 +1127,7 @@ namespace FinanceManagement.APIs.DashBoards
                 sheetBCChi.Names.Add("Total", cellRangeToTotal);
 
 
-                AssignDataForSheetBCTotalChi(dataChi,ref sheetBCChi, currencyDefault?.Name, startDate, endDate);
+                FillDataForSheetBCTotalChi(dataChi,ref sheetBCChi, currencyDefault?.Name, startDate, endDate);
 
                 using(var stream = new MemoryStream())
                 {
@@ -1259,7 +1259,7 @@ namespace FinanceManagement.APIs.DashBoards
             sheetBCChi.Names["THANH_TIEN"].Value = $"Thành tiền ({currencyDefaultName})";
         }
 
-        private void AssignDataForSheetBCTotalChi(
+        private void FillDataForSheetBCTotalChi(
             IEnumerable<GetThongTinRequestChi> data,
             ref ExcelWorksheet sheetBCChi,
             string currencyDefaultName,
@@ -1279,17 +1279,20 @@ namespace FinanceManagement.APIs.DashBoards
                 sheetBCChi.Cells[rowIndex, 4].Value = item.Name;
                 sheetBCChi.Cells[rowIndex, 5].Value = item.DetailName;
                 sheetBCChi.Cells[rowIndex, 6].Value = item.ReportDate.HasValue ? item.ReportDate.Value.ToString("dd/MM/yyyy") : string.Empty;
-                sheetBCChi.Cells[rowIndex, 7].Value = item.TotalFormat;
+                sheetBCChi.Cells[rowIndex, 7].Value = item.Total;
                 sheetBCChi.Cells[rowIndex, 8].Value = item.CurrencyName;
                 sheetBCChi.Cells[rowIndex, 9].Value = item.ExchangeRate;
-                sheetBCChi.Cells[rowIndex, 10].Value = item.TotalVNDFormat;
+                sheetBCChi.Cells[rowIndex, 10].Value = item.TotalVND;
                 sheetBCChi.Cells[rowIndex, 11].Value = item.OutcomingEntryType;
                 sheetBCChi.Cells[rowIndex, 12].Value = item.LaChiPhi;
                 tongChi += item.TotalVND;
                 rowIndex++;
             }
-            var range = sheetBCChi.Cells[startRow, 1, (rowIndex-1), 12];
-            range.SetBorderRangeCells();
+            if(startRow != rowIndex)
+            {
+                var range = sheetBCChi.Cells[startRow, 1, (rowIndex - 1), 12];
+                range.SetBorderRangeCells();
+            }
 
             sheetBCChi.Names["RangeDate"].Value = String.Format("{0} - {1}",startDate.ToString("dd/MM/yyyy"), endDate.ToString("dd/MM/yyyy"));
             sheetBCChi.Names["Total"].Value = Helpers.FormatMoney(tongChi);

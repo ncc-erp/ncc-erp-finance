@@ -27,7 +27,7 @@ export class RollbackClientPaidComponent extends AppComponentBase implements OnI
   }
 
   private setModel(): void {
-    this._bTransaction.getInfoIncomingEntries(this.data)
+    this._bTransaction.getInfoRollbackBTransactionHasIncomingEntry(this.data)
       .subscribe((response) => {
         if (!response.success) return;;
         this.model = response.result;
@@ -43,7 +43,7 @@ export class RollbackClientPaidComponent extends AppComponentBase implements OnI
       '',
       (result: boolean) => {
         if (result) {
-          this._bTransaction.rollbackIncomingEntries(this.data)
+          this._bTransaction.rollbackBTransactionHasIncomingEntry(this.data)
           .subscribe((rs)=>{
             if(rs){
               abp.notify.success("Thu hồi ghi nhận thu thành công")

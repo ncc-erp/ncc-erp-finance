@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace FinanceManagement.Managers.BTransactions.Dtos
 {
@@ -37,19 +38,30 @@ namespace FinanceManagement.Managers.BTransactions.Dtos
     {
         public long BankTransactionId { get; set; }
         public string BankTransactionName { get; set; }
+        [JsonIgnore]
+        public BankAccountInfo FromBankAccount { get; set; }
+        [JsonIgnore]
+        public BankAccountInfo ToBankAccount { get; set; }
         public long FromBankAccountId { get; set; }
-        public string FromBankAccountName { get; set; }
+        public string FromBankAccountName => FromBankAccount.Name;
         public double FromValue { get; set; }
         public string FromValueFormat => Helpers.FormatMoney(FromValue);
-        public string FromCurrencyName { get; set; }
-        public long? FromCurrencyId { get; set; }
+        public string FromCurrencyName => FromBankAccount.CurrencyName;
+        public long? FromCurrencyId => FromBankAccount?.CurrencyId;
         public long ToBankAccountId { get; set; }
-        public string ToBankAccountName { get; set; }
+        public string ToBankAccountName => ToBankAccount.Name;
         public double ToValue { get; set; }
         public string ToValueFormat => Helpers.FormatMoney(ToValue);
-        public string ToCurrencyName { get; set; }      
-        public long? ToCurrencyId { get; set; }
+        public string ToCurrencyName => ToBankAccount.CurrencyName;
+        public long? ToCurrencyId => ToBankAccount?.CurrencyId;
         public double Fee { get; set; }
+    }
+    
+    public class BankAccountInfo
+    {
+        public string Name { get; set; }
+        public long? CurrencyId { get; set; }
+        public string CurrencyName { get; set; }
     }
 
     public class IncomingEntryInforDto

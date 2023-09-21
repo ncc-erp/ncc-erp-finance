@@ -112,10 +112,10 @@ export class BtransactionService extends BaseApiService {
   chiChuyenDoi(payload: ChiChuyenDoiDto): Observable<ApiResponse<any>> {
     return this.http.post<any>(this.rootUrl + `/ChiChuyenDoi`, payload);
   }
-  getInfoIncomingEntries(id: any):Observable<ApiResponse<any>>{
-    return this.http.get<ApiResponse<any>>(this.rootUrl +  `/GetInfoIncomingEntries?bTransactionId=${id}`);
+  getInfoRollbackBTransactionHasIncomingEntry(id: any):Observable<ApiResponse<any>>{
+    return this.http.get<ApiResponse<any>>(this.rootUrl +  `/GetInfoRollbackBTransactionHasIncomingEntry?bTransactionId=${id}`);
   }
-  rollbackIncomingEntries(id: any): Observable<ApiResponse<any>>{
-    return this.http.get<any>(this.rootUrl + `/RollbackIncomingEntries?bTransactionId=${id}`);
+  rollbackBTransactionHasIncomingEntry(id: any): Observable<ApiResponse<any>>{
+    return this.http.get<any>(this.rootUrl + `/RollbackBTransactionHasIncomingEntry?bTransactionId=${id}`);
   }
 }

@@ -99,7 +99,7 @@ export class DetailBaocaoChiComponent implements OnInit {
   }
 
   exportBBC() {
-    this.dashBoardService.exportExcelBBC(this.startDate, this.endDate, this.branchId).subscribe(data => {
+    this.dashBoardService.exportExcelBBC(this.startDate, this.endDate, this.branchId, this.expenseType).subscribe(data => {
       const file = new Blob([this.convertFile(atob(data.result))], {
         type: "application/vnd.ms-excel;charset=utf-8"
       });
@@ -113,8 +113,8 @@ export class DetailBaocaoChiComponent implements OnInit {
       else if (this.data.expenseType === 1) {
         type = "Chi_Không_Thực_";
       }
-      var branchNameReplace = this.data.branchName.replace(/ /g, "_");
-      FileSaver.saveAs(file, `Báo_Cáo_${type}Chi_Nhánh_${branchNameReplace}.xlsx`);
+      var branchNameReplace = this.data.branchName == "Tổng cộng" ? "Toàn_Công_Ty" : `Chi_Nhánh_${this.data.branchName.replace(/ /g, "_")}`;
+      FileSaver.saveAs(file, `Báo_Cáo_${type}${branchNameReplace}.xlsx`);
       abp.notify.success("export successful")
       this.dialogRef.close()
     })

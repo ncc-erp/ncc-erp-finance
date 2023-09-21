@@ -59,8 +59,11 @@ constructor( http: HttpClient) {
   exportExcelStatistics(fromDate, toDate): Observable<any> {
     return this.http.get<any>(this.rootUrl + `/ExportComparativeStatistics?startDate=${fromDate}&endDate=${toDate}`);
   }
-  exportExcelBBC(startDate, endDate, branchId){
-    return this.http.get<any>(this.rootUrl + `/ExportToTalChi?startDate=${startDate}&endDate=${endDate}&branchId=${branchId}`);
+  exportExcelBBC(startDate, endDate, branchId, expenseType){
+    if(expenseType === -1){
+      return this.http.get<any>(this.rootUrl + `/ExportBCC?startDate=${startDate}&endDate=${endDate}&branchId=${branchId}`);
+      }
+      return this.http.get<any>(this.rootUrl + `/ExportBCC?startDate=${startDate}&endDate=${endDate}&branchId=${branchId}&isExpense=${expenseType}`);
   }
   public getChart(year):Observable<any>{
     return this.http.get(this.rootUrl + `/GetChart?year=${year}`)
