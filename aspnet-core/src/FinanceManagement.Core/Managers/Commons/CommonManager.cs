@@ -69,6 +69,14 @@ namespace FinanceManagement.Managers.Commons
                 .FirstOrDefaultAsync();
         }
 
+        public long GetWorkflowStatusENDId()
+        {
+            return _ws.GetAll<WorkflowStatus>()
+                .Where(x => x.Code.Trim() == FinanceManagementConsts.WORKFLOW_STATUS_END)
+                .Select(x => x.Id)
+                .FirstOrDefault();
+        }
+
         public async Task<long> GetCurrencyVNDId()
         {
             return await _ws.GetAll<Currency>()

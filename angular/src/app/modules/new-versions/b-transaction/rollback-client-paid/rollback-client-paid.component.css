@@ -1,0 +1,29 @@
+.col-status{
+    width: 150px;
+}
+.col-money{
+    width: 150px;
+}
+.col-type{
+    width: 150px;
+}
+.fixHeader{
+    overflow-y: auto;
+    max-height: 50vh;
+}
+.fixHeader thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+a:hover{
+    text-decoration: underline;
+}
+
+.blue-thead{
+    background-color: #cdefff;
+}
+
+.yellow-thead{
+    background-color: #ffeab2;
+}

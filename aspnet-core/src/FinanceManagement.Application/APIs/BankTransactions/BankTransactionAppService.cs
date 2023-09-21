@@ -470,6 +470,10 @@ namespace FinanceManagement.APIs.BankTransactions
                 .ThenInclude(x => x.Currency)
                 .Where(s => s.Id == id)
                 .FirstOrDefaultAsync();
+                if(bankTransaction == null)
+                {
+                    throw new UserFriendlyException(string.Format("Giao dịch ngân hàng: {0} không tồn tại hoặc đã bị xóa", id));
+                }
                 var dicUsers = await _myUserManager.GetDictionaryUserAudited(new List<long>
                 {
                     bankTransaction.CreatorUserId ?? 0,
