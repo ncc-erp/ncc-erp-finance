@@ -29,6 +29,7 @@ namespace FinanceManagement.Managers.Commons
         Task<IEnumerable<TreeItem<OutputCategoryEntryType>>> GetTreeOutcomingTypeByUserId(long userId, bool isShowAll);
         bool IsOutcomingEntryNameExist(string name);
         Task<long> GetWorkflowStatusStartId();
+        long GetWorkflowStatusENDId();
         Task<long> GetOutcomingEntryTypeTeamBuildingId();
     }
 }

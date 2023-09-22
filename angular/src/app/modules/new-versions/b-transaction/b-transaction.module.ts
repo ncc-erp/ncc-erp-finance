@@ -22,9 +22,10 @@ import { SelectionTreeIncomingEntryTypeComponent } from './create-multi-incoming
 import { FormsModule } from '@angular/forms';
 import { ChiChuyenDoiComponent } from './chi-chuyen-doi/chi-chuyen-doi.component';
 import { LinkExpenditureResultComponent } from './link-expenditure-dialog/link-expenditure-result/link-expenditure-result.component';
+import { RollbackClientPaidComponent } from './rollback-client-paid/rollback-client-paid.component';
 
 @NgModule({
-  declarations: [BTransactionComponent, ListBtransactionComponent, PaymentDialogComponent, SettingPaymentDialogComponent, CreateEditBTransactionComponent, LinkBTransactionMultiOutComingDialogComponent, ImportFileComponent, DialogResultImportFileComponent, LinkMultiBtransactionOutcomingEntryDialogComponent, RollbackLinkOutcomingEntryComponent, CurrencyExchangeComponent, BuyForeignCurrencyComponent, CreateMultiIncomingEntryComponent, ChiChuyenDoiComponent, LinkExpenditureResultComponent],
+  declarations: [BTransactionComponent, ListBtransactionComponent, PaymentDialogComponent, SettingPaymentDialogComponent, CreateEditBTransactionComponent, LinkBTransactionMultiOutComingDialogComponent, ImportFileComponent, DialogResultImportFileComponent, LinkMultiBtransactionOutcomingEntryDialogComponent, RollbackLinkOutcomingEntryComponent, CurrencyExchangeComponent, BuyForeignCurrencyComponent, CreateMultiIncomingEntryComponent, ChiChuyenDoiComponent, LinkExpenditureResultComponent, RollbackClientPaidComponent],
   imports: [
     CommonModule,
     BTransactionRoutingModule,

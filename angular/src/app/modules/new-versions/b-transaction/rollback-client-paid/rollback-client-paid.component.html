@@ -1,0 +1,127 @@
+<ng-container>
+  <abp-modal-header [title]="'Thu hồi biến động số dư dương'" (onCloseClick)="onClose()"></abp-modal-header>
+  <div class="modal-body">
+    <div class="btransactionInfo row">
+      <div class="col-2"><strong>Biến động số dư: </strong></div>
+      <div class="col-10 row">
+        <span class="col-1 text-right">#{{model.bTransactionInfor.bTransactionId}}</span>
+        <div>
+          <span class="ml-1">TK: <strong>{{model.bTransactionInfor.bankNumber}}</strong></span>
+          <span class="ml-1">Số tiền GD:
+            <strong>{{model.bTransactionInfor.moneyFormat}}&nbsp;
+              <label [style.color]="_utilities.getColorByCurrency(model.bTransactionInfor.currencyName)">
+                {{model.bTransactionInfor.currencyName}}
+              </label>
+            </strong>
+          </span>
+          <span class="ml-1"> lúc <strong>{{model.bTransactionInfor.timeAt| date:"dd/MM/yyyy HH:mm:ss"}}</strong></span>
+        </div>
+      </div>
+    </div>
+    <div class="banktransactionInfo row mt-5">
+      <div class="col-2"><strong>Giao dịch ngân hàng: </strong></div>
+      <div class="col-10 row">
+        <a [href]="getUrlLinkTransaction(model.bankTransactionInfor.bankTransactionId)" target="_blank"
+          class="text-primary col-1 text-right">#{{model.bankTransactionInfor.bankTransactionId}}</a>
+        <div class="col-4">
+          <p><strong>Bên gửi</strong></p>
+          <p>{{model.bankTransactionInfor.fromBankAccountName}}</p>
+          <p>{{model.bankTransactionInfor.fromValueFormat}}&nbsp;{{model.bankTransactionInfor.fromCurrencyName}}</p>
+        </div>
+        <div class="col-4">
+          <p><strong>Bên nhận</strong></p>
+          <p>{{model.bankTransactionInfor.toBankAccountName}}</p>
+          <p>{{model.bankTransactionInfor.toValueFormat}}&nbsp;{{model.bankTransactionInfor.toCurrencyName}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="rollbackIncomingEntryInfos" *ngIf="model.incomingEntrieInfors.length > 0">
+      <div style="font-weight: 600;">Danh sách ghi nhận thu liên quan ({{model.incomingEntrieInfors.length}})</div>
+      <div class="table-responsive" *ngIf="model.incomingEntrieInfors.length > 0">
+        <div class="fixedHeader">
+          <table class="table table-hover border-top">
+            <thead>
+              <tr>
+                <th colspan="3" class="blue-thead">Ghi nhận thu</th>
+                <th colspan="3" class="yellow-thead">Khoản phải thu</th>
+              </tr>
+              <tr>
+                <th>#</th>
+                <th>Tên ghi nhận thu</th>
+                <th class="col-money">Số tiền</th>
+                <th>Tên khoản thu</th>
+                <th>Khách hàng</th>
+                <th class="col-status">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of model.incomingEntrieInfors;let i = index">
+                <td class="text-center">{{i+1}}</td>
+                <td>
+                  <a [href]="getUrlLinkRevenue(model.bankTransactionInfor.bankTransactionId)" target="_blank">#{{ item.incomingEntryId }}
+                  </a> - {{item.incomingEntryName}}</td>
+                <td class="text-right">{{item.moneyFormat}} 
+                  <label [style.color]="_utilities.getColorByCurrency(item.invoiceCurrencyName)">
+                    {{ item.invoiceCurrencyName }}
+                  </label>
+                </td>
+                <td>#{{ item.invoiceId }} - {{ item.invoiceName}} - {{item.invoiceDateMonth}}/{{item.invoiceDateYear}}</td>
+                <td>{{item.accountName}}</td>
+                <td class="text-center">
+                  <label [style.backgroundColor]="
+                  _utilities.getBgTagInvoiceStatus(item.invoiceStatus)"
+                    class="label-status center-status">{{item.invoiceStatusName}}</label>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="rollbackOutcomingEntryInfor" *ngIf="model.outComingEntryInfors.length > 0">
+      <div style="font-weight: 600;">Danh sách request chi liên quan ({{model.outComingEntryInfors.length}})</div>
+      <div class="table-responsive" *ngIf="model.outComingEntryInfors.length > 0">
+        <div class="fixedHeader">
+          <table class="table table-hover border-top">
+            <thead>
+              <th>Nội dung</th>
+              <th>Chi nhánh</th>
+              <th>Giá trị</th>
+              <th>Loại yêu cầu</th>
+              <th class="col-status">Trạng thái</th>
+              <th>Ngày Tạo</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of model.outComingEntryInfors; let i = index">
+                <td class="text-left">
+                  <a [href]="getUrlLinkRequestDetail(item.outcomingEntryId)" target="_blank">
+                    #<strong>{{item.outcomingEntryId}}</strong>
+                  </a>
+                  &nbsp;{{item.outcomingEntryName}}</td>
+                <td class="text-center">{{item.branchName}}</td>  
+                <td class="text-center">{{item.valueFormat}}&nbsp;
+                  <label [style.color]="_utilities.getColorByCurrency(item.currencyName)">
+                    {{item.currencyName}}
+                  </label>
+                </td>
+                <td class="text-center">{{item.outcomingEntryTypeName}}</td>
+                <td class="text-center" ><lable [ngClass]="
+                  APP_CONSTANT.StatusStyle[item.workflowStatusCode.trim()]">{{item.workflowStatusName}}</lable>
+                </td>
+                <td class="text-center">{{item.createdAt}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-between mx-3">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="onClose()">
+      Close
+    </button>
+    <button class="btn btn-primary" (click)="rollBackClientPaidConfirm()">
+      Thu hồi
+    </button>
+  </div>
+</ng-container>
