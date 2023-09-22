@@ -1,0 +1,90 @@
+name: Deploy Finance_BE PROD
+on:
+  push:
+    branches:
+      - prod
+    paths:
+    - 'aspnet-core/**'
+    - '.github/workflows/deploy_server_prod_be.yml'
+
+jobs:
+  build:
+    runs-on: prod
+    name: Build Finance_BE PROD
+    environment: prod
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build Migrator
+        run: |
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core/src/FinanceManagement.Migrator
+          dotnet3 build
+          dotnet3 publish
+
+      - name: Copy New Migrator
+        run: |
+          cd aspnet-core/src/FinanceManagement.Migrator/bin/Debug/netcoreapp3.1/publish/
+          rm -rf appsettings.json
+          cp -r * /var/www/migrator_git/finfast/stg-dotnet-migrator-finfast/
+
+      - name: Build Host
+        run: |
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core
+          dotnet3 build
+          dotnet3 publish
+      
+      - name: Backup Log
+        run: |
+          cp -r /var/www/app_git/finfast/prod-dotnet-host-finfast/wwwroot/* /home/erp/data_git/finfast/
+          cp -r /var/www/app_git/finfast/prod-dotnet-host-finfast/Uploads/* /home/erp/data_git/finfast/Uploads/
+          cp -r /var/www/app_git/finfast/prod-dotnet-host-finfast/App_Data/Logs/* /home/erp/data_git/finfast/Logs/
+          rm -rf /home/erp/data_git/finfast/swagger
+
+      - name: Copy New Host
+        run: |
+          cd aspnet-core/src/FinanceManagement.Web.Host/bin/Debug/netcoreapp3.1/publish/
+          rm -rf appsettings.json
+          cp -r * /var/www/app_git/finfast/prod-dotnet-host-finfast/
+
+  deploy:
+    runs-on: prod
+    name: Deploy Finance_BE PROD
+    environment: prod
+    needs:
+      - build
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Up Data appsettings.json
+        run: |
+          cd aspnet-core/
+          echo '${{ secrets.APP_SETTING_PROD }}' > appsettings.json
+
+      - name: Migrate Database
+        run: |
+          sudo service erp-finfast stop
+          export PATH=$PATH:/opt/dotnet3/
+          cd aspnet-core/
+          cp -r appsettings.json /var/www/migrator_git/finfast/stg-dotnet-migrator-finfast/
+          cd /var/www/migrator_git/finfast/stg-dotnet-migrator-finfast/
+          dotnet3 FinanceManagement.Migrator.dll -q
+
+      - name: Restart Server
+        run: |
+          cd aspnet-core/
+          cp -r appsettings.json /var/www/app_git/finfast/prod-dotnet-host-finfast/
+          cd /var/www/app_git/finfast/prod-dotnet-host-finfast/
+          rm -rf appsettings.Staging.json
+          mkdir -p /var/www/app_git/finfast/prod-dotnet-host-finfast/App_Data/Logs/
+          cp -r /home/erp/data_git/finfast/Logs/* /var/www/app_git/finfast/prod-dotnet-host-finfast/App_Data/Logs/
+          chmod 777 -R App_Data/
+          cp -r /home/erp/data_git/finfast/* /var/www/app_git/finfast/prod-dotnet-host-finfast/wwwroot/
+          cp -r /home/erp/data_git/finfast/Uploads/* /var/www/app_git/finfast/prod-dotnet-host-finfast/Uploads/
+          chmod -R 777 /var/www/app_git/finfast/prod-dotnet-host-finfast/wwwroot/
+          chmod -R 777 /var/www/app_git/finfast/prod-dotnet-host-finfast/Uploads/
+          sudo service erp-finfast restart
+          sudo service erp-finfast status
