@@ -42,6 +42,8 @@ jobs:
           cp -r /var/www/app_git/finfast/prod-dotnet-host-finfast/Uploads/* /home/erp/data_git/finfast/Uploads/
           cp -r /var/www/app_git/finfast/prod-dotnet-host-finfast/App_Data/Logs/* /home/erp/data_git/finfast/Logs/
           rm -rf /home/erp/data_git/finfast/swagger
+          rm - rf /var/www/app_git/finfast/prod-dotnet-host-finfast-bk/*
+          cp -r /var/www/app_git/finfast/prod-dotnet-host-finfast/* /var/www/app_git/finfast/prod-dotnet-host-finfast-bk/
 
       - name: Copy New Host
         run: |
