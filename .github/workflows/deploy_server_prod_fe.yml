@@ -1,0 +1,73 @@
+name: Deploy Finance_FE PROD
+on:
+  push:
+    branches:
+      - prod
+    paths:
+      - 'angular/**'
+      - '.github/workflows/deploy_server_prod_fe.yml'
+jobs:
+  build:
+    runs-on: prod
+    name: Build Finance_FE PROD
+    environment: prod
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Cache Node Module
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-node-modules
+      with:
+        path: |
+          **/node_modules
+        key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json,**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-build-${{ env.cache-name }}-
+          ${{ runner.os }}-build-
+          ${{ runner.os }}-
+
+    
+    - name: npm install
+      if: steps.cache-nodemodules.outputs.cache-hit != 'true'
+      run: |
+        cd angular/
+        export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+        nvm use 14.15
+        node -v
+        echo "=== INSTALL PACKAGE ==="
+        npm install
+
+    - name: Angular Build
+      run: |
+        cd angular/
+        export NVM_DIR="$HOME/.nvm" && . "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+        nvm use 14.15
+        ng build --prod
+
+    - name: Remove appconfig
+      run: |
+        cd angular/dist/assets
+        rm -rf appconfig.production.json
+        rm -rf /var/www/app_git/finfast/prod-fe-finfast/*
+        
+    - name: Copy AngularBuild
+      run: |
+        cd angular/dist/
+        cp -r . /var/www/app_git/finfast/prod-fe-finfast/
+        
+    - name: Update Env-Config
+      run: |
+        cd angular/
+        echo '${{ secrets.APP_CONFIG_PROD }}' > appconfig.production.json
+      
+    - name: Restart Nginx
+      run: |
+        cd angular/
+        cp appconfig.production.json /var/www/app_git/finfast/prod-fe-finfast/assets/
+        sudo service nginx reload
