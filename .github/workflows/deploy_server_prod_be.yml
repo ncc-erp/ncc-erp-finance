@@ -68,7 +68,7 @@ jobs:
 
       - name: Migrate Database
         run: |
-          sudo service erp-finfast stop
+          sudo service erp-finfast-git stop
           export PATH=$PATH:/opt/dotnet3/
           cd aspnet-core/
           cp -r appsettings.json /var/www/migrator_git/finfast/stg-dotnet-migrator-finfast/
@@ -88,5 +88,5 @@ jobs:
           cp -r /home/erp/data_git/finfast/Uploads/* /var/www/app_git/finfast/prod-dotnet-host-finfast/Uploads/
           chmod -R 777 /var/www/app_git/finfast/prod-dotnet-host-finfast/wwwroot/
           chmod -R 777 /var/www/app_git/finfast/prod-dotnet-host-finfast/Uploads/
-          sudo service erp-finfast restart
-          sudo service erp-finfast status
+          sudo service erp-finfast-git restart
+          sudo service erp-finfast-git status
