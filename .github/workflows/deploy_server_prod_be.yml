@@ -36,7 +36,7 @@ jobs:
           dotnet3 build
           dotnet3 publish
       
-      - name: Backup Log
+      - name: Backup BE, LOG PROD
         run: |
           cp -r /var/www/app_git/finfast/prod-dotnet-host-finfast/wwwroot/* /home/erp/data_git/finfast/
           cp -r /var/www/app_git/finfast/prod-dotnet-host-finfast/Uploads/* /home/erp/data_git/finfast/Uploads/
