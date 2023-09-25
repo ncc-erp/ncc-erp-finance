@@ -49,7 +49,7 @@ jobs:
         [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
         nvm use 14.15
         ng build --prod
-
+        
     - name: Remove appconfig
       run: |
         cd angular/dist/assets
