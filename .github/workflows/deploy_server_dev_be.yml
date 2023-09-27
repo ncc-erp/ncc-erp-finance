@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: dev
     name: Build Finance_BE Dev
     environment: dev
     steps:

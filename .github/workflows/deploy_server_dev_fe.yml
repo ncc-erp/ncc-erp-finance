@@ -8,7 +8,7 @@ on:
       - '.github/workflows/deploy_server_dev_fe.yml'
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: dev
     name: Build Finance_FE Dev
     environment: dev
     steps:
