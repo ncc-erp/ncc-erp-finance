@@ -4,14 +4,16 @@ using FinanceManagement.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FinanceManagement.Migrations
 {
     [DbContext(typeof(FinanceManagementDbContext))]
-    partial class FinanceManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231012100842_add_new_table_CircleChart_and_CircleChartDetail")]
+    partial class add_new_table_CircleChart_and_CircleChartDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
