@@ -22,6 +22,7 @@ namespace FinanceManagement.Migrations
                     DeletionTime = table.Column<DateTime>(nullable: true),
                     TenantId = table.Column<int>(nullable: true),
                     Name = table.Column<string>(maxLength: 500, nullable: true),
+                    Color = table.Column<string>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
                     IsIncome = table.Column<bool>(nullable: false)
                 },

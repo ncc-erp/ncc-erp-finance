@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceManagement.Migrations
 {
     [DbContext(typeof(FinanceManagementDbContext))]
-    [Migration("20231012100842_add_new_table_CircleChart_and_CircleChartDetail")]
+    [Migration("20231013022253_add_new_table_CircleChart_and_CircleChartDetail")]
     partial class add_new_table_CircleChart_and_CircleChartDetail
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2647,6 +2647,9 @@ namespace FinanceManagement.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");

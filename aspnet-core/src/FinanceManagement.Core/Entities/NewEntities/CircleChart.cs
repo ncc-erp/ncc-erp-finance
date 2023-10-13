@@ -13,6 +13,7 @@ namespace FinanceManagement.Entities.NewEntities
         public int? TenantId { get; set; }
         [MaxLength(500)]
         public string Name { get; set; }
+        public string Color { get; set; }
         public bool IsActive { get; set; }
         public bool IsIncome { get; set; }
     }
