@@ -2720,7 +2720,7 @@ namespace FinanceManagement.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InOutCommingIds")
+                    b.Property<string>("InOutcomeIds")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")

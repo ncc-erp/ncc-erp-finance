@@ -61,7 +61,7 @@ namespace FinanceManagement.Migrations
                     Name = table.Column<string>(maxLength: 500, nullable: true),
                     BranchId = table.Column<long>(nullable: true),
                     ClientIds = table.Column<string>(nullable: true),
-                    InOutCommingIds = table.Column<string>(nullable: true)
+                    InOutcomeIds = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

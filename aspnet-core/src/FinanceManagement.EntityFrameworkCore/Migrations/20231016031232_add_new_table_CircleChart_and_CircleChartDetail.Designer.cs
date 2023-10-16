@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceManagement.Migrations
 {
     [DbContext(typeof(FinanceManagementDbContext))]
-    [Migration("20231013022253_add_new_table_CircleChart_and_CircleChartDetail")]
+    [Migration("20231016031232_add_new_table_CircleChart_and_CircleChartDetail")]
     partial class add_new_table_CircleChart_and_CircleChartDetail
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2722,7 +2722,7 @@ namespace FinanceManagement.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InOutCommingIds")
+                    b.Property<string>("InOutcomeIds")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")

@@ -18,7 +18,7 @@ namespace FinanceManagement.Entities.NewEntities
         [ForeignKey(nameof(BranchId))]
         public long? BranchId { get; set; }
         public string ClientIds { get; set; }
-        public string InOutCommingIds { get; set; }
+        public string InOutcomeIds { get; set; }
 
         #region Foreign Key
         public virtual CircleChart CircleChart { get; set; }
