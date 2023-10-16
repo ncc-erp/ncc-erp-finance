@@ -22,7 +22,6 @@ namespace FinanceManagement.Migrations
                     DeletionTime = table.Column<DateTime>(nullable: true),
                     TenantId = table.Column<int>(nullable: true),
                     Name = table.Column<string>(maxLength: 500, nullable: true),
-                    Color = table.Column<string>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
                     IsIncome = table.Column<bool>(nullable: false)
                 },
@@ -59,9 +58,10 @@ namespace FinanceManagement.Migrations
                     TenantId = table.Column<int>(nullable: true),
                     CircleChartId = table.Column<long>(nullable: false),
                     Name = table.Column<string>(maxLength: 500, nullable: true),
+                    Color = table.Column<string>(nullable: true),
                     BranchId = table.Column<long>(nullable: true),
                     ClientIds = table.Column<string>(nullable: true),
-                    InOutcomeIds = table.Column<string>(nullable: true)
+                    InOutcomingIds = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

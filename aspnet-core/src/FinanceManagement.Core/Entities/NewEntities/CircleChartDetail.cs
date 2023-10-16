@@ -15,10 +15,11 @@ namespace FinanceManagement.Entities.NewEntities
         public long CircleChartId { get; set; }
         [MaxLength(500)]
         public string Name { get; set; }
+        public string Color { get; set; }
         [ForeignKey(nameof(BranchId))]
         public long? BranchId { get; set; }
         public string ClientIds { get; set; }
-        public string InOutcomeIds { get; set; }
+        public string InOutcomingIds { get; set; }
 
         #region Foreign Key
         public virtual CircleChart CircleChart { get; set; }

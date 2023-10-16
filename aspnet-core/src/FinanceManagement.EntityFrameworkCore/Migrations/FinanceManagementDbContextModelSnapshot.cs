@@ -2646,9 +2646,6 @@ namespace FinanceManagement.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
@@ -2708,6 +2705,9 @@ namespace FinanceManagement.Migrations
                     b.Property<string>("ClientIds")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
@@ -2720,7 +2720,7 @@ namespace FinanceManagement.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InOutcomeIds")
+                    b.Property<string>("InOutcomingIds")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")

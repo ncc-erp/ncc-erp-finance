@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceManagement.Migrations
 {
     [DbContext(typeof(FinanceManagementDbContext))]
-    [Migration("20231016031232_add_new_table_CircleChart_and_CircleChartDetail")]
+    [Migration("20231016083505_add_new_table_CircleChart_and_CircleChartDetail")]
     partial class add_new_table_CircleChart_and_CircleChartDetail
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2648,9 +2648,6 @@ namespace FinanceManagement.Migrations
                         .HasColumnType("bigint")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
@@ -2710,6 +2707,9 @@ namespace FinanceManagement.Migrations
                     b.Property<string>("ClientIds")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
@@ -2722,7 +2722,7 @@ namespace FinanceManagement.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("InOutcomeIds")
+                    b.Property<string>("InOutcomingIds")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
