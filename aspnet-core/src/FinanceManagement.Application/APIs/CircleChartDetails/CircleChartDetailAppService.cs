@@ -36,7 +36,7 @@ namespace FinanceManagement.APIs.CircleChartDetails
         }
 
         [HttpPost]
-        [AbpAuthorize(PermissionNames.Admin_CircleChartDetail_Create)]
+        [AbpAuthorize(PermissionNames.Admin_CircleChart_CircleChartDetail_View)]
         public async Task<CreateCircleChartDetailDto> Create(CreateCircleChartDetailDto input)
         {
             var circleChart = WorkScope.Get<CircleChart>(input.CircleChartId);
@@ -46,7 +46,7 @@ namespace FinanceManagement.APIs.CircleChartDetails
         }
 
         [HttpPut]
-        [AbpAuthorize(PermissionNames.Admin_CircleChartDetail_Edit)]
+        [AbpAuthorize(PermissionNames.Admin_CircleChart_CircleChartDetail_Edit)]
         public async Task<UpdateCircleChartDetailDto> Edit(UpdateCircleChartDetailDto input)
         {
             _ = IsClientExisted(input.ClientIds);
@@ -54,21 +54,21 @@ namespace FinanceManagement.APIs.CircleChartDetails
         }
 
         [HttpDelete]
-        [AbpAuthorize(PermissionNames.Admin_CircleChartDetail_Delete)]
+        [AbpAuthorize(PermissionNames.Admin_CircleChart_CircleChartDetail_Delete)]
         public async Task<long> Delete(long id)
         {
             return await _circleChartDetailManager.Delete(id);
         }
 
         [HttpPut]
-        [AbpAuthorize(PermissionNames.Admin_CircleChartDetail_ActiveDeactive)]
+        [AbpAuthorize(PermissionNames.Admin_CircleChart_CircleChartDetail_ActiveDeactive)]
         public async Task<long> Active(long id)
         {
             return await _circleChartDetailManager.Active(id);
         }
 
         [HttpPut]
-        [AbpAuthorize(PermissionNames.Admin_CircleChartDetail_ActiveDeactive)]
+        [AbpAuthorize(PermissionNames.Admin_CircleChart_CircleChartDetail_ActiveDeactive)]
         public async Task<long> DeActive(long id)
         {
             return await _circleChartDetailManager.DeActive(id);
