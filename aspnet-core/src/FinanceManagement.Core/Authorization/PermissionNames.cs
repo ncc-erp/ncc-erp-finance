@@ -85,6 +85,24 @@ namespace FinanceManagement.Authorization
         public const string Admin_LineChartSetting_Delete = "Admin.LineChartSetting.Delete";
         public const string Admin_LineChartSetting_ActiveDeactive = "Admin.LineChartSetting.ActiveDeactive";
 
+        //Circle Chart
+
+        public const string Admin_CircleChart = "Admin.CircleChart";
+        public const string Admin_CircleChart_View = "Admin.CircleChart.View";
+        public const string Admin_CircleChart_Create = "Admin.CircleChart.Create";
+        public const string Admin_CircleChart_Edit = "Admin.CircleChart.Edit";
+        public const string Admin_CircleChart_Delete = "Admin.CircleChart.Delete";
+        public const string Admin_CircleChart_ActiveDeactive = "Admin.CircleChart.ActiveDeactive";
+
+         //Circle Chart Detail
+
+        public const string Admin_CircleChartDetail = "Admin.Admin_CircleChartDetail";
+        public const string Admin_CircleChartDetail_View = "Admin.Admin_CircleChartDetail.View";
+        public const string Admin_CircleChartDetail_Create = "Admin.Admin_CircleChartDetail.Create";
+        public const string Admin_CircleChartDetail_Edit = "Admin.Admin_CircleChartDetail.Edit";
+        public const string Admin_CircleChartDetail_Delete = "Admin.Admin_CircleChartDetail.Delete";
+        public const string Admin_CircleChartDetail_ActiveDeactive = "Admin.Admin_CircleChartDetail.ActiveDeactive";
+
         // Crawl
         public const string Admin_CrawlHistory = "Admin.CrawlHistory";
         public const string Admin_CrawlHistory_View = "Admin.CrawlHistory.View";
@@ -418,6 +436,22 @@ namespace FinanceManagement.Authorization
                     PermissionNames.Admin_LineChartSetting_Delete,
                     PermissionNames.Admin_LineChartSetting_ActiveDeactive,
 
+                    //CircleChart
+                    PermissionNames.Admin_CircleChart,
+                    PermissionNames.Admin_CircleChart_View,
+                    PermissionNames.Admin_CircleChart_Create,
+                    PermissionNames.Admin_CircleChart_Edit,
+                    PermissionNames.Admin_CircleChart_Delete,
+                    PermissionNames.Admin_CircleChart_ActiveDeactive,
+
+                    //CircleChartDetail
+                    PermissionNames.Admin_CircleChartDetail,
+                    PermissionNames.Admin_CircleChartDetail_View,
+                    PermissionNames.Admin_CircleChartDetail_Create,
+                    PermissionNames.Admin_CircleChartDetail_Edit,
+                    PermissionNames.Admin_CircleChartDetail_Delete,
+                    PermissionNames.Admin_CircleChartDetail_ActiveDeactive,
+
                     // Crawl
                     PermissionNames.Admin_CrawlHistory,
                     PermissionNames.Admin_CrawlHistory_View,
@@ -725,6 +759,22 @@ namespace FinanceManagement.Authorization
                     PermissionNames.Admin_LineChartSetting_Delete,
                     PermissionNames.Admin_LineChartSetting_ActiveDeactive,
 
+                    //CircleChart
+                    PermissionNames.Admin_CircleChart,
+                    PermissionNames.Admin_CircleChart_View,
+                    PermissionNames.Admin_CircleChart_Create,
+                    PermissionNames.Admin_CircleChart_Edit,
+                    PermissionNames.Admin_CircleChart_Delete,
+                    PermissionNames.Admin_CircleChart_ActiveDeactive,
+
+                    //CircleChartDetail
+                    PermissionNames.Admin_CircleChartDetail,
+                    PermissionNames.Admin_CircleChartDetail_View,
+                    PermissionNames.Admin_CircleChartDetail_Create,
+                    PermissionNames.Admin_CircleChartDetail_Edit,
+                    PermissionNames.Admin_CircleChartDetail_Delete,
+                    PermissionNames.Admin_CircleChartDetail_ActiveDeactive,
+
                     // Crawl
                     PermissionNames.Admin_CrawlHistory,
                     PermissionNames.Admin_CrawlHistory_View,
@@ -999,6 +1049,22 @@ namespace FinanceManagement.Authorization
                     PermissionNames.Admin_LineChartSetting_Edit,
                     PermissionNames.Admin_LineChartSetting_Delete,
                     PermissionNames.Admin_LineChartSetting_ActiveDeactive,
+
+                    //CircleChart
+                    PermissionNames.Admin_CircleChart,
+                    PermissionNames.Admin_CircleChart_View,
+                    PermissionNames.Admin_CircleChart_Create,
+                    PermissionNames.Admin_CircleChart_Edit,
+                    PermissionNames.Admin_CircleChart_Delete,
+                    PermissionNames.Admin_CircleChart_ActiveDeactive,
+
+                    //CircleChartDetail
+                    PermissionNames.Admin_CircleChartDetail,
+                    PermissionNames.Admin_CircleChartDetail_View,
+                    PermissionNames.Admin_CircleChartDetail_Create,
+                    PermissionNames.Admin_CircleChartDetail_Edit,
+                    PermissionNames.Admin_CircleChartDetail_Delete,
+                    PermissionNames.Admin_CircleChartDetail_ActiveDeactive,
 
                     // Crawl
                     PermissionNames.Admin_CrawlHistory,
@@ -1351,7 +1417,24 @@ namespace FinanceManagement.Authorization
                 new SystemPermission{ Name =  PermissionNames.Admin_LineChartSetting_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa" },
                 new SystemPermission{ Name =  PermissionNames.Admin_LineChartSetting_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xóa" },
                 new SystemPermission{ Name =  PermissionNames.Admin_LineChartSetting_ActiveDeactive, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Active/Deactive" },
-                 //Lịch sử Crawl
+                
+                //Circle Chart
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChart, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Circle Chart setting" },
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChart_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xem tất cả" },
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChart_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tạo mới" },
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChart_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa" },
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChart_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xóa" },
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChart_ActiveDeactive, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Active/Deactive" },
+
+                //Circle Chart Detail
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Circle Chart Detail setting" },
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xem tất cả" },
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tạo mới" },
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa" },
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xóa" },
+                new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail_ActiveDeactive, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Active/Deactive" },
+                
+                //Lịch sử Crawl
                 new SystemPermission{ Name =  PermissionNames.Admin_CrawlHistory, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Lịch sử Crawl giao dịch" },
                 new SystemPermission{ Name =  PermissionNames.Admin_CrawlHistory_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xem tất cả" },
                 // Auditlog
@@ -1676,6 +1759,28 @@ namespace FinanceManagement.Authorization
                                  new SystemPermission{ Name =  PermissionNames.Admin_LineChartSetting_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa" },
                                  new SystemPermission{ Name =  PermissionNames.Admin_LineChartSetting_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xóa" },
                                  new SystemPermission{ Name =  PermissionNames.Admin_LineChartSetting_ActiveDeactive, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Active/Deactive" },
+
+                            }
+                        },
+                       new SystemPermission{ Name =  PermissionNames.Admin_CircleChart, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Circle Chart setting",
+                            Childrens = new List<SystemPermission>()
+                            {
+                                 new SystemPermission{ Name =  PermissionNames.Admin_CircleChart_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xem tất cả" },
+                                 new SystemPermission{ Name =  PermissionNames.Admin_CircleChart_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tạo mới" },
+                                 new SystemPermission{ Name =  PermissionNames.Admin_CircleChart_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa" },
+                                 new SystemPermission{ Name =  PermissionNames.Admin_CircleChart_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xóa" },
+                                 new SystemPermission{ Name =  PermissionNames.Admin_CircleChart_ActiveDeactive, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Active/Deactive" },
+
+                            }
+                        },
+                        new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Circle Chart Detail setting",
+                            Childrens = new List<SystemPermission>()
+                            {
+                                 new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xem tất cả" },
+                                 new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Tạo mới" },
+                                 new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa" },
+                                 new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xóa" },
+                                 new SystemPermission{ Name =  PermissionNames.Admin_CircleChartDetail_ActiveDeactive, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Active/Deactive" },
 
                             }
                         },
