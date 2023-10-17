@@ -2723,6 +2723,9 @@ namespace FinanceManagement.Migrations
                     b.Property<string>("InOutcomingIds")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -2738,9 +2741,6 @@ namespace FinanceManagement.Migrations
 
                     b.Property<int?>("TenantId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("isActive")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

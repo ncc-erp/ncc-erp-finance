@@ -62,7 +62,7 @@ namespace FinanceManagement.Migrations
                     BranchId = table.Column<long>(nullable: true),
                     ClientIds = table.Column<string>(nullable: true),
                     InOutcomingIds = table.Column<string>(nullable: true),
-                    isActive = table.Column<bool>(nullable: false)
+                    IsActive = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

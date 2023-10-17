@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceManagement.Migrations
 {
     [DbContext(typeof(FinanceManagementDbContext))]
-    [Migration("20231016104354_add_new_table_CircleChart_and_CircleChartDetail")]
+    [Migration("20231017021156_add_new_table_CircleChart_and_CircleChartDetail")]
     partial class add_new_table_CircleChart_and_CircleChartDetail
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2725,6 +2725,9 @@ namespace FinanceManagement.Migrations
                     b.Property<string>("InOutcomingIds")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -2740,9 +2743,6 @@ namespace FinanceManagement.Migrations
 
                     b.Property<int?>("TenantId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("isActive")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 

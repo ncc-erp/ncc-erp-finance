@@ -20,7 +20,7 @@ namespace FinanceManagement.Entities.NewEntities
         public long? BranchId { get; set; }
         public string ClientIds { get; set; }
         public string InOutcomingIds { get; set; }
-        public bool isActive { get; set; }
+        public bool IsActive { get; set; }
 
         #region Foreign Key
         public virtual CircleChart CircleChart { get; set; }
