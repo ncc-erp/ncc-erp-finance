@@ -159,6 +159,12 @@ import { DetailBaocaoThuComponent } from './home/detail-baocao-thu/detail-baocao
 import { DetailBaocaoChiComponent } from './home/detail-baocao-chi/detail-baocao-chi.component';
 import { DetailNhanvienNoComponent } from './home/detail-nhanvien-no/detail-nhanvien-no.component';
 import { AppConsts } from '@shared/AppConsts';
+import { CircleChartComponent } from './modules/circle-chart/circle-chart.component';
+import { CreateEditCircleChartComponent } from './modules/circle-chart/create-edit-circle-chart/create-edit-circle-chart.component';
+import { CircleChartDetailComponent } from './modules/circle-chart/circle-chart-detail/circle-chart-detail.component';
+import { CreateEditCircleChartDetailComponent } from './modules/circle-chart/circle-chart-detail/create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
+import { SelectionTreeCircleChartComponent } from './modules/circle-chart/circle-chart-detail/create-edit-circle-chart-detail/selection-tree-circle-chart/selection-tree-circle-chart.component';
+import { PieChartComponent } from './home/pie-chart/pie-chart.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -313,6 +319,19 @@ import { AppConsts } from '@shared/AppConsts';
     DetailBaocaoChiComponent,
 
     DetailNhanvienNoComponent,
+
+    CircleChartComponent,
+
+    CircleChartDetailComponent,
+
+    CreateEditCircleChartComponent,
+
+    CreateEditCircleChartDetailComponent,
+
+    SelectionTreeCircleChartComponent,
+
+    PieChartComponent,
+
   ],
   imports: [
     CommonModule,

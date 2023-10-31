@@ -1,4 +1,5 @@
 ﻿using Abp.Domain.Entities;
+using Castle.Components.DictionaryAdapter;
 using FinanceManagement.Enums;
 using FinanceManagement.GeneralModels;
 using System;
@@ -15,5 +16,6 @@ namespace FinanceManagement.Entities.NewEntities
         public string Name { get; set; }
         public bool IsActive { get; set; }
         public bool IsIncome { get; set; }
-    }
+        public virtual ICollection<CircleChartDetail> CircleChartDetails { get; set; }
+}
 }

@@ -74,7 +74,7 @@ namespace FinanceManagement.Managers.CircleCharts
 
                 if (currentSettings.Count > 0)
                 {
-                    throw new UserFriendlyException("Chart đã được gắn reference, hãy xóa reference trước khi edit type");
+                    throw new UserFriendlyException("Chart đã có detail, hãy xóa detail trước khi edit type");
                 }
             }
 

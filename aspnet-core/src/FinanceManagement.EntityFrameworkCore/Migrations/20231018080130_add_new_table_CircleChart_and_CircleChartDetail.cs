@@ -61,8 +61,7 @@ namespace FinanceManagement.Migrations
                     Color = table.Column<string>(nullable: true),
                     BranchId = table.Column<long>(nullable: true),
                     ClientIds = table.Column<string>(nullable: true),
-                    InOutcomingIds = table.Column<string>(nullable: true),
-                    IsActive = table.Column<bool>(nullable: false)
+                    InOutcomeTypeIds = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

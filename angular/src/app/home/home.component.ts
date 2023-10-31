@@ -19,6 +19,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { DetailBaocaoThuComponent } from './detail-baocao-thu/detail-baocao-thu.component';
 import { DetailBaocaoChiComponent } from './detail-baocao-chi/detail-baocao-chi.component';
 import { DetailNhanvienNoComponent } from './detail-nhanvien-no/detail-nhanvien-no.component';
+import { InputListCircleChartDto } from '@app/service/model/circle-chart.dto';
 
 @Component({
   templateUrl: './home.component.html',
@@ -32,6 +33,8 @@ export class HomeComponent extends AppComponentBase {
   tableData = {} as any;
   outcomeData = []
   incomeData = []
+  circleChartData = []
+  listChartId: number[] = []
   statusBox = {} as totalStatusDto
   cashFlowData = {
   } as CashFlowDataDto
@@ -418,23 +421,33 @@ export class HomeComponent extends AppComponentBase {
   }
 
   getDataForPieChart(fromDate, toDate) {
-    this.isLoadingChart = true
-    this.dashBoardService.GetPieChartIncoming(fromDate, toDate, this.isByPeriod).subscribe(rs => {
-      this.incomeData = rs.result
-      this.isLoadingChart = false
-      this.buildIncomeChart()
-    },
-      () => this.isLoadingChart = false)
+    // this.isLoadingChart = true
+    // this.dashBoardService.GetPieChartIncoming(fromDate, toDate, this.isByPeriod).subscribe(rs => {
+    //   this.incomeData = rs.result
+    //   this.isLoadingChart = false
+    //   this.buildIncomeChart()
+    // },
+    //   () => this.isLoadingChart = false)
 
-    this.dashBoardService.GetPieChartOutcoming(fromDate, toDate, this.isByPeriod).subscribe(rs => {
-      this.outcomeData = rs.result
-      this.isLoadingChart = false
-      this.buildOutcomeChart()
-    },
-      () => this.isLoadingChart = false)
-
-
+    // this.dashBoardService.GetPieChartOutcoming(fromDate, toDate, this.isByPeriod).subscribe(rs => {
+    //   this.outcomeData = rs.result
+    //   this.isLoadingChart = false
+    //   this.buildOutcomeChart()
+    // },
+    //   () => this.isLoadingChart = false)
+      this.isLoadingChart = true
+      let input = {
+        circleChartIds: this.listChartId,
+        startDate: fromDate,
+        endDate: toDate
+      } as InputListCircleChartDto;
+      this.dashBoardService.GetNewCircleChart(input).subscribe(rs => {
+        this.circleChartData = rs.result
+        this.isLoadingChart = false
+      },
+        () => this.isLoadingChart = false)
   }
+
 
   nextOrPre(title: any) {
 

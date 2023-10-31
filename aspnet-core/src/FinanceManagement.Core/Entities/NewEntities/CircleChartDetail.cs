@@ -11,19 +11,18 @@ namespace FinanceManagement.Entities.NewEntities
     public class CircleChartDetail : FKFullAuditedEntity, IMayHaveTenant
     {
         public int? TenantId { get; set; }
-        [ForeignKey(nameof(CircleChartId))]
         public long CircleChartId { get; set; }
         [MaxLength(500)]
         public string Name { get; set; }
         public string Color { get; set; }
-        [ForeignKey(nameof(BranchId))]
         public long? BranchId { get; set; }
         public string ClientIds { get; set; }
-        public string InOutcomingIds { get; set; }
-        public bool IsActive { get; set; }
+        public string InOutcomeTypeIds { get; set; }
 
         #region Foreign Key
+        [ForeignKey(nameof(CircleChartId))]
         public virtual CircleChart CircleChart { get; set; }
+        [ForeignKey(nameof(BranchId))]
         public virtual Branch Branch { get; set; }
         #endregion
     }

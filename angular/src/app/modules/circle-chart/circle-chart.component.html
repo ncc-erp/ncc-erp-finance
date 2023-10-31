@@ -1,0 +1,66 @@
+<div class="wrapper px-4 py-2">
+    <div class="header d-flex justify-content-between">
+        <div class="breadcrumb">
+            <app-bread-crumb [listBreadCrumb]="listBreadCrumb"></app-bread-crumb>
+        </div>
+        <button  class="btn btn-primary" *ngIf="isShowCreateBtn()"
+            (click)="onCreate()">
+            <i class="fa fa-plus-square mr-1"></i>
+            Thêm mới</button>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped" [busy]="isTableLoading">
+                    <thead>
+                        <tr>
+                            <th class="text-center col-1">#</th>
+                            <th class="text-center">Tên</th>
+                            <th class="text-center col-1">Thu/Chi</th>
+                            <th class="text-center col-1">Active</th>
+                            <th class="text-center col-1">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of circleChartDto; let i = index">
+                            <td class="text-center">{{i+1}}</td>
+                            <td>
+                                <div *ngIf="permission.isGranted(Admin_CircleChart_CircleChartDetail_View);else circleChartName" (click)="showDetail(item.id)" class="hyperlink" >{{item.name}}</div>
+                                <ng-template #circleChartName>{{ item.name }}</ng-template>
+                            </td>
+                            <td class="text-center">
+                                <span [ngClass]="item.isIncome ? 'badge bg-primary' : 'badge bg-danger'">{{item.circleChartTypeName}}</span>
+                            </td>
+                            <td class="text-center"><i
+                                    [ngClass]="item.isActive ? 'fas fa-check text-success': 'fas fa-times text-danger'"></i>
+                            </td>
+                            <td class="text-center">
+                                <button *ngIf="isShowActionMenu()" mat-button [matMenuTriggerFor]="menu" ><i class="fas fa-bars fa-lg"></i></button>
+                                <mat-menu #menu="matMenu">
+                                    <button mat-menu-item (click)="onEdit(item)" *ngIf="isShowEditBtn()">
+                                        <mat-icon>edit</mat-icon>
+                                        Chỉnh sửa
+                                    </button>
+                                    <button mat-menu-item (click)="delete(item)" *ngIf="isShowDeleteBtn()">
+                                        <mat-icon>delete</mat-icon>
+                                        Xóa
+                                    </button>
+                                    <button *ngIf="item.isActive == false && isShowActiveDecativeActionBtns()"  mat-menu-item (click)="onActive(item)">
+                                        <mat-icon>check</mat-icon>
+                                        Active
+                                    </button>
+                                    <button *ngIf="item.isActive == true && isShowActiveDecativeActionBtns()" mat-menu-item (click)="onDeActive(item)">
+                                        <mat-icon>close</mat-icon>
+                                        DeActive
+                                    </button>
+                                </mat-menu>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

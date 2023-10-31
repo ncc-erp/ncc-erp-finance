@@ -73,6 +73,22 @@ export const PERMISSIONS_CONSTANT = {
     Admin_LineChartSetting_Delete : "Admin.LineChartSetting.Delete",
     Admin_LineChartSetting_ActiveDeactive : "Admin.LineChartSetting.ActiveDeactive",
 
+     //Circle Chart
+
+     Admin_CircleChart : "Admin.CircleChart",
+     Admin_CircleChart_View : "Admin.CircleChart.View",
+     Admin_CircleChart_Create : "Admin.CircleChart.Create",
+     Admin_CircleChart_Edit : "Admin.CircleChart.Edit",
+     Admin_CircleChart_Delete : "Admin.CircleChart.Delete",
+     Admin_CircleChart_ActiveDeactive : "Admin.CircleChart.ActiveDeactive",
+     //Circle Chart Detail
+
+     Admin_CircleChart_CircleChartDetail : "Admin.CircleChart.CircleChartDetail",
+     Admin_CircleChart_CircleChartDetail_View : "Admin.CircleChart.CircleChartDetail.View",
+     Admin_CircleChart_CircleChartDetail_Create : "Admin.CircleChart.CircleChartDetail.Create",
+     Admin_CircleChart_CircleChartDetail_Edit : "Admin.CircleChart.CircleChartDetail.Edit",
+     Admin_CircleChart_CircleChartDetail_Delete : "Admin.CircleChart.CircleChartDetail.Delete",
+ 
     // Crawl
     Admin_CrawlHistory : "Admin.CrawlHistory",
     Admin_CrawlHistory_View : "Admin.CrawlHistory.View",

@@ -614,6 +614,42 @@ namespace FinanceManagement.Managers.Dashboards
 
             return result.ToList();
         }
+
+        public List<double> GetCircleChartIncomingEntry(
+            DateTime startDate,
+            DateTime endDate,
+            HashSet<long> incomingEntryTypeIds,
+            Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert
+        )
+        {
+            var incoms = _ws.GetAll<IncomingEntry>()
+                .Select(x => new
+                {
+                    x.IncomingEntryTypeId,
+                    x.CurrencyId,
+                    TimeAt = x.BankTransaction.TransactionDate.Date,
+                    x.Value,
+
+                })
+                .WhereIf(incomingEntryTypeIds.Any(), x => incomingEntryTypeIds.Contains(x.IncomingEntryTypeId))
+                .Where(x => x.TimeAt >= startDate.Date && x.TimeAt <= endDate.Date)
+                .Select(x => new KeyValuePairChart
+                {
+                    Value = x.Value,
+                    Key = new CurrencyYearMonthDto
+                    {
+                        CurrencyId = x.CurrencyId,
+                        Month = x.TimeAt.Month,
+                        Year = x.TimeAt.Year
+                    }
+                })
+                .AsEnumerable()
+                .GetBaseDataCharts(dicCurrencyConvert)
+                .Select(s => s.Value)
+                .ToList();
+
+            return incoms;
+        }
         public List<double> GetLineChartOutcomingEntry(
             DateTime startDate,
             DateTime endDate,
@@ -655,6 +691,44 @@ namespace FinanceManagement.Managers.Dashboards
                          select lo == default ? 0 : lo.Value;
 
             return result.ToList();
+        }
+
+        public List<double> GetCircleChartOutcomingEntry(
+            DateTime startDate,
+            DateTime endDate,
+            HashSet<long> outcomingEntryTypeIds,
+            Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert,
+            long statusEndId
+        )
+        {
+            var outcoms = _ws.GetAll<OutcomingEntry>()
+                .Select(x => new
+                {
+                    x.Value,
+                    x.WorkflowStatusId,
+                    x.OutcomingEntryTypeId,
+                    x.ReportDate,
+                    x.CurrencyId
+                })
+                .Where(x => x.WorkflowStatusId == statusEndId)
+                .WhereIf(outcomingEntryTypeIds.Any(), x => outcomingEntryTypeIds.Contains(x.OutcomingEntryTypeId))
+                .Where(x => x.ReportDate.HasValue && (x.ReportDate.Value >= startDate && x.ReportDate.Value <= endDate))
+                .Select(x => new KeyValuePairChart
+                {
+                    Value = x.Value,
+                    Key = new CurrencyYearMonthDto
+                    {
+                        CurrencyId = x.CurrencyId,
+                        Month = x.ReportDate.Value.Month,
+                        Year = x.ReportDate.Value.Year
+                    }
+                })
+                .AsEnumerable()
+                .GetBaseDataCharts(dicCurrencyConvert)
+                .Select(x => x.Value)
+                .ToList();
+
+            return outcoms;
         }
         public NewChartDto GetBarChartIncoming(
             DateTime startDate,

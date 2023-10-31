@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { BaseApiService } from './base-api.service';
+import { InputListCircleChartDto } from '../model/circle-chart.dto';
 @Injectable({
   providedIn: 'root'
 })
@@ -28,7 +29,10 @@ constructor( http: HttpClient) {
 
   GetNewChart(startDate:string, endDate:string, isByPeriod:boolean):Observable<any>{
     return this.http.get(this.rootUrl + `/GetNewChart?startDate=${startDate}&endDate=${endDate}&isByPeriod=${isByPeriod}`)
+  }
 
+  GetNewCircleChart(input: InputListCircleChartDto):Observable<any>{
+    return this.http.post<any>(this.rootUrl + `/GetNewCircleChart`, input)
   }
 
   GetPieChartIncoming(startDate:string, endDate:string, isByPeriod:boolean):Observable<any>{

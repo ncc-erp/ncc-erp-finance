@@ -20,6 +20,7 @@ using Abp.Linq.Extensions;
 using FinanceManagement.Extension;
 using Abp.Authorization;
 using FinanceManagement.Authorization;
+using FinanceManagement.Managers.CircleChartDetails.Dtos;
 
 namespace FinanceManagement.APIs.Commons
 {
@@ -119,6 +120,20 @@ namespace FinanceManagement.APIs.Commons
                                     {
                                         Name = s.Name + " [" + s.Code + "]",
                                         Value = s.Id,
+                                    })
+                                    .Distinct()
+                                    .ToListAsync();
+        }
+        [HttpGet]
+        public async Task<List<ClientInfoDto>> GetAllClientInfo(bool isInActive = false)
+        {
+            return await WorkScope.GetAll<Account>()
+                                    .Where(x => x.Type == AccountTypeEnum.CLIENT)
+                                    .WhereIf(!isInActive, s => s.IsActive)
+                                    .Select(s => new ClientInfoDto
+                                    {
+                                        ClientName = s.Name + " [" + s.Code + "]",
+                                        ClientId = s.Id,
                                     })
                                     .Distinct()
                                     .ToListAsync();

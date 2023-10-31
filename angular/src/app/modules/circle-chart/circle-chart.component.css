@@ -1,0 +1,17 @@
+button {
+    height: fit-content;
+  }
+.hyperlink:hover {
+    cursor: pointer;
+    text-decoration: underline !important;
+}
+.hyperlink {
+    color: #007bff;
+}
+.breadcrumb {
+    font-size: 28.8px;
+    display: inline-block;
+    background-color: unset !important;
+    margin-bottom: 0px;
+    padding: 0px;
+}

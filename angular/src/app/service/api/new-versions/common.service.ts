@@ -9,6 +9,7 @@ import { IncomingEntryTypeOptions } from '@app/modules/new-versions/b-transactio
 import { SelectionOutcomingEntry } from '@app/modules/new-versions/b-transaction/link-b-transaction-multi-out-coming-dialog/link-b-transaction-multi-out-coming-dialog.component';
 import { FilterBankAccount } from '@app/service/model/bank-account.dto';
 import { GetAccountCompanyForDropdownDto } from '@app/modules/expenditure-request/expenditure-request.component';
+import { ClientInfoDto } from '@app/service/model/circle-chart.dto';
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +52,9 @@ export class CommonService extends BaseApiService {
   }
   getAllClient(): Observable<ApiResponse<ValueAndNameModel[]>> {
     return this.http.get<any>(this.rootUrl + '/GetAllClient');
+  }
+  getAllClientInfo(): Observable<ApiResponse<ClientInfoDto[]>> {
+    return this.http.get<any>(this.rootUrl + '/GetAllClientInfo');
   }
   getBTransactionOptions(): Observable<ApiResponse<BTransactionDto[]>> {
     return this.http.get<any>(this.rootUrl + '/GetBTransactionOptions');

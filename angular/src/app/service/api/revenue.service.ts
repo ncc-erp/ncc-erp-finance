@@ -30,6 +30,11 @@ export class RevenueService extends BaseApiService {
       this.rootUrl + `/GetExistInComeInChartSetting?lineChartId=${id}`
     );
   }
+  public GetExistInComeInCircleChartDetail(id: number): Observable<any> {
+    return this.http.get<any>(
+      this.rootUrl + `/GetExistInComeInCircleChartDetail?id=${id}`
+    );
+  }
 
   handleError(error: any) {
     let errorMessage = "";

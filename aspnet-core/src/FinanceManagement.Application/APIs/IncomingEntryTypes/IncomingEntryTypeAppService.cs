@@ -18,6 +18,7 @@ using FinanceManagement.Managers.Commons;
 using FinanceManagement.GeneralModels;
 using Abp.Collections.Extensions;
 using FinanceManagement.APIs.OutcomingEntryTypes.Dto;
+using Newtonsoft.Json;
 
 namespace FinanceManagement.APIs.AccountTypes
 {
@@ -280,6 +281,26 @@ namespace FinanceManagement.APIs.AccountTypes
                 .ToListAsync();
 
             return await WorkScope.GetAll<IncomingEntryType>().Where(x => existInChartSetting.Contains(x.Id))
+                        .OrderByDescending(x => x.CreationTime)
+                        .Select(x => new IncomingEntryTypeDto
+                        {
+                            Id = x.Id,
+                            Name = x.Name,
+                            Code = x.Code,
+                            IsActive = x.IsActive,
+                            RevenueCounted = x.RevenueCounted
+                        }).ToListAsync();
+        }
+
+        [HttpGet]
+        public async Task<List<IncomingEntryTypeDto>> GetExistInComeInCircleChartDetail(long id)
+        {
+            var inOutComeTypeIds = WorkScope.Get<CircleChartDetail>(id).InOutcomeTypeIds;
+            var listInOutcomeTypeIds = (string.IsNullOrWhiteSpace(inOutComeTypeIds))
+                ? new List<long>()
+                : JsonConvert.DeserializeObject<List<long>>(inOutComeTypeIds);
+
+            return await WorkScope.GetAll<IncomingEntryType>().Where(x => listInOutcomeTypeIds.Contains(x.Id))
                         .OrderByDescending(x => x.CreationTime)
                         .Select(x => new IncomingEntryTypeDto
                         {

@@ -67,6 +67,11 @@ export class ExpenditureService extends BaseApiService {
       this.rootUrl + `/GetExistOutComeInChartSetting?lineChartId=${id}`
     );
   }
+  public GetExistOutComeInCircleChartDetail(id: number): Observable<any> {
+    return this.http.get<any>(
+      this.rootUrl + `/GetExistOutComeInCircleChartDetail?id=${id}`
+    );
+  }
   public getAllForDropdownByUserNew(): Observable<ApiResponse<IncomingEntryTypeOptions[]>> {
     return this.http.get<any>(this.rootUrl + `/GetAllForDropdownByUserNew`);
   }

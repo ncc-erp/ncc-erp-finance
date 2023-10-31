@@ -12,6 +12,6 @@ namespace FinanceManagement.Managers.CircleCharts.Dtos
         public string Name { get; set; }
         public bool IsIncome { get; set; }
         public bool IsActive { get; set; }
-        public string CircleChartSettingTypeName => IsIncome ? "Loại thu" : "Loại chi";
+        public string CircleChartTypeName => IsIncome ? "Thu" : "Chi";
     }
 }

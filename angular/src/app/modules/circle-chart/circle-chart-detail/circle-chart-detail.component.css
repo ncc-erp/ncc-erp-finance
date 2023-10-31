@@ -1,0 +1,18 @@
+button {
+    height: fit-content;
+}
+.breadcrumb {
+    font-size: 28.8px;
+    display: inline-block;
+    background-color: unset !important;
+    margin-bottom: 0px;
+    padding: 0px;
+}
+
+.type-and-status span {
+font-size: 16px;
+margin-left: 10px;
+position: relative;
+}
+
+

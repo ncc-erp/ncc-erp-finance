@@ -1,0 +1,87 @@
+<div class="content px-4 pt-1">
+    <section class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-7 d-flex align-items-center">
+                    <div class="breadcrumb">
+                        <app-bread-crumb [listBreadCrumb]="listBreadCrumb"></app-bread-crumb>
+                    </div>
+                    <div class="type-and-status">
+                        <span [ngClass]="isIncome ? 'badge badge-pill bg-primary' : 'badge badge-pill bg-danger'">
+                            {{circleChartTypeName}}</span>
+                        <span [ngClass]="isActive ? 'badge badge-pill bg-success' : 'badge badge-pill bg-secondary'">
+                            {{ isActive ? 'Active' : 'Inactive' }}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-5 text-right">
+                    <button  class="btn btn-primary" *ngIf="isShowCreateBtn()"
+                        (click)="onCreate()">
+                        <i class="fa fa-plus-square mr-1"></i>
+                        Thêm mới</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-center col-1">#</th>
+                                    <th class="text-center">Tên</th>
+                                    <th class="text-center col-1">Màu</th>
+                                    <th class="text-center col-1">Chi nhánh</th>
+                                    <th class="text-center col-2">{{ isIncome? 'Danh sách Thu' : 'Danh sách chi' }}</th>
+                                    <th *ngIf="isIncome" class="text-center col-2">Danh sách khách hàng</th>
+                                    <th class="text-center col-1">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of circleChartInfo?.details; let i = index">
+                                    <td class="text-center">{{i+1}}</td>
+                                    <td>
+                                        <div *ngIf="permission.isGranted(Admin_CircleChart_CircleChartDetail_View);else circleChartName" (click)="showDetail(item.id)" class="hyperlink" >{{item.name}}</div>
+                                        <ng-template #circleChartName>{{ item.name }}</ng-template>
+                                    </td>
+                                    <td class="text-center"><span class="badge badge-pill"
+                                        [ngStyle]="{'background': item.color}">{{item.color}}</span></td>
+                                    <td class="text-center">
+                                        <span>{{item.branch.branchName}}</span>
+                                    </td>
+                                    <td>
+                                        <div *ngFor="let inOutcomeType of item.inOutcomeTypes">
+                                            <div><span class="badge bg-primary">{{inOutcomeType.inOutcomeTypeName}}</span></div>
+                                        </div>
+                                    </td>
+                                    <td *ngIf="isIncome">
+                                        <div *ngFor="let client of item.clients">
+                                            <div><span class="badge bg-primary">{{client.clientName}}</span></div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <button *ngIf="isShowActionMenu()" mat-button [matMenuTriggerFor]="menu" ><i class="fas fa-bars fa-lg"></i></button>
+                                        <mat-menu #menu="matMenu">
+                                            <button mat-menu-item (click)="onEdit(item)" *ngIf="isShowEditBtn()">
+                                                <mat-icon>edit</mat-icon>
+                                                Chỉnh sửa
+                                            </button>
+                                            <button mat-menu-item (click)="delete(item)" *ngIf="isShowDeleteBtn()">
+                                                <mat-icon>delete</mat-icon>
+                                                Xóa
+                                            </button>
+                                        </mat-menu>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

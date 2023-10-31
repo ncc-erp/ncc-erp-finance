@@ -6,6 +6,8 @@ using FinanceManagement.Entities.NewEntities;
 using FinanceManagement.IoC;
 using FinanceManagement.Managers.CircleChartDetails;
 using FinanceManagement.Managers.CircleChartDetails.Dtos;
+using FinanceManagement.Managers.CircleCharts.Dtos;
+using FinanceManagement.Paging;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -24,67 +26,38 @@ namespace FinanceManagement.APIs.CircleChartDetails
         }
 
         [HttpGet]
-        public async Task<List<CircleChartDetailDto>> GetAllCircleChartDetails(bool isIncome)
+        public async Task<CircleChartInfoDto> GetCircleChartDetailsByChartId(long circleChartId)
         {
-            return await _circleChartDetailManager.GetAllCircleChartDetails(isIncome);
-        }
-
-        [HttpGet]
-        public async Task<List<CircleChartDetailDto>> GetCircleChartDetailsById(long chartId)
-        {
-            return await _circleChartDetailManager.GetCircleChartDetailsById(chartId);
+            return await _circleChartDetailManager.GetCircleChartDetailsByChartId(circleChartId);
         }
 
         [HttpPost]
-        [AbpAuthorize(PermissionNames.Admin_CircleChartDetail_Create)]
+        [AbpAuthorize(PermissionNames.Admin_CircleChart_CircleChartDetail_Create)]
         public async Task<CreateCircleChartDetailDto> Create(CreateCircleChartDetailDto input)
         {
-            var circleChart = WorkScope.Get<CircleChart>(input.CircleChartId);
-            if (circleChart == null)
-                throw new UserFriendlyException("Không tồn tại circleChart với id = " + circleChart.Id);
             return await _circleChartDetailManager.Create(input);
         }
 
         [HttpPut]
-        [AbpAuthorize(PermissionNames.Admin_CircleChartDetail_Edit)]
-        public async Task<UpdateCircleChartDetailDto> Edit(UpdateCircleChartDetailDto input)
+        [AbpAuthorize(PermissionNames.Admin_CircleChart_CircleChartDetail_Edit)]
+        public async Task<UpdateCircleChartDetailDto> Update(UpdateCircleChartDetailDto input)
         {
-            _ = IsClientExisted(input.ClientIds);
             return await _circleChartDetailManager.Update(input);
         }
 
+        [HttpPut]
+        [AbpAuthorize(PermissionNames.Admin_CircleChart_CircleChartDetail_Edit)]
+        public async Task<UpdateCircleChartInOutcomeTypeIdsDto> UpdateInOutcomeTypeIds(UpdateCircleChartInOutcomeTypeIdsDto input)
+        {
+            return await _circleChartDetailManager.UpdateInOutcomeTypeIds(input);
+        }
+
+
         [HttpDelete]
-        [AbpAuthorize(PermissionNames.Admin_CircleChartDetail_Delete)]
+        [AbpAuthorize(PermissionNames.Admin_CircleChart_CircleChartDetail_Delete)]
         public async Task<long> Delete(long id)
         {
             return await _circleChartDetailManager.Delete(id);
-        }
-
-        [HttpPut]
-        [AbpAuthorize(PermissionNames.Admin_CircleChartDetail_ActiveDeactive)]
-        public async Task<long> Active(long id)
-        {
-            return await _circleChartDetailManager.Active(id);
-        }
-
-        [HttpPut]
-        [AbpAuthorize(PermissionNames.Admin_CircleChartDetail_ActiveDeactive)]
-        public async Task<long> DeActive(long id)
-        {
-            return await _circleChartDetailManager.DeActive(id);
-        }
-
-        public bool IsClientExisted(List<long> clientIds)
-        {
-            foreach (var clientId in clientIds)
-            {
-                var client = WorkScope.Get<Account>(clientId);
-                if (client == null)
-                    throw new UserFriendlyException("Không tồn tại account có Id = " + clientId);
-                if (client.AccountType.Code != Constants.ACCOUNT_TYPE_CLIENT)
-                    throw new UserFriendlyException($"Account có id = '{clientId}' không thuộc loại CLIENT ");
-            }
-            return true;
         }
     }
 }
