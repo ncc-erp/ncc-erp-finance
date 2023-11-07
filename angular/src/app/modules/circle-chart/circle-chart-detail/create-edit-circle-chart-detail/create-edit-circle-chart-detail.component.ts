@@ -51,7 +51,7 @@ export class CreateEditCircleChartDetailComponent implements OnInit {
     private circleChartDetailService: CircleChartDetailService,
     private commonService: CommonService,
     public branchService: BranchService) {
-      if (data) {
+      if (data.item) {
       this.inputFilter.isActive = null
       this.isEdit = true
       this.chartDetail = this.data.item
@@ -59,7 +59,6 @@ export class CreateEditCircleChartDetailComponent implements OnInit {
       this.clientInfos = this.chartDetail.clients
       this.listClientId = this.chartDetail.listClientIds
       this.title = `Chỉnh sửa detail: ${this.chartDetail.name}`
-      this.isIncome = this.data.isIncome
       this.circleChartTypeName = this.data.isIncome ? "Thu" : "Chi"
       this.onSelectType()
     }
@@ -67,6 +66,7 @@ export class CreateEditCircleChartDetailComponent implements OnInit {
       this.title = `Thêm detail mới: `
       this.chartDetail.color = "#21211f"
     }
+    this.isIncome = this.data.isIncome
     this.getAllBranch();
     this.getAllClient();
     this.paramId = this.route.snapshot.queryParamMap.get('id');
@@ -115,12 +115,12 @@ export class CreateEditCircleChartDetailComponent implements OnInit {
 
   onSave() {
     this.isLoading = true;
-    if (!this.data) {
+    if (!this.data.item) {
       this.createChartDetail = {
         circleChartId: this.paramId, 
         name: this.chartDetail.name,
         color: this.chartDetail.color,
-        branchId: this.branchInfo.branchId
+        branchId: this.branchInfo.branchId==0?null:this.branchInfo.branchId
       }
       this.circleChartDetailService.create(this.createChartDetail).subscribe(rs => {
         abp.notify.success(`Created new detail: ${this.createChartDetail.name}`)
@@ -133,7 +133,7 @@ export class CreateEditCircleChartDetailComponent implements OnInit {
         id: this.chartDetail.id,
         name: this.chartDetail.name,
         color: this.chartDetail.color,
-        branchId: this.branchInfo.branchId,
+        branchId: this.branchInfo.branchId==0?null:this.branchInfo.branchId,
         clientIds:this.listClientId,
       }
       this.circleChartDetailService.update(this.updateChartDetail).subscribe(rs => {

@@ -29,26 +29,29 @@ cdkDragHandle>
                     <mat-form-field appearance="outline" class="col-5">
                         <input name="name" type="text" matInput [(ngModel)]="chartDetail.name" required>
                     </mat-form-field>
-                <label for="type" class="col-1 col-form-label">Chi nhánh:</label>
-                <mat-form-field appearance="outline" class="col-2">
+                <label *ngIf="!isIncome" for="type" class="col-1 mt-2 ml-4">Chi nhánh:</label>
+                <mat-form-field *ngIf="!isIncome" appearance="outline" class="col-2">
                     <mat-label>Branch</mat-label>
-                    <mat-select name="branchId" [(ngModel)]="branchInfo.branchId" required>
+                    <mat-select name="branchId" [(ngModel)]="branchInfo.branchId">
                         <mat-option>
                             <ngx-mat-select-search placeholderLabel="Search" [formControl]="branchSearch"
                             noEntriesFoundLabel= "No matching found"></ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option [value]="null">
+                            All
                         </mat-option>
                         <mat-option *ngFor="let branch of listBranch" [value]='branch.id'>
                             {{branch.name}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <label for="color" class="col-1 mt-2">Màu:</label>
+                <label for="color" class="col-1 mt-2 ml-4">Màu:</label>
                 <input name="color" style="margin-top: 2px;" type="color" [(ngModel)]="chartDetail.color">
             </div>
             <div class="form-edit row form-group">
                 <label *ngIf="isIncome" for="type" class="col-1 col-form-label">Khách hàng:</label>
                 <app-multiple-select
-                class="client-selection col-5"
+                class="client-selection col-11"
                 *ngIf="isIncome" 
                 labelName="Client"
                 name="listClient"
@@ -136,16 +139,19 @@ cdkDragHandle>
             </div>
         </div>
 
-        <div class="form-group required row mt-3">
+        <div *ngIf="!isIncome" class="form-group row mt-3">
             <label for="type" class="col-3 mt-3 col-form-label">Chi nhánh:</label>
-            <div class="col-9 required">
+            <div class="col-9">
                 <mat-form-field appearance="outline">
                     <mat-label>Branch</mat-label>
 
-                    <mat-select name="branchId" [(ngModel)]="branchInfo.branchId" required>
+                    <mat-select name="branchId" [(ngModel)]="branchInfo.branchId">
                         <mat-option>
                             <ngx-mat-select-search placeholderLabel="Search" [formControl]="branchSearch"
                             noEntriesFoundLabel= "No matching found"></ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option [value]="null">
+                            All
                         </mat-option>
                         <mat-option *ngFor="let branch of listBranch" [value]='branch.id'>
                             {{branch.name}}

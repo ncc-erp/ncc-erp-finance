@@ -31,10 +31,10 @@
                         <table class="table table-hover table-striped">
                             <thead>
                                 <tr>
-                                    <th class="text-center col-1">#</th>
+                                    <th class="text-center stt">#</th>
                                     <th class="text-center">Tên</th>
                                     <th class="text-center col-1">Màu</th>
-                                    <th class="text-center col-1">Chi nhánh</th>
+                                    <th  *ngIf="!isIncome" class="text-center col-1">Chi nhánh</th>
                                     <th class="text-center col-2">{{ isIncome? 'Danh sách Thu' : 'Danh sách chi' }}</th>
                                     <th *ngIf="isIncome" class="text-center col-2">Danh sách khách hàng</th>
                                     <th class="text-center col-1">Action</th>
@@ -49,7 +49,7 @@
                                     </td>
                                     <td class="text-center"><span class="badge badge-pill"
                                         [ngStyle]="{'background': item.color}">{{item.color}}</span></td>
-                                    <td class="text-center">
+                                    <td  *ngIf="!isIncome" class="text-center">
                                         <span>{{item.branch.branchName}}</span>
                                     </td>
                                     <td>

@@ -22,6 +22,9 @@ using FinanceManagement.Managers.Periods;
 using Abp.Authorization;
 using FinanceManagement.Services.HRM;
 using Abp.MultiTenancy;
+using FinanceManagement.Managers.CircleChartDetails.Dtos;
+using FinanceManagement.Uitls;
+using FinanceManagement.Managers.IncomingEntries;
 
 namespace FinanceManagement.Managers.Dashboards
 {
@@ -33,6 +36,7 @@ namespace FinanceManagement.Managers.Dashboards
         private readonly IPermissionChecker _permissionChecker;
         private readonly IPeriodResolveContributor _periodResolveContributor;
         private readonly HRMService _hrmService;
+        private readonly IIncomingEntryManager _incomingEntryManager;
 
         public DashboardManager(IWorkScope ws,
             IMySettingManager mySettingManager,
@@ -40,7 +44,8 @@ namespace FinanceManagement.Managers.Dashboards
             IPeriodResolveContributor periodResolveContributor,
             IPermissionChecker permissionChecker,
             IPeriodManager periodManager,
-            HRMService hrmService
+            HRMService hrmService,
+            IIncomingEntryManager incomingEntryManager
             ) : base(ws)
         {
             _mySettingManager = mySettingManager;
@@ -49,6 +54,7 @@ namespace FinanceManagement.Managers.Dashboards
             _periodManager = periodManager;
             _permissionChecker = permissionChecker;
             _hrmService = hrmService;
+            _incomingEntryManager = incomingEntryManager;
         }
         #region đối soát
         public async Task<ResultNewComparativeStatisticDto> GetBankAccountStatistics(bool isIncludeBTransPending)
@@ -538,6 +544,8 @@ namespace FinanceManagement.Managers.Dashboards
         }
         public Dictionary<CurrencyYearMonthDto, double> GetDictionaryCurrencyConvertByYearMonth(DateTime startDate, DateTime endDate)
         {
+            startDate = DateTimeUtils.GetFirstDayOfMonth(startDate);
+            endDate = DateTimeUtils.GetLastDayOfMonth(endDate);
             return _ws.GetAll<CurrencyConvert>()
                 .Select(x => new
                 {
@@ -560,6 +568,8 @@ namespace FinanceManagement.Managers.Dashboards
         }
         public void CheckDictionaryCurrencyConvertByYearMonth(Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, DateTime startDate, DateTime endDate)
         {
+            startDate = DateTimeUtils.GetFirstDayOfMonth(startDate);
+            endDate = DateTimeUtils.GetLastDayOfMonth(endDate);
             var dicMonthYear = dicCurrencyConvert.Keys
                 .Select(x => new { x.Month, x.Year })
                 .Distinct()
@@ -615,39 +625,40 @@ namespace FinanceManagement.Managers.Dashboards
             return result.ToList();
         }
 
-        public List<double> GetCircleChartIncomingEntry(
+        public double GetValueCircleChartIncomingEntry(
             DateTime startDate,
             DateTime endDate,
             HashSet<long> incomingEntryTypeIds,
-            Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert
+            Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert,
+            List<long> listClientIds
         )
         {
-            var incoms = _ws.GetAll<IncomingEntry>()
+            var incoms = _incomingEntryManager.BuildIncomingQuery()
                 .Select(x => new
                 {
                     x.IncomingEntryTypeId,
                     x.CurrencyId,
-                    TimeAt = x.BankTransaction.TransactionDate.Date,
+                    x.ClientAccountId,
+                    TimeAt = x.Date,
                     x.Value,
-
                 })
-                .WhereIf(incomingEntryTypeIds.Any(), x => incomingEntryTypeIds.Contains(x.IncomingEntryTypeId))
-                .Where(x => x.TimeAt >= startDate.Date && x.TimeAt <= endDate.Date)
-                .Select(x => new KeyValuePairChart
-                {
-                    Value = x.Value,
-                    Key = new CurrencyYearMonthDto
-                    {
-                        CurrencyId = x.CurrencyId,
-                        Month = x.TimeAt.Month,
-                        Year = x.TimeAt.Year
-                    }
-                })
-                .AsEnumerable()
-                .GetBaseDataCharts(dicCurrencyConvert)
-                .Select(s => s.Value)
-                .ToList();
-
+               .WhereIf(listClientIds.Any(), x => x.ClientAccountId != 0 && listClientIds.Contains(x.ClientAccountId))
+               .WhereIf(incomingEntryTypeIds.Any(), x => incomingEntryTypeIds.Contains(x.IncomingEntryTypeId))
+               .Where(x => x.TimeAt >= startDate.Date && x.TimeAt <= endDate.Date)
+               .Select(x => new KeyValuePairChart
+               {
+                   Value = x.Value,
+                   Key = new CurrencyYearMonthDto
+                   {
+                       CurrencyId = x.CurrencyId,
+                       Month = x.TimeAt.Month,
+                       Year = x.TimeAt.Year
+                   }
+               })
+               .AsEnumerable()
+               .GetBaseDataCharts(dicCurrencyConvert)
+               .Select(s => s.Value)
+               .Sum();
             return incoms;
         }
         public List<double> GetLineChartOutcomingEntry(
@@ -693,12 +704,13 @@ namespace FinanceManagement.Managers.Dashboards
             return result.ToList();
         }
 
-        public List<double> GetCircleChartOutcomingEntry(
+        public double GetValueCircleChartOutcomingEntry(
             DateTime startDate,
             DateTime endDate,
             HashSet<long> outcomingEntryTypeIds,
             Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert,
-            long statusEndId
+            long statusEndId,
+            long branchId
         )
         {
             var outcoms = _ws.GetAll<OutcomingEntry>()
@@ -707,10 +719,12 @@ namespace FinanceManagement.Managers.Dashboards
                     x.Value,
                     x.WorkflowStatusId,
                     x.OutcomingEntryTypeId,
+                    x.BranchId,
                     x.ReportDate,
                     x.CurrencyId
                 })
                 .Where(x => x.WorkflowStatusId == statusEndId)
+                .WhereIf(branchId != 0, x => x.BranchId == branchId)
                 .WhereIf(outcomingEntryTypeIds.Any(), x => outcomingEntryTypeIds.Contains(x.OutcomingEntryTypeId))
                 .Where(x => x.ReportDate.HasValue && (x.ReportDate.Value >= startDate && x.ReportDate.Value <= endDate))
                 .Select(x => new KeyValuePairChart
@@ -726,7 +740,7 @@ namespace FinanceManagement.Managers.Dashboards
                 .AsEnumerable()
                 .GetBaseDataCharts(dicCurrencyConvert)
                 .Select(x => x.Value)
-                .ToList();
+                .Sum();
 
             return outcoms;
         }

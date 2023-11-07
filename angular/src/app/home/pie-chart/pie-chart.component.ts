@@ -23,7 +23,12 @@ export class PieChartComponent implements OnInit {
       option = {
         title: {
           text: this.chartData.chartName,
-          left: 'center'
+          left: 'center',
+          textStyle: {
+            fontFamily: 'Source Sans Pro',
+            fontSize: 16,
+          },
+          padding: 20,
         },
         tooltip: {
           trigger: 'item',

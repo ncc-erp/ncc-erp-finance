@@ -19,7 +19,9 @@ import { AppConsts } from '@shared/AppConsts';
 import { DetailBaocaoThuComponent } from './detail-baocao-thu/detail-baocao-thu.component';
 import { DetailBaocaoChiComponent } from './detail-baocao-chi/detail-baocao-chi.component';
 import { DetailNhanvienNoComponent } from './detail-nhanvien-no/detail-nhanvien-no.component';
-import { InputListCircleChartDto } from '@app/service/model/circle-chart.dto';
+import { CircleChartDto, InputListCircleChartDto } from '@app/service/model/circle-chart.dto';
+import { CircleChartService } from '@app/service/api/circle-chart.service';
+import { IOption } from '@shared/components/custome-select/custome-select.component';
 
 @Component({
   templateUrl: './home.component.html',
@@ -57,6 +59,8 @@ export class HomeComponent extends AppComponentBase {
   activeView: number = 0;
   endDate = new FormControl(moment())
   startDate = new FormControl(moment());
+  listCircleChart: IOption[] = []
+  
 
   setEndDate(normalizedMonthAndYear: moment.Moment, datepicker: MatDatepicker<moment.Moment>) {
     const ctrlValue: moment.Moment = moment();
@@ -122,11 +126,12 @@ export class HomeComponent extends AppComponentBase {
 
     this.overviewInvoiceStatistics()
     this.getHRMDebtStatistic()
+    this.getCircleChartActive()
   }
 
   constructor(injector: Injector, private router: Router, private route: ActivatedRoute, private dialog: MatDialog,
     private dashBoardService: DashBoardService, private outcomeService: ExpenditureRequestService,
-    private periodService: PeriodService) {
+    private periodService: PeriodService, private circleChartService: CircleChartService) {
     super(injector);
 
   }
@@ -441,7 +446,7 @@ export class HomeComponent extends AppComponentBase {
         startDate: fromDate,
         endDate: toDate
       } as InputListCircleChartDto;
-      this.dashBoardService.GetNewCircleChart(input).subscribe(rs => {
+      this.dashBoardService.GetCircleChart(input).subscribe(rs => {
         this.circleChartData = rs.result
         this.isLoadingChart = false
       },
@@ -470,11 +475,11 @@ export class HomeComponent extends AppComponentBase {
       this.activeView = 0;
     }
     let fromDate, toDate;
-    if (this.viewChange.value === this.APP_CONSTANT.TypeViewHomePage.Week) {
-      fromDate = moment().startOf('isoWeek').add(this.activeView, 'w');
-      toDate = moment(fromDate).endOf('isoWeek');
-      this.typeDate = 'Week';
-    }
+    // if (this.viewChange.value === this.APP_CONSTANT.TypeViewHomePage.Week) {
+    //   fromDate = moment().startOf('isoWeek').add(this.activeView, 'w');
+    //   toDate = moment(fromDate).endOf('isoWeek');
+    //   this.typeDate = 'Week';
+    // }
     if (this.viewChange.value === this.APP_CONSTANT.TypeViewHomePage.Month) {
       fromDate = moment().startOf('M').add(this.activeView, 'M');
       toDate = moment(fromDate).endOf('M');
@@ -485,16 +490,31 @@ export class HomeComponent extends AppComponentBase {
       toDate = moment(fromDate).endOf('Q');
       this.typeDate = 'Quater';
     }
+    if (this.viewChange.value === this.APP_CONSTANT.TypeViewHomePage.Half_Year) {
+      const currentDate = moment();
+      const currentMonth = currentDate.month();
+      const isFirstHalf = currentMonth < 6;
+    
+      if (isFirstHalf) {
+        fromDate = moment().startOf('year').add(this.activeView * 6, 'months');
+        toDate = moment(fromDate).add(5, 'months').endOf('month');
+      } else {
+        fromDate = moment().startOf('year').add((this.activeView * 6) + 6, 'months');
+        toDate = moment(fromDate).add(5, 'months').endOf('month');
+      }
+    
+      this.typeDate = 'Half-Year';
+    }
     if (this.viewChange.value === this.APP_CONSTANT.TypeViewHomePage.Year) {
       fromDate = moment().startOf('y').add(this.activeView, 'y');
       toDate = moment(fromDate).endOf('y');
       this.typeDate = 'Years';
     }
-    if (this.viewChange.value == this.APP_CONSTANT.TypeViewHomePage.AllTime) {
-      fromDate = '';
-      toDate = '';
-      this.distanceFromAndToDate = 'All Time';
-    }
+    // if (this.viewChange.value == this.APP_CONSTANT.TypeViewHomePage.AllTime) {
+    //   fromDate = '';
+    //   toDate = '';
+    //   this.distanceFromAndToDate = 'All Time';
+    // }
     if (this.viewChange.value == this.APP_CONSTANT.TypeViewHomePage.CustomTime) {
       fromDate = '';
       toDate = '';
@@ -541,11 +561,17 @@ export class HomeComponent extends AppComponentBase {
     this.fromDate = fromDate;
     this.toDate = toDate;
   }
+  
+  fromDateCustomTime: any;
+  toDateCustomTime: any;
+
   showPopup(): void {
     let popup = this.dialog.open(PopupComponent);
     popup.afterClosed().subscribe(result => {
       if (result != undefined) {
         if (result.result) {
+          this.fromDateCustomTime = result.data.fromDateCustomTime;
+          this.toDateCustomTime = result.data.toDateCustomTime;
           this.changeView(false, result.data.fromDateCustomTime, result.data.toDateCustomTime);
         }
       }
@@ -701,8 +727,22 @@ export class HomeComponent extends AppComponentBase {
       data: this.debtStatistic
     })
   }
-}
 
+  getCircleChartActive(){
+    this.circleChartService.getAllActive().subscribe((data) => {
+      this.listCircleChart = data.result.map(item => {
+        item.name = item.name;
+        item.value = item.id;
+        return item;
+      })
+    })
+  }
+
+  onCircleChartSelect(ids: number[]) {
+    this.listChartId = ids;
+    this.changeView(false, this.fromDateCustomTime, this.toDateCustomTime);
+  }
+}
 export class totalStatusDto {
   totalPending: number
   totalApprove: number

@@ -1,5 +1,6 @@
 ﻿using Abp.Domain.Services;
 using FinanceManagement.Enums;
+using FinanceManagement.Managers.CircleChartDetails.Dtos;
 using FinanceManagement.Managers.Dashboards.Dtos;
 using System;
 using System.Collections.Generic;
@@ -53,9 +54,9 @@ namespace FinanceManagement.Managers.Dashboards
         Dictionary<CurrencyYearMonthDto, double> GetDictionaryCurrencyConvertByYearMonth(DateTime startDate, DateTime endDate);
         void CheckDictionaryCurrencyConvertByYearMonth(Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, DateTime startDate, DateTime endDate);
         List<double> GetLineChartIncomingEntry(DateTime startDate, DateTime endDate, HashSet<long> incomingEntryTypeIds, IEnumerable<string> labels, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert);
-        List<double> GetCircleChartIncomingEntry(DateTime startDate, DateTime endDate, HashSet<long> incomingEntryTypeIds, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert);
+        double GetValueCircleChartIncomingEntry(DateTime startDate, DateTime endDate, HashSet<long> incomingEntryTypeIds, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, List<long> listClientIds);
         List<double> GetLineChartOutcomingEntry(DateTime startDate, DateTime endDate, HashSet<long> outcomingEntryTypeIds, IEnumerable<string> labels, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, long statusEndId);
-        List<double> GetCircleChartOutcomingEntry(DateTime startDate, DateTime endDate, HashSet<long> outcomingEntryTypeIds, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, long statusEndId);
+        double GetValueCircleChartOutcomingEntry(DateTime startDate, DateTime endDate, HashSet<long> outcomingEntryTypeIds, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, long statusEndId, long branchId);
         NewChartDto GetBarChartIncoming(DateTime startDate, DateTime endDate, IEnumerable<string> labels, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert);
         NewChartDto GetBarChartOutcomingEntry(DateTime startDate, DateTime endDate, IEnumerable<string> labels, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, long statusEndId);
         Task<List<PieChartDto>> GetPieChartIncoming(long? rootId, DateTime startDate, DateTime endDate);

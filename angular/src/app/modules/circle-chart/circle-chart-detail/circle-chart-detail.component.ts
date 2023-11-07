@@ -52,6 +52,9 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
   public onCreate() {
     let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {
       width: "540px",
+      data: {
+        isIncome: this.isIncome,
+      },
       disableClose: true
     });
 

@@ -339,6 +339,16 @@
                       </mat-option>
                     </mat-select>
                   </mat-form-field>
+                  <div class="col-2">
+                    <custome-select
+                      (onSelect)="onCircleChartSelect($event)"
+                      className="col-12"
+                      [dropdownData]="listCircleChart"
+                      [label]="'Biểu đồ'"
+                      [defaultValue]="listChartId"
+                      [placeholder]="'Biểu đồ'"
+                    ></custome-select>
+                  </div>
                 </div>
               </div>
               <div class="row">
@@ -352,6 +362,11 @@
                     <div class="py-2 text-center" id="outcomeChart" style="height: 290px; max-width: 100%"></div>
                   </div>
                 </div> -->
+                <div *ngIf="circleChartData==null" class="col-12">
+                  <div class="card" style="font-family: 'Source Sans Pro'; font-size: 20px;">
+                    <span>Không có biểu đồ nào đang active</span>
+                </div>
+                </div>
                 <div class="col-6" *ngFor="let chart of circleChartData; let i = index">
                   <div class="card">
                     <app-pie-chart [chartData]="chart"></app-pie-chart>

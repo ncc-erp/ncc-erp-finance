@@ -27,6 +27,12 @@ namespace FinanceManagement.APIs.CircleCharts
             return await _circleChartManager.GetAll();
         }
 
+        [HttpGet]
+        public async Task<List<CircleChartDto>> GetAllActive()
+        {
+            return await _circleChartManager.GetAllActive();
+        }
+
         [HttpPost]
         public async Task<GridResult<CircleChartDto>> GetAllPaging(GridParam input)
         {

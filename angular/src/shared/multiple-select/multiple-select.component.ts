@@ -107,6 +107,7 @@ export class MultipleSelectComponent implements OnInit {
       }
       this.setListSelectedId();
     }
+    this.onSelectChange()
   }
 
   selectedOption(value) {

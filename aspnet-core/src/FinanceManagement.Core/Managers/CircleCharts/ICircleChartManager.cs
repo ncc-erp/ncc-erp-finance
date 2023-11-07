@@ -14,6 +14,7 @@ namespace FinanceManagement.Managers.CircleCharts
         IQueryable<CircleChartDto> IQGetCircleChart();
         Task<GridResult<CircleChartDto>> GetAllPaging(GridParam input);
         Task<List<CircleChartDto>> GetAll();
+        Task<List<CircleChartDto>> GetAllActive();
         Task<CreateCircleChartDto> Create(CreateCircleChartDto input);
         Task<UpdateCircleChartDto> Update(UpdateCircleChartDto input);
         Task<CircleChartDto> Get(int id);

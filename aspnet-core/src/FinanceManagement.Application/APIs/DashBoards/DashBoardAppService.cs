@@ -35,6 +35,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 
 namespace FinanceManagement.APIs.DashBoards
@@ -973,9 +974,9 @@ namespace FinanceManagement.APIs.DashBoards
         }
         [AbpAuthorize(PermissionNames.Dashboard)]
         [HttpPost]
-        public async Task<List<ResultCircleChartDto>> GetNewCircleChart(InputListCircleChartDto input)
+        public async Task<List<ResultCircleChartDto>> GetCircleChart(InputListCircleChartDto input)
         {
-            return await GetDataNewCircleChartByIds(input.CircleChartIds, input.StartDate, input.EndDate);
+            return await GetDataCircleChartByIds(input.CircleChartIds, input.StartDate, input.EndDate);
         }
         private async Task<ResultChartDto> GetDataNewChart([Required] DateTime startDate, [Required] DateTime endDate)
         {
@@ -1035,44 +1036,18 @@ namespace FinanceManagement.APIs.DashBoards
             return result;
         }
 
-        private async Task<List<ResultCircleChartDto>> GetDataNewCircleChartByIds(
+        private async Task<List<ResultCircleChartDto>> GetDataCircleChartByIds(
             List<long> circleChartIds, 
             [Required] DateTime startDate, 
             [Required] DateTime endDate)
-        { 
-            if (circleChartIds.IsNullOrEmpty())
-            {
-                circleChartIds = await WorkScope.GetAll<CircleChart>()
-                                .Where(s => s.IsActive == true)
-                                .Select(s => s.Id)
-                                .ToListAsync();
-            }
-            var totalResult = new List<ResultCircleChartDto>();
-            foreach (var id in circleChartIds)
-            {
-                var result = await GetDataNewCircleChartById(id, startDate, endDate);
-                totalResult.Add(result);
-            }
-            return totalResult;
-        }
-            private async Task<ResultCircleChartDto> GetDataNewCircleChartById(
-                [Required]long circleChartId, 
-                [Required] DateTime startDate, 
-                [Required] DateTime endDate)
         {
-            startDate = DateTimeUtils.GetFirstDayOfMonth(startDate);
-            endDate = DateTimeUtils.GetLastDayOfMonth(endDate);
+            var query = WorkScope.GetAll<CircleChart>().Where(s => s.IsActive == true);
 
-            var dicCurrencyConvert = _dashboardManager.GetDictionaryCurrencyConvertByYearMonth(startDate, endDate);
-            //TODO::ktra du tien chuyen doi trong thoi gian tim kiem 
-            _dashboardManager.CheckDictionaryCurrencyConvertByYearMonth(dicCurrencyConvert, startDate, endDate);
-            var treeOutcomingEntry = _commonManager.GetTreeOutcomingEntries();
-            var treeIncomingEntry = _commonManager.GetTreeIncomingEntries();
-            var outcomingEntryStatusEndId = await _commonManager.GetStatusIdByCode(FinanceManagementConsts.WORKFLOW_STATUS_END);
-
-            var circleChartInfo = await WorkScope.GetAll<CircleChart>()
-                .Where(s => s.Id == circleChartId)
-                .Where(s => s.IsActive == true)
+            if (circleChartIds != null && circleChartIds.Any())
+            {
+                query = query.Where(s => circleChartIds.Contains(s.Id));
+            }
+            var circleChartInfo = await query
                 .Select(s => new CircleChartInfoDto
                 {
                     Id = s.Id,
@@ -1083,30 +1058,58 @@ namespace FinanceManagement.APIs.DashBoards
                         Id = x.Id,
                         Name = x.Name,
                         Color = x.Color,
+                        Branch = new BranchInfoDto
+                        {
+                            BranchId = x.Branch.Id,
+                            BranchName = x.Branch.Name
+                        },
                         ClientIds = x.ClientIds,
                         InOutcomeTypeIds = x.InOutcomeTypeIds,
                     }).ToList()
-                }).FirstOrDefaultAsync();
+                }).ToListAsync();
+            if (circleChartInfo.IsNullOrEmpty())
+            {
+                return null;
+            }
+            var totalResult = new List<ResultCircleChartDto>();
+            foreach (var chartInfo in circleChartInfo)
+            {
+                var result = await GetDataCircleChartById(chartInfo, startDate, endDate);
+                totalResult.Add(result);
+            }
+            return totalResult;
+        }
+        private async Task<ResultCircleChartDto> GetDataCircleChartById(
+            CircleChartInfoDto chartInfo, 
+            [Required] DateTime startDate, 
+            [Required] DateTime endDate)
+        {
+            var dicCurrencyConvert = _dashboardManager.GetDictionaryCurrencyConvertByYearMonth(startDate, endDate);
+            //TODO::ktra du tien chuyen doi trong thoi gian tim kiem 
+            _dashboardManager.CheckDictionaryCurrencyConvertByYearMonth(dicCurrencyConvert, startDate, endDate);
+            var outcomingEntryStatusEndId = await _commonManager.GetStatusIdByCode(FinanceManagementConsts.WORKFLOW_STATUS_END);
 
             var result = new ResultCircleChartDto
                 {
-                    ChartName = circleChartInfo.Name,
+                    ChartName = chartInfo.Name,
                 };
-            foreach (var detail in circleChartInfo.Details)
+            foreach (var detail in chartInfo.Details)
             { 
                 var chart = new ResultCircleChartDetailDto();
                 chart.Name = detail.Name;
                 chart.Color = detail.Color;
                 var setEntryIds = new HashSet<long>();
-                if (circleChartInfo.IsIncome)
+                if (chartInfo.IsIncome)
                 {
+                    var treeIncomingEntry = _commonManager.GetTreeIncomingEntries();
                     _commonManager.GetEntryTypeIdsFromTree(detail.ListInOutcomeTypeIds, treeIncomingEntry, false, setEntryIds);
-                    chart.Value = _dashboardManager.GetCircleChartIncomingEntry(startDate, endDate, setEntryIds, dicCurrencyConvert).Sum();
+                    chart.Value = _dashboardManager.GetValueCircleChartIncomingEntry(startDate, endDate, setEntryIds, dicCurrencyConvert, detail.ListClientIds);
                 }
                 else
                 {
+                    var treeOutcomingEntry = _commonManager.GetTreeOutcomingEntries();
                     _commonManager.GetEntryTypeIdsFromTree(detail.ListInOutcomeTypeIds, treeOutcomingEntry, false, setEntryIds);
-                    chart.Value = _dashboardManager.GetCircleChartOutcomingEntry(startDate, endDate, setEntryIds, dicCurrencyConvert, outcomingEntryStatusEndId).Sum();
+                    chart.Value = _dashboardManager.GetValueCircleChartOutcomingEntry(startDate, endDate, setEntryIds, dicCurrencyConvert, outcomingEntryStatusEndId, detail.Branch.BranchId);
                 }
                 result.Details.Add(chart);
             }

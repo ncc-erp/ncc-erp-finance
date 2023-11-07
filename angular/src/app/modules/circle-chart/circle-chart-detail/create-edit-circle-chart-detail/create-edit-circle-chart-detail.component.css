@@ -39,14 +39,14 @@
 }
 
 .title {
-    font-size: 28px;
+    font-size: 20px;
     display: inline-block;
     background-color: unset !important;
     margin-bottom: 0px;
     padding: 0px;
 }
 .chart-type span {
-    font-size: 16px;
+    font-size: 14px;
     margin-left: 10px;
     position: relative;
 }

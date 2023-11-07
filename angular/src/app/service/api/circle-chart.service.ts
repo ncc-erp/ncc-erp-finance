@@ -17,6 +17,10 @@ export class CircleChartService extends BaseApiService {
     return 'CircleChart';
   }
 
+  getAllActive(): Observable<any> {
+    return this.http.get<any>(this.rootUrl + '/GetAllActive');
+}
+
   public DeActive(id:number): Observable<any> {
     return this.http.put<any>(this.rootUrl + `/DeActive?id=${id}`,{});
   }

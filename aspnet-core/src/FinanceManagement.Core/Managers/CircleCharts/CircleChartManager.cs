@@ -38,6 +38,10 @@ namespace FinanceManagement.Managers.CircleCharts
         {
             return await IQGetCircleChart().ToListAsync();
         }
+        public async Task<List<CircleChartDto>> GetAllActive()
+        {
+            return await IQGetCircleChart().Where(s => s.IsActive).ToListAsync();
+        }
 
         public async Task<GridResult<CircleChartDto>> GetAllPaging(GridParam input)
         {

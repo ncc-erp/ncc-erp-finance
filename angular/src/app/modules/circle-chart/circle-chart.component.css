@@ -1,5 +1,6 @@
 button {
     height: fit-content;
+    display: inline-block;
   }
 .hyperlink:hover {
     cursor: pointer;
@@ -9,9 +10,16 @@ button {
     color: #007bff;
 }
 .breadcrumb {
-    font-size: 28.8px;
+    font-size: 20px;
     display: inline-block;
     background-color: unset !important;
     margin-bottom: 0px;
     padding: 0px;
+}
+.stt {
+    width: 50px;
+}
+
+.header{
+    margin-bottom: 5px;
 }

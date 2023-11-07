@@ -31,8 +31,8 @@ constructor( http: HttpClient) {
     return this.http.get(this.rootUrl + `/GetNewChart?startDate=${startDate}&endDate=${endDate}&isByPeriod=${isByPeriod}`)
   }
 
-  GetNewCircleChart(input: InputListCircleChartDto):Observable<any>{
-    return this.http.post<any>(this.rootUrl + `/GetNewCircleChart`, input)
+  GetCircleChart(input: InputListCircleChartDto):Observable<any>{
+    return this.http.post<any>(this.rootUrl + `/GetCircleChart`, input)
   }
 
   GetPieChartIncoming(startDate:string, endDate:string, isByPeriod:boolean):Observable<any>{
