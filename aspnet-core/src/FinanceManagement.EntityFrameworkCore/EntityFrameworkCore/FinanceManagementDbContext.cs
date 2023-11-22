@@ -67,6 +67,8 @@ namespace FinanceManagement.EntityFrameworkCore
         public DbSet<FinanceReviewExplain> FinanceReviewExplains { get; set; }
         public DbSet<LineChart> LineCharts { get; set; }
         public DbSet<LineChartSetting> LineChartSettings { get; set; }
+        public DbSet<CircleChart> CircleCharts { get; set; }
+        public DbSet<CircleChartDetail> CircleChartDetails { get; set; }
 
         #region new version
         public DbSet<BTransaction> BTransactions { get; set; }

@@ -39,6 +39,7 @@ export abstract class AppComponentBase  {
     elementRef: ElementRef;
     optionAll: ValueAndNameModel = {value: AppConsts.VALUE_OPTIONS_ALL, name: "All"};
     subscriptions: Subscription[] = []
+    public listBreadCrumb: Object = []
     constructor(injector: Injector) {
         this.localization = injector.get(LocalizationService);
         this.permission = injector.get(PermissionCheckerService);

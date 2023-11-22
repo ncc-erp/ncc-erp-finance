@@ -10,3 +10,7 @@ button {
 .isActive {
   width: 60px;
 }
+
+.header{
+  margin-bottom: 5px;
+}

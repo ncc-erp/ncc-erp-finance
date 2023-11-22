@@ -25,6 +25,9 @@ using FinanceManagement.Managers.Commons;
 using FinanceManagement.Extension;
 using Abp.Collections.Extensions;
 using System.Linq.Expressions;
+using FinanceManagement.Managers.CircleChartDetails;
+using Newtonsoft.Json;
+using FinanceManagement.APIs.Commons.Dtos;
 
 namespace FinanceManagement.APIs.AccountTypes
 {
@@ -208,7 +211,7 @@ namespace FinanceManagement.APIs.AccountTypes
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Directory_OutcomingEntryType)]
-        public async Task<List<OutcomingEntryTypeDto>> GetAll(InputFilterOutcomingEntryTypeDto input)
+        public async Task<List<OutcomingEntryTypeDto>> GetAll(InputFilterEntryTypeDto input)
         {
             var allOutcoming = await WorkScope.GetAll<OutcomingEntryType>()
                 .Select(s => new OutcomingEntryTypeDto
@@ -231,8 +234,10 @@ namespace FinanceManagement.APIs.AccountTypes
             var treeHasRoot = _commonManager.GetTreeEntryWithRoot(allOutcoming as IEnumerable<OutputCategoryEntryType>);
 
             var outcomingEntryTypeIds = allOutcoming
-               .WhereIf(input.IsActive.HasValue, x => x.IsActive == input.IsActive)
-               .WhereIf(input.ExpenseType.HasValue, x => x.ExpenseType == input.ExpenseType)
+               .WhereIf(input.Status == StatusFilter.ACTIVE, x => x.IsActive == true)
+               .WhereIf(input.Status == StatusFilter.INACTIVE, x => x.IsActive == false)
+               .WhereIf(input.RevenueExpenseType == RevenueExpenseType.REAL_REVENUE_EXPENSE, x => x.ExpenseType == ExpenseType.REAL_EXPENSE)
+               .WhereIf(input.RevenueExpenseType == RevenueExpenseType.NON_REVENUE_EXPENSE, x => x.ExpenseType == ExpenseType.NON_EXPENSE)
                .WhereIf(!string.IsNullOrEmpty(input.SearchText), x => x.Name.ToLower().Contains(input.SearchText.ToLower()))
                .Select(x => x.Id)
                .ToList();
@@ -335,6 +340,28 @@ namespace FinanceManagement.APIs.AccountTypes
                 .ToListAsync();
 
             return await WorkScope.GetAll<OutcomingEntryType>().Where(x => existInChartSetting.Contains(x.Id))
+                        .OrderByDescending(x => x.CreationTime)
+                        .Select(x => new OutcomingEntryTypeDto
+                        {
+                            Id = x.Id,
+                            Name = x.Name,
+                            Code = x.Code,
+                            ExpenseType = x.ExpenseType,
+                            Level = x.Level,
+                            ParentId = x.ParentId,
+                            IsActive = x.IsActive
+                        }).ToListAsync();
+        }
+
+        [HttpGet]
+        public async Task<List<OutcomingEntryTypeDto>> GetExistOutComeInCircleChartDetail(long id)
+        {
+            var inOutComeTypeIds = WorkScope.Get<CircleChartDetail>(id).InOutcomeTypeIds;
+            var listInOutcomeTypeIds = (string.IsNullOrWhiteSpace(inOutComeTypeIds))
+                ? new List<long>()
+                : JsonConvert.DeserializeObject<List<long>>(inOutComeTypeIds);
+
+            return await WorkScope.GetAll<OutcomingEntryType>().Where(x => listInOutcomeTypeIds.Contains(x.Id))
                         .OrderByDescending(x => x.CreationTime)
                         .Select(x => new OutcomingEntryTypeDto
                         {
