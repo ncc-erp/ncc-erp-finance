@@ -8,7 +8,6 @@ using FinanceManagement.Entities;
 using FinanceManagement.Extension;
 using FinanceManagement.GeneralModels;
 using FinanceManagement.IoC;
-using FinanceManagement.Managers.IncomingEntries;
 using FinanceManagement.Managers.IncomingEntries.Dtos;
 using FinanceManagement.Managers.Users;
 using FinanceManagement.Paging;
@@ -27,11 +26,9 @@ namespace FinanceManagement.APIs.IncomingEntries
     public class IncomingEntryAppService : FinanceManagementAppServiceBase
     {
         private readonly IMyUserManager _myUserManager;
-        private readonly IIncomingEntryManager _incomingEntryManager;
-        public IncomingEntryAppService(IMyUserManager myUserManager, IIncomingEntryManager incomingEntryManager, IWorkScope workScope) : base(workScope)
+        public IncomingEntryAppService(IMyUserManager myUserManager, IWorkScope workScope) : base(workScope)
         {
             _myUserManager = myUserManager;
-            _incomingEntryManager = incomingEntryManager;
         }
 
         [HttpPost]
@@ -92,7 +89,7 @@ namespace FinanceManagement.APIs.IncomingEntries
         [AbpAuthorize(PermissionNames.Finance_IncomingEntry)]
         public async Task<GridResult<IncomingEntryDto>> GetAllPaging(IncomingEntryGridParam input)
         {
-            var query = _incomingEntryManager.BuildIncomingQuery().FiltersByIncomingEntryGridParam(input);
+            var query = BuildIncomingQuery().FiltersByIncomingEntryGridParam(input);
             var result = await query.GetGridResult(query, input);
             var creatorUserIds = result.Items.Where(s => s.CreationUserId.HasValue).Select(s => s.CreationUserId.Value);
             var lastModifiedIds = result.Items.Where(s => s.LastModifiedUserId.HasValue).Select(s => s.LastModifiedUserId.Value);
@@ -109,7 +106,7 @@ namespace FinanceManagement.APIs.IncomingEntries
         [AbpAuthorize(PermissionNames.Finance_IncomingEntry)]
         public async Task<List<GetTotalByCurrencyDto>> GetTotalByCurrency(IncomingEntryGridParam input)
         {
-            var query = _incomingEntryManager.BuildIncomingQuery().FiltersByIncomingEntryGridParam(input); ;
+            var query = BuildIncomingQuery().FiltersByIncomingEntryGridParam(input); ;
 
             var incomingEntries = await query.FilterByGridParam(input);
             var result = (from q in incomingEntries.AsEnumerable()
@@ -125,43 +122,43 @@ namespace FinanceManagement.APIs.IncomingEntries
             return result;
         }
 
-        //private IQueryable<IncomingEntryDto> BuildIncomingQuery()
-        //{
-        //    var query = (from ie in WorkScope.GetAll<IncomingEntry>().Include(x => x.IncomingEntryType).OrderByDescending(x => x.CreationTime)
-        //                 //join cc in WorkScope.GetAll<CurrencyConvert>() on ie.CurrencyId equals cc.CurrencyId into ccs
-        //                 //from cc in ccs.DefaultIfEmpty()
-        //                 join bt in WorkScope.GetAll<BankTransaction>()
-        //                      on ie.BankTransactionId equals bt.Id
-        //                 join ba in WorkScope.GetAll<BankAccount>() on bt.FromBankAccountId equals ba.Id
-        //                 join a in WorkScope.GetAll<Account>().Include(x => x.AccountType) on ba.AccountId equals a.Id
-        //                 select new IncomingEntryDto
-        //                 {
-        //                     Id = ie.Id,
-        //                     IncomingEntryTypeId = ie.IncomingEntryTypeId,
-        //                     IncomingEntryTypeName = ie.IncomingEntryType.Name,
-        //                     BankTransactionId = ie.BankTransactionId ?? 0,
-        //                     Name = ie.Name,
-        //                     AccountId = ie.AccountId ?? 0,
-        //                     AccountName = ie.Account.Name,
-        //                     BranchId = ie.BranchId,
-        //                     CurrencyId = ie.CurrencyId ?? ie.BTransactions.BankAccount.CurrencyId,
-        //                     CurrencyName = ie.Currency.Code ?? ie.BTransactions.BankAccount.Currency.Name,
-        //                     CurrencyCode = ie.Currency.Code ?? ie.BTransactions.BankAccount.Currency.Code,
-        //                     BranchName = ie.Branch.Name,
-        //                     Status = ie.Status,
-        //                     Value = ie.Value,
-        //                     //ValueToVND = ie.Value * cc.Value,
-        //                     Date = bt.TransactionDate,
-        //                     ClientAccountId = a.AccountType.Code == Constants.ACCOUNT_TYPE_CLIENT ? ba.AccountId : default,
-        //                     ClientName = a.AccountType.Code == Constants.ACCOUNT_TYPE_CLIENT ? ba.Account.Name : null,
-        //                     CreationUserId = ie.CreatorUserId,
-        //                     CreationTime = ie.CreationTime,
-        //                     LastModifiedTime = ie.LastModificationTime,
-        //                     LastModifiedUserId = ie.LastModifierUserId,
-        //                     RevenueCounted = ie.IncomingEntryType.RevenueCounted
-        //                 }).OrderByDescending(x => x.Date);
-        //    return query;
-        //}
+        private IQueryable<IncomingEntryDto> BuildIncomingQuery()
+        {
+            var query = (from ie in WorkScope.GetAll<IncomingEntry>().Include(x => x.IncomingEntryType).OrderByDescending(x => x.CreationTime)
+                             //join cc in WorkScope.GetAll<CurrencyConvert>() on ie.CurrencyId equals cc.CurrencyId into ccs
+                             //from cc in ccs.DefaultIfEmpty()
+                         join bt in WorkScope.GetAll<BankTransaction>()
+                              on ie.BankTransactionId equals bt.Id
+                         join ba in WorkScope.GetAll<BankAccount>() on bt.FromBankAccountId equals ba.Id
+                         join a in WorkScope.GetAll<Account>().Include(x => x.AccountType) on ba.AccountId equals a.Id
+                         select new IncomingEntryDto
+                         {
+                             Id = ie.Id,
+                             IncomingEntryTypeId = ie.IncomingEntryTypeId,
+                             IncomingEntryTypeName = ie.IncomingEntryType.Name,
+                             BankTransactionId = ie.BankTransactionId ?? 0,
+                             Name = ie.Name,
+                             AccountId = ie.AccountId ?? 0,
+                             AccountName = ie.Account.Name,
+                             BranchId = ie.BranchId,
+                             CurrencyId = ie.CurrencyId ?? ie.BTransactions.BankAccount.CurrencyId,
+                             CurrencyName = ie.Currency.Code ?? ie.BTransactions.BankAccount.Currency.Name,
+                             CurrencyCode = ie.Currency.Code ?? ie.BTransactions.BankAccount.Currency.Code,
+                             BranchName = ie.Branch.Name,
+                             Status = ie.Status,
+                             Value = ie.Value,
+                             //ValueToVND = ie.Value * cc.Value,
+                             Date = bt.TransactionDate,
+                             ClientAccountId = a.AccountType.Code == Constants.ACCOUNT_TYPE_CLIENT ? ba.AccountId : default,
+                             ClientName = a.AccountType.Code == Constants.ACCOUNT_TYPE_CLIENT ? ba.Account.Name : null,
+                             CreationUserId = ie.CreatorUserId,
+                             CreationTime = ie.CreationTime,
+                             LastModifiedTime = ie.LastModificationTime,
+                             LastModifiedUserId = ie.LastModifierUserId,
+                             RevenueCounted = ie.IncomingEntryType.RevenueCounted
+                         }).OrderByDescending(x => x.Date);
+            return query;
+        }
 
         private IQueryable<CurrencyConvert> IQueryCurrencyConvert()
         {
@@ -295,7 +292,7 @@ namespace FinanceManagement.APIs.IncomingEntries
         [HttpGet]
         public async Task<List<ClientInfo>> GetAllClient()
         {
-            return await _incomingEntryManager.BuildIncomingQuery()
+            return await BuildIncomingQuery()
                 .Where(s => s.ClientAccountId != default)
                 .Select(s => new ClientInfo
                 {
@@ -316,7 +313,7 @@ namespace FinanceManagement.APIs.IncomingEntries
                 using (var wb = new XLWorkbook())
                 {
                     var incomeWS = wb.Worksheets.Add("Income");
-                    var incomingEntries = await _incomingEntryManager.BuildIncomingQuery()
+                    var incomingEntries = await BuildIncomingQuery()
                         .FiltersByIncomingEntryGridParam(input)
                         .FilterByGridParam(input);
                     var totalIncome = await GetTotalByCurrency(input);

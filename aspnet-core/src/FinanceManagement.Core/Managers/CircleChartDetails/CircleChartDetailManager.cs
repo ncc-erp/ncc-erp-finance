@@ -12,6 +12,7 @@ using FinanceManagement.GeneralModels;
 using FinanceManagement.IoC;
 using FinanceManagement.Managers.CircleChartDetails.Dtos;
 using FinanceManagement.Managers.CircleCharts.Dtos;
+using FinanceManagement.Managers.Dashboards.Dtos;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
@@ -49,6 +50,7 @@ namespace FinanceManagement.Managers.CircleChartDetails
                         Color = x.Color,
                         ClientIds = x.ClientIds,
                         InOutcomeTypeIds = x.InOutcomeTypeIds,
+                        RevenueExpenseType = x.RevenueExpenseType,
                         Branch = new BranchInfoDto
                         {
                             BranchId = x.Branch.Id,

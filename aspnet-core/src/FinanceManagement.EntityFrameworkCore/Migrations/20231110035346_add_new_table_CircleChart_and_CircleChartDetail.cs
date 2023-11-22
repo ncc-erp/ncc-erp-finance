@@ -60,6 +60,7 @@ namespace FinanceManagement.Migrations
                     Name = table.Column<string>(maxLength: 500, nullable: true),
                     Color = table.Column<string>(nullable: true),
                     BranchId = table.Column<long>(nullable: true),
+                    RevenueExpenseType = table.Column<long>(nullable: true),
                     ClientIds = table.Column<string>(nullable: true),
                     InOutcomeTypeIds = table.Column<string>(nullable: true)
                 },

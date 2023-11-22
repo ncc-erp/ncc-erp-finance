@@ -1,4 +1,5 @@
 ﻿using Abp.Domain.Entities;
+using FinanceManagement.Enums;
 using FinanceManagement.GeneralModels;
 using System;
 using System.Collections.Generic;
@@ -15,8 +16,22 @@ namespace FinanceManagement.Entities.NewEntities
         [MaxLength(500)]
         public string Name { get; set; }
         public string Color { get; set; }
+        /// <summary>
+        /// null: không filter theo chi nhánh
+        /// khác null: filter theo branchId
+        /// </summary>
         public long? BranchId { get; set; }
+
+        /// <summary>
+        /// null: theo loại chi
+        /// NON_EXPENSE: chi không thực, không tính vào chi phí
+        /// REAL_EXPENSE: chi thực, tính vào chi phí
+        /// </summary>
+        public RevenueExpenseType? RevenueExpenseType { get; set; }
         public string ClientIds { get; set; }
+        /// <summary>
+        /// lưu dạng Json String, ví dụ: [1, 3, 100]
+        /// </summary>
         public string InOutcomeTypeIds { get; set; }
 
         #region Foreign Key

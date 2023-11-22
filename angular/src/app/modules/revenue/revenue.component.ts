@@ -6,6 +6,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { CreateEditRevenueComponent } from "./create-edit-revenue/create-edit-revenue.component";
 import { AppConsts, OPTION_ALL } from "@shared/AppConsts";
 import { StatusEnum } from "@shared/AppEnums";
+import { InputFilterEntryTypeDto } from "@app/service/model/common-DTO";
 
 @Component({
   selector: "app-revenue",
@@ -29,7 +30,7 @@ export class RevenueComponent extends AppComponentBase implements OnInit {
     super(injector);
   }
   outCommingList: any;
-  inputFilter: InputFilterRevenue = new InputFilterRevenue();
+  inputFilter: InputFilterEntryTypeDto = new InputFilterEntryTypeDto();
 
   ngOnInit(): void {
     this.subscriptions.push(
@@ -102,12 +103,3 @@ export class RevenueListDto {
   children: RevenuesDto[];
 }
 
-export class InputFilterRevenue {
-  constructor(){
-    this.isActive = true;
-    this.revenueCounted = "";
-  }
-  isActive?: boolean;
-  revenueCounted?: boolean | string;
-  searchText: string;
-}

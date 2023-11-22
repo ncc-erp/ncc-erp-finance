@@ -27,6 +27,7 @@ using Abp.Collections.Extensions;
 using System.Linq.Expressions;
 using FinanceManagement.Managers.CircleChartDetails;
 using Newtonsoft.Json;
+using FinanceManagement.APIs.Commons.Dtos;
 
 namespace FinanceManagement.APIs.AccountTypes
 {
@@ -210,7 +211,7 @@ namespace FinanceManagement.APIs.AccountTypes
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Directory_OutcomingEntryType)]
-        public async Task<List<OutcomingEntryTypeDto>> GetAll(InputFilterOutcomingEntryTypeDto input)
+        public async Task<List<OutcomingEntryTypeDto>> GetAll(InputFilterEntryTypeDto input)
         {
             var allOutcoming = await WorkScope.GetAll<OutcomingEntryType>()
                 .Select(s => new OutcomingEntryTypeDto
@@ -233,8 +234,10 @@ namespace FinanceManagement.APIs.AccountTypes
             var treeHasRoot = _commonManager.GetTreeEntryWithRoot(allOutcoming as IEnumerable<OutputCategoryEntryType>);
 
             var outcomingEntryTypeIds = allOutcoming
-               .WhereIf(input.IsActive.HasValue, x => x.IsActive == input.IsActive)
-               .WhereIf(input.ExpenseType.HasValue, x => x.ExpenseType == input.ExpenseType)
+               .WhereIf(input.Status == StatusFilter.ACTIVE, x => x.IsActive == true)
+               .WhereIf(input.Status == StatusFilter.INACTIVE, x => x.IsActive == false)
+               .WhereIf(input.RevenueExpenseType == RevenueExpenseType.REAL_REVENUE_EXPENSE, x => x.ExpenseType == ExpenseType.REAL_EXPENSE)
+               .WhereIf(input.RevenueExpenseType == RevenueExpenseType.NON_REVENUE_EXPENSE, x => x.ExpenseType == ExpenseType.NON_EXPENSE)
                .WhereIf(!string.IsNullOrEmpty(input.SearchText), x => x.Name.ToLower().Contains(input.SearchText.ToLower()))
                .Select(x => x.Id)
                .ToList();

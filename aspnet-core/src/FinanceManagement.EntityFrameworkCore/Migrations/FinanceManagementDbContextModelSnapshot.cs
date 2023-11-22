@@ -2736,6 +2736,9 @@ namespace FinanceManagement.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
 
+                    b.Property<long?>("RevenueExpenseType")
+                        .HasColumnType("bigint");
+
                     b.Property<int?>("TenantId")
                         .HasColumnType("int");
 
@@ -4410,7 +4413,7 @@ namespace FinanceManagement.Migrations
                         .HasForeignKey("BranchId");
 
                     b.HasOne("FinanceManagement.Entities.NewEntities.CircleChart", "CircleChart")
-                        .WithMany()
+                        .WithMany("CircleChartDetails")
                         .HasForeignKey("CircleChartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

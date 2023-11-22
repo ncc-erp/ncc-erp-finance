@@ -22,6 +22,7 @@ namespace FinanceManagement.APIs.CircleCharts
         }
 
         [HttpGet]
+        [AbpAuthorize(PermissionNames.Admin_CircleChart_View)]
         public async Task<List<CircleChartDto>> GetAll()
         {
             return await _circleChartManager.GetAll();
@@ -34,6 +35,7 @@ namespace FinanceManagement.APIs.CircleCharts
         }
 
         [HttpPost]
+        [AbpAuthorize(PermissionNames.Admin_CircleChart_View)]
         public async Task<GridResult<CircleChartDto>> GetAllPaging(GridParam input)
         {
             return await _circleChartManager.GetAllPaging(input);

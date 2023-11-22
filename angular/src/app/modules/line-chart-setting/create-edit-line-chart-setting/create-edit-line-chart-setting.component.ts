@@ -1,11 +1,12 @@
 import { expenditureDto } from './../../expenditure/expenditure.component';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { InputFilterRevenue, RevenuesDto } from '@app/modules/revenue/revenue.component';
+import { RevenuesDto } from '@app/modules/revenue/revenue.component';
 import { LinechartSettingService } from '@app/service/api/linechart-setting.service';
 import { RevenueService } from '@app/service/api/revenue.service';
 import { LineChartSettingDto } from '@app/service/model/linechartSetting.dto';
 import { ExpenditureService } from '@app/service/api/expenditure.service';
+import { StatusFilter } from '@shared/AppEnums';
 
 @Component({
   selector: 'app-create-edit-line-chart-setting',
@@ -40,7 +41,7 @@ export class CreateEditLineChartSettingComponent implements OnInit {
     private lineChartSettingService: LinechartSettingService) {
     this.chartType = chartSettingType
     if (data) {
-      this.inputFilter.isActive = true
+      this.inputFilter.status = StatusFilter.ACTIVE
       this.isEdit = true
       this.chartSetting = this.data
       this.title = `Chỉnh sửa chart setting: ${this.chartSetting.name}`
@@ -137,7 +138,7 @@ export class CreateEditLineChartSettingComponent implements OnInit {
   }
 
   onSelectActiveType() {
-    this.inputFilter.isActive = true;
+    this.inputFilter.status = StatusFilter.ACTIVE;
   }
 
   private onEmit() {
@@ -175,10 +176,10 @@ export enum chartSettingType {
 }
 export class InputFilter {
   constructor(){
-    this.isActive = true;
+    this.status = 0;
+    this.revenueExpenseType = 0;
   }
-  isActive?: boolean;
-  expenseType?: number;
-  revenueCounted: boolean;
+  status: number;
+  revenueExpenseType: number;
   searchText: string;
 }

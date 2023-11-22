@@ -21,6 +21,7 @@ using FinanceManagement.Extension;
 using Abp.Authorization;
 using FinanceManagement.Authorization;
 using FinanceManagement.Managers.CircleChartDetails.Dtos;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 namespace FinanceManagement.APIs.Commons
 {
@@ -111,33 +112,24 @@ namespace FinanceManagement.APIs.Commons
         }
 
         [HttpGet]
-        public async Task<List<ValueAndNameDto>> GetAllClient(bool isInActive = false)
+        public List<ValueAndNameDto> GetAllClient(bool isActive = true)
         {
-            return await WorkScope.GetAll<Account>()
+            return WorkScope.GetAll<Account>()
                                     .Where(x => x.Type == AccountTypeEnum.CLIENT)
-                                    .WhereIf(!isInActive, s => s.IsActive)
+                                    .WhereIf(isActive, s => s.IsActive)
                                     .Select(s => new ValueAndNameDto
                                     {
-                                        Name = s.Name + " [" + s.Code + "]",
+                                        Name = $"{s.Name} [{s.Code}] {(s.IsActive ? "" : "- Inactive")}",
                                         Value = s.Id,
+                                        IsActive = s.IsActive
                                     })
                                     .Distinct()
-                                    .ToListAsync();
+                                    .ToList()
+                                    .OrderByDescending(x => x.IsActive ? 1 : 0)
+                                    .ThenBy(x => x.Name)
+                                    .ToList();
         }
-        [HttpGet]
-        public async Task<List<ClientInfoDto>> GetAllClientInfo(bool isInActive = false)
-        {
-            return await WorkScope.GetAll<Account>()
-                                    .Where(x => x.Type == AccountTypeEnum.CLIENT)
-                                    .WhereIf(!isInActive, s => s.IsActive)
-                                    .Select(s => new ClientInfoDto
-                                    {
-                                        ClientName = s.Name + " [" + s.Code + "]",
-                                        ClientId = s.Id,
-                                    })
-                                    .Distinct()
-                                    .ToListAsync();
-        }
+        
         [HttpGet]
         public async Task<List<ValueAndNameDto>> GetAllAccountCompany(bool isShowAll)
         {

@@ -1,7 +1,7 @@
 <mat-form-field [ngClass]="classCustom" class="multi-select" appearance="outline">
   <mat-label >{{labelName}}</mat-label>
   <mat-select multiple #matSelect [(ngModel)]="listSelectedId" disableOptionCentering="true"
-    (openedChange)="handleOpenedChange($event)">
+    (openedChange)="handleOpenedChange($event)" [disabled]="disabled">
     <div class="action-select-all-delete">
       <div class="d-flex">
         <button class="btn btn-primary mr-10" (click)="handleSelectAll()">

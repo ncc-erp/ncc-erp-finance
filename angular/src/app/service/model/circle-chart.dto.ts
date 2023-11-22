@@ -1,3 +1,5 @@
+import { RevenueExpenseType } from "@shared/AppEnums"
+
 export interface CircleChartDto {
     id: number
     name: string
@@ -22,11 +24,15 @@ export interface CircleChartDetailInfoDto {
     circleChartId: number
     name: string
     color: string
+    revenueExpenseType: number
+    branchId: number
     branch: BranchInfoDto
     clients: ClientInfoDto[]
     inOutcomeTypes: InOutcomeTypeDto[]
     listClientIds: number[]
     listInOutcomeTypeIds: number[]
+    hideClient : boolean;
+    hideEntryType: boolean;
 }
 
 export interface ClientInfoDto {
@@ -50,6 +56,7 @@ export class CreateCircleChartDetailDto
     name: string
     color: string
     branchId: number
+    revenueExpenseType: number
 }
 
 export class UpdateCircleChartDetailDto
@@ -59,6 +66,7 @@ export class UpdateCircleChartDetailDto
     color: string
     branchId: number
     clientIds: number[]
+    revenueExpenseType: number
 }
 
 export class UpdateCircleChartInOutcomeTypeIdsDto
@@ -72,4 +80,28 @@ export class InputListCircleChartDto
     circleChartIds: number[]
     startDate: string
     endDate: string
+}
+
+export class ResultCircleChartDto
+{
+    id: number;
+    chartName: string;
+    isIncome: boolean;
+    details: ResultCircleChartDetailDto[];
+}
+export class ResultCircleChartDetailDto
+{
+    id: number;
+    circleChartId: number;
+    name: string;
+    value: number;
+    color: string;
+    branchId: number;
+    branchName: string;
+    revenueExpenseType: RevenueExpenseType;
+    clientIds: string;
+    inOutcomeTypeIds: string;
+    listClientIds: number[];
+    listInOutcomeTypeIds: number[];
+    circleChartDetailInfo: CircleChartDetailInfoDto
 }

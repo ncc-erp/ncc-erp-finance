@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FinanceManagement.Managers.IncomingEntries.Dtos
+namespace FinanceManagement.APIs.IncomingEntries.Dto
 {
     [AutoMapTo(typeof(IncomingEntry))]
     public class IncomingEntryDto: EntityDto<long>, IGeneralInfoAudited

@@ -4,7 +4,8 @@ import { Observable, throwError } from "rxjs";
 import { BaseApiService } from "./base-api.service";
 import { HttpClient } from "@angular/common/http";
 import { StatusEnum } from "@shared/AppEnums";
-import { InputFilterRevenue, RevenuesDto } from "@app/modules/revenue/revenue.component";
+import { RevenuesDto } from "@app/modules/revenue/revenue.component";
+import { InputFilterEntryTypeDto } from '../model/common-DTO';
 
 @Injectable({
   providedIn: "root",
@@ -17,7 +18,7 @@ export class RevenueService extends BaseApiService {
     return "IncomingEntryType";
   }
 
-  public getAllByStatus(input: InputFilterRevenue): Observable<ApiResponse<RevenuesDto[]>> {
+  public getAllByStatus(input: InputFilterEntryTypeDto): Observable<ApiResponse<RevenuesDto[]>> {
       return this.http.post<any>(this.rootUrl + `/GetAll`, input);
   }
 

@@ -43,13 +43,13 @@ cdkDragHandle>
                 <mat-form-field class="w-100 col-2" appearance="outline">
                     <mat-select
                       name="type"
-                      [(ngModel)]="inputFilter.isActive"
+                      [(ngModel)]="inputFilter.status"
                       placeholder="Select status"
                       (selectionChange)="onSelectType()"
                     >
-                      <mat-option value="">All</mat-option>
-                      <mat-option [value]="true">Active</mat-option>
-                      <mat-option [value]="false">Inactive</mat-option>
+                      <mat-option [value]="0">All</mat-option>
+                      <mat-option [value]="1">Active</mat-option>
+                      <mat-option [value]="2">Inactive</mat-option>
                     </mat-select>
                   </mat-form-field>
             </div>

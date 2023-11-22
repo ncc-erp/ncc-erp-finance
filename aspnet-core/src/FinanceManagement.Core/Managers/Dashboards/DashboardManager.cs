@@ -25,6 +25,7 @@ using Abp.MultiTenancy;
 using FinanceManagement.Managers.CircleChartDetails.Dtos;
 using FinanceManagement.Uitls;
 using FinanceManagement.Managers.IncomingEntries;
+using DocumentFormat.OpenXml.Bibliography;
 
 namespace FinanceManagement.Managers.Dashboards
 {
@@ -633,33 +634,36 @@ namespace FinanceManagement.Managers.Dashboards
             List<long> listClientIds
         )
         {
-            var incoms = _incomingEntryManager.BuildIncomingQuery()
+            var qIncoms = _ws.GetAll<IncomingEntry>()
                 .Select(x => new
                 {
                     x.IncomingEntryTypeId,
                     x.CurrencyId,
-                    x.ClientAccountId,
-                    TimeAt = x.Date,
+                    TimeAt = x.BankTransaction.TransactionDate.Date,
                     x.Value,
-                })
-               .WhereIf(listClientIds.Any(), x => x.ClientAccountId != 0 && listClientIds.Contains(x.ClientAccountId))
-               .WhereIf(incomingEntryTypeIds.Any(), x => incomingEntryTypeIds.Contains(x.IncomingEntryTypeId))
-               .Where(x => x.TimeAt >= startDate.Date && x.TimeAt <= endDate.Date)
-               .Select(x => new KeyValuePairChart
-               {
-                   Value = x.Value,
-                   Key = new CurrencyYearMonthDto
-                   {
-                       CurrencyId = x.CurrencyId,
-                       Month = x.TimeAt.Month,
-                       Year = x.TimeAt.Year
-                   }
-               })
+
+                });
+
+            qIncoms = qIncoms.Where(x => x.TimeAt >= startDate.Date && x.TimeAt <= endDate.Date);
+
+            qIncoms = qIncoms.WhereIf(incomingEntryTypeIds.Any(), x => incomingEntryTypeIds.Contains(x.IncomingEntryTypeId));
+
+            //var qIncom = qIncoms.WhereIf(listClientIds.Any(), x => x.ClientAccountId != 0 && listClientIds.Contains(x.ClientAccountId));
+
+            var incoms = qIncoms.Select(x => new KeyValuePairChart
+            {
+                Value = x.Value,
+                Key = new CurrencyYearMonthDto
+                {
+                    CurrencyId = x.CurrencyId,
+                    Month = x.TimeAt.Month,
+                    Year = x.TimeAt.Year
+                }
+            })
                .AsEnumerable()
                .GetBaseDataCharts(dicCurrencyConvert)
-               .Select(s => s.Value)
-               .Sum();
-            return incoms;
+               .Select(s => s.Value);
+            return incoms.Sum(); ;
         }
         public List<double> GetLineChartOutcomingEntry(
             DateTime startDate,
@@ -710,7 +714,7 @@ namespace FinanceManagement.Managers.Dashboards
             HashSet<long> outcomingEntryTypeIds,
             Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert,
             long statusEndId,
-            long branchId
+            long? branchId
         )
         {
             var outcoms = _ws.GetAll<OutcomingEntry>()
@@ -724,7 +728,7 @@ namespace FinanceManagement.Managers.Dashboards
                     x.CurrencyId
                 })
                 .Where(x => x.WorkflowStatusId == statusEndId)
-                .WhereIf(branchId != 0, x => x.BranchId == branchId)
+                .WhereIf(branchId.HasValue, x => x.BranchId == branchId)
                 .WhereIf(outcomingEntryTypeIds.Any(), x => outcomingEntryTypeIds.Contains(x.OutcomingEntryTypeId))
                 .Where(x => x.ReportDate.HasValue && (x.ReportDate.Value >= startDate && x.ReportDate.Value <= endDate))
                 .Select(x => new KeyValuePairChart
@@ -959,9 +963,10 @@ namespace FinanceManagement.Managers.Dashboards
 
             return result.Where(x => x.Value != 0).ToList();
         }
-        public async Task<List<BaoCaoChungDto>> GetDataBaoCaoChung(DateTime startDate, DateTime endDate, long branchId, ExpenseType? isExpense)
+        public async Task<List<BaoCaoChungDto>> GetDataBaoCaoChung(DateTime startDate, DateTime endDate, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, long branchId, ExpenseType? isExpense)
         {
-            var qtongChi = await GetAllRequestChiForBaoCao(startDate, endDate, branchId, isExpense);             
+
+            var qtongChi = await GetAllRequestChiForBaoCao(startDate, endDate, dicCurrencyConvert, branchId, isExpense);             
             var tongChiTheoChiNhanh = qtongChi
                 .GroupBy(x => new { x.BranchId, x.BranchName })
                 .Select(x => new BaoCaoChungDto
@@ -983,7 +988,7 @@ namespace FinanceManagement.Managers.Dashboards
                 })
                 .ToDictionary(x => x.BranchId, x => x.TotalVND);
             //lay theo thu
-            var qtongThu = await GetDataBaoCaoThu(startDate, endDate, null);
+            var qtongThu = await GetDataBaoCaoThu(startDate, endDate, dicCurrencyConvert, null);
 
             foreach (var dto in tongChiTheoChiNhanh)
             {
@@ -1002,7 +1007,11 @@ namespace FinanceManagement.Managers.Dashboards
 
             return tongChiTheoChiNhanh;
         }
-        public async Task<IEnumerable<GetThongTinRequestChi>> GetAllRequestChiForBaoCao(DateTime startDate, DateTime endDate, long branchId, ExpenseType? isExpense)
+        public async Task<IEnumerable<GetThongTinRequestChi>> GetAllRequestChiForBaoCao(
+            DateTime startDate, DateTime endDate, 
+            Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, 
+            long? branchId, ExpenseType? isExpense, 
+            HashSet<long> outcomingEntryTypeIds = null)
         {
             var statusEndId = await _commonManager.GetStatusIdByCode(FinanceManagementConsts.WORKFLOW_STATUS_END.Trim());
             //lay theo chi
@@ -1026,7 +1035,9 @@ namespace FinanceManagement.Managers.Dashboards
                     detail.Name = item.Name;
                     detail.ReportDate = item.ReportDate;
                     detail.ExchangeRate = item.ExchangeRate;
+                    detail.CurrencyId = item.CurrencyId;
                     detail.CurrencyName = item.CurrencyName;
+                    detail.OutcomingEntryTypeId = item.OutcomingEntryTypeId;
                     detail.OutcomingEntryType = item.OutcomingEntryType;
                 }
             };
@@ -1049,19 +1060,39 @@ namespace FinanceManagement.Managers.Dashboards
                     ReportDate = x.ReportDate,
                     ExchangeRate = x.ExchangeRate,
                     BranchName = x.BranchName,
+                    CurrencyId = x.CurrencyId,
                     CurrencyName = x.CurrencyName,
+                    OutcomingEntryTypeId = x.OutcomingEntryTypeId,
                     OutcomingEntryType = x.OutcomingEntryType
                 })
                 .ToList();
 
-            var requestChiUnio = requestChiHasDetail.Union(requestChiHasNotDetail).OrderBy(x => x.BranchName).ThenBy(x => x.ReportDate);
+            var requestChiUnio = requestChiHasDetail.Union(requestChiHasNotDetail).OrderBy(x => x.BranchName).ThenBy(x => x.ReportDate).AsQueryable();
 
-            if (branchId > 0)
+            if (branchId.HasValue && branchId.Value > 0)
             {
-                return requestChiUnio.Where(x => x.BranchId == branchId);
+                requestChiUnio = requestChiUnio.Where(x => x.BranchId == branchId);
             }
-
-            return requestChiUnio;
+            if (outcomingEntryTypeIds != null && outcomingEntryTypeIds.Any())
+            {
+                requestChiUnio = requestChiUnio.Where(x => outcomingEntryTypeIds.Contains(x.OutcomingEntryTypeId));
+            }
+            return requestChiUnio.Select(x => new GetThongTinRequestChi
+            {
+                BranchId = x.BranchId,
+                BranchName = x.BranchName,
+                Id = x.Id,
+                Name = x.Name,
+                Total = x.Total,
+                ExpenseType = x.ExpenseType,
+                ReportDate = x.ReportDate,
+                ExchangeRate = GetExchangeRateByDicCurrencyConvert(dicCurrencyConvert, x.CurrencyId, x.ReportDate),
+                CurrencyId = x.CurrencyId,
+                CurrencyName = x.CurrencyName,
+                OutcomingEntryTypeId = x.OutcomingEntryTypeId,
+                OutcomingEntryType = x.OutcomingEntryType,
+                Details = x.Details
+            }).OrderBy(x => x.ReportDate);
         }
         private IQueryable<GetThongTinRequestChi> IQOutcomingEntryForDashboard(long? statusEndId = null)
         {
@@ -1077,18 +1108,24 @@ namespace FinanceManagement.Managers.Dashboards
                     ExpenseType = x.OutcomingEntryType.ExpenseType ?? ExpenseType.NON_EXPENSE,
                     ReportDate = x.ReportDate,
                     ExchangeRate = x.Currency.CurrencyConverts.OrderByDescending(x => x.DateAt).Select(x => x.Value).FirstOrDefault(),
-                    CurrencyName = x.Currency.Name,
+                    CurrencyId = x.CurrencyId.Value, 
+                    CurrencyName = x.Currency.Name, 
+                    OutcomingEntryTypeId = x.OutcomingEntryTypeId,
                     OutcomingEntryType = x.OutcomingEntryType.Name,
                     Details = x.OutcomingEntryDetails.Select(s => new GetThongTinRequestChi
                     {
                         BranchId = s.BranchId,
-                        BranchName = s.Branch.Name,                        
-                        DetailName = s.Name,                        
-                        Total = s.Total,                        
+                        BranchName = s.Branch.Name,
+                        DetailName = s.Name,
+                        Total = s.Total,
                     })
                 });
         }
-        public async Task<List<BaoCaoThuDto>> GetDataBaoCaoThu(DateTime startDate, DateTime endDate,bool? isDoanhThu)
+        public async Task<List<BaoCaoThuDto>> GetDataBaoCaoThu(
+            DateTime startDate, DateTime endDate, 
+            Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, 
+            bool? isDoanhThu, List<long> listClientIds = null, 
+            HashSet<long> incomingEntryTypeIds = null)
         {
             var query = IQGetIncomingEntryForBaoCao()
             .Where(x => x.TransactionDate.HasValue ? (startDate.Date <= x.TransactionDate.Value.Date && x.TransactionDate.Value.Date <= endDate.Date) : false);
@@ -1097,8 +1134,33 @@ namespace FinanceManagement.Managers.Dashboards
             {
                 query = query.Where(x => x.IsDoanhThu == isDoanhThu.Value);
             }
+            if (listClientIds != null && listClientIds.Any())
+            {
+                query = query.Where(x => listClientIds.Contains(x.ClientId.Value));
+            }
+
+            if (incomingEntryTypeIds != null && incomingEntryTypeIds.Any()) {
+                query = query.Where(x => incomingEntryTypeIds.Contains(x.IncomingEntryTypeId));
+            }
 
             return await query
+                .Select(x => new BaoCaoThuDto
+                {
+                    Id = x.Id,
+                    ClientId = x.ClientId,
+                    ClientName = x.ClientName,
+                    Name = x.Name,
+                    IncomingEntryTypeId = x.IncomingEntryTypeId,
+                    IncomingEntryType = x.IncomingEntryType,
+                    IsDoanhThu = x.IsDoanhThu,
+                    ExchangeRate = GetExchangeRateByDicCurrencyConvert(dicCurrencyConvert, x.CurrencyId, x.TransactionDate),
+                    Value = x.Value,
+                    CurrencyId = x.CurrencyId,
+                    CurrencyName = x.CurrencyName,
+                    Month = x.Month,
+                    Year = x.Year,
+                    TransactionDate = x.TransactionDate,
+                })
                 .OrderBy(x => x.TransactionDate)
                 .ToListAsync();
         }
@@ -1108,12 +1170,15 @@ namespace FinanceManagement.Managers.Dashboards
                 .Select(x => new BaoCaoThuDto
                 {
                     Id = x.Id,
+                    ClientId = x.BTransactions.FromAccountId,
                     ClientName = x.BTransactions.FromAccount.Name,
                     Name = x.Name,
+                    IncomingEntryTypeId = x.IncomingEntryTypeId,
                     IncomingEntryType = x.IncomingEntryType.Name,
                     IsDoanhThu = x.IncomingEntryType.RevenueCounted,
                     ExchangeRate = x.Currency.CurrencyConverts.OrderByDescending(x => x.DateAt).Select(x => x.Value).FirstOrDefault(),
                     Value = x.Value,
+                    CurrencyId = x.CurrencyId.Value,
                     CurrencyName = x.Currency.Name,
                     Month = x.Invoices.Month,
                     Year = x.Invoices.Year,
@@ -1128,6 +1193,22 @@ namespace FinanceManagement.Managers.Dashboards
                 return response;
             }
             return new DebtStatisticFromHRMDto();
+        }
+        private static double GetExchangeRateByDicCurrencyConvert(Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, long currencyId, DateTime? date)
+        {
+            if (date.HasValue)
+            {
+                var key = new CurrencyYearMonthDto
+                {
+                    CurrencyId = currencyId,
+                    Year = date.Value.Year,
+                    Month = date.Value.Month
+                };
+
+                return dicCurrencyConvert.ContainsKey(key) ? dicCurrencyConvert[key] : 1;
+            }
+
+            return 1;
         }
 
         #endregion

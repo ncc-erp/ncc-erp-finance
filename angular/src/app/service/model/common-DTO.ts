@@ -39,3 +39,12 @@ export class BankAccoutForCompanyDto{
     name: string;
     currentBalance?: number;
 }
+export class InputFilterEntryTypeDto {
+    constructor(){
+      this.status = 0;
+      this.revenueExpenseType = 0;
+    }
+    status: number;
+    revenueExpenseType: number;
+    searchText: string;
+}

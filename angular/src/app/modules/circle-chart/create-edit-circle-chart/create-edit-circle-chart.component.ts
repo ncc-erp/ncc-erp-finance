@@ -1,7 +1,6 @@
 import { expenditureDto } from './../../expenditure/expenditure.component';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { InputFilterRevenue, RevenuesDto } from '@app/modules/revenue/revenue.component';
 import { CircleChartService } from '@app/service/api/circle-chart.service';
 import { RevenueService } from '@app/service/api/revenue.service';
 import { CircleChartDto } from '@app/service/model/circle-chart.dto';

@@ -165,6 +165,7 @@ import { CircleChartDetailComponent } from './modules/circle-chart/circle-chart-
 import { CreateEditCircleChartDetailComponent } from './modules/circle-chart/circle-chart-detail/create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
 import { SelectionTreeCircleChartComponent } from './modules/circle-chart/circle-chart-detail/create-edit-circle-chart-detail/selection-tree-circle-chart/selection-tree-circle-chart.component';
 import { PieChartComponent } from './home/pie-chart/pie-chart.component';
+import { DateSelectorDashboardComponent } from './home/date-selector-dashboard/date-selector-dashboard.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -331,6 +332,8 @@ import { PieChartComponent } from './home/pie-chart/pie-chart.component';
     SelectionTreeCircleChartComponent,
 
     PieChartComponent,
+
+    DateSelectorDashboardComponent,
 
   ],
   imports: [

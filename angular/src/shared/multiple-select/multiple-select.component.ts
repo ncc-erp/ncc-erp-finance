@@ -40,6 +40,7 @@ export class MultipleSelectComponent implements OnInit {
     this.listFilteredOption = this.listOption;
     this.listSelectedId = this.defaultValue;
     this.getListSelectedIdByListOption();
+    this.sortListFilteredOption()
   }
 
   ngOnInit(): void {
@@ -48,6 +49,18 @@ export class MultipleSelectComponent implements OnInit {
   getListSelectedIdByListOption() {
     this.listSelectedIdByListOption = [];
     this.listSelectedIdByListOption = this.listOption.map((item) => item.id);
+  }
+
+  sortListFilteredOption() {
+    let selectedOptions = this.listFilteredOption.filter(option =>
+      this.listSelectedId.includes(option.id)
+    );
+    console.log('selectedOptions' + selectedOptions)
+    let unselectedOptions = this.listFilteredOption.filter(option =>
+      !this.listSelectedId.includes(option.id)
+    );
+    console.log('unselectedOptions' + unselectedOptions)
+    this.listFilteredOption = selectedOptions.concat(unselectedOptions);
   }
 
   handleSearch(textSearch: string) {
@@ -69,9 +82,11 @@ export class MultipleSelectComponent implements OnInit {
     this.listFilteredOption = this.listOption.filter((item) =>
       item.name.toLowerCase().includes(textSearch)
     );
+    this.sortListFilteredOption()
   }
   setListSelectedIdCache() {
     this.listSelectedIdTemp = this.listSelectedId;
+    this.sortListFilteredOption();
   }
 
   handleSelectAll() {
@@ -122,6 +137,7 @@ export class MultipleSelectComponent implements OnInit {
     this.listSelectedId = this.listSelectedIdTemp;
   }
   onSelectChange() {
+    this.sortListFilteredOption()
     this.onChange.emit(this.listSelectedId);
   }
   onCancelSelect() {

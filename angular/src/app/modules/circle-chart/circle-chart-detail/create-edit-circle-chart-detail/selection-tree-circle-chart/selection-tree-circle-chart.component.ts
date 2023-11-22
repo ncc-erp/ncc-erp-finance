@@ -10,6 +10,7 @@ import { UpdateCircleChartInOutcomeTypeIdsDto } from '@app/service/model/circle-
 export class SelectionTreeCircleChartComponent implements OnInit {
   @Input() data: any
   @Input() selected?: boolean
+  @Input() disabled?: boolean
   @Input() chartDetail: any
   @Input() existList: number[] = []
   @Output() onSelectedItem = new EventEmitter();
@@ -26,25 +27,28 @@ export class SelectionTreeCircleChartComponent implements OnInit {
   }
 
   onSelect() {
-    this.onSelectedItem.emit()
+    if (!this.disabled) {
+      this.onSelectedItem.emit()
+    }
   }
   
   async onCheck(event) {
-    if (!event.checked) {
-      let input = {
-        id: this.chartDetail.id,
-        inOutcomeTypeIds: this.existList.concat(this.data.id)
-      } as UpdateCircleChartInOutcomeTypeIdsDto;
-  
-      this.circleChartDetailService.UpdateInOutcomeTypeIds(input).subscribe(rs => {
-        abp.notify.success("added new type to circle chart");
-        this.existList.push(this.data.id);
-        this.existListChange.emit(this.existList);
-        this.onSelectedItem.emit();
-      });
-    } else {
-      this.RemoveInOutComeType();
-      console.log("1")
+    if (!this.disabled) {
+      if (!event.checked) {
+        let input = {
+          id: this.chartDetail.id,
+          inOutcomeTypeIds: this.existList.concat(this.data.id)
+        } as UpdateCircleChartInOutcomeTypeIdsDto;
+    
+        this.circleChartDetailService.UpdateInOutcomeTypeIds(input).subscribe(rs => {
+          abp.notify.success("added new type to circle chart");
+          this.existList.push(this.data.id);
+          this.existListChange.emit(this.existList);
+          this.onSelectedItem.emit();
+        });
+      } else {
+        this.RemoveInOutComeType();
+      }
     }
   }
 
@@ -57,17 +61,19 @@ export class SelectionTreeCircleChartComponent implements OnInit {
 
 
   public RemoveInOutComeType() {
-    let input = {
-      id: this.chartDetail.id,
-      inOutcomeTypeIds: this.existList.filter(id => id !== this.data.id)
-    } as UpdateCircleChartInOutcomeTypeIdsDto;
-  
-    this.circleChartDetailService.UpdateInOutcomeTypeIds(input).subscribe(rs => {
-      abp.notify.success(`Remove type ${this.data.name}`);
-      this.existList = this.existList.filter(id => id !== this.data.id);
-      this.existListChange.emit(this.existList);
-      this.onRemoveItem.emit();
-    });
+    if (!this.disabled) {
+      let input = {
+        id: this.chartDetail.id,
+        inOutcomeTypeIds: this.existList.filter(id => id !== this.data.id)
+      } as UpdateCircleChartInOutcomeTypeIdsDto;
+    
+      this.circleChartDetailService.UpdateInOutcomeTypeIds(input).subscribe(rs => {
+        abp.notify.success(`Remove type ${this.data.name}`);
+        this.existList = this.existList.filter(id => id !== this.data.id);
+        this.existListChange.emit(this.existList);
+        this.onRemoveItem.emit();
+      });
+    }
   }
 
   onExistListChange(existList: number[]) {

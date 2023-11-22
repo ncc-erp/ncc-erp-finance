@@ -2,7 +2,7 @@
 cdkDragRootElement=".cdk-overlay-pane"
 cdkDragHandle>
     <div class="row justify-content-between">
-        <div class="col-8">
+        <div class="col-8 align-items-center">
             <div class="d-flex align-items-center">
                 <div class="title">
                     <span>{{title}}</span>
@@ -13,7 +13,10 @@ cdkDragHandle>
                 </div>
             </div>
         </div>
-        <div class="col-4 text-right">
+        <div class="col-4 d-flex justify-content-end align-items-center">
+            <button *ngIf="isShowEditBtn() && isEdit" 
+                    [ngClass]="isViewOnly ? 'btn btn-primary mr-3' : 'btn btn-success mr-3'" 
+                    (click)="onChangeEditMode()">{{ isViewOnly ? 'Edit' : 'View' }}</button>
             <i class="fas fa-times fa-lg pointer" mat-dialog-close></i>
         </div>
     </div>
@@ -26,61 +29,110 @@ cdkDragHandle>
         <div>
             <div class="form-edit form-group required row">
                 <label for="name" class="col-1 col-form-label">Tên:</label>
-                    <mat-form-field appearance="outline" class="col-5">
-                        <input name="name" type="text" matInput [(ngModel)]="chartDetail.name" required>
-                    </mat-form-field>
-                <label *ngIf="!isIncome" for="type" class="col-1 mt-2 ml-4">Chi nhánh:</label>
-                <mat-form-field *ngIf="!isIncome" appearance="outline" class="col-2">
-                    <mat-label>Branch</mat-label>
-                    <mat-select name="branchId" [(ngModel)]="branchInfo.branchId">
+                <mat-form-field appearance="outline" class="col-5">
+                    <input name="name" type="text" matInput [(ngModel)]="chartDetail.name" required [disabled]="isViewOnly">
+                </mat-form-field>
+                <label for="color" class="col-1 col-form-label">Màu:</label>
+                <input name="color" style="margin-top: 2px;" type="color" [(ngModel)]="chartDetail.color" [disabled]="isViewOnly">
+            </div>
+            <div *ngIf="!isIncome" class="form-edit row form-group">
+                <label for="type" class="col-1 col-form-label">Chi nhánh:</label>
+                <mat-form-field appearance="outline" class="col-5">
+                    <mat-select name="branchId" [(ngModel)]="branchInfo.branchId" placeholder="Tất cả" [disabled]="isViewOnly">
                         <mat-option>
                             <ngx-mat-select-search placeholderLabel="Search" [formControl]="branchSearch"
                             noEntriesFoundLabel= "No matching found"></ngx-mat-select-search>
                         </mat-option>
                         <mat-option [value]="null">
-                            All
+                            Tất cả
                         </mat-option>
                         <mat-option *ngFor="let branch of listBranch" [value]='branch.id'>
                             {{branch.name}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-                <label for="color" class="col-1 mt-2 ml-4">Màu:</label>
-                <input name="color" style="margin-top: 2px;" type="color" [(ngModel)]="chartDetail.color">
+                <label for="type" class="col-1 col-form-label">Chi thực/ không thực:</label>
+                <mat-form-field class="col-3" appearance="outline" style="padding-left: 0px;">
+                    <mat-select name="revenueExpenseType" 
+                    [(ngModel)]="chartDetail.revenueExpenseType"
+                    [disabled]="isViewOnly">
+                        <mat-option [value]="0">
+                            Không phân biệt
+                        </mat-option>
+                        <mat-option [value]="1">
+                            Chi thực
+                        </mat-option>
+                        <mat-option [value]="2">
+                            Chi không thực
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
             </div>
-            <div class="form-edit row form-group">
-                <label *ngIf="isIncome" for="type" class="col-1 col-form-label">Khách hàng:</label>
+            <div *ngIf="isIncome" class="form-edit row form-group">
+                <label for="type" class="col-1 col-form-label">Khách hàng:</label>
                 <app-multiple-select
-                class="client-selection col-11"
-                *ngIf="isIncome" 
-                labelName="Client"
+                class="client-selection col-5"               
                 name="listClient"
+                placeholder="Tất cả"
                 [listOption]="clientOptions"
                 [defaultValue]="listClientId"
                 (onChange)="onChangeListClientIdSelected($event)"
-                [disabled]="isLoading">
+                [disabled]="isLoading || isViewOnly">
                 </app-multiple-select>
+                <label for="type" class="col-1 col-form-label">Thu thực/ không thực:</label>
+                <mat-form-field class="col-3" appearance="outline" style="padding-left: 0px;">
+                    <mat-select name="revenueExpenseType" 
+                    [(ngModel)]="chartDetail.revenueExpenseType"
+                    [disabled]="isViewOnly">
+                        <mat-option [value]="0">
+                            Không phân biệt
+                        </mat-option>
+                        <mat-option [value]="1">
+                            Thu thực
+                        </mat-option>
+                        <mat-option [value]="2">
+                            Thu Không Thực
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
             </div>
         </div>
-
-        <div class="w-100">
+        <div class="w-100" *ngIf="chartDetail.revenueExpenseType === 0">
 
             <div class="row" style="margin-top: 20px;">
                 <div class="col-6 p-1">
                     <div class="d-flex align-items-center" style="height: 48px;">
-                        <div class="col-10">
+                        <div class="col-6">
                             <h5 class="text-center text-bold m-0">Danh sách Loại {{ isIncome ? 'Thu' : 'Chi' }}</h5>
                         </div>
-                        <div class="col-2">
+                        <div class="col-3">
                             <mat-form-field class="w-100 m-0 align-items-center" appearance="outline">
                                 <mat-select
                                 name="type"
-                                [(ngModel)]="inputFilter.isActive"
-                                placeholder="All"
+                                [(ngModel)]="inputFilter.revenueExpenseType"
                                 (selectionChange)="onSelectType()">
-                                <mat-option value="">All</mat-option>
-                                <mat-option [value]="true">Active</mat-option>
-                                <mat-option [value]="false">Inactive</mat-option>
+                                <mat-option [value]="0">
+                                    Tất cả
+                                </mat-option>
+                                <mat-option [value]="1">
+                                    {{ isIncome ? 'Thu thực' : 'Chi thực' }}
+                                </mat-option>
+                                <mat-option [value]="2">
+                                    {{ isIncome ? 'Thu không thực' : 'Chi không thực' }}
+                                </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-3">
+                            <mat-form-field class="w-100 m-0 align-items-center" appearance="outline">
+                                <mat-label>Status</mat-label>
+                                <mat-select
+                                name="type"
+                                [(ngModel)]="inputFilter.status"
+                                (selectionChange)="onSelectType()">
+                                <mat-option [value]="0">All</mat-option>
+                                <mat-option [value]="1">Active</mat-option>
+                                <mat-option [value]="2">Inactive</mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
@@ -91,7 +143,8 @@ cdkDragHandle>
                                 <app-selection-tree-circle-chart
                                 [existList]="existReferenceIds" 
                                 [chartDetail]="chartDetail"
-                                [data]="item" 
+                                [data]="item"
+                                [disabled]="isViewOnly"
                                 (onSelectedItem)="onSelect($event)"
                                 (onRemoveItem)="onRemove()" 
                                 (existListChange)="onExistListChange($event)"></app-selection-tree-circle-chart>
@@ -110,7 +163,8 @@ cdkDragHandle>
                                 [existList]="existReferenceIds" 
                                 [chartDetail]="chartDetail"
                                 [selected]="true" 
-                                [data]="item" 
+                                [data]="item"
+                                [disabled]="isViewOnly" 
                                 (onSelectedItem)="onSelect()"
                                 (onRemoveItem)="onRemove()"
                                 (existListChange)="onExistListChange($event)"></app-selection-tree-circle-chart>
@@ -122,8 +176,8 @@ cdkDragHandle>
 
         </div>
         <div class="d-flex justify-content-end">
-            <button class="btn btn-default mr-2" mat-dialog-close>Cancel</button>
-            <button class="btn btn-primary" [disabled]="!createSettingForm.valid" (click)="onSave()">Save</button>
+            <button class="btn btn-default mr-2" mat-dialog-close>{{isViewOnly ? 'Close' : 'Cancel'}}</button>
+            <button class="btn btn-primary" [style.display]="isViewOnly ? 'none' : 'flex'" [disabled]="!createSettingForm.valid"  (click)="onSave()">Save</button>
         </div>
     </form>
 </ng-template>
@@ -131,7 +185,7 @@ cdkDragHandle>
 <ng-template [ngIf]="!isEdit">
     <form #createSettingForm="ngForm" id="setting-wrapper">
         <div class="form-group required row">
-            <label for="name" class="col-3 mt-3 col-form-label">Tên:</label>
+            <label for="name" class="col-3 col-form-label">Tên:</label>
             <div class="col-9 required">
                 <mat-form-field appearance="outline" class="col-12">
                     <input name="name" type="text" matInput [(ngModel)]="chartDetail.name" required>
@@ -139,22 +193,62 @@ cdkDragHandle>
             </div>
         </div>
 
-        <div *ngIf="!isIncome" class="form-group row mt-3">
-            <label for="type" class="col-3 mt-3 col-form-label">Chi nhánh:</label>
+        <div *ngIf="!isIncome" class="form-group row">
+            <label for="branchId" class="col-3 col-form-label">Chi nhánh:</label>
             <div class="col-9">
                 <mat-form-field appearance="outline">
-                    <mat-label>Branch</mat-label>
-
-                    <mat-select name="branchId" [(ngModel)]="branchInfo.branchId">
+                    <mat-select name="branchId" 
+                    [(ngModel)]="branchInfo.branchId" 
+                    placeholder="Tất cả">
                         <mat-option>
                             <ngx-mat-select-search placeholderLabel="Search" [formControl]="branchSearch"
                             noEntriesFoundLabel= "No matching found"></ngx-mat-select-search>
                         </mat-option>
                         <mat-option [value]="null">
-                            All
+                            Tất cả
                         </mat-option>
                         <mat-option *ngFor="let branch of listBranch" [value]='branch.id'>
                             {{branch.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div *ngIf="isIncome" class="form-group required row">
+            <label for="revenueExpenseType" class="col-3 col-form-label">Thu thực/ không thực:</label>
+            <div class="col-9 required">
+                <mat-form-field appearance="outline">
+                    <mat-select name="revenueExpenseType" 
+                    [(ngModel)]="chartDetail.revenueExpenseType"
+                    required>
+                        <mat-option [value]="0">
+                            Không phân biệt
+                        </mat-option>
+                        <mat-option [value]="1">
+                            Thu thực
+                        </mat-option>
+                        <mat-option [value]="2">
+                            Thu Không Thực
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div *ngIf="!isIncome" class="form-group required row">
+            <label for="revenueExpenseType" class="col-3 col-form-label">Chi thực/ không thực:</label>
+            <div class="col-9 required">
+                <mat-form-field appearance="outline">
+                    <mat-select name="revenueExpenseType" 
+                    [(ngModel)]="chartDetail.revenueExpenseType"
+                    required>
+                        <mat-option [value]="0">
+                            Không phân biệt
+                        </mat-option>
+                        <mat-option [value]="1">
+                            Chi thực
+                        </mat-option>
+                        <mat-option [value]="2">
+                            Chi không thực
                         </mat-option>
                     </mat-select>
                 </mat-form-field>

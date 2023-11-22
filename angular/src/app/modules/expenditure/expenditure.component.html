@@ -56,13 +56,13 @@
               <mat-form-field class="w-100" appearance="outline">
                 <mat-select
                   name="type"
-                  [(ngModel)]="inputFilter.expenseType"
+                  [(ngModel)]="inputFilter.revenueExpenseType"
                   placeholder="Select type"
                   (selectionChange)="getAllData()"
                 >
-                  <mat-option value="">Tất cả</mat-option>
-                  <mat-option value="0">Tính vào chi phí thực tế</mat-option>
-                  <mat-option value="1">
+                  <mat-option [value]="0">Tất cả</mat-option>
+                  <mat-option [value]="1">Tính vào chi phí thực tế</mat-option>
+                  <mat-option [value]="2">
                     Không tính vào chi phí thực tế</mat-option
                   >
                 </mat-select>
@@ -74,13 +74,13 @@
                 <mat-label>Status</mat-label>
                 <mat-select
                   name="type"
-                  [(ngModel)]="inputFilter.isActive"
+                  [(ngModel)]="inputFilter.status"
                   placeholder="Select status"
                   (selectionChange)="getAllData()"
                 >
-                  <mat-option value="">All</mat-option>
-                  <mat-option [value]="true">Active</mat-option>
-                  <mat-option [value]="false">Inactive</mat-option>
+                  <mat-option [value]="0">All</mat-option>
+                  <mat-option [value]="1">Active</mat-option>
+                  <mat-option [value]="2">Inactive</mat-option>
                 </mat-select>
               </mat-form-field>
             </div>

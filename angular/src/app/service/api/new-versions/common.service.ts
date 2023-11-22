@@ -50,11 +50,8 @@ export class CommonService extends BaseApiService {
   getAllAccounTypeEnum(): Observable<ApiResponse<ValueAndNameModel[]>> {
     return this.http.get<any>(this.rootUrl + '/GetAllAccounTypeEnum');
   }
-  getAllClient(): Observable<ApiResponse<ValueAndNameModel[]>> {
-    return this.http.get<any>(this.rootUrl + '/GetAllClient');
-  }
-  getAllClientInfo(): Observable<ApiResponse<ClientInfoDto[]>> {
-    return this.http.get<any>(this.rootUrl + '/GetAllClientInfo');
+  getAllClient(isActive: boolean = true): Observable<ApiResponse<ValueAndNameModel[]>> {
+    return this.http.get<any>(this.rootUrl + `/GetAllClient?isActive=${isActive}`);
   }
   getBTransactionOptions(): Observable<ApiResponse<BTransactionDto[]>> {
     return this.http.get<any>(this.rootUrl + '/GetBTransactionOptions');

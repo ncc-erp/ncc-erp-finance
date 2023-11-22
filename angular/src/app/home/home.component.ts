@@ -19,9 +19,11 @@ import { AppConsts } from '@shared/AppConsts';
 import { DetailBaocaoThuComponent } from './detail-baocao-thu/detail-baocao-thu.component';
 import { DetailBaocaoChiComponent } from './detail-baocao-chi/detail-baocao-chi.component';
 import { DetailNhanvienNoComponent } from './detail-nhanvien-no/detail-nhanvien-no.component';
-import { CircleChartDto, InputListCircleChartDto } from '@app/service/model/circle-chart.dto';
+import { CircleChartDto, InputListCircleChartDto, ResultCircleChartDto } from '@app/service/model/circle-chart.dto';
 import { CircleChartService } from '@app/service/api/circle-chart.service';
 import { IOption } from '@shared/components/custome-select/custome-select.component';
+import { DateSelectorHomeEnum } from '@shared/AppEnums';
+import { DateTimeSelectorHome } from './date-selector-dashboard/date-selector-dashboard.component';
 
 @Component({
   templateUrl: './home.component.html',
@@ -35,7 +37,7 @@ export class HomeComponent extends AppComponentBase {
   tableData = {} as any;
   outcomeData = []
   incomeData = []
-  circleChartData = []
+  circleChartData: ResultCircleChartDto[]
   listChartId: number[] = []
   statusBox = {} as totalStatusDto
   cashFlowData = {
@@ -60,7 +62,12 @@ export class HomeComponent extends AppComponentBase {
   endDate = new FormControl(moment())
   startDate = new FormControl(moment());
   listCircleChart: IOption[] = []
-  
+
+  defaultDateFilterTypeBaoCaoThuChi: DateSelectorHomeEnum = DateSelectorHomeEnum.MONTH;
+  searchWithDateTimeBaoCaoThuChi = {} as DateTimeSelectorHome;
+
+  defaultDateFilterTypeCircleChart: DateSelectorHomeEnum = DateSelectorHomeEnum.MONTH;
+  searchWithDateTimeCircleChart = {} as DateTimeSelectorHome;
 
   setEndDate(normalizedMonthAndYear: moment.Moment, datepicker: MatDatepicker<moment.Moment>) {
     const ctrlValue: moment.Moment = moment();
@@ -116,7 +123,6 @@ export class HomeComponent extends AppComponentBase {
             this.endDate.setValue(this.baoCaoToDate)
           }
           this.baoCaoFromDate = period.startDate         
-          this.getDataBaoCaoChung()
           this.overviewBTransactionStatistics()
           this.overviewOutcomingEntryStatistics()
           this.getDataForLineChart()
@@ -335,95 +341,95 @@ export class HomeComponent extends AppComponentBase {
   }
 
 
-  buildIncomeChart() {
-    var chartDom = document.getElementById('incomeChart');
-    var myChart = echarts.init(chartDom);
-    var option;
-    option = {
-      title: {
-        text: this.incomeData.length > 0 ? 'Thu' : `No data `,
+  // buildIncomeChart() {
+  //   var chartDom = document.getElementById('incomeChart');
+  //   var myChart = echarts.init(chartDom);
+  //   var option;
+  //   option = {
+  //     title: {
+  //       text: this.incomeData.length > 0 ? 'Thu' : `No data `,
 
-        left: 'center'
-      },
-      tooltip: {
-        trigger: 'item',
-      },
-      legend: {
-        orient: 'horizontal',
-        bottom: 0,
-        data: this.incomeData?.map(item => item.name)
-      },
-      toolbox: {
-        feature: {
-          saveAsImage: {
-            title: ""
-          }
-        }
-      },
-      series: [
-        {
-          type: 'pie',
-          radius: '65%',
-          center: ['50%', '50%'],
-          selectedMode: 'single',
-          data: this.incomeData,
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-          }
-        }
-      ]
-    };
-    option && myChart.setOption(option);
-  }
+  //       left: 'center'
+  //     },
+  //     tooltip: {
+  //       trigger: 'item',
+  //     },
+  //     legend: {
+  //       orient: 'horizontal',
+  //       bottom: 0,
+  //       data: this.incomeData?.map(item => item.name)
+  //     },
+  //     toolbox: {
+  //       feature: {
+  //         saveAsImage: {
+  //           title: ""
+  //         }
+  //       }
+  //     },
+  //     series: [
+  //       {
+  //         type: 'pie',
+  //         radius: '65%',
+  //         center: ['50%', '50%'],
+  //         selectedMode: 'single',
+  //         data: this.incomeData,
+  //         emphasis: {
+  //           itemStyle: {
+  //             shadowBlur: 10,
+  //             shadowOffsetX: 0,
+  //             shadowColor: 'rgba(0, 0, 0, 0.5)'
+  //           }
+  //         }
+  //       }
+  //     ]
+  //   };
+  //   option && myChart.setOption(option);
+  // }
 
-  buildOutcomeChart() {
-    var chartDom = document.getElementById('outcomeChart');
-    var myChart = echarts.init(chartDom);
-    var option;
-    option = {
-      title: {
-        text: this.outcomeData.length > 0 ? 'Chi' : `No data `,
-        left: 'center'
-      },
-      tooltip: {
-        trigger: 'item',
-      },
-      legend: {
-        orient: 'horizontal',
-        bottom: 0,
-        data: this.outcomeData?.map(item => item.name)
-      },
-      toolbox: {
-        feature: {
-          saveAsImage: {
-            title: ""
-          }
-        }
-      },
-      series: [
-        {
-          type: 'pie',
-          radius: '65%',
-          center: ['50%', '50%'],
-          selectedMode: 'single',
-          data: this.outcomeData
-          ,
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)'
-            }
-          }
-        }
-      ]
-    };
-    option && myChart.setOption(option);
-  }
+  // buildOutcomeChart() {
+  //   var chartDom = document.getElementById('outcomeChart');
+  //   var myChart = echarts.init(chartDom);
+  //   var option;
+  //   option = {
+  //     title: {
+  //       text: this.outcomeData.length > 0 ? 'Chi' : `No data `,
+  //       left: 'center'
+  //     },
+  //     tooltip: {
+  //       trigger: 'item',
+  //     },
+  //     legend: {
+  //       orient: 'horizontal',
+  //       bottom: 0,
+  //       data: this.outcomeData?.map(item => item.name)
+  //     },
+  //     toolbox: {
+  //       feature: {
+  //         saveAsImage: {
+  //           title: ""
+  //         }
+  //       }
+  //     },
+  //     series: [
+  //       {
+  //         type: 'pie',
+  //         radius: '65%',
+  //         center: ['50%', '50%'],
+  //         selectedMode: 'single',
+  //         data: this.outcomeData
+  //         ,
+  //         emphasis: {
+  //           itemStyle: {
+  //             shadowBlur: 10,
+  //             shadowOffsetX: 0,
+  //             shadowColor: 'rgba(0, 0, 0, 0.5)'
+  //           }
+  //         }
+  //       }
+  //     ]
+  //   };
+  //   option && myChart.setOption(option);
+  // }
 
   getDataForPieChart(fromDate, toDate) {
     // this.isLoadingChart = true
@@ -469,17 +475,46 @@ export class HomeComponent extends AppComponentBase {
     this.changeView();
   }
 
+  getCircleChartActive(){
+    this.circleChartService.getAllActive().subscribe((data) => {
+      this.listCircleChart = data.result.map(item => {
+        item.name = item.name;
+        item.value = item.id;
+        return item;
+      })
+    })
+  }
+
+  onCircleChartSelect(ids: number[]) {
+    this.listChartId = ids;
+    this.getDataForPieChart(this.fromDate, this.toDate)
+  }
+
+  onRefreshCircleChart(){
+    this.getDataForPieChart(this.fromDate, this.toDate)
+  }
+
+  onDateChangeCircleChart(event: DateTimeSelectorHome){
+    let data = event;
+    this.searchWithDateTimeCircleChart = data;
+    this.defaultDateFilterTypeCircleChart = data.dateType;
+    this.searchWithDateTimeCircleChart.dateType = data.dateType
+    this.fromDate = moment(this.searchWithDateTimeCircleChart.fromDate).format("YYYY-MM-DD");
+    this.toDate = moment(this.searchWithDateTimeCircleChart.toDate).format("YYYY-MM-DD")
+    this.getDataForPieChart(this.fromDate, this.toDate)
+  }
+
 
   changeView(reset?: boolean, fDate?: any, tDate?: any) {
     if (reset) {
       this.activeView = 0;
     }
     let fromDate, toDate;
-    // if (this.viewChange.value === this.APP_CONSTANT.TypeViewHomePage.Week) {
-    //   fromDate = moment().startOf('isoWeek').add(this.activeView, 'w');
-    //   toDate = moment(fromDate).endOf('isoWeek');
-    //   this.typeDate = 'Week';
-    // }
+    if (this.viewChange.value === this.APP_CONSTANT.TypeViewHomePage.Week) {
+      fromDate = moment().startOf('isoWeek').add(this.activeView, 'w');
+      toDate = moment(fromDate).endOf('isoWeek');
+      this.typeDate = 'Week';
+    }
     if (this.viewChange.value === this.APP_CONSTANT.TypeViewHomePage.Month) {
       fromDate = moment().startOf('M').add(this.activeView, 'M');
       toDate = moment(fromDate).endOf('M');
@@ -510,11 +545,11 @@ export class HomeComponent extends AppComponentBase {
       toDate = moment(fromDate).endOf('y');
       this.typeDate = 'Years';
     }
-    // if (this.viewChange.value == this.APP_CONSTANT.TypeViewHomePage.AllTime) {
-    //   fromDate = '';
-    //   toDate = '';
-    //   this.distanceFromAndToDate = 'All Time';
-    // }
+    if (this.viewChange.value == this.APP_CONSTANT.TypeViewHomePage.AllTime) {
+      fromDate = '';
+      toDate = '';
+      this.distanceFromAndToDate = 'All Time';
+    }
     if (this.viewChange.value == this.APP_CONSTANT.TypeViewHomePage.CustomTime) {
       fromDate = '';
       toDate = '';
@@ -561,17 +596,12 @@ export class HomeComponent extends AppComponentBase {
     this.fromDate = fromDate;
     this.toDate = toDate;
   }
-  
-  fromDateCustomTime: any;
-  toDateCustomTime: any;
 
   showPopup(): void {
     let popup = this.dialog.open(PopupComponent);
     popup.afterClosed().subscribe(result => {
       if (result != undefined) {
         if (result.result) {
-          this.fromDateCustomTime = result.data.fromDateCustomTime;
-          this.toDateCustomTime = result.data.toDateCustomTime;
           this.changeView(false, result.data.fromDateCustomTime, result.data.toDateCustomTime);
         }
       }
@@ -635,6 +665,16 @@ export class HomeComponent extends AppComponentBase {
 
   onBaoCaoFilter() {
     this.getDataBaoCaoChung()
+  }
+
+  onDateChangeBaoCaoThuChi(event: DateTimeSelectorHome){
+    let data = event;
+    this.searchWithDateTimeBaoCaoThuChi = data;
+    this.defaultDateFilterTypeBaoCaoThuChi = data.dateType;
+    this.searchWithDateTimeBaoCaoThuChi.dateType = data.dateType;
+    this.baoCaoFromDate = this.searchWithDateTimeBaoCaoThuChi.fromDate
+    this.baoCaoToDate = this.searchWithDateTimeBaoCaoThuChi.toDate
+    this.getDataBaoCaoChung();
   }
 
   getExpenditureRequestUrl(param) {
@@ -726,21 +766,6 @@ export class HomeComponent extends AppComponentBase {
       width: "1200px",
       data: this.debtStatistic
     })
-  }
-
-  getCircleChartActive(){
-    this.circleChartService.getAllActive().subscribe((data) => {
-      this.listCircleChart = data.result.map(item => {
-        item.name = item.name;
-        item.value = item.id;
-        return item;
-      })
-    })
-  }
-
-  onCircleChartSelect(ids: number[]) {
-    this.listChartId = ids;
-    this.changeView(false, this.fromDateCustomTime, this.toDateCustomTime);
   }
 }
 export class totalStatusDto {

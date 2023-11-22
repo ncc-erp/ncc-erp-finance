@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using FinanceManagement.Enums;
 
 namespace FinanceManagement.Managers.CircleChartDetails.Dtos
 {
@@ -14,5 +15,6 @@ namespace FinanceManagement.Managers.CircleChartDetails.Dtos
         public string Name { get; set; }
         public long? BranchId { get; set; }
         public string Color { get; set; }
+        public RevenueExpenseType? RevenueExpenseType { get; set; }
     }
 }

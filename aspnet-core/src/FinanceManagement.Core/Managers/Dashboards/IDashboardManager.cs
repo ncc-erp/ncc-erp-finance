@@ -54,16 +54,14 @@ namespace FinanceManagement.Managers.Dashboards
         Dictionary<CurrencyYearMonthDto, double> GetDictionaryCurrencyConvertByYearMonth(DateTime startDate, DateTime endDate);
         void CheckDictionaryCurrencyConvertByYearMonth(Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, DateTime startDate, DateTime endDate);
         List<double> GetLineChartIncomingEntry(DateTime startDate, DateTime endDate, HashSet<long> incomingEntryTypeIds, IEnumerable<string> labels, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert);
-        double GetValueCircleChartIncomingEntry(DateTime startDate, DateTime endDate, HashSet<long> incomingEntryTypeIds, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, List<long> listClientIds);
         List<double> GetLineChartOutcomingEntry(DateTime startDate, DateTime endDate, HashSet<long> outcomingEntryTypeIds, IEnumerable<string> labels, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, long statusEndId);
-        double GetValueCircleChartOutcomingEntry(DateTime startDate, DateTime endDate, HashSet<long> outcomingEntryTypeIds, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, long statusEndId, long branchId);
         NewChartDto GetBarChartIncoming(DateTime startDate, DateTime endDate, IEnumerable<string> labels, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert);
         NewChartDto GetBarChartOutcomingEntry(DateTime startDate, DateTime endDate, IEnumerable<string> labels, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, long statusEndId);
         Task<List<PieChartDto>> GetPieChartIncoming(long? rootId, DateTime startDate, DateTime endDate);
         Task<List<PieChartDto>> GetPieChartOutcoming(long? rootId, DateTime startDate, DateTime endDate);
-        Task<List<BaoCaoChungDto>> GetDataBaoCaoChung(DateTime startDate, DateTime endDate, long branchId, ExpenseType? isExpense);
-        Task<IEnumerable<GetThongTinRequestChi>> GetAllRequestChiForBaoCao(DateTime startDate, DateTime endDate, long branchId, ExpenseType? isExpense);
-        Task<List<BaoCaoThuDto>> GetDataBaoCaoThu(DateTime startDate, DateTime endDate, bool? isDoanhThu);
+        Task<List<BaoCaoChungDto>> GetDataBaoCaoChung(DateTime startDate, DateTime endDate, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, long branchId, ExpenseType? isExpense);
+        Task<IEnumerable<GetThongTinRequestChi>> GetAllRequestChiForBaoCao(DateTime startDate, DateTime endDate, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, long? branchId, ExpenseType? isExpense, HashSet<long> outcomingEntryTypeIds = null);
+        Task<List<BaoCaoThuDto>> GetDataBaoCaoThu(DateTime startDate, DateTime endDate, Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert, bool? isDoanhThu, List<long> listClientIds = null, HashSet<long> incomingEntryTypeIds = null);
         Task<DebtStatisticFromHRMDto> GetHRMDebtStatistic(int? tenantId);
 
         //Task GetDataBaoCaoChi();

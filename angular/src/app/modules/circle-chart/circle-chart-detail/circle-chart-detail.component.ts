@@ -3,10 +3,11 @@ import { Component, Injector, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
-import { CircleChartInfoDto } from '@app/service/model/circle-chart.dto';
+import { CircleChartDetailInfoDto, CircleChartInfoDto } from '@app/service/model/circle-chart.dto';
 import { AppComponentBase } from '@shared/app-component-base';
 import { CircleChartDetailService } from '../../../service/api/circle-chart-detail.service';
 import { CreateEditCircleChartDetailComponent } from './create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
+import { RevenueExpenseType } from '@shared/AppEnums';
 
 
 @Component({
@@ -38,6 +39,10 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
   refresh(id): void {
     this.circleChartDetailService.GetCircleChartDetailsByChartId(id).subscribe((item) => {
       this.circleChartInfo = item.result;
+      this.circleChartInfo.details?.forEach(item => {
+        item.hideClient = false;
+        item.hideEntryType = false;
+      })
       this.isIncome = item.result.isIncome;
       this.listBreadCrumb = [
         {name: '<i class="fas fa-home fa-l"></i>',url:''}, 
@@ -63,13 +68,14 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
     });
   }
 
-  public onEdit(setting: CircleChartInfoDto) {
+  public onEdit(setting: CircleChartDetailInfoDto) {
     let item = { ...setting };
     let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {
       width: "70vw",
       data: {
         item: item,
         isIncome: this.isIncome,
+        isViewOnly: false
       },
       disableClose: true,
       
@@ -80,7 +86,25 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
     });
   }
 
-  protected delete(entity: CircleChartInfoDto): void {
+  public onView(setting: CircleChartDetailInfoDto) {
+    let item = { ...setting };
+    let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {
+      width: "70vw",
+      data: {
+        item: item,
+        isIncome: this.isIncome,
+        isViewOnly: true
+      },
+      disableClose: true,
+      
+    });
+
+    ref.afterClosed().subscribe((rs) => {
+      this.refresh(this.paramId);
+    });
+  }
+
+  protected delete(entity: CircleChartDetailInfoDto): void {
     abp.message.confirm(`Delete detail: ${entity.name}`, "", (rs) => {
       if(rs){
         this.circleChartDetailService.delete(entity.id).subscribe((rs) => {
@@ -92,8 +116,48 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
       }
     });
   }
+
+  toggleEntryType(item){
+    item.hideEntryType = !item.hideEntryType;
+    console.log(item.hideEntryType)
+  }
+
+  toggleClient(item){
+    item.hideClient = !item.hideClient;
+    console.log(item.hideClient)
+  }
+
+  getRevenueExpenseTypeText(revenueExpenseType: RevenueExpenseType): string {
+    if (this.isIncome){
+      switch (revenueExpenseType) {
+        case RevenueExpenseType.REAL_REVENUE_EXPENSE:
+          return 'Thu thực';
+        case RevenueExpenseType.NON_REVENUE_EXPENSE:
+          return 'Thu không thực';
+        case RevenueExpenseType.ALL_REVENUE_EXPENSE:
+          return 'Không phân biệt';
+        default:
+          return '';
+      }
+    } else{
+      switch (revenueExpenseType) {
+        case RevenueExpenseType.REAL_REVENUE_EXPENSE:
+          return 'Chi thực';
+        case RevenueExpenseType.NON_REVENUE_EXPENSE:
+          return 'Chi không thực';
+        case RevenueExpenseType.ALL_REVENUE_EXPENSE:
+          return 'Không phân biệt';
+        default:
+          return '';
+      }
+    }
+  }
+
   isShowCreateBtn(){
     return this.isGranted(PERMISSIONS_CONSTANT.Admin_CircleChart_CircleChartDetail_Create);
+  }
+  isShowViewBtn(){
+    return this.isGranted(PERMISSIONS_CONSTANT.Admin_CircleChart_CircleChartDetail_View);
   }
   isShowEditBtn(){
     return this.isGranted(PERMISSIONS_CONSTANT.Admin_CircleChart_CircleChartDetail_Edit);

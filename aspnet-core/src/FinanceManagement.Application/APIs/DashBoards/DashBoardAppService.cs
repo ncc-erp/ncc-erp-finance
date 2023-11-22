@@ -1,7 +1,9 @@
 ﻿using Abp.Authorization;
 using Abp.Collections.Extensions;
 using Abp.UI;
+using Aspose.Pdf.Text;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Office2016.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -976,7 +978,7 @@ namespace FinanceManagement.APIs.DashBoards
         [HttpPost]
         public async Task<List<ResultCircleChartDto>> GetCircleChart(InputListCircleChartDto input)
         {
-            return await GetDataCircleChartByIds(input.CircleChartIds, input.StartDate, input.EndDate);
+            return await GetDataCircleCharts(input.CircleChartIds, input.StartDate, input.EndDate);
         }
         private async Task<ResultChartDto> GetDataNewChart([Required] DateTime startDate, [Required] DateTime endDate)
         {
@@ -984,14 +986,12 @@ namespace FinanceManagement.APIs.DashBoards
             endDate = DateTimeUtils.GetLastDayOfMonth(endDate);
 
             var labels = DateTimeUtils.GetMonthYearLabelChartFromDate(startDate, endDate);
-            var dicCurrencyConvert = _dashboardManager.GetDictionaryCurrencyConvertByYearMonth(startDate, endDate);
-            //TODO::ktra du tien chuyen doi trong thoi gian tim kiem 
-            _dashboardManager.CheckDictionaryCurrencyConvertByYearMonth(dicCurrencyConvert, startDate, endDate);
+            var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
             var treeOutcomingEntry = _commonManager.GetTreeOutcomingEntries();
             var treeIncomingEntry = _commonManager.GetTreeIncomingEntries();
             var outcomingEntryStatusEndId = await _commonManager.GetStatusIdByCode(FinanceManagementConsts.WORKFLOW_STATUS_END);
 
-            var lineCharts = await WorkScope.GetAll<LineChart>()
+            var lineCharts = await WorkScope.GetAll<Entities.NewEntities.LineChart>()
                 .Where(x => x.IsActive)
                 .Select(x => new
                 {
@@ -1036,7 +1036,7 @@ namespace FinanceManagement.APIs.DashBoards
             return result;
         }
 
-        private async Task<List<ResultCircleChartDto>> GetDataCircleChartByIds(
+        private async Task<List<ResultCircleChartDto>> GetDataCircleCharts(
             List<long> circleChartIds, 
             [Required] DateTime startDate, 
             [Required] DateTime endDate)
@@ -1056,12 +1056,15 @@ namespace FinanceManagement.APIs.DashBoards
                     Details = s.CircleChartDetails.Select(x => new CircleChartDetailInfoDto
                     {
                         Id = x.Id,
+                        CircleChartId = x.CircleChartId,
                         Name = x.Name,
                         Color = x.Color,
+                        BranchId = x.BranchId,
+                        RevenueExpenseType = x.RevenueExpenseType,
                         Branch = new BranchInfoDto
                         {
-                            BranchId = x.Branch.Id,
-                            BranchName = x.Branch.Name
+                            BranchId = x.BranchId,
+                            BranchName = x.Branch != null ? x.Branch.Name : ""
                         },
                         ClientIds = x.ClientIds,
                         InOutcomeTypeIds = x.InOutcomeTypeIds,
@@ -1074,42 +1077,62 @@ namespace FinanceManagement.APIs.DashBoards
             var totalResult = new List<ResultCircleChartDto>();
             foreach (var chartInfo in circleChartInfo)
             {
-                var result = await GetDataCircleChartById(chartInfo, startDate, endDate);
+                var result = await GetDataCircleChart(chartInfo, startDate, endDate);
                 totalResult.Add(result);
             }
             return totalResult;
         }
-        private async Task<ResultCircleChartDto> GetDataCircleChartById(
+        private async Task<ResultCircleChartDto> GetDataCircleChart(
             CircleChartInfoDto chartInfo, 
             [Required] DateTime startDate, 
             [Required] DateTime endDate)
         {
-            var dicCurrencyConvert = _dashboardManager.GetDictionaryCurrencyConvertByYearMonth(startDate, endDate);
-            //TODO::ktra du tien chuyen doi trong thoi gian tim kiem 
-            _dashboardManager.CheckDictionaryCurrencyConvertByYearMonth(dicCurrencyConvert, startDate, endDate);
+            var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
             var outcomingEntryStatusEndId = await _commonManager.GetStatusIdByCode(FinanceManagementConsts.WORKFLOW_STATUS_END);
 
             var result = new ResultCircleChartDto
                 {
+                    Id = chartInfo.Id,
                     ChartName = chartInfo.Name,
+                    IsIncome = chartInfo.IsIncome
                 };
+
+            IEnumerable<TreeItem<OutputCategoryEntryType>> treeEntry = chartInfo.IsIncome
+                                                            ?_commonManager.GetTreeIncomingEntries()
+                                                            : _commonManager.GetTreeOutcomingEntries();
+
             foreach (var detail in chartInfo.Details)
-            { 
-                var chart = new ResultCircleChartDetailDto();
-                chart.Name = detail.Name;
-                chart.Color = detail.Color;
-                var setEntryIds = new HashSet<long>();
+            {
+                var chart = new ResultCircleChartDetailDto
+                {
+                    Id = detail.Id,
+                    CircleChartId = detail.CircleChartId,
+                    Name = detail.Name,
+                    Color = detail.Color,
+                    BranchId = detail.BranchId,
+                    BranchName = detail.BranchId != null ? detail.Branch.BranchName : "Tổng cộng",
+                    RevenueExpenseType = detail.RevenueExpenseType,
+                    ClientIds = detail.ClientIds,
+                    InOutcomeTypeIds = detail.InOutcomeTypeIds,
+                    CircleChartDetailInfo = detail
+                };
+                var setEntryTypeIds = new HashSet<long>();
+                _commonManager.GetEntryTypeIdsFromTree(detail.ListInOutcomeTypeIds, treeEntry, false, setEntryTypeIds);
                 if (chartInfo.IsIncome)
                 {
-                    var treeIncomingEntry = _commonManager.GetTreeIncomingEntries();
-                    _commonManager.GetEntryTypeIdsFromTree(detail.ListInOutcomeTypeIds, treeIncomingEntry, false, setEntryIds);
-                    chart.Value = _dashboardManager.GetValueCircleChartIncomingEntry(startDate, endDate, setEntryIds, dicCurrencyConvert, detail.ListClientIds);
+                    var isDoanhThu = detail.RevenueExpenseType == RevenueExpenseType.ALL_REVENUE_EXPENSE ? (bool?) null 
+                                    : detail.RevenueExpenseType == RevenueExpenseType.REAL_REVENUE_EXPENSE;
+                    var allGhiNhanThu = _dashboardManager.GetDataBaoCaoThu(startDate, endDate, dicCurrencyConvert, isDoanhThu, detail.ListClientIds, isDoanhThu == null ? setEntryTypeIds : null);
+                    chart.Value = allGhiNhanThu.Result.Sum(x => x.TotalVND);
                 }
                 else
                 {
-                    var treeOutcomingEntry = _commonManager.GetTreeOutcomingEntries();
-                    _commonManager.GetEntryTypeIdsFromTree(detail.ListInOutcomeTypeIds, treeOutcomingEntry, false, setEntryIds);
-                    chart.Value = _dashboardManager.GetValueCircleChartOutcomingEntry(startDate, endDate, setEntryIds, dicCurrencyConvert, outcomingEntryStatusEndId, detail.Branch.BranchId);
+
+                    var expenseType = detail.RevenueExpenseType == RevenueExpenseType.ALL_REVENUE_EXPENSE ? (ExpenseType?) null
+                                    : detail.RevenueExpenseType == RevenueExpenseType.REAL_REVENUE_EXPENSE ? ExpenseType.REAL_EXPENSE
+                                    : ExpenseType.NON_EXPENSE;
+                    var allRequestChi = _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, dicCurrencyConvert, detail.BranchId, expenseType, expenseType == null ? setEntryTypeIds : null);
+                    chart.Value = allRequestChi.Result.Sum(x => x.TotalVND);
                 }
                 result.Details.Add(chart);
             }
@@ -1167,9 +1190,10 @@ namespace FinanceManagement.APIs.DashBoards
             var currencyDefault = await GetCurrencyDefaultAsync();
             using (CurrentUnitOfWork.SetFilterParameter(nameof(IMustHavePeriod),"PeriodId", periodId))
             {
-                var dataBCChung = await _dashboardManager.GetDataBaoCaoChung(startDate, endDate, -1, null);
-                var dataBCChi = await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, -1, null);
-                var dataBCThu = await _dashboardManager.GetDataBaoCaoThu(startDate, endDate,null);
+                var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
+                var dataBCChung = await _dashboardManager.GetDataBaoCaoChung(startDate, endDate, dicCurrencyConvert, - 1, null);
+                var dataBCChi = await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, dicCurrencyConvert, - 1, null);
+                var dataBCThu = await _dashboardManager.GetDataBaoCaoThu(startDate, endDate, dicCurrencyConvert, null);
 
                 using (ExcelPackage pck = new ExcelPackage(file.OpenRead()))
                 {
@@ -1200,7 +1224,9 @@ namespace FinanceManagement.APIs.DashBoards
             var file = Helpers.GetInfoFileTemplate(new string[] { _env.WebRootPath, "Template_BaoCaoChi.xlsx" });
             var currencyDefault = await GetCurrencyDefaultAsync();
 
-            var dataChi = await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, branchId, isExpense);
+            var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
+
+            var dataChi = await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, dicCurrencyConvert, branchId, isExpense);
 
             using (ExcelPackage epck = new ExcelPackage(file.OpenRead()))
             {
@@ -1392,19 +1418,48 @@ namespace FinanceManagement.APIs.DashBoards
         [HttpGet]
         public async Task<List<BaoCaoChungDto>> GetDataBaoCaoChung(DateTime startDate, DateTime endDate, long branchId, ExpenseType? isExpense)
         {
-            return await _dashboardManager.GetDataBaoCaoChung(startDate, endDate, branchId, isExpense);
+            var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
+            return await _dashboardManager.GetDataBaoCaoChung(startDate, endDate, dicCurrencyConvert, branchId, isExpense);
         }
 
         [HttpGet]
         public async Task<List<BaoCaoThuDto>> GetDataBaoCaoThu(DateTime startDate, DateTime endDate, bool? isDoanhThu)
         {
-            return await _dashboardManager.GetDataBaoCaoThu(startDate, endDate, isDoanhThu);
+            var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
+            return await _dashboardManager.GetDataBaoCaoThu(startDate, endDate, dicCurrencyConvert, isDoanhThu);
         }
+
 
         [HttpGet]
         public async Task<List<GetThongTinRequestChi>> GetDataBaoCaoChi(DateTime startDate, DateTime endDate, long branchId, ExpenseType? isExpense)
         {
-            return (await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, branchId, isExpense)).ToList();
+            var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
+            return (await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, dicCurrencyConvert, branchId, isExpense)).ToList();
+        }
+
+        [HttpPost]
+        public async Task<List<BaoCaoThuDto>> GetDataBaoCaoThuForCircleChart(DateTime startDate, DateTime endDate, ResultCircleChartDetailDto circleChartDetail)
+        {
+            var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
+            IEnumerable<TreeItem<OutputCategoryEntryType>> treeEntry = _commonManager.GetTreeIncomingEntries();
+            var setEntryTypeIds = new HashSet<long>();
+            _commonManager.GetEntryTypeIdsFromTree(circleChartDetail.ListInOutcomeTypeIds, treeEntry, false, setEntryTypeIds);
+            var isDoanhThu = circleChartDetail.RevenueExpenseType == RevenueExpenseType.ALL_REVENUE_EXPENSE ? (bool?) null
+                           : circleChartDetail.RevenueExpenseType == RevenueExpenseType.REAL_REVENUE_EXPENSE;
+            return await _dashboardManager.GetDataBaoCaoThu(startDate, endDate, dicCurrencyConvert, isDoanhThu, circleChartDetail.ListClientIds, isDoanhThu == null ? setEntryTypeIds : null);
+        }
+
+        [HttpPost]
+        public async Task<List<GetThongTinRequestChi>> GetDataBaoCaoChiForCircleChart(DateTime startDate, DateTime endDate, ResultCircleChartDetailDto circleChartDetail)
+        {
+            var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
+            IEnumerable<TreeItem<OutputCategoryEntryType>> treeEntry = _commonManager.GetTreeOutcomingEntries();
+            var setEntryTypeIds = new HashSet<long>();
+            _commonManager.GetEntryTypeIdsFromTree(circleChartDetail.ListInOutcomeTypeIds, treeEntry, false, setEntryTypeIds);
+            var expenseType = circleChartDetail.RevenueExpenseType == RevenueExpenseType.ALL_REVENUE_EXPENSE ? (ExpenseType?) null
+                            : circleChartDetail.RevenueExpenseType == RevenueExpenseType.REAL_REVENUE_EXPENSE ? ExpenseType.REAL_EXPENSE
+                            : ExpenseType.NON_EXPENSE;
+            return (await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, dicCurrencyConvert, circleChartDetail.BranchId, expenseType, expenseType == null ? setEntryTypeIds : null)).ToList();
         }
 
         [HttpGet]
@@ -1413,6 +1468,12 @@ namespace FinanceManagement.APIs.DashBoards
             return await _dashboardManager.GetHRMDebtStatistic(AbpSession.TenantId);
         }
 
+        public Dictionary<CurrencyYearMonthDto, double> GetAndCheckDictionaryCurrencyConvertByYearMonth(DateTime startDate, DateTime endDate)
+        {
+            var dicCurrencyConvert = _dashboardManager.GetDictionaryCurrencyConvertByYearMonth(startDate, endDate);
+            _dashboardManager.CheckDictionaryCurrencyConvertByYearMonth(dicCurrencyConvert, startDate, endDate);
+            return dicCurrencyConvert;
+        }
         #endregion
     }
 }

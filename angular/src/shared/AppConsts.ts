@@ -52,6 +52,13 @@ export const DATE_TIME_OPTIONS = [
   "Year",
   "Custom",
 ];
+export const DATE_TIME_OPTIONS_HOME = [
+  "Month",
+  "Quarter",
+  "Half-year",
+  "Year",
+  "Custom",
+];
 
 export const CUSTOM_DATE_FORMATS = {
   parse: {

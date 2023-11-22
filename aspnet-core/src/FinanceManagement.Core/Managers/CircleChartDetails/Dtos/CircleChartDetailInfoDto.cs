@@ -15,6 +15,8 @@ namespace FinanceManagement.Managers.CircleChartDetails.Dtos
         public long CircleChartId { get; set; }
         public string Name { get; set; }
         public string Color { get; set; }
+        public long? BranchId { get; set; }
+        public RevenueExpenseType? RevenueExpenseType { get; set; }
         public BranchInfoDto Branch { get; set; }
         public List<ClientInfoDto> Clients { get; set; }
         public List<InOutcomeTypeDto> InOutcomeTypes { get; set; }
@@ -48,7 +50,7 @@ namespace FinanceManagement.Managers.CircleChartDetails.Dtos
 
     public class BranchInfoDto
     {
-        public long BranchId { get; set;}
+        public long? BranchId { get; set;}
         public string BranchName { get; set; }
     }
 }

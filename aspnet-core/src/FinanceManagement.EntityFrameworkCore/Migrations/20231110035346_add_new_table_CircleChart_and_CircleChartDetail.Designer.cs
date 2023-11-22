@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinanceManagement.Migrations
 {
     [DbContext(typeof(FinanceManagementDbContext))]
-    [Migration("20231018080130_add_new_table_CircleChart_and_CircleChartDetail")]
+    [Migration("20231110035346_add_new_table_CircleChart_and_CircleChartDetail")]
     partial class add_new_table_CircleChart_and_CircleChartDetail
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2738,6 +2738,9 @@ namespace FinanceManagement.Migrations
                         .HasColumnType("nvarchar(500)")
                         .HasMaxLength(500);
 
+                    b.Property<long?>("RevenueExpenseType")
+                        .HasColumnType("bigint");
+
                     b.Property<int?>("TenantId")
                         .HasColumnType("int");
 
@@ -4412,7 +4415,7 @@ namespace FinanceManagement.Migrations
                         .HasForeignKey("BranchId");
 
                     b.HasOne("FinanceManagement.Entities.NewEntities.CircleChart", "CircleChart")
-                        .WithMany()
+                        .WithMany("CircleChartDetails")
                         .HasForeignKey("CircleChartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

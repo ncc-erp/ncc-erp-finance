@@ -1,10 +1,10 @@
 export const APP_CONSTANT = {
   TypeViewHomePage: {
-    // Week: 0,
+    Week: 0,
     Month: 1,
     Quater: 2,
     Year: 3,
-    // AllTime: 4,
+    AllTime: 4,
     CustomTime: 5,
     Half_Year: 6
   },

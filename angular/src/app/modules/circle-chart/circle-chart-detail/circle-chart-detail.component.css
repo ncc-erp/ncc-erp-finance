@@ -1,6 +1,13 @@
 button {
     height: fit-content;
 }
+.hyperlink:hover {
+    cursor: pointer;
+    text-decoration: underline !important;
+}
+.hyperlink {
+    color: #007bff;
+}
 .breadcrumb {
     font-size: 20px;
     display: inline-block;
@@ -19,4 +26,55 @@ position: relative;
 }
 .header{
     margin-bottom: 5px;
+}
+.preReview{
+    width: 100%;
+    border: none;
+    resize: none;
+    cursor: pointer;
+    overflow-y: scroll;
+    background-color: transparent;
+    text-overflow: ellipsis;
+    line-height: 25px;
+    word-wrap: break-word;
+    -webkit-line-clamp: 3;
+    height: 50px;
+    margin-bottom: 0px;
+    -webkit-box-orient: vertical;
+}
+
+.review{
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    resize: none;
+    background-color: transparent;
+    text-overflow: ellipsis;
+    line-height: 25px;
+    word-wrap: break-word;
+    margin-bottom: 0px;
+}
+
+.preReview::-webkit-scrollbar
+{
+	width: 7px;
+	background-color: #F5F5F5;
+}
+
+.preReview::-webkit-scrollbar-thumb
+{
+	background-color: #cecece;
+	border: 2px solid #cecece;
+}
+
+.review::-webkit-scrollbar
+{
+	width: 7px;
+	background-color: #F5F5F5;
+}
+
+.review::-webkit-scrollbar-thumb
+{
+	background-color: #cecece;
+	border: 2px solid #cecece;
 }
