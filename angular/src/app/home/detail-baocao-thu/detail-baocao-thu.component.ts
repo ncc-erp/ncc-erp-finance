@@ -1,7 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { DashBoardService } from '@app/service/api/dash-board.service';
 import { BaoCaoThuDto } from '../home.component';
+import { RevenueExpenseType } from '@shared/AppEnums';
+import { CircleChartDetailInfoDto, InputListCircleChartDto, ResultCircleChartDetailDto } from '@app/service/model/circle-chart.dto';
+import { CreateEditCircleChartDetailComponent } from '@app/modules/circle-chart/circle-chart-detail/create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
 
 @Component({
   selector: 'app-detail-baocao-thu',
@@ -9,7 +12,7 @@ import { BaoCaoThuDto } from '../home.component';
   styleUrls: ['./detail-baocao-thu.component.css']
 })
 export class DetailBaocaoThuComponent implements OnInit {
-
+  @Output() refreshDataEvent = new EventEmitter<any>();
   public baoCaoThu: BaoCaoThuDto[] = []
   public startDate: string = ""
   public endDate: string = ""
@@ -21,18 +24,38 @@ export class DetailBaocaoThuComponent implements OnInit {
   sortDirect: number;
   iconSort: string;
   sortedBaoCaoThu: BaoCaoThuDto[]=[];
-
-
+  public circleChartDetail: ResultCircleChartDetailDto;
+  public circleChart: any;
+  ALL_REVENUE_EXPENSE = RevenueExpenseType.ALL_REVENUE_EXPENSE;
+  REAL_REVENUE_EXPENSE = RevenueExpenseType.REAL_REVENUE_EXPENSE;
+  NON_REVENUE_EXPENSE = RevenueExpenseType.NON_REVENUE_EXPENSE;
+  
   constructor(private dashBoardService: DashBoardService,
     public dialogRef: MatDialogRef<DetailBaocaoThuComponent>,
+    private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data) { }
 
   ngOnInit(): void {
     this.startDate = this.data.startDate
     this.endDate = this.data.endDate
     this.isDoanhThu = this.data.isDoanhThu
-    this.getDetailBaoCaoThu()
+    if (this.data.circleChartDetail) {
+      this.circleChartDetail = this.data.circleChartDetail
+      this.getDetailBaoCaoThuForCircleChart()
+    }
+    else {
+      this.getDetailBaoCaoThu()
+    }
+    if (this.data.circleChart){
+      this.circleChart = this.data.circleChart
+    }
   }
+
+  refresh(){
+    this.refreshDataEvent.emit();
+    this.onClose();
+  }
+
 
   getDetailBaoCaoThu() {
     this.dashBoardService.GetDataBaoCaoThu(this.startDate, this.endDate, this.isDoanhThu).subscribe(rs => {
@@ -48,6 +71,38 @@ export class DetailBaocaoThuComponent implements OnInit {
 
     })
   }
+
+  getDetailBaoCaoThuForCircleChart() {
+    this.dashBoardService.GetDataBaoCaoThuForCircleChart(this.startDate, this.endDate, this.circleChartDetail).subscribe(rs => {
+      this.baoCaoThu = rs.result;
+      this.sortedBaoCaoThu = this.baoCaoThu.slice();      
+      if(this.data.tinhVaoDoanhThu){
+        this.baoCaoThu = this.baoCaoThu.filter(x => x.isDoanhThu == this.data.tinhVaoDoanhThu)
+      }
+
+      this.total = this.baoCaoThu.reduce((sum, val) => {
+        return sum += val.totalVND
+      }, 0)
+    })
+  }
+
+  public onViewDetail(setting: CircleChartDetailInfoDto) {
+    let item = { ...setting };
+    let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {
+      width: "70vw",
+      data: {
+        item: item,
+        isIncome: true,
+        isViewOnly: true
+      },
+      disableClose: true,
+      
+    });
+    ref.componentInstance.onSaveChange.subscribe((data) => {
+      this.refresh()
+    });
+  }
+
   onClose() {
     this.dialogRef.close()
   }

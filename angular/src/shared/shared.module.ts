@@ -81,6 +81,8 @@ import { SelectionCustomsComponent } from './selection-customs/selection-customs
 import { SelectionTreeIncomingEntryTypeComponent } from "@app/modules/new-versions/b-transaction/create-multi-incoming-entry/selection-tree-incoming-entry-type/selection-tree-incoming-entry-type.component";
 import { MyDateFormatPipe } from './pipes/my-date-format.pipe';
 import { TreeInOutTypeComponent } from './components/tree-in-out-type/tree-in-out-type.component';
+import { MultipleSelectComponent } from './multiple-select/multiple-select.component' ;
+import { BreadCrumbComponent } from './bread-crumb/bread-crumb.component';
 
 
 // import {DialogComponentModule} from './dialog-component/dialog-component.module';
@@ -155,7 +157,9 @@ import { TreeInOutTypeComponent } from './components/tree-in-out-type/tree-in-ou
         SelectionCustomsComponent,
         SelectionTreeIncomingEntryTypeComponent,
         MyDateFormatPipe,
-        TreeInOutTypeComponent
+        TreeInOutTypeComponent,
+        MultipleSelectComponent,
+        BreadCrumbComponent,
     ],
     exports: [
         TextEditorComponent,
@@ -218,7 +222,9 @@ import { TreeInOutTypeComponent } from './components/tree-in-out-type/tree-in-ou
         SelectionCustomsComponent,
         SelectionTreeIncomingEntryTypeComponent,
         TreeInOutTypeComponent,
-        MyDateFormatPipe
+        MyDateFormatPipe,
+        MultipleSelectComponent,
+        BreadCrumbComponent,
     ],
     entryComponents: [PopupComponent],
     providers: [

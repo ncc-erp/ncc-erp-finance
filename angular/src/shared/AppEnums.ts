@@ -21,6 +21,13 @@ export enum DateSelectorEnum {
   YEAR = "Year",
   CUSTOM = "Custom",
 }
+export enum DateSelectorHomeEnum {
+  MONTH = "Month",
+  QUARTER = "Quarter",
+  HALF_YEAR = "Half-year",
+  YEAR = "Year",
+  CUSTOM = "Custom",
+}
 export enum ExpressionEnum {
   NO_FILTER = 0,
   LESS_OR_EQUAL = 1,
@@ -102,4 +109,14 @@ export enum ExpenseType{
 export enum TypeFilterTypeOptions{
   OUTCOMING_ENTRY_TYPE = 0,
   INCOMING_ENTRY_TYPE = 1,
+}
+export enum RevenueExpenseType{
+  ALL_REVENUE_EXPENSE = 0,
+  REAL_REVENUE_EXPENSE = 1,
+  NON_REVENUE_EXPENSE = 2
+}
+export enum StatusFilter{
+  ALL = 0,
+  ACTIVE = 1,
+  INACTIVE = 2
 }

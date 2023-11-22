@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: dev
     name: Build Finance_BE Dev
     environment: dev
     steps:
@@ -55,7 +55,7 @@ jobs:
           chmod -R 777 App_Data/
           chmod -R 777 wwwroot/
   deploy:
-    runs-on: self-hosted
+    runs-on: dev
     name: Deploy Finance_BE Dev
     environment: dev
     needs:

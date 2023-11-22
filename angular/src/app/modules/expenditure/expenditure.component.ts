@@ -7,6 +7,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { Component, Injector, OnInit } from "@angular/core";
 import { StatusEnum } from "@shared/AppEnums";
 import * as _ from "lodash";
+import { InputFilterEntryTypeDto } from "@app/service/model/common-DTO";
 
 @Component({
   selector: "app-expenditure",
@@ -23,7 +24,7 @@ export class ExpenditureComponent extends AppComponentBase implements OnInit {
   data: any = {
     name: "all",
   };
-  inputFilter: InputFilterExpenditure = new InputFilterExpenditure();
+  inputFilter: InputFilterEntryTypeDto = new InputFilterEntryTypeDto();
 
   constructor(
     private dialog: MatDialog,
@@ -103,13 +104,4 @@ export class expenditureDto {
 export class expenditureListDto {
   name: string;
   children: expenditureDto[];
-}
-export class InputFilterExpenditure {
-  constructor(){
-    this.isActive = true;
-    this.expenseType = "";
-  }
-  isActive?: boolean;
-  expenseType?: number| string;
-  searchText: string;
 }

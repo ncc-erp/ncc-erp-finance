@@ -1,4 +1,4 @@
-import { expenditureDto, InputFilterExpenditure } from './../../modules/expenditure/expenditure.component';
+import { expenditureDto } from './../../modules/expenditure/expenditure.component';
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { IncomingEntryTypeOptions } from "@app/modules/new-versions/b-transaction/link-revenue-ecognition-dialog/link-revenue-ecognition-dialog.component";
@@ -7,6 +7,7 @@ import { Observable, throwError } from "rxjs";
 import { ApiResponse } from "../model/api-response.model";
 import { BaseApiService } from "./base-api.service";
 import { InputFilterOutcomingEntryType, OutcomingEntryTypesDto } from '@app/users/edit-user/edit-user-dialog.component';
+import { InputFilterEntryTypeDto } from '../model/common-DTO';
 
 @Injectable({
   providedIn: "root",
@@ -19,7 +20,7 @@ export class ExpenditureService extends BaseApiService {
     return "OutcomingEntryType";
   }
 
-  public getAllByStatus(inputFilter: InputFilterExpenditure): Observable<ApiResponse<expenditureDto[]>> {
+  public getAllByStatus(inputFilter: InputFilterEntryTypeDto): Observable<ApiResponse<expenditureDto[]>> {
     return this.http.post<any>(this.rootUrl + '/GetAll', inputFilter);
   }
 
@@ -65,6 +66,11 @@ export class ExpenditureService extends BaseApiService {
   public GetExistOutComeInChartSetting(id: number): Observable<any> {
     return this.http.get<any>(
       this.rootUrl + `/GetExistOutComeInChartSetting?lineChartId=${id}`
+    );
+  }
+  public GetExistOutComeInCircleChartDetail(id: number): Observable<any> {
+    return this.http.get<any>(
+      this.rootUrl + `/GetExistOutComeInCircleChartDetail?id=${id}`
     );
   }
   public getAllForDropdownByUserNew(): Observable<ApiResponse<IncomingEntryTypeOptions[]>> {

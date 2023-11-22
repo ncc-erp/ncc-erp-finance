@@ -1,0 +1,23 @@
+<div *ngIf="defaultDateType != DateSelectorHomeEnum.CUSTOM" class="px-2" style="margin-top: 10px;">
+    <button class="btn btn-sm btn-primary mx-2" (click)="nextOrPre('pre')">
+      <i class="fas fa-chevron-left mr-2"></i>prev
+    </button>
+    <button class="btn btn-sm btn-primary mx-2" (click)="nextOrPre('next')">
+      <i class="fas fa-chevron-right mr-2"></i>next
+    </button>
+  </div>
+  <span class="title-date mx-2" style="margin-top: 13px">
+    <b style="font-size: 15px">{{ dateText }}</b>
+  </span>
+  <mat-form-field appearance="outline">
+    <mat-select [(ngModel)]="defaultDateType" (selectionChange)="changeOptions(true)">
+      <mat-option *ngFor="let item of dateTimeOptions" [value]="item">
+        <p *ngIf="item != DateSelectorHomeEnum.CUSTOM">
+          {{ item }}
+        </p>
+        <p *ngIf="item == DateSelectorHomeEnum.CUSTOM" (click)="showPopup()">
+          {{ item }}
+        </p>
+      </mat-option>
+    </mat-select>
+  </mat-form-field>

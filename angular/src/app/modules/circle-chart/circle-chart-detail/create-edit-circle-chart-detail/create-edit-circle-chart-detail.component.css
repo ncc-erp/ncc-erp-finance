@@ -1,0 +1,60 @@
+::ng-deep #setting-wrapper .mat-form-field-flex > .mat-form-field-infix { padding: 0.4em 0px !important;}
+::ng-deep #setting-wrapper .mat-form-field-label-wrapper { top: -1.5em; }
+
+::ng-deep #setting-wrapper .mat-form-field-appearance-outline.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label {
+    transform: translateY(-1.1em) scale(.75);
+    width: 133.33333%;
+}
+::ng-deep #setting-wrapper .mat-form-field-wrapper{
+    padding: 0;
+}
+::ng-deep #setting-wrapper .mat-form-field-label-wrapper .mat-form-field-label{
+    font-weight: normal;
+    font-size: 14px;
+    margin-top: 4px;
+}
+::ng-deep #setting-wrapper .mat-form-field-flex{
+    background: white;
+}
+.parent{
+    font-weight: bold;
+}
+::ng-deep #setting-wrapper .mat-form-field-flex{
+    background: white;
+}
+
+.list-reference{
+    max-height: 50vh;
+    overflow: auto;
+    margin-top: 6px;
+}
+.search-bar{
+    border: 1px solid lightgrey;
+    width: 98%;
+}
+
+.form-edit {
+    display: flex;
+    align-items: center;
+}
+
+.title {
+    font-size: 20px;
+    display: inline-block;
+    background-color: unset !important;
+    margin-bottom: 0px;
+    padding: 0px;
+}
+.chart-type span {
+    font-size: 14px;
+    margin-left: 10px;
+    position: relative;
+}
+.mat-form-field {
+    padding-left: 7px;
+}
+
+
+
+
+
