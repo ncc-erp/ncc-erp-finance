@@ -7,7 +7,6 @@ import * as echarts from 'echarts';
 import * as moment from 'moment';
 import { DetailBaocaoThuComponent } from '../detail-baocao-thu/detail-baocao-thu.component';
 import { DetailBaocaoChiComponent } from '../detail-baocao-chi/detail-baocao-chi.component';
-import { RevenueExpenseType } from '@shared/AppEnums';
 import { ResultCircleChartDetailDto, ResultCircleChartDto } from '@app/service/model/circle-chart.dto';
 
 @Component({

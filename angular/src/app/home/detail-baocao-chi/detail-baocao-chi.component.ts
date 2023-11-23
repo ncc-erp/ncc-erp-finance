@@ -5,7 +5,7 @@ import { DashBoardService } from '@app/service/api/dash-board.service';
 import { BaoCaoChiDto, baoCaoFilterOption, BaoCaoThuDto } from '../home.component';
 import { ExpenseType } from '@shared/AppEnums';
 import * as FileSaver from 'file-saver';
-import { CircleChartDetailInfoDto, InputListCircleChartDto, ResultCircleChartDetailDto } from '@app/service/model/circle-chart.dto';
+import {  ResultCircleChartDetailDto } from '@app/service/model/circle-chart.dto';
 import { CreateEditCircleChartDetailComponent } from '@app/modules/circle-chart/circle-chart-detail/create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
 import { CircleChartDetailService } from '@app/service/api/circle-chart-detail.service';
 

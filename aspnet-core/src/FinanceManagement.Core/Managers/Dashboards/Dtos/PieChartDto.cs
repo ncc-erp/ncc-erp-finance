@@ -22,7 +22,6 @@ namespace FinanceManagement.Managers.Dashboards.Dtos
     public class ResultCircleChartDetailDto
     {
         public long Id { get; set; }
-        public long CircleChartId { get; set; }
         public string Name { get; set; }
         public double Value { get; set; }
         public string Color { get; set; }

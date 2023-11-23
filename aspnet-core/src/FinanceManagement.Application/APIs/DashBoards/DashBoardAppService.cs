@@ -1110,7 +1110,6 @@ namespace FinanceManagement.APIs.DashBoards
                 var chart = new ResultCircleChartDetailDto
                 {
                     Id = detail.Id,
-                    CircleChartId = detail.CircleChartId,
                     Name = detail.Name,
                     Color = detail.Color,
                 };

@@ -92,7 +92,6 @@ export class ResultCircleChartDto
 export class ResultCircleChartDetailDto
 {
     id: number;
-    circleChartId: number;
     name: string;
     value: number;
     color: string;

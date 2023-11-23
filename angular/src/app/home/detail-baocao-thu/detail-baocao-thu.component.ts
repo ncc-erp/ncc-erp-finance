@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dial
 import { DashBoardService } from '@app/service/api/dash-board.service';
 import { BaoCaoThuDto } from '../home.component';
 import { RevenueExpenseType } from '@shared/AppEnums';
-import { CircleChartDetailInfoDto, InputListCircleChartDto, ResultCircleChartDetailDto } from '@app/service/model/circle-chart.dto';
+import { ResultCircleChartDetailDto } from '@app/service/model/circle-chart.dto';
 import { CreateEditCircleChartDetailComponent } from '@app/modules/circle-chart/circle-chart-detail/create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
 import { CircleChartDetailService } from '@app/service/api/circle-chart-detail.service';
 
