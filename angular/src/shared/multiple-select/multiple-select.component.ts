@@ -55,11 +55,9 @@ export class MultipleSelectComponent implements OnInit {
     let selectedOptions = this.listFilteredOption.filter(option =>
       this.listSelectedId.includes(option.id)
     );
-    console.log('selectedOptions' + selectedOptions)
     let unselectedOptions = this.listFilteredOption.filter(option =>
       !this.listSelectedId.includes(option.id)
     );
-    console.log('unselectedOptions' + unselectedOptions)
     this.listFilteredOption = selectedOptions.concat(unselectedOptions);
   }
 

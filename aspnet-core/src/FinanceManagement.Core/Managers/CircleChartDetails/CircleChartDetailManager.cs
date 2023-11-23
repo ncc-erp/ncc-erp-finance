@@ -13,6 +13,7 @@ using FinanceManagement.IoC;
 using FinanceManagement.Managers.CircleChartDetails.Dtos;
 using FinanceManagement.Managers.CircleCharts.Dtos;
 using FinanceManagement.Managers.Dashboards.Dtos;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
@@ -51,6 +52,7 @@ namespace FinanceManagement.Managers.CircleChartDetails
                         ClientIds = x.ClientIds,
                         InOutcomeTypeIds = x.InOutcomeTypeIds,
                         RevenueExpenseType = x.RevenueExpenseType,
+                        BranchId = x.BranchId,
                         Branch = new BranchInfoDto
                         {
                             BranchId = x.Branch.Id,
@@ -66,6 +68,29 @@ namespace FinanceManagement.Managers.CircleChartDetails
             });
 
             return circleChartDetailInfoDto;
+        }
+
+        public async Task<CircleChartDetailInfoDto> GetCircleChartDetailInfoById(long id)
+        {
+            return await _ws.GetAll<CircleChartDetail>()
+                .Where(s => s.Id == id)
+                .Select(s => new CircleChartDetailInfoDto
+                {
+                    Id = s.Id,
+                    CircleChartId = s.CircleChartId, 
+                    Name = s.Name,
+                    Color = s.Color,
+                    RevenueExpenseType = s.RevenueExpenseType,
+                    BranchId = s.BranchId,
+                    ClientIds = s.ClientIds,
+                    InOutcomeTypeIds = s.InOutcomeTypeIds,
+                    Branch = new BranchInfoDto
+                    {
+                        BranchId = s.Branch.Id,
+                        BranchName = s.Branch.Name
+                    }
+                })
+                .FirstOrDefaultAsync();
         }
 
         public List<InOutcomeTypeDto> CreateInOutcomeTypeDto(CircleChartInfoDto circleChartDetailInfoDtos, List<long> ListInOutcomeTypeIds) {

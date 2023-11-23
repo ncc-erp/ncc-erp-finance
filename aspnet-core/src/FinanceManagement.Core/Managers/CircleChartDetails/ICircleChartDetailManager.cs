@@ -14,6 +14,7 @@ namespace FinanceManagement.Managers.CircleChartDetails
     public interface ICircleChartDetailManager : ITransientDependency
     {
         Task<CircleChartInfoDto> GetCircleChartDetailsByChartId(long circleChartId);
+        Task<CircleChartDetailInfoDto> GetCircleChartDetailInfoById(long id);
         Task<CreateCircleChartDetailDto> Create(CreateCircleChartDetailDto input);
         Task<UpdateCircleChartDetailDto> Update(UpdateCircleChartDetailDto input);
         Task<UpdateCircleChartInOutcomeTypeIdsDto> UpdateInOutcomeTypeIds(UpdateCircleChartInOutcomeTypeIdsDto input);
