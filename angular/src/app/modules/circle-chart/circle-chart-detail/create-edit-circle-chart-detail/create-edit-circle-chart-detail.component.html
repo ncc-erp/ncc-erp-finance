@@ -17,7 +17,7 @@ cdkDragHandle>
             <button *ngIf="isShowEditBtn() && isEdit" 
                     [ngClass]="isViewOnly ? 'btn btn-primary mr-3' : 'btn btn-success mr-3'" 
                     (click)="onChangeEditMode()">{{ isViewOnly ? 'Edit' : 'View' }}</button>
-            <i class="fas fa-times fa-lg pointer" mat-dialog-close></i>
+            <i class="fas fa-times fa-lg pointer" mat-dialog-close (click)="onClose()"></i>
         </div>
     </div>
     <div class="card-body" style="padding: 12px;">
@@ -176,7 +176,7 @@ cdkDragHandle>
 
         </div>
         <div class="d-flex justify-content-end">
-            <button class="btn btn-default mr-2" mat-dialog-close>{{isViewOnly ? 'Close' : 'Cancel'}}</button>
+            <button class="btn btn-default mr-2" mat-dialog-close (click)="onClose()">{{isViewOnly ? 'Close' : 'Cancel'}}</button>
             <button class="btn btn-primary" [style.display]="isViewOnly ? 'none' : 'flex'" [disabled]="!createSettingForm.valid"  (click)="onSave()">Save</button>
         </div>
     </form>
