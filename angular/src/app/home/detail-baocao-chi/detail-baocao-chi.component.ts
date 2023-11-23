@@ -160,7 +160,7 @@ export class DetailBaocaoChiComponent implements OnInit {
         width: "70vw",
         data: {
           item: item,
-          isIncome: true,
+          isIncome: false,
           isViewOnly: true
         },
         disableClose: true,
