@@ -22,27 +22,9 @@ namespace FinanceManagement.Managers.Dashboards.Dtos
     public class ResultCircleChartDetailDto
     {
         public long Id { get; set; }
-        public long CircleChartId { get; set; }
         public string Name { get; set; }
         public double Value { get; set; }
         public string Color { get; set; }
-        public long? BranchId { get; set; }
-        public string BranchName { get; set; }
-        public RevenueExpenseType? RevenueExpenseType { get; set; }
-        public string ClientIds { get; set; }
-        public string InOutcomeTypeIds { get; set; }
-        /// <summary>
-        /// DeserializeObject from Json string to list<long>
-        /// </summary>
-        public List<long> ListClientIds => (string.IsNullOrWhiteSpace(ClientIds))
-                                                ? new List<long>()
-                                                : JsonConvert.DeserializeObject<List<long>>(ClientIds);
-        /// <summary>
-        /// DeserializeObject from Json string to list<long>
-        /// </summary>
-        public List<long> ListInOutcomeTypeIds => (string.IsNullOrWhiteSpace(InOutcomeTypeIds))
-                                                ? new List<long>()
-                                                : JsonConvert.DeserializeObject<List<long>>(InOutcomeTypeIds);
-        public CircleChartDetailInfoDto CircleChartDetailInfo { get; set;}
+        
     }
 }

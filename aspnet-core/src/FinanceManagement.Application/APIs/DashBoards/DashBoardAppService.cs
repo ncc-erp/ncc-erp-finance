@@ -17,6 +17,7 @@ using FinanceManagement.Extension;
 using FinanceManagement.GeneralModels;
 using FinanceManagement.Helper;
 using FinanceManagement.IoC;
+using FinanceManagement.Managers.CircleChartDetails;
 using FinanceManagement.Managers.CircleChartDetails.Dtos;
 using FinanceManagement.Managers.CircleCharts.Dtos;
 using FinanceManagement.Managers.Commons;
@@ -51,6 +52,7 @@ namespace FinanceManagement.APIs.DashBoards
         private readonly IDashboardManager _dashboardManager;
         private readonly ICommonManager _commonManager;
         private readonly IPeriodManager _periodManager;
+        private readonly ICircleChartDetailManager _circleChartDetailManager;
         private readonly IWebHostEnvironment _env;
         public DashBoardAppService(
             ComparativeStatisticAppService comparativeStatisticAppService,
@@ -58,6 +60,7 @@ namespace FinanceManagement.APIs.DashBoards
             IDashboardManager dashboardManager,
             ICommonManager commonManager,
             IPeriodManager periodManager,
+            ICircleChartDetailManager circleChartDetailManager,
             IWebHostEnvironment env
         ) : base(workScope)
         {
@@ -65,6 +68,7 @@ namespace FinanceManagement.APIs.DashBoards
             _dashboardManager = dashboardManager;
             _commonManager = commonManager;
             _periodManager = periodManager;
+            _circleChartDetailManager = circleChartDetailManager;
             _env = env;
         }
         #region Old Dashboard
@@ -1106,15 +1110,8 @@ namespace FinanceManagement.APIs.DashBoards
                 var chart = new ResultCircleChartDetailDto
                 {
                     Id = detail.Id,
-                    CircleChartId = detail.CircleChartId,
                     Name = detail.Name,
                     Color = detail.Color,
-                    BranchId = detail.BranchId,
-                    BranchName = detail.BranchId != null ? detail.Branch.BranchName : "Tổng cộng",
-                    RevenueExpenseType = detail.RevenueExpenseType,
-                    ClientIds = detail.ClientIds,
-                    InOutcomeTypeIds = detail.InOutcomeTypeIds,
-                    CircleChartDetailInfo = detail
                 };
                 var setEntryTypeIds = new HashSet<long>();
                 _commonManager.GetEntryTypeIdsFromTree(detail.ListInOutcomeTypeIds, treeEntry, false, setEntryTypeIds);
@@ -1437,30 +1434,37 @@ namespace FinanceManagement.APIs.DashBoards
             return (await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, dicCurrencyConvert, branchId, isExpense)).ToList();
         }
 
-        [HttpPost]
-        public async Task<List<BaoCaoThuDto>> GetDataBaoCaoThuForCircleChart(DateTime startDate, DateTime endDate, ResultCircleChartDetailDto circleChartDetail)
+        [HttpGet]
+        public async Task<List<BaoCaoThuDto>> GetDataBaoCaoThuForCircleChart(DateTime startDate, DateTime endDate, long circleChartDetailId)
         {
             var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
+            CircleChartDetailInfoDto circleChartDetail = _circleChartDetailManager.GetCircleChartDetailInfoById(circleChartDetailId).Result;
+
             IEnumerable<TreeItem<OutputCategoryEntryType>> treeEntry = _commonManager.GetTreeIncomingEntries();
             var setEntryTypeIds = new HashSet<long>();
             _commonManager.GetEntryTypeIdsFromTree(circleChartDetail.ListInOutcomeTypeIds, treeEntry, false, setEntryTypeIds);
+
             var isDoanhThu = circleChartDetail.RevenueExpenseType == RevenueExpenseType.ALL_REVENUE_EXPENSE ? (bool?) null
                            : circleChartDetail.RevenueExpenseType == RevenueExpenseType.REAL_REVENUE_EXPENSE;
             return await _dashboardManager.GetDataBaoCaoThu(startDate, endDate, dicCurrencyConvert, isDoanhThu, circleChartDetail.ListClientIds, isDoanhThu == null ? setEntryTypeIds : null);
         }
 
-        [HttpPost]
-        public async Task<List<GetThongTinRequestChi>> GetDataBaoCaoChiForCircleChart(DateTime startDate, DateTime endDate, ResultCircleChartDetailDto circleChartDetail)
+        [HttpGet]
+        public async Task<List<GetThongTinRequestChi>> GetDataBaoCaoChiForCircleChart(DateTime startDate, DateTime endDate, long circleChartDetailId)
         {
             var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
+            CircleChartDetailInfoDto circleChartDetail = _circleChartDetailManager.GetCircleChartDetailInfoById(circleChartDetailId).Result;
+
             IEnumerable<TreeItem<OutputCategoryEntryType>> treeEntry = _commonManager.GetTreeOutcomingEntries();
             var setEntryTypeIds = new HashSet<long>();
             _commonManager.GetEntryTypeIdsFromTree(circleChartDetail.ListInOutcomeTypeIds, treeEntry, false, setEntryTypeIds);
+
             var expenseType = circleChartDetail.RevenueExpenseType == RevenueExpenseType.ALL_REVENUE_EXPENSE ? (ExpenseType?) null
                             : circleChartDetail.RevenueExpenseType == RevenueExpenseType.REAL_REVENUE_EXPENSE ? ExpenseType.REAL_EXPENSE
                             : ExpenseType.NON_EXPENSE;
             return (await _dashboardManager.GetAllRequestChiForBaoCao(startDate, endDate, dicCurrencyConvert, circleChartDetail.BranchId, expenseType, expenseType == null ? setEntryTypeIds : null)).ToList();
         }
+
 
         [HttpGet]
         public async Task<DebtStatisticFromHRMDto> GetHRMDebtStatistic()

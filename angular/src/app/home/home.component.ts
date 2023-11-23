@@ -559,7 +559,6 @@ export class HomeComponent extends AppComponentBase {
           toDate = tDate.format('DD MMM YYYY');
         }
         this.setFromAndToDate(fromDate, toDate);
-        this.getDataForPieChart(fromDate, toDate)
         this.distanceFromAndToDate = fromDate + '  -  ' + toDate
       } else {
         this.distanceFromAndToDate = 'Custom Time';
@@ -586,7 +585,6 @@ export class HomeComponent extends AppComponentBase {
     if (this.viewChange.value != this.APP_CONSTANT.TypeViewHomePage.CustomTime) {
       fromDate = fromDate == '' ? '' : fromDate.format('YYYY-MM-DD');
       toDate = toDate == '' ? '' : toDate.format('YYYY-MM-DD');
-      this.getDataForPieChart(fromDate, toDate)
       this.setFromAndToDate(fromDate, toDate);
     }
   }

@@ -5,8 +5,9 @@ import { DashBoardService } from '@app/service/api/dash-board.service';
 import { BaoCaoChiDto, baoCaoFilterOption, BaoCaoThuDto } from '../home.component';
 import { ExpenseType } from '@shared/AppEnums';
 import * as FileSaver from 'file-saver';
-import { CircleChartDetailInfoDto, InputListCircleChartDto } from '@app/service/model/circle-chart.dto';
+import {  ResultCircleChartDetailDto } from '@app/service/model/circle-chart.dto';
 import { CreateEditCircleChartDetailComponent } from '@app/modules/circle-chart/circle-chart-detail/create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
+import { CircleChartDetailService } from '@app/service/api/circle-chart-detail.service';
 
 @Component({
   selector: 'app-detail-baocao-chi',
@@ -27,10 +28,12 @@ export class DetailBaocaoChiComponent implements OnInit {
   sortDirect: number;
   iconSort: string;
   sortedBaoCaoChi: BaoCaoChiDto[]=[];
-  public circleChartDetail: any;
+  public circleChartDetail: ResultCircleChartDetailDto;
   public circleChart: any;
 
-  constructor(private dashBoardService: DashBoardService,
+  constructor(
+    private dashBoardService: DashBoardService,
+    private circleChartDetailService: CircleChartDetailService,
     public dialogRef: MatDialogRef<DetailBaocaoChiComponent>,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data) { }
@@ -78,16 +81,8 @@ export class DetailBaocaoChiComponent implements OnInit {
   }
 
   getDetailBaoCaoChiForCircleChart() {
-    this.dashBoardService.getDetailBaoCaoChiForCircleChart(this.startDate, this.endDate, this.circleChartDetail).subscribe(rs => {
+    this.dashBoardService.getDetailBaoCaoChiForCircleChart(this.startDate, this.endDate, this.circleChartDetail.id).subscribe(rs => {
       this.baoCaoChi = rs.result;      
-
-      if (this.data.branchName != "Tổng cộng") {
-        this.baoCaoChi = this.baoCaoChi.filter(x => x.branchName.toLowerCase().trim() == this.data.branchName.toLowerCase().trim())
-      }
-      if (this.data.tinhVaoChiPhi) {
-        this.baoCaoChi = this.baoCaoChi.filter(x => x.expenseType === baoCaoFilterOption.REAL_EXPENSE)
-      }
-
       this.sortedBaoCaoChi = this.baoCaoChi.slice();
       
       this.total = this.baoCaoChi.reduce((sum, val) => {
@@ -158,21 +153,21 @@ export class DetailBaocaoChiComponent implements OnInit {
     })
   }
 
-  public onViewDetail(setting: CircleChartDetailInfoDto) {
-    let item = { ...setting };
-    let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {
-      width: "70vw",
-      data: {
-        item: item,
-        isIncome: false,
-        isViewOnly: true
-      },
-      disableClose: true,
-      
-    });
-    ref.componentInstance.onSaveChange.subscribe((data) => {
-      this.refresh()
-    });
+  public onViewDetail(id: number) {
+    this.circleChartDetailService.GetCircleChartDetailInfoById(id).subscribe(data =>{
+      let item = data.result;
+      let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {
+        width: "70vw",
+        data: {
+          item: item,
+          isIncome: false,
+          isViewOnly: true
+        },
+        disableClose: true,
+      });
+      ref.componentInstance.onSaveChange.subscribe((data) => {
+        this.refresh()
+      });
+    })
   }
-
 }
