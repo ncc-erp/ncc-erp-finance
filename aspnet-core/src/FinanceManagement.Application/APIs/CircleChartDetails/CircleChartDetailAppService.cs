@@ -31,6 +31,11 @@ namespace FinanceManagement.APIs.CircleChartDetails
         {
             return await _circleChartDetailManager.GetCircleChartDetailsByChartId(circleChartId);
         }
+        [HttpGet]
+        public async Task<CircleChartDetailInfoDto> GetCircleChartDetailInfoById(long id)
+        {
+            return await _circleChartDetailManager.GetCircleChartDetailInfoById(id);
+        }
 
         [HttpPost]
         [AbpAuthorize(PermissionNames.Admin_CircleChart_CircleChartDetail_Create)]

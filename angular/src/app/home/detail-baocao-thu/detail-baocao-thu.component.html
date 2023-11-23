@@ -24,7 +24,7 @@
                 <span *ngIf="!data.circleChartDetail" class="badge bg-primary ml-2">{{this.data.tinhVaoDoanhThu ? 'Tính vào doanh thu' : ''}}</span>
                 <button *ngIf="data.circleChartDetail" 
                 class="viewBtn btn btn-outline-secondary btn-sm ml-2" 
-                (click)="onViewDetail(circleChartDetail.circleChartDetailInfo)">
+                (click)="onViewDetail(circleChartDetail.id)">
                     <mat-icon style="font-size: 20px; vertical-align: middle; height: fit-content;">settings</mat-icon>
                 </button>  
             </div>

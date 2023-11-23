@@ -5,6 +5,7 @@ import { BaoCaoThuDto } from '../home.component';
 import { RevenueExpenseType } from '@shared/AppEnums';
 import { CircleChartDetailInfoDto, InputListCircleChartDto, ResultCircleChartDetailDto } from '@app/service/model/circle-chart.dto';
 import { CreateEditCircleChartDetailComponent } from '@app/modules/circle-chart/circle-chart-detail/create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
+import { CircleChartDetailService } from '@app/service/api/circle-chart-detail.service';
 
 @Component({
   selector: 'app-detail-baocao-thu',
@@ -30,7 +31,9 @@ export class DetailBaocaoThuComponent implements OnInit {
   REAL_REVENUE_EXPENSE = RevenueExpenseType.REAL_REVENUE_EXPENSE;
   NON_REVENUE_EXPENSE = RevenueExpenseType.NON_REVENUE_EXPENSE;
   
-  constructor(private dashBoardService: DashBoardService,
+  constructor(
+    private dashBoardService: DashBoardService,
+    private circleChartDetailService: CircleChartDetailService,
     public dialogRef: MatDialogRef<DetailBaocaoThuComponent>,
     private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data) { }
@@ -73,34 +76,31 @@ export class DetailBaocaoThuComponent implements OnInit {
   }
 
   getDetailBaoCaoThuForCircleChart() {
-    this.dashBoardService.GetDataBaoCaoThuForCircleChart(this.startDate, this.endDate, this.circleChartDetail).subscribe(rs => {
+    this.dashBoardService.GetDataBaoCaoThuForCircleChart(this.startDate, this.endDate, this.circleChartDetail.id).subscribe(rs => {
       this.baoCaoThu = rs.result;
       this.sortedBaoCaoThu = this.baoCaoThu.slice();      
-      if(this.data.tinhVaoDoanhThu){
-        this.baoCaoThu = this.baoCaoThu.filter(x => x.isDoanhThu == this.data.tinhVaoDoanhThu)
-      }
-
       this.total = this.baoCaoThu.reduce((sum, val) => {
         return sum += val.totalVND
       }, 0)
     })
   }
 
-  public onViewDetail(setting: CircleChartDetailInfoDto) {
-    let item = { ...setting };
-    let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {
-      width: "70vw",
-      data: {
-        item: item,
-        isIncome: true,
-        isViewOnly: true
-      },
-      disableClose: true,
-      
-    });
-    ref.componentInstance.onSaveChange.subscribe((data) => {
-      this.refresh()
-    });
+  public onViewDetail(id: number) {
+    this.circleChartDetailService.GetCircleChartDetailInfoById(id).subscribe(data =>{
+      let item = data.result;
+      let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {
+        width: "70vw",
+        data: {
+          item: item,
+          isIncome: true,
+          isViewOnly: true
+        },
+        disableClose: true,
+      });
+      ref.componentInstance.onSaveChange.subscribe((data) => {
+        this.refresh()
+      });
+    })
   }
 
   onClose() {

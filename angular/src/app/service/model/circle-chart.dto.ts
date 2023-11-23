@@ -96,12 +96,4 @@ export class ResultCircleChartDetailDto
     name: string;
     value: number;
     color: string;
-    branchId: number;
-    branchName: string;
-    revenueExpenseType: RevenueExpenseType;
-    clientIds: string;
-    inOutcomeTypeIds: string;
-    listClientIds: number[];
-    listInOutcomeTypeIds: number[];
-    circleChartDetailInfo: CircleChartDetailInfoDto
 }

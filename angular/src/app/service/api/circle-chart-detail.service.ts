@@ -22,7 +22,9 @@ export class CircleChartDetailService extends BaseApiService {
   public GetCircleChartDetailsByChartId(circleChartId:number): Observable<any> {
     return this.http.get<any>(this.rootUrl + `/GetCircleChartDetailsByChartId?circleChartId=${circleChartId}`,{});
   }
-
+  public GetCircleChartDetailInfoById(id:number): Observable<any> {
+    return this.http.get<any>(this.rootUrl + `/GetCircleChartDetailInfoById?id=${id}`,{});
+  }
   public UpdateInOutcomeTypeIds(item: any): Observable<any> {
     return this.http.put<any>(this.rootUrl + '/UpdateInOutcomeTypeIds', item);
 }

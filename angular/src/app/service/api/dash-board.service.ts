@@ -128,8 +128,8 @@ constructor( http: HttpClient) {
     return this.http.get(this.rootUrl + `/GetDataBaoCaoThu?startDate=${startDate}&endDate=${endDate}&isDoanhThu=${isDoanhThu}`);
   }
 
-  GetDataBaoCaoThuForCircleChart(startDate, endDate, circleChartDetail): Observable<any>{
-    return this.http.post(this.rootUrl + `/GetDataBaoCaoThuForCircleChart?startDate=${startDate}&endDate=${endDate}`, circleChartDetail);
+  GetDataBaoCaoThuForCircleChart(startDate, endDate, circleChartDetailId): Observable<any>{
+    return this.http.get(this.rootUrl + `/GetDataBaoCaoThuForCircleChart?startDate=${startDate}&endDate=${endDate}&circleChartDetailId=${circleChartDetailId}`);
   }
 
   GetDataBaoCaoChi(startDate, endDate, branchId, expenseType): Observable<any>{
@@ -139,8 +139,8 @@ constructor( http: HttpClient) {
     return this.http.get(this.rootUrl + `/GetDataBaoCaoChi?startDate=${startDate}&endDate=${endDate}&branchId=${branchId}&isExpense=${expenseType}`);
   }
 
-  getDetailBaoCaoChiForCircleChart(startDate, endDate, circleChartDetail): Observable<any>{
-    return this.http.post(this.rootUrl + `/GetDataBaoCaoChiForCircleChart?startDate=${startDate}&endDate=${endDate}`, circleChartDetail);
+  getDetailBaoCaoChiForCircleChart(startDate, endDate, circleChartDetailId): Observable<any>{
+    return this.http.get(this.rootUrl + `/GetDataBaoCaoChiForCircleChart?startDate=${startDate}&endDate=${endDate}&circleChartDetailId=${circleChartDetailId}`);
   }
   GetHRMDebtStatistic(): Observable<any>{
     return this.http.get(this.rootUrl + `/GetHRMDebtStatistic`);

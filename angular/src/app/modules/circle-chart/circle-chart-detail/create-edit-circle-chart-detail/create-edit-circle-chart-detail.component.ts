@@ -31,7 +31,6 @@ export class CreateEditCircleChartDetailComponent  implements OnInit {
   public chartDetail = {} as CircleChartDetailInfoDto
   public branchInfo = {} as BranchInfoDto
   public listClientId: number[] = []
-  public clientInfos: ClientInfoDto[] = []
   public clientOptions: ClientOptionDto[] = []
   public referenceList = []
   public selectedReferences: number[] = []
@@ -62,7 +61,6 @@ export class CreateEditCircleChartDetailComponent  implements OnInit {
       this.isEdit = true
       this.chartDetail = this.data.item
       this.branchInfo = this.chartDetail.branch
-      this.clientInfos = this.chartDetail.clients
       this.listClientId = this.chartDetail.listClientIds
       if (data.isViewOnly){
         this.title = `${this.chartDetail.name}`
