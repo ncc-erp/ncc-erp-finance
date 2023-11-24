@@ -202,7 +202,8 @@
               <div class="card px-4 py-2">
                 <div id="baocao-title" class="d-flex">
                   <h2 class="block-title" style="line-height: 47px;">Báo cáo thu/chi: </h2>
-                  <mat-form-field appearance="outline" class="ml-3 filter-date">
+                  
+                  <!-- <mat-form-field appearance="outline" class="ml-3 filter-date">
                     <mat-label>từ ngày</mat-label>
                     <input matInput [matDatepicker]="pickerBCFromDate" [(ngModel)]="baoCaoFromDate"
                       (ngModelChange)="onBaoCaoFilter()" name="baoCaoFromDate">
@@ -215,7 +216,13 @@
                       (ngModelChange)="onBaoCaoFilter()" name="baoCaoToDate">
                     <mat-datepicker-toggle matIconSuffix [for]="pickerBCToDate"></mat-datepicker-toggle>
                     <mat-datepicker #pickerBCToDate></mat-datepicker>
-                  </mat-form-field>
+                  </mat-form-field> -->
+                  <app-date-selector-dashboard
+                  style="display: inline-flex;"
+                  (onDateSelectorChange)="onDateChangeBaoCaoThuChi($event)"
+                  [type]="defaultDateFilterTypeBaoCaoThuChi"
+                  [defaultDateFilter]="searchWithDateTimeBaoCaoThuChi">
+                  </app-date-selector-dashboard>
                 </div>
                 <div class="table-responsive mt-2">
                   <table class="table baocao-tbl">
@@ -307,49 +314,33 @@
             <div class="text-center">
               <div class="card mb-2">
                 <div class="row mx-3" style="height: 50px; justify-content: center">
-                  <div class="px-2" style="margin-top: 10px">
-                    <button class="btn btn-sm btn-primary mx-2" (click)="nextOrPre('pre')">
-                      <i class="fas fa-chevron-left mr-2"></i>prev
-                    </button>
-                    <button class="btn btn-sm btn-primary mx-2" (click)="nextOrPre('next')">
-                      <i class="fas fa-chevron-right mr-2"></i>next
-                    </button>
+                  <app-date-selector-dashboard
+                  style="display: inline-flex;"
+                  (onDateSelectorChange)="onDateChangeCircleChart($event)"
+                  [type]="defaultDateFilterTypeCircleChart"
+                  [defaultDateFilter]="searchWithDateTimeCircleChart">
+                  </app-date-selector-dashboard>
+                  <div class="col-2">
+                    <custome-select
+                      (onSelect)="onCircleChartSelect($event)"
+                      className="col-12"
+                      [dropdownData]="listCircleChart"
+                      [label]="'Biểu đồ'"
+                      [defaultValue]="listChartId"
+                      [placeholder]="'Biểu đồ'"
+                    ></custome-select>
                   </div>
-                  <span class="title-date mx-2" style="margin-top: 13px"><b *ngIf="distanceFromAndToDate != 'All Time'"
-                      style="font-size: 15px">{{ fromDate | date: "dd/MM/yyy" }} -
-                      {{ toDate | date: "dd/MM/yyy" }}</b>
-                    <b style="font-size: 15px" *ngIf="distanceFromAndToDate == 'All Time'">
-                      {{ distanceFromAndToDate }}</b>
-                  </span>
-                  <mat-form-field appearance="outline">
-                    <mat-select [formControl]="viewChange" (selectionChange)="changeView(true)">
-                      <mat-option *ngFor="let item of APP_CONFIG.TypeViewHomePage" [value]="item.value">
-                        <p *ngIf="
-                            item.value !=
-                            APP_CONSTANT.TypeViewHomePage.CustomTime
-                          ">
-                          {{ item.name }}
-                        </p>
-                        <p *ngIf="
-                            item.value ==
-                            APP_CONSTANT.TypeViewHomePage.CustomTime
-                          " (click)="showPopup()">
-                          {{ item.name }}
-                        </p>
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
                 </div>
               </div>
               <div class="row">
-                <div class="col-6">
-                  <div class="card">
-                    <div class="py-2 text-center" id="incomeChart" style="height: 290px; max-width: 100%"></div>
-                  </div>
+                <div *ngIf="circleChartData==null" class="col-12">
+                  <div class="card" style="font-family: 'Source Sans Pro'; font-size: 20px;">
+                    <span>Không có biểu đồ nào đang active</span>
                 </div>
-                <div class="col-6">
+                </div>
+                <div class="col-6" *ngFor="let chart of circleChartData; let i = index">
                   <div class="card">
-                    <div class="py-2 text-center" id="outcomeChart" style="height: 290px; max-width: 100%"></div>
+                    <app-pie-chart [chartData]="chart" [fromDate]="fromDate" [toDate]="toDate" (refreshData)="onRefreshCircleChart()"></app-pie-chart>
                   </div>
                 </div>
               </div>

@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { BaseApiService } from './base-api.service';
+import { InputListCircleChartDto } from '../model/circle-chart.dto';
 @Injectable({
   providedIn: 'root'
 })
@@ -28,7 +29,10 @@ constructor( http: HttpClient) {
 
   GetNewChart(startDate:string, endDate:string, isByPeriod:boolean):Observable<any>{
     return this.http.get(this.rootUrl + `/GetNewChart?startDate=${startDate}&endDate=${endDate}&isByPeriod=${isByPeriod}`)
+  }
 
+  GetCircleChart(input: InputListCircleChartDto):Observable<any>{
+    return this.http.post<any>(this.rootUrl + `/GetCircleChart`, input)
   }
 
   GetPieChartIncoming(startDate:string, endDate:string, isByPeriod:boolean):Observable<any>{
@@ -123,11 +127,20 @@ constructor( http: HttpClient) {
     }
     return this.http.get(this.rootUrl + `/GetDataBaoCaoThu?startDate=${startDate}&endDate=${endDate}&isDoanhThu=${isDoanhThu}`);
   }
+
+  GetDataBaoCaoThuForCircleChart(startDate, endDate, circleChartDetailId): Observable<any>{
+    return this.http.get(this.rootUrl + `/GetDataBaoCaoThuForCircleChart?startDate=${startDate}&endDate=${endDate}&circleChartDetailId=${circleChartDetailId}`);
+  }
+
   GetDataBaoCaoChi(startDate, endDate, branchId, expenseType): Observable<any>{
     if(expenseType === -1){
     return this.http.get(this.rootUrl + `/GetDataBaoCaoChi?startDate=${startDate}&endDate=${endDate}&branchId=${branchId}`);
     }
     return this.http.get(this.rootUrl + `/GetDataBaoCaoChi?startDate=${startDate}&endDate=${endDate}&branchId=${branchId}&isExpense=${expenseType}`);
+  }
+
+  getDetailBaoCaoChiForCircleChart(startDate, endDate, circleChartDetailId): Observable<any>{
+    return this.http.get(this.rootUrl + `/GetDataBaoCaoChiForCircleChart?startDate=${startDate}&endDate=${endDate}&circleChartDetailId=${circleChartDetailId}`);
   }
   GetHRMDebtStatistic(): Observable<any>{
     return this.http.get(this.rootUrl + `/GetHRMDebtStatistic`);

@@ -2639,6 +2639,122 @@ namespace FinanceManagement.Migrations
                     b.ToTable("BTransactionLogs");
                 });
 
+            modelBuilder.Entity("FinanceManagement.Entities.NewEntities.CircleChart", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsIncome")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
+
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorUserId");
+
+                    b.HasIndex("LastModifierUserId");
+
+                    b.ToTable("CircleCharts");
+                });
+
+            modelBuilder.Entity("FinanceManagement.Entities.NewEntities.CircleChartDetail", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long?>("BranchId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CircleChartId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ClientIds")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("CreatorUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("DeleterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InOutcomeTypeIds")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("LastModifierUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(500)")
+                        .HasMaxLength(500);
+
+                    b.Property<long?>("RevenueExpenseType")
+                        .HasColumnType("bigint");
+
+                    b.Property<int?>("TenantId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("CircleChartId");
+
+                    b.HasIndex("CreatorUserId");
+
+                    b.HasIndex("LastModifierUserId");
+
+                    b.ToTable("CircleChartDetails");
+                });
+
             modelBuilder.Entity("FinanceManagement.Entities.NewEntities.LineChart", b =>
                 {
                     b.Property<long>("Id")
@@ -4273,6 +4389,38 @@ namespace FinanceManagement.Migrations
                     b.HasOne("FinanceManagement.Entities.Account", "FromAccount")
                         .WithMany()
                         .HasForeignKey("FromAccountId");
+
+                    b.HasOne("FinanceManagement.Authorization.Users.User", "LastModifiedUser")
+                        .WithMany()
+                        .HasForeignKey("LastModifierUserId");
+                });
+
+            modelBuilder.Entity("FinanceManagement.Entities.NewEntities.CircleChart", b =>
+                {
+                    b.HasOne("FinanceManagement.Authorization.Users.User", "CreationUser")
+                        .WithMany()
+                        .HasForeignKey("CreatorUserId");
+
+                    b.HasOne("FinanceManagement.Authorization.Users.User", "LastModifiedUser")
+                        .WithMany()
+                        .HasForeignKey("LastModifierUserId");
+                });
+
+            modelBuilder.Entity("FinanceManagement.Entities.NewEntities.CircleChartDetail", b =>
+                {
+                    b.HasOne("FinanceManagement.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId");
+
+                    b.HasOne("FinanceManagement.Entities.NewEntities.CircleChart", "CircleChart")
+                        .WithMany("CircleChartDetails")
+                        .HasForeignKey("CircleChartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FinanceManagement.Authorization.Users.User", "CreationUser")
+                        .WithMany()
+                        .HasForeignKey("CreatorUserId");
 
                     b.HasOne("FinanceManagement.Authorization.Users.User", "LastModifiedUser")
                         .WithMany()

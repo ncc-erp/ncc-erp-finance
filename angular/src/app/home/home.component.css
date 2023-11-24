@@ -40,7 +40,6 @@ a:hover {
 }
 
 ::ng-deep #baocao-title .mat-form-field-flex > .mat-form-field-infix {
-  padding: 0 !important;
   display: flex;
 }
 ::ng-deep #baocao-title .mat-form-field-label-wrapper {

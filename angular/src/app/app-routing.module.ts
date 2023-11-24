@@ -49,6 +49,8 @@ import { PeriodComponent } from './modules/period/period.component';
 import { LineChartSettingComponent } from './modules/line-chart-setting/line-chart-setting.component';
 import { FinanceReviewOldComponent } from './modules/finance-review-old/finance-review-old.component';
 import { CurrencyConvertComponent } from './modules/currency-convert/currency-convert.component';
+import { CircleChartComponent } from './modules/circle-chart/circle-chart.component';
+import { CircleChartDetailComponent } from './modules/circle-chart/circle-chart-detail/circle-chart-detail.component';
 
 
 @NgModule({
@@ -80,13 +82,15 @@ import { CurrencyConvertComponent } from './modules/currency-convert/currency-co
                     { path: "revenue-record", component: RevenueRecordingComponent, canActivate: [AppRouteGuard] },
                     { path: "detail", component: FinanceDetailComponent, canActivate: [AppRouteGuard] },
                     { path: "setting", component: AdminSettingComponent, canActivate: [AppRouteGuard] },
-
+                    
                     { path: 'bank-account', component: BankAccountComponent },
                     { path: "bank-account/detail", component: BankAccountDetailComponent, canActivate: [AppRouteGuard] },
                     { path: "expenditure-request", component: ExpenditureRequestComponent, canActivate: [AppRouteGuard] },
                     { path: "supplierList", component: SupplierListComponent, canActivate: [AppRouteGuard] },
                     { path: "supplier", component: SupplierComponent, canActivate: [AppRouteGuard] },
                     { path: "status", component: StatusComponent, canActivate: [AppRouteGuard] },
+                    { path: 'circleChart', component: CircleChartComponent, canActivate: [AppRouteGuard] },
+                    { path: 'circleChartDetail', component: CircleChartDetailComponent, canActivate: [AppRouteGuard] },
                     {
                         path: "requestDetail", component: ExpenditureRequestDetailComponent, canActivate: [AppRouteGuard],
                         children: [{

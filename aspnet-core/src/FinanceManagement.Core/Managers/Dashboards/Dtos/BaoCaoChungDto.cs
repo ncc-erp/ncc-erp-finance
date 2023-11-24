@@ -45,8 +45,12 @@ namespace FinanceManagement.Managers.Dashboards.Dtos
         public string ExchangeRateFromat => Helpers.FormatMoney(ExchangeRate);
         public double TotalVND => Total * ExchangeRate;
         public string TotalVNDFormat => Helpers.FormatMoney(TotalVND);
+        public long CurrencyId { get; set; }
         public string CurrencyName { get; set; }
+        public long OutcomingEntryTypeId { get; set; }
         public string OutcomingEntryType { get; set; }
+        public int? Month { get; set; }
+        public int? Year { get; set; }
         public string LaChiPhi => ExpenseType == ExpenseType.REAL_EXPENSE ? "YES" : "NO";
         public IEnumerable<GetThongTinRequestChi> Details { get; set; }
     }
@@ -61,6 +65,7 @@ namespace FinanceManagement.Managers.Dashboards.Dtos
     {
         public long Id { get; set; }
         public string Name { get; set; }
+        public long? ClientId { get; set; }
         public string ClientName { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
@@ -68,13 +73,21 @@ namespace FinanceManagement.Managers.Dashboards.Dtos
         public DateTime? TransactionDate { get; set; }
         public double Value { get; set; }
         public string ValueFormat => Helpers.FormatMoney(Value);
+        public long CurrencyId { get; set; }
         public string CurrencyName { get; set; }
         public double ExchangeRate { get; set; }
         public string ExchangeRateFormat => Helpers.FormatMoney(ExchangeRate);
         public double TotalVND => Value * ExchangeRate;
         public string TotalVNDFormat => Helpers.FormatMoney(TotalVND);
+        public long IncomingEntryTypeId { get; set; }
         public string IncomingEntryType { get; set; }
         public bool IsDoanhThu { get; set; }
         public string TinhDoanhThu => IsDoanhThu ? "YES" : "NO";
+    }
+
+    public class BaoCaoDto
+    {
+        public BaoCaoThuDto BaoCaoThu { get; set; }
+        public GetThongTinRequestChi BaoCaoChi { get; set; }
     }
 }

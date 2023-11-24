@@ -33,5 +33,12 @@
         public const string TEN_GHI_NHAN_THU_KHI_MUA_NGOAI_TE = "MUA {0} {1} tỉ giá trung bình {2}";
 
         public const string BANK_ACCOUNT_OPTION_NAME = "{0} ({1}) {2} [{3}]";
+
+        //AccountType
+        public const string ACCOUNT_TYPE_EMPLOYEE = "EMPLOYEE";
+        public const string ACCOUNT_TYPE_CLIENT = "CLIENT";
+        public const string ACCOUNT_TYPE_OTHER = "OTHER";
+        public const string ACCOUNT_TYPE_COMPANY = "COMPANY";
+        public const string ACCOUNT_TYPE_SUPPLIER = "SUPPLIER";
     }
 }

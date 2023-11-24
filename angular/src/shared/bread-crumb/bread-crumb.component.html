@@ -1,0 +1,4 @@
+<span *ngFor="let item of listBreadCrumb">
+    <a *ngIf="item.url" [routerLink]="item.url" [queryParams]="item.queryParams" class="hyperlink" [innerHtml]="item.name"></a>
+    <span *ngIf="!item.url" [innerHtml]="item.name"></span>
+</span> 

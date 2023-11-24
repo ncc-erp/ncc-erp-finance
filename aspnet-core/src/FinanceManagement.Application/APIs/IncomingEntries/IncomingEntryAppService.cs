@@ -125,8 +125,8 @@ namespace FinanceManagement.APIs.IncomingEntries
         private IQueryable<IncomingEntryDto> BuildIncomingQuery()
         {
             var query = (from ie in WorkScope.GetAll<IncomingEntry>().Include(x => x.IncomingEntryType).OrderByDescending(x => x.CreationTime)
-                         //join cc in WorkScope.GetAll<CurrencyConvert>() on ie.CurrencyId equals cc.CurrencyId into ccs
-                         //from cc in ccs.DefaultIfEmpty()
+                             //join cc in WorkScope.GetAll<CurrencyConvert>() on ie.CurrencyId equals cc.CurrencyId into ccs
+                             //from cc in ccs.DefaultIfEmpty()
                          join bt in WorkScope.GetAll<BankTransaction>()
                               on ie.BankTransactionId equals bt.Id
                          join ba in WorkScope.GetAll<BankAccount>() on bt.FromBankAccountId equals ba.Id

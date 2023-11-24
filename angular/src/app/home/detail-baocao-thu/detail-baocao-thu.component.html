@@ -1,7 +1,7 @@
 <div class="card-header move-cursor" cdkDrag cdkDragRootElement=".modal-content, .cdk-overlay-pane" cdkDragHandle>
     <div class="d-flex justify-content-between">
         <div class="col-7 p-0">
-            <span style="font-size: 30px;">
+            <span *ngIf="!data.circleChartDetail" style="font-size: 30px;">
                 <ng-container *ngIf="data.isDoanhThu === null">
                     Tổng thu
                 </ng-container>
@@ -12,9 +12,21 @@
                     Thu không Thực
                 </ng-container>
             </span>
+            <span *ngIf="data.circleChartDetail" style="font-size: 30px;">
+                <ng-container>
+                    {{this.circleChart}}
+                    <i class="fas fa-chevron-right"></i>
+                    {{this.circleChartDetail.name}}
+                </ng-container>
+            </span>
             <div class="d-inline" style="font-size: 20px;">
                 <span class="badge bg-primary ml-2">{{startDate | dmyDateFormat}} - {{endDate | dmyDateFormat}}</span>
-                <span class="badge bg-primary ml-2">{{this.data.tinhVaoDoanhThu ? 'Tính vào doanh thu' : ''}}</span>
+                <span *ngIf="!data.circleChartDetail" class="badge bg-primary ml-2">{{this.data.tinhVaoDoanhThu ? 'Tính vào doanh thu' : ''}}</span>
+                <button *ngIf="data.circleChartDetail" 
+                class="viewBtn btn btn-outline-secondary btn-sm ml-2" 
+                (click)="onViewDetail(circleChartDetail.id)">
+                    <mat-icon style="font-size: 20px; vertical-align: middle; height: fit-content;">settings</mat-icon>
+                </button>  
             </div>
         </div>
 
