@@ -35,6 +35,8 @@ export class SelectionTreeCircleChartComponent implements OnInit {
   async onCheck(event) {
     if (!this.disabled) {
       if (!event.checked) {
+        this.existList.push(this.data.id);
+        this.checkAllChildren(this.data, true);
         let input = {
           id: this.chartDetail.id,
           inOutcomeTypeIds: this.existList.concat(this.data.id)
@@ -42,12 +44,26 @@ export class SelectionTreeCircleChartComponent implements OnInit {
     
         this.circleChartDetailService.UpdateInOutcomeTypeIds(input).subscribe(rs => {
           abp.notify.success("added new type to circle chart");
-          this.existList.push(this.data.id);
           this.existListChange.emit(this.existList);
           this.onSelectedItem.emit();
         });
       } else {
+        this.existList = this.existList.filter(id => id !== this.data.id);
+        this.checkAllChildren(this.data, false);
         this.RemoveInOutComeType();
+      }
+    }
+  }
+
+  private checkAllChildren(node: any, checked: boolean) {
+    if (node.children && node.children.length > 0) {
+      for (const child of node.children) {
+        child.checked = checked;
+        this.existList = checked
+          ? [...this.existList, child.id]
+          : this.existList.filter(id => id !== child.id);
+
+        this.checkAllChildren(child, checked);
       }
     }
   }
