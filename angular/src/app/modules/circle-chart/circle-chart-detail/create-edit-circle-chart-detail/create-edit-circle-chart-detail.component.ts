@@ -44,6 +44,7 @@ export class CreateEditCircleChartDetailComponent  implements OnInit {
   public listBranchFilter: BranchDto[];
   public listClient = [];
   public revenueExpenseType;
+  public isEntryTypeChange = false
   public inputFilter: InputFilter = new InputFilter();
 
   constructor(@Inject(MAT_DIALOG_DATA) private data: any,
@@ -213,10 +214,18 @@ export class CreateEditCircleChartDetailComponent  implements OnInit {
   }
 
   onSelect() {
+    this.isEntryTypeChange = true
     this.onEmit()
   }
   onRemove() {
+    this.isEntryTypeChange = true
     this.onEmit()
+  }
+
+  onClose(){
+    if(this.isEntryTypeChange){
+      this.onSaveChange.emit()
+    }
   }
 
   onSelectType() {
