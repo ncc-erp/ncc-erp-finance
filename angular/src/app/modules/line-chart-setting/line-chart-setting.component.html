@@ -1,6 +1,8 @@
 <div class="wrapper px-4 py-2">
     <div class="header d-flex justify-content-between">
-        <h5>Line Chart</h5>
+        <div class="breadcrumb">
+            <app-bread-crumb [listBreadCrumb]="listBreadCrumb"></app-bread-crumb>
+        </div>
         <button  class="btn btn-primary" *ngIf="isShowCreateBtn()"
             (click)="onCreate()">
             <i class="fa fa-plus-square mr-1"></i>

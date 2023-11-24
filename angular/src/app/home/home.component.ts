@@ -51,8 +51,8 @@ export class HomeComponent extends AppComponentBase {
   public YCTDStatus: string = "[YCTĐ] Chờ CEO duyệt"
   public selectedPeriod = {} as PeriodDto
   public baoCaoChung: BaoCaoChungDto[] = []
-  public baoCaoFromDate = AppConsts.periodStartDate
-  public baoCaoToDate = this.getLastDateOfMonth(moment())
+  public baoCaoFromDate: any
+  public baoCaoToDate: any
   public baoCaoFilter = baoCaoFilterOption
   public debtStatistic = {} as HrmDebtDto
 
@@ -122,7 +122,6 @@ export class HomeComponent extends AppComponentBase {
           else {
             this.endDate.setValue(this.baoCaoToDate)
           }
-          this.baoCaoFromDate = period.startDate         
           this.overviewBTransactionStatistics()
           this.overviewOutcomingEntryStatistics()
           this.getDataForLineChart()
@@ -666,6 +665,7 @@ export class HomeComponent extends AppComponentBase {
   }
 
   onDateChangeBaoCaoThuChi(event: DateTimeSelectorHome){
+    console.log(1)
     let data = event;
     this.searchWithDateTimeBaoCaoThuChi = data;
     this.defaultDateFilterTypeBaoCaoThuChi = data.dateType;
@@ -673,6 +673,8 @@ export class HomeComponent extends AppComponentBase {
     this.baoCaoFromDate = this.searchWithDateTimeBaoCaoThuChi.fromDate
     this.baoCaoToDate = this.searchWithDateTimeBaoCaoThuChi.toDate
     this.getDataBaoCaoChung();
+    console.log(moment(this.baoCaoFromDate).format("YYYY-MM-DD"))
+    console.log(moment(this.baoCaoToDate).format("YYYY-MM-DD"))
   }
 
   getExpenditureRequestUrl(param) {
@@ -726,8 +728,11 @@ export class HomeComponent extends AppComponentBase {
   }
 
   viewBaoCaoThuDetail(tinhVaoDoanhThu: boolean, isDoanhThu : any) {
+    console.log(moment(this.baoCaoFromDate).format("YYYY-MM-DD"))
+    console.log(moment(this.baoCaoToDate).format("YYYY-MM-DD"))
     this.dialog.open(DetailBaocaoThuComponent, {
-      width: "80vw",
+      width: "90vw",
+      maxWidth: "90vw",
       data: {
         startDate: moment(this.baoCaoFromDate).format("YYYY-MM-DD"),
         endDate: moment(this.baoCaoToDate).format("YYYY-MM-DD"),
@@ -740,7 +745,8 @@ export class HomeComponent extends AppComponentBase {
 
   viewBaoCaoChiDetail(branchName:string,branchId:number, expenseType:number ) {
     this.dialog.open(DetailBaocaoChiComponent, {
-      width: "80vw",
+      width: "90vw",
+      maxWidth: "90vw",
       data: {
         startDate: moment(this.baoCaoFromDate).format("YYYY-MM-DD"),
         endDate: moment(this.baoCaoToDate).format("YYYY-MM-DD"),        
@@ -858,7 +864,8 @@ export interface BaoCaoThuDto {
   totalVNDFormat: string,
   incomingEntryType: number,
   isDoanhThu: boolean,
-  tinhDoanhThu: string
+  tinhDoanhThu: string,
+  bankTransactionId: number
 }
 
 export interface BaoCaoChiDto {

@@ -2,7 +2,7 @@
     cursor: move;
 }
 .total{
-    font-size: 18px;
+    font-size: 16px;
 }
 ::ng-deep #baocaothu .ngx-pagination{
     padding: 0;
@@ -16,4 +16,32 @@
     height: 30px;
     border-radius: 50%; 
     border-style: none;
+}
+.align {
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.card-header {
+    padding: 10px;
+}
+.card-body {
+    padding: 10px;
+}
+
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-wrapper {
+    padding-bottom: 0;
+  }
+
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline {
+    bottom: 5px !important;
+  }
+::ng-deep .mat-dialog-container {
+    padding: 10px;
 }

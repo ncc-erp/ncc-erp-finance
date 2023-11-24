@@ -41,6 +41,10 @@ export class LineChartSettingComponent
         },
         () => (this.isTableLoading = false)
       );
+      this.listBreadCrumb = [
+        {name: '<i class="fas fa-home"></i>',url:''}, 
+        {name: ' <i class="fas fa-chevron-right"></i> '}, 
+        {name: 'Line Chart' }];
   }
   protected delete(entity: LineChartSettingDto): void {
     abp.message.confirm(`Delete setting: ${entity.name}`, "", (rs) => {
