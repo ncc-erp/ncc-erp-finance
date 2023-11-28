@@ -82,13 +82,13 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
           'Admin.Configuration'
         ),
         new MenuItem(
-          'Line Chart',
+          'menu2.lineChart',
           '/app/lineChartSetting',
           'fas fa-cogs',
           'Admin.LineChartSetting'
         ),
         new MenuItem(
-          'Circle Chart',
+          'menu2.circleChart',
           '/app/circleChart',
           'fas fa-cogs',
           'Admin.CircleChart'

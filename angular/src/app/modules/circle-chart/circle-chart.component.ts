@@ -10,6 +10,7 @@ import {
 import { finalize } from "rxjs/operators";
 import { CreateEditCircleChartComponent } from "./create-edit-circle-chart/create-edit-circle-chart.component";
 import { PERMISSIONS_CONSTANT } from "@app/constant/permission.constant";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: 'app-circle-chart',
@@ -42,10 +43,11 @@ implements OnInit
         },
         () => (this.isTableLoading = false)
       );
-    this.listBreadCrumb = [
-      {name: '<i class="fas fa-home"></i>',url:''}, 
-      {name: ' <i class="fas fa-chevron-right"></i> '}, 
-      {name: 'Circle Chart' }];
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.onLangChange();
+      
   }
   protected delete(entity: CircleChartDto): void {
     abp.message.confirm(`Delete chart: ${entity.name}`, "", (rs) => {
@@ -58,6 +60,20 @@ implements OnInit
         });
       }
     });
+  }
+
+  onLangChange(){
+    this.translate.get("menu2.circleChart").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: '<i class="fas fa-home"></i>', url: '' },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title }
+    ];
   }
 
   showDetail(id) {
@@ -73,7 +89,8 @@ implements OnInit
   constructor(
     injector: Injector,
     private dialog: MatDialog,
-    private circleChartService: CircleChartService
+    private circleChartService: CircleChartService,
+    private translate: TranslateService
   ) {
     super(injector);
   }

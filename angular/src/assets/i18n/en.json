@@ -130,7 +130,9 @@
     "role": "Roles",
     "workFlow": "Work flow",
     "status": "Status",
-    "configuration": "Configuration"
+    "configuration": "Configuration",
+    "lineChart": "Line Chart",
+    "circleChart": "Circle Chart"
   },
   "menu3": {
     "m3_child1": "Currency",

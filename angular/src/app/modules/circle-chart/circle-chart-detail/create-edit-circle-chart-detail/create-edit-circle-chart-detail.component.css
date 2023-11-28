@@ -53,6 +53,17 @@
 .mat-form-field {
     padding-left: 7px;
 }
+.card-header {
+    padding: 0;
+    padding-bottom: 10px;
+}
+.card-body {
+    padding: 0;
+}
+::ng-deep .mat-dialog-container {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 
 
 

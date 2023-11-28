@@ -115,7 +115,8 @@ export class PieChartComponent extends AppComponentBase implements OnInit {
 
   viewBaoCaoThuDetailFromCircleChart(circleChartDetail : ResultCircleChartDetailDto) {
     let ref = this.dialog.open(DetailBaocaoThuComponent, {
-      width: "80vw",
+      width: "90vw",
+      maxWidth: "90vw",
       data: {
         startDate: this.fromDate,
         endDate: this.toDate,
@@ -131,7 +132,8 @@ export class PieChartComponent extends AppComponentBase implements OnInit {
 
   viewBaoCaoChiDetailFromCircleChart(circleChartDetail : ResultCircleChartDetailDto) {
     let ref = this.dialog.open(DetailBaocaoChiComponent, {
-      width: "80vw",
+      width: "90vw",
+      maxWidth: "90vw",
       data: {
         startDate: this.fromDate,
         endDate: this.toDate,        

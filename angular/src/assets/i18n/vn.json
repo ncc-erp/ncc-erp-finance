@@ -131,7 +131,9 @@
     "role": "Vai trò",
     "workFlow": "Work flow",
     "status": "Trạng thái",
-    "configuration": "Cài đặt"
+    "configuration": "Cài đặt",
+    "lineChart": "Line Chart",
+    "circleChart": "Circle Chart"
   },
   "menu3": {
     "m3_child1": "Tiền tệ",

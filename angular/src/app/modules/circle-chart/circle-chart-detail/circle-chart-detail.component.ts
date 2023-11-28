@@ -8,6 +8,7 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { CircleChartDetailService } from '../../../service/api/circle-chart-detail.service';
 import { CreateEditCircleChartDetailComponent } from './create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
 import { RevenueExpenseType } from '@shared/AppEnums';
+import { TranslateService } from '@ngx-translate/core';
 
 
 @Component({
@@ -23,11 +24,14 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
   circleChartInfo: CircleChartInfoDto;
   isIncome: boolean;
   isActive: boolean;
+  title: any;
   constructor(
     injector: Injector, 
     private circleChartDetailService: CircleChartDetailService, 
     private dialog: MatDialog, 
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private translate: TranslateService
+    ) {
     super(injector);
   }
   paramId;
@@ -44,15 +48,34 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
         item.hideEntryType = false;
       })
       this.isIncome = item.result.isIncome;
-      this.listBreadCrumb = [
-        {name: '<i class="fas fa-home fa-l"></i>',url:''}, 
-        {name: ' <i class="fas fa-chevron-right"></i> '}, 
-        {name: 'Circle Chart', url: '/app/circleChart'}, 
-        {name: ' <i class="fas fa-chevron-right"></i> '}, 
-        {name: this.circleChartInfo.name }];
+      // this.listBreadCrumb = [
+      //   {name: '<i class="fas fa-home fa-l"></i>',url:''}, 
+      //   {name: ' <i class="fas fa-chevron-right"></i> '}, 
+      //   {name: 'Circle Chart', url: '/app/circleChart'}, 
+      //   {name: ' <i class="fas fa-chevron-right"></i> '}, 
+      //   {name: this.circleChartInfo.name }];
       this.circleChartTypeName = this.circleChartInfo.circleChartTypeName;
       this.isActive = this.circleChartInfo.isActive;
+      this.translate.onLangChange.subscribe(() => {
+        this.onLangChange();
+      });
+      this.onLangChange();
     })
+  }
+
+  onLangChange(){
+    this.translate.get("menu2.circleChart").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: '<i class="fas fa-home"></i>', url: '' },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title, url: '/app/circleChart' },
+      {name: ' <i class="fas fa-chevron-right"></i> '}, 
+      {name: this.circleChartInfo.name }];
   }
   public onCreate() {
     let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {
