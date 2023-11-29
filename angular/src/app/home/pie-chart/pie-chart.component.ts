@@ -76,8 +76,12 @@ export class PieChartComponent extends AppComponentBase implements OnInit {
               value: item.value,
               detail: item,
               itemStyle: {
-                color: item.color
-              }
+                color: item.color,
+              },
+              label: {
+                show: true,
+                formatter: '{b} ({d}%)', // Display name and percentage
+              },
             })),
             emphasis: {
               itemStyle: {
@@ -115,7 +119,8 @@ export class PieChartComponent extends AppComponentBase implements OnInit {
 
   viewBaoCaoThuDetailFromCircleChart(circleChartDetail : ResultCircleChartDetailDto) {
     let ref = this.dialog.open(DetailBaocaoThuComponent, {
-      width: "80vw",
+      width: "90vw",
+      maxWidth: "90vw",
       data: {
         startDate: this.fromDate,
         endDate: this.toDate,
@@ -131,7 +136,8 @@ export class PieChartComponent extends AppComponentBase implements OnInit {
 
   viewBaoCaoChiDetailFromCircleChart(circleChartDetail : ResultCircleChartDetailDto) {
     let ref = this.dialog.open(DetailBaocaoChiComponent, {
-      width: "80vw",
+      width: "90vw",
+      maxWidth: "90vw",
       data: {
         startDate: this.fromDate,
         endDate: this.toDate,        
