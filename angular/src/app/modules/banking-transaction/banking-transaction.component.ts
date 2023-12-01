@@ -33,6 +33,8 @@ import { AccountTypeEnum, BankTransactionFilterDateTimeType, CurrencyColor, Date
 import { IOption } from '@shared/components/custome-select/custome-select.component';
 import { Utils } from '@app/service/helpers/utils';
 import { DateTimeSelector } from '@shared/date-selector/date-selector.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: "app-banking-transaction",
@@ -143,6 +145,9 @@ export class BankingTransactionComponent
   BANK_TRANSCATION_DATE_TIME_OPTIONS = BANK_TRANSCATION_DATE_TIME_OPTIONS;
   optionDate: BankTransactionFilterDateTimeType = BankTransactionFilterDateTimeType.NO_FILTER;
   BankTransactionFilterDateTimeTypeNO_FILTER = BankTransactionFilterDateTimeType.NO_FILTER
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankTransaction;
+  queryParams;
 
   protected list(
     request: GetAllPagingBankTransactionDto,
@@ -185,6 +190,33 @@ export class BankingTransactionComponent
         });
         this.showPaging(data.result, pageNumber);
       });
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu5").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu5.m5_child3").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
 
   listCurrency: CurrencyConvertDto[];
@@ -194,7 +226,8 @@ export class BankingTransactionComponent
     private route: ActivatedRoute,
     private service: TransactionService,
     private currencyService: CurrencyService,
-    injector: Injector
+    injector: Injector,
+    private translate: TranslateService
   ) {
     super(injector);
     const id = route.snapshot.queryParamMap.get("id");

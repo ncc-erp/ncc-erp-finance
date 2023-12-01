@@ -8,6 +8,9 @@ import { PeriodDto } from '../../service/model/period.dto'
 import { PAGE_SIZE_OPTIONS } from '../revenue-managed/revenue-managed.component';
 import { CloseAndCreatePeriodComponent } from './close-and-create-period/close-and-create-period.component';
 import { CreateEditPeriodComponent } from './create-edit-period/create-edit-period.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-period',
@@ -15,14 +18,19 @@ import { CreateEditPeriodComponent } from './create-edit-period/create-edit-peri
   styleUrls: ['./period.component.css']
 })
 export class PeriodComponent extends PagedListingComponentBase<PeriodDto> implements OnInit {
-  constructor(injector: Injector,
+  constructor(
+    private route: ActivatedRoute,
+    injector: Injector,
     private periodService : PeriodService,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private translate: TranslateService) {
     super(injector);
   }
   public listPeriods: PeriodDto[] = [];
   public isTheFirstCreate :boolean = false;
-
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.period;
+  queryParams;
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
     this.isTableLoading = true;
     this.periodService.getAllPaging(request).subscribe((rs)=>{
@@ -40,6 +48,33 @@ export class PeriodComponent extends PagedListingComponentBase<PeriodDto> implem
   ngOnInit(): void {
     this.refresh();
     this.isTheFirstRecord();
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu5").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu5.m5_child9").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
 
   private onOpenDialog(period : PeriodDto, title: string, isEditting){

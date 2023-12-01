@@ -24,6 +24,8 @@ import { CircleChartService } from '@app/service/api/circle-chart.service';
 import { IOption } from '@shared/components/custome-select/custome-select.component';
 import { DateSelectorHomeEnum } from '@shared/AppEnums';
 import { DateTimeSelectorHome } from './date-selector-dashboard/date-selector-dashboard.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   templateUrl: './home.component.html',
@@ -55,6 +57,7 @@ export class HomeComponent extends AppComponentBase {
   public baoCaoToDate: any
   public baoCaoFilter = baoCaoFilterOption
   public debtStatistic = {} as HrmDebtDto
+  public title: any;
 
   distanceFromAndToDate = '';
   viewChange = new FormControl(this.APP_CONSTANT.TypeViewHomePage.Month);
@@ -62,6 +65,8 @@ export class HomeComponent extends AppComponentBase {
   endDate = new FormControl(moment())
   startDate = new FormControl(moment());
   listCircleChart: IOption[] = []
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu1;
+  queryParams;
 
   defaultDateFilterTypeBaoCaoThuChi: DateSelectorHomeEnum = DateSelectorHomeEnum.MONTH;
   searchWithDateTimeBaoCaoThuChi = {} as DateTimeSelectorHome;
@@ -132,11 +137,31 @@ export class HomeComponent extends AppComponentBase {
     this.overviewInvoiceStatistics()
     this.getHRMDebtStatistic()
     this.getCircleChartActive()
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu1").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.title , url: this.routeUrlFirstLevel }
+    ];
   }
 
   constructor(injector: Injector, private router: Router, private route: ActivatedRoute, private dialog: MatDialog,
     private dashBoardService: DashBoardService, private outcomeService: ExpenditureRequestService,
-    private periodService: PeriodService, private circleChartService: CircleChartService) {
+    private periodService: PeriodService, private circleChartService: CircleChartService, private translate: TranslateService) {
     super(injector);
 
   }
@@ -665,7 +690,6 @@ export class HomeComponent extends AppComponentBase {
   }
 
   onDateChangeBaoCaoThuChi(event: DateTimeSelectorHome){
-    console.log(1)
     let data = event;
     this.searchWithDateTimeBaoCaoThuChi = data;
     this.defaultDateFilterTypeBaoCaoThuChi = data.dateType;
@@ -673,8 +697,6 @@ export class HomeComponent extends AppComponentBase {
     this.baoCaoFromDate = this.searchWithDateTimeBaoCaoThuChi.fromDate
     this.baoCaoToDate = this.searchWithDateTimeBaoCaoThuChi.toDate
     this.getDataBaoCaoChung();
-    console.log(moment(this.baoCaoFromDate).format("YYYY-MM-DD"))
-    console.log(moment(this.baoCaoToDate).format("YYYY-MM-DD"))
   }
 
   getExpenditureRequestUrl(param) {
@@ -728,8 +750,6 @@ export class HomeComponent extends AppComponentBase {
   }
 
   viewBaoCaoThuDetail(tinhVaoDoanhThu: boolean, isDoanhThu : any) {
-    console.log(moment(this.baoCaoFromDate).format("YYYY-MM-DD"))
-    console.log(moment(this.baoCaoToDate).format("YYYY-MM-DD"))
     this.dialog.open(DetailBaocaoThuComponent, {
       width: "90vw",
       maxWidth: "90vw",

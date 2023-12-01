@@ -25,6 +25,8 @@ import * as _ from 'lodash';
 import { ActivatedRoute } from '@angular/router';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import * as FileSaver from 'file-saver';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-list-n-revenue',
@@ -40,6 +42,9 @@ export class ListNRevenueComponent extends PagedListingComponentBase<NRevenueByA
   revenueStatusOptions: ValueAndNameModel[] = [];
   revenueByAccounts: NRevenueByAccount[] = [];
   searchWithDateTime: DateTimeSelector;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.nrevenue;
+  queryParams;
   searchDetail = {
     month: AppConsts.VALUE_OPTIONS_ALL,
     year: AppConsts.VALUE_OPTIONS_ALL,
@@ -91,7 +96,8 @@ export class ListNRevenueComponent extends PagedListingComponentBase<NRevenueByA
     private _revenue: NRevenueService,
     private dialog: MatDialog,
     public _utilities: UtilitiesService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translate: TranslateService
   ) {
     super(injector);
   }
@@ -106,6 +112,33 @@ export class ListNRevenueComponent extends PagedListingComponentBase<NRevenueByA
     this.setYears();
     this.getListAccount();
     this.getInvoiceRoutingFromHomepage();
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+
+  onLangChange(){
+    this.translate.get("menu.menu5").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu5.m5_child5").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
 
   setYears() {

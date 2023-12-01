@@ -10,6 +10,9 @@ import { finalize } from 'rxjs/operators';
 import { UtilitiesService } from '@app/service/api/new-versions/utilities.service';
 import { SessionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-currency',
@@ -22,6 +25,9 @@ export class CurrencyComponent extends PagedListingComponentBase<any> implements
   Directory_Currency_Delete = PERMISSIONS_CONSTANT.Directory_Currency_Delete;
   Directory_Currency_Edit = PERMISSIONS_CONSTANT.Directory_Currency_Edit;
   Directory_Currency_ChangeDefaultCurrency = PERMISSIONS_CONSTANT.Directory_Currency_ChangeDefaultCurrency;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.currencies;
+  queryParams;
 
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     { propertyName: 'Name', comparisions: [0, 6, 7, 8], displayName: "filterDirectory.Name" },
@@ -30,11 +36,13 @@ export class CurrencyComponent extends PagedListingComponentBase<any> implements
   ];
 
   constructor(
+    private route: ActivatedRoute,
     injector: Injector,
     private _currencyService: CurrencyService,
     private _modalService: BsModalService,
     public _utilities: UtilitiesService,
    private sessionService: SessionServiceProxy,
+   private translate: TranslateService
   ) {
     super(injector);
 
@@ -54,6 +62,33 @@ export class CurrencyComponent extends PagedListingComponentBase<any> implements
         this.currencies = result.result.items;
         this.showPaging(result.result, pageNumber);
       });
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu3").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu3.m3_child1").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
   delete(currency: CurrencyDto): void {
     abp.message.confirm(

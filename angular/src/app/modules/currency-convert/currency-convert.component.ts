@@ -11,6 +11,8 @@ import { finalize } from 'rxjs/operators';
 import {CurrencyConvertService} from '../../service/api/currency-convert.service';
 import { EComparisor, PAGE_SIZE_OPTIONS } from '../revenue-managed/revenue-managed.component';
 import { CreateEditCurrencyConvertComponent } from './create-edit-currency-convert/create-edit-currency-convert.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-currency-convert',
@@ -24,7 +26,8 @@ export class CurrencyConvertComponent extends PagedListingComponentBase<Currency
     private currencyConvertService: CurrencyConvertService,
     private _currencyService: CurrencyService,
     private route: ActivatedRoute,
-    public dialog: MatDialog) {
+    public dialog: MatDialog,
+    private translate: TranslateService) {
     super(injector);
     this.applyUrlFilters();
   }
@@ -43,6 +46,9 @@ export class CurrencyConvertComponent extends PagedListingComponentBase<Currency
   public sortDirection: number = null
   public sortDirectionEnum = SortDirectionEnum;
   public filterItems: FilterDto[] = [];
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.currencyConvert;
+  queryParams;
 
   async ngOnInit(){
     await this.getYearOfCurrencyConvert();
@@ -65,6 +71,33 @@ export class CurrencyConvertComponent extends PagedListingComponentBase<Currency
       this.showPaging(rs.result, pageNumber);
       this.isTableLoading = false;
     }, ()=> this.isTableLoading = false)
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu3").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu3.m3_child8").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
   protected delete(entity: CurrencyConvertComponent): void {
     throw new Error('Method not implemented.');

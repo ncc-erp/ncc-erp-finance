@@ -11,6 +11,8 @@ import { finalize } from "rxjs/operators";
 import { CreateEditCircleChartComponent } from "./create-edit-circle-chart/create-edit-circle-chart.component";
 import { PERMISSIONS_CONSTANT } from "@app/constant/permission.constant";
 import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'app-circle-chart',
@@ -21,7 +23,10 @@ export class CircleChartComponent
 extends PagedListingComponentBase<CircleChartDto>
 implements OnInit 
 {
-  Admin_CircleChart_CircleChartDetail_View = PERMISSIONS_CONSTANT.Admin_CircleChart_CircleChartDetail_View
+  Admin_CircleChart_CircleChartDetail_View = PERMISSIONS_CONSTANT.Admin_CircleChart_CircleChartDetail_View;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.circleChart;
+  queryParams;
   protected list(
     request: PagedRequestDto,
     pageNumber: number,
@@ -46,7 +51,10 @@ implements OnInit
     this.translate.onLangChange.subscribe(() => {
       this.onLangChange();
     });
-    this.onLangChange();
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
       
   }
   protected delete(entity: CircleChartDto): void {
@@ -63,16 +71,21 @@ implements OnInit
   }
 
   onLangChange(){
+    this.translate.get("menu.menu2").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
     this.translate.get("menu2.circleChart").subscribe((res: string) => {
       this.title = res;
       this.updateBreadCrumb();
     });
   }
   updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
-      { name: '<i class="fas fa-home"></i>', url: '' },
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title }
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
     ];
   }
 
@@ -87,6 +100,7 @@ implements OnInit
   public circleChartDto: CircleChartDto[] = [];
 
   constructor(
+    private route: ActivatedRoute,
     injector: Injector,
     private dialog: MatDialog,
     private circleChartService: CircleChartService,

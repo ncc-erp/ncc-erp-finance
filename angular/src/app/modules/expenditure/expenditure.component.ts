@@ -8,6 +8,9 @@ import { Component, Injector, OnInit } from "@angular/core";
 import { StatusEnum } from "@shared/AppEnums";
 import * as _ from "lodash";
 import { InputFilterEntryTypeDto } from "@app/service/model/common-DTO";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-expenditure",
@@ -25,11 +28,18 @@ export class ExpenditureComponent extends AppComponentBase implements OnInit {
     name: "all",
   };
   inputFilter: InputFilterEntryTypeDto = new InputFilterEntryTypeDto();
+  title: any;
+  routeTitleFirstLevel;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.outcomingType;
+  queryParams;
 
   constructor(
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     private service: ExpenditureService,
-    injector: Injector
+    injector: Injector,
+    private translate: TranslateService
   ) {
     super(injector);
   }
@@ -38,6 +48,33 @@ export class ExpenditureComponent extends AppComponentBase implements OnInit {
 
   ngOnInit(): void {
     this.getAllData();
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu3").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu3.m3_child6").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
   getByNum(enumValue: number, objectEnum: any) {
     for (let key in objectEnum) {

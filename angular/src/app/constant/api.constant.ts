@@ -60,5 +60,50 @@ export const APP_CONSTANT = {
     PENDING: "bg-warning",
     DONE: "bg-success"
 
+  },
+  UrlBreadcrumbFirstLevel: {
+    Menu1: "/app/home",
+    Menu2: "/app/b-transaction-log",
+    Menu3: "/app/supplierList",
+    Menu4: "/app/accountant-account",
+    Menu5: "/app/expenditure-request"
+  },
+  UrlBreadcrumbSecondLevel: {
+    tenants: "/app/tenants",
+    user: "/app/users",
+    role: "/app/roles",
+    workFlow: "/app/workFlow",
+    status: "/app/status",
+    configuration: "/app/setting",
+    lineChart: "/app/lineChartSetting",
+    circleChart: "/app/circleChart",
+    bTransactionLog: "/app/b-transaction-log",
+    auditLog: "/app/auditlog",
+    currencies: "/app/currencies",
+    currencyConvert: "/app/currency-convert",
+    banks: "/app/banks",
+    accountType: "/app/accountType",
+    branch: "/app/branches",
+    incomingType: "/app/incomingType",
+    outcomingType: "/app/outcomingType",
+    supplierList: "/app/supplierList",
+    bankAccount: "/app/bank-account",
+    accountantAccount: "/app/accountant-account",
+    revenueRecord: "/app/revenue-record",
+    expenditureRequest: "/app/expenditure-request",
+    bankTransaction: "/app/bank-transaction",
+    financeReview: "/app/finance-review",
+    financeStatisticOld: "/app/finance-statistic-old",
+    btransaction: "/app/btransaction",
+    nrevenue: "/app/nrevenue",
+    period: "/app/period"
+  },
+  UrlBreadcrumbThirdLevel: {
+    workFlowDetail: "/app/workFlowDetail",
+    circleChartDetail: "/app/circleChartDetail",
+    bankAccountDetail: "/app/bankAccountDetail",
+    revenueRecordDetail: "/app/detail",
+    bankTransactionDetail: "/app/detail",
+    expenditureRequestDetail: "/app/requestDetail/main"
   }
 }

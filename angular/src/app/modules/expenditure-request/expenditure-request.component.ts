@@ -39,6 +39,8 @@ import { CloneRequestComponent } from "./clone-request/clone-request.component";
 import { Utils } from "@app/service/helpers/utils";
 import { UpdateBranchComponent } from "../expenditure-request-detail/main-tab/update-branch/update-branch.component";
 import { TreeInOutTypeOption } from "@shared/components/tree-in-out-type/tree-in-out-type.component";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
 
 @Component({
   selector: "app-expenditure-request",
@@ -68,6 +70,9 @@ export class ExpenditureRequestComponent
     PERMISSIONS_CONSTANT.Finance_OutcomingEntry_ExportPdf;
   Finance_OutcomingEntry_UpdateReportDate =
     PERMISSIONS_CONSTANT.Finance_OutcomingEntry_UpdateReportDate;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.expenditureRequest;
+  queryParams;
   fileParam: DropDownDataDto[] = [
     { displayName: "No File Yet", value: 0 },
     { displayName: "Not Yet Confirmed", value: 1 },
@@ -264,6 +269,33 @@ export class ExpenditureRequestComponent
     //       return (sum += item.totalValueToCurrencyDefault);
     //     }, 0);
     //   });
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu5").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu5.m5_child2").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
 
   protected delete(entity: ExpenditureRequestDto): void {
@@ -280,7 +312,8 @@ export class ExpenditureRequestComponent
     public branchService: BranchService,
     public _utilities: UtilitiesService,
     private commonService: CommonService,
-    private outcomingEntryService: ExpenditureService
+    private outcomingEntryService: ExpenditureService,
+    private translate: TranslateService
   ) {
     super(injector);
     const status = this.route.snapshot.queryParamMap.get("status");

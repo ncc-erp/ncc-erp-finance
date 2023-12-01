@@ -5,6 +5,9 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { SessionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { forkJoin } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { ActivatedRoute } from '@angular/router';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-setting',
@@ -36,8 +39,13 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
   public isEditCoTheSuaThongTinCuaKiCu: boolean = false
   public isEnableCrawlBTransactionNoti: boolean = false
   public hrmConfig = {} as internalToolConfig
+  public title: any;
+  routeTitleFirstLevel;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.configuration;
+  queryParams;
 
-  constructor(private settingService: AppConfigurationService, private sessionService: SessionServiceProxy, injector: Injector) {
+  constructor(private route: ActivatedRoute, private settingService: AppConfigurationService, private sessionService: SessionServiceProxy, injector: Injector, private translate: TranslateService) {
     super(injector)
   }
 
@@ -48,6 +56,33 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
     this.getAllowChangeEntityInPeriodClosed()
     this.getEnableCrawlBTransactionNoti()
     this.getHRMConfig()
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+
+  onLangChange(){
+    this.translate.get("menu.menu2").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu2.configuration").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
   getSetting() {
     this.isLoading = true;

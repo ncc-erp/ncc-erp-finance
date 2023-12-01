@@ -65,6 +65,8 @@ import { AppConfigurationService } from "@app/service/api/app-configuration.serv
 import { MatMenuTrigger } from "@angular/material/menu";
 import * as FileSaver from "file-saver";
 import { RollbackClientPaidComponent } from "../rollback-client-paid/rollback-client-paid.component";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
 
 @Component({
   selector: "app-list-btransaction",
@@ -105,6 +107,9 @@ export class ListBtransactionComponent
     TimeAt: "timeAt",
   };
   searchWithDateTime = {} as DateTimeSelector;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.btransaction;
+  queryParams;
 
   id?: number | string;
   @ViewChildren(MatMenuTrigger) menuTrigger: any;
@@ -115,7 +120,8 @@ export class ListBtransactionComponent
     public _utilities: UtilitiesService,
     public dialog: MatDialog,
     private _settingService: AppConfigurationService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private translate: TranslateService
   ) {
     super(injector);
     this.id = this.route.snapshot.queryParamMap.get("id");
@@ -136,7 +142,33 @@ export class ListBtransactionComponent
         this.refresh();
       }));
     this.getEspecialIncomingEntryType();
-  }
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+}
+
+onLangChange(){
+  this.translate.get("menu.menu5").subscribe((res: string) => {
+    this.routeTitleFirstLevel = res;
+    this.updateBreadCrumb();
+  });
+  this.translate.get("menu5.m5_child8").subscribe((res: string) => {
+    this.title = res;
+    this.updateBreadCrumb();
+  });
+}
+
+updateBreadCrumb() {
+  this.listBreadCrumb = [
+    { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+    { name: ' <i class="fas fa-chevron-right"></i> ' },
+    { name: this.title , url: this.routeUrlSecondLevel}
+  ];
+}
   getEspecialIncomingEntryType() {
     this._settingService.getEspecialIncomingEntryType()
       .subscribe(async response => {

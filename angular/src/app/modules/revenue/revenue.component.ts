@@ -7,6 +7,9 @@ import { CreateEditRevenueComponent } from "./create-edit-revenue/create-edit-re
 import { AppConsts, OPTION_ALL } from "@shared/AppConsts";
 import { StatusEnum } from "@shared/AppEnums";
 import { InputFilterEntryTypeDto } from "@app/service/model/common-DTO";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-revenue",
@@ -22,10 +25,17 @@ export class RevenueComponent extends AppComponentBase implements OnInit {
   };
   type = 2;
   searchText: string = "";
+  title: any;
+  routeTitleFirstLevel;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.incomingType;
+  queryParams;
   constructor(
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     private service: RevenueService,
-    injector: Injector
+    injector: Injector,
+    private translate: TranslateService
   ) {
     super(injector);
   }
@@ -37,6 +47,33 @@ export class RevenueComponent extends AppComponentBase implements OnInit {
       AppConsts.periodId.asObservable().subscribe((rs) => {
         this.getAllData();
       }));
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu3").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu3.m3_child5").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
   getAllData() {
     this.service

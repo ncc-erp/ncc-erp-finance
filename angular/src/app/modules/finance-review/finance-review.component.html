@@ -1,395 +1,389 @@
-<div class="wrapper p-3">
-  <h2>Đối soát</h2>
-  <div class="card p-3">
-    <div class="col-12 mt-2">
-      <div class="table-title px-3 py-2">
-        <span [matTooltip]="tooltip"
-          >Dư theo loại tiền ({{ totalValueStatisticByCurrency?.valueFormat }}
-          {{ defaultCurrencyCode }}) (D1)
-        </span>
+<section class="content-header list-revenue">
+  <div class="container-fluid">
+    <div class="header d-flex justify-content-between align-items-center">
+      <div class="breadcrumb">
+        <app-bread-crumb [listBreadCrumb]="listBreadCrumb"></app-bread-crumb>
       </div>
-      <div class="table-responsive statistic-tbl">
-        <table class="table">
+    </div>
+  </div>
+</section>
+<section class="content px-2">
+  <div class="container-fluid">
+    <div class="card p-3">
+      <div class="col-12 mt-2">
+        <div class="table-title px-3 py-2">
+          <span [matTooltip]="tooltip"
+            >Dư theo loại tiền ({{ totalValueStatisticByCurrency?.valueFormat }}
+            {{ defaultCurrencyCode }}) (D1)
+          </span>
+        </div>
+        <div class="table-responsive statistic-tbl">
+          <table class="table">
+            <thead>
+              <tr>
+                <th class="gray-thead">Tiền tệ</th>
+                <th class="gray-thead">Dư đầu kỳ</th>
+                <th class="thead">
+                  Thu sổ
+                  <div>(A)</div>
+                </th>
+                <th class="thead">
+                  Thu sao kê
+                  <div>(A1)</div>
+                </th>
+                <th class="thead chenhlech-cells-th">
+                  Chênh lệch thu
+                  <div>(A-A1)</div>
+                </th>
+                <th class="thead yellow-thead">
+                  Chi sổ
+                  <div>(B)</div>
+                </th>
+                <th class="thead yellow-thead">
+                  Chi sao kê
+                  <div>(B1)</div>
+                </th>
+                <th class="thead yellow-thead">
+                  Hoàn tiền
+                  <div>(C)</div>
+                </th>
+                <th class="thead chenhlech-cells-th">
+                  Chênh lệch chi
+                  <div>(B+C-B1)</div>
+                </th>
+                <th class="thead green-thead">
+                  Dư sổ
+                  <div>(D=A-B-C)</div>
+                </th>
+                <th class="thead green-thead">
+                  Dư sao kê
+                  <div>(D1=A1-B1)</div>
+                </th>
+                <th class="thead chenhlech-cells-th">
+                  Chênh lệch
+                  <div>(D-D1)</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of statisticByCurrency">
+                <td class="text-center gray-td">
+                  <strong [ngStyle]="{ color: getCurrencyColor(item.tienTe) }">{{
+                    item.tienTe
+                  }}</strong>
+                </td>
+                <td
+                  class="text-right gray-td"
+                  [ngStyle]="{ color: getMoneyColor(item.duDauKi) }"
+                >
+                  {{ item.duDauKiFormat }}
+                </td>
+                <td
+                  class="text-right blue-td"
+                  [ngStyle]="{ color: getMoneyColor(item.thuSo) }"
+                >
+                  {{ item.thuSoFormat }}
+                </td>
+                <td
+                  class="text-right blue-td"
+                  [ngStyle]="{ color: getMoneyColor(item.thuSaoKe) }"
+                >
+                  {{ item.thuSaoKeFormat }}
+                </td>
+                <td class="text-right chenhlech-cells">
+                  <strong
+                    [ngStyle]="{ color: getMoneyColor(item.chenhLechThu) }"
+                    >{{ item.chenhLechThuFormat }}</strong
+                  >
+                </td>
+                <td
+                  class="text-right yellow-td"
+                  [ngStyle]="{ color: getMoneyColor(item.chiSo) }"
+                >
+                  {{ item.chiSoFormat }}
+                </td>
+                <td
+                  class="text-right yellow-td"
+                  [ngStyle]="{ color: getMoneyColor(item.chiSaoKe) }"
+                >
+                  {{ item.chiSaoKeFormat }}
+                </td>
+                <td
+                  class="text-right yellow-td"
+                  [ngStyle]="{ color: getMoneyColor(item.hoanTien) }"
+                >
+                  {{ item.hoanTienFormat }}
+                </td>
+                <td class="text-right chenhlech-cells">
+                  <strong
+                    [ngStyle]="{ color: getMoneyColor(item.chenhLechChi) }"
+                    >{{ item.chenhLechChiFormat }}</strong
+                  >
+                </td>
+                <td
+                  class="text-right green-td"
+                  [ngStyle]="{ color: getMoneyColor(item.duTheoSo) }"
+                >
+                  {{ item.duTheoSoFormat }}
+                </td>
+                <td
+                  class="text-right green-td"
+                  [ngStyle]="{ color: getMoneyColor(item.duTheoSaoKe) }"
+                >
+                  {{ item.duTheoSaoKeFormat }}
+                </td>
+                <td class="text-right chenhlech-cells">
+                  <strong [ngStyle]="{ color: getMoneyColor(item.chenhLech) }">{{
+                    item.chenhLechFormat
+                  }}</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+  
+      <div class="table-title px-3 py-2 mt-3 d-flex justify-content-between">
+        <div #name>
+          <span [matTooltip]="tooltipExchangeRateOfBankAccount"
+            >Dư theo tài khoản ngân hàng ({{
+              totalValueStatisticBankAccount?.valueFormat
+            }}
+            {{ defaultCurrencyCode }}) (E)
+          </span>
+        </div>
+        <div #chenh_lech>
+          E - D1 =
+          <span
+            [ngClass]="roundToTwo(totalValueStatisticBankAccount?.value - totalValueStatisticByCurrency?.value) > 0
+                ? 'text-chenh': ''">
+            {{(roundToTwo(totalValueStatisticBankAccount?.value - totalValueStatisticByCurrency?.value) | formatMoney)}} {{ defaultCurrencyCode }}</span>
+        </div>
+        <div #bao_gom_btrans_pending>
+          <div class="d-inline-block float-right">
+            <mat-checkbox
+              [(ngModel)]="unIncludeBTransPending"
+              class="is-include-btrans-pending"
+              (ngModelChange)="GetBankAccountStatistics()"
+            >
+              <span style="font-size: 16px; font-weight: 500">Bao gồm biến động số dư pending</span>
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
           <thead>
             <tr>
-              <th class="gray-thead">Tiền tệ</th>
-              <th class="gray-thead">Dư đầu kỳ</th>
+              <th class="thead">Tên tài khoản</th>
               <th class="thead">
-                Thu sổ
-                <div>(A)</div>
+                Số dư đầu kì
+                <div><strong>(A)</strong></div>
               </th>
               <th class="thead">
-                Thu sao kê
-                <div>(A1)</div>
+                Tăng trong kì
+                <div><strong>(B)</strong></div>
               </th>
-              <th class="thead chenhlech-cells-th">
-                Chênh lệch thu
-                <div>(A-A1)</div>
+              <th class="thead">
+                Giảm trong kì
+                <div><strong>(C)</strong></div>
               </th>
-              <th class="thead yellow-thead">
-                Chi sổ
-                <div>(B)</div>
-              </th>
-              <th class="thead yellow-thead">
-                Chi sao kê
-                <div>(B1)</div>
-              </th>
-              <th class="thead yellow-thead">
-                Hoàn tiền
-                <div>(C)</div>
-              </th>
-              <th class="thead chenhlech-cells-th">
-                Chênh lệch chi
-                <div>(B+C-B1)</div>
-              </th>
-              <th class="thead green-thead">
-                Dư sổ
-                <div>(D=A-B-C)</div>
-              </th>
-              <th class="thead green-thead">
-                Dư sao kê
-                <div>(D1=A1-B1)</div>
-              </th>
-              <th class="thead chenhlech-cells-th">
-                Chênh lệch
-                <div>(D-D1)</div>
+              <th class="thead">
+                Số dư hiện tại
+                <div><strong>(A+B+C)</strong></div>
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of statisticByCurrency">
-              <td class="text-center gray-td">
-                <strong [ngStyle]="{ color: getCurrencyColor(item.tienTe) }">{{
-                  item.tienTe
-                }}</strong>
-              </td>
-              <td
-                class="text-right gray-td"
-                [ngStyle]="{ color: getMoneyColor(item.duDauKi) }"
-              >
-                {{ item.duDauKiFormat }}
-              </td>
-              <td
-                class="text-right blue-td"
-                [ngStyle]="{ color: getMoneyColor(item.thuSo) }"
-              >
-                {{ item.thuSoFormat }}
-              </td>
-              <td
-                class="text-right blue-td"
-                [ngStyle]="{ color: getMoneyColor(item.thuSaoKe) }"
-              >
-                {{ item.thuSaoKeFormat }}
-              </td>
-              <td class="text-right chenhlech-cells">
-                <strong
-                  [ngStyle]="{ color: getMoneyColor(item.chenhLechThu) }"
-                  >{{ item.chenhLechThuFormat }}</strong
+            <tr *ngFor="let account of listbankAccountStatistic">
+              <td>
+                <a
+                  target="_blank"
+                  class="link-primary pointer"
+                  [href]="getUrlBankAccount(account.bankAccountId)"
+                  >{{ account.bankAccountName }}</a
                 >
               </td>
-              <td
-                class="text-right yellow-td"
-                [ngStyle]="{ color: getMoneyColor(item.chiSo) }"
-              >
-                {{ item.chiSoFormat }}
+              <td class="text-right">
+                {{ account.baseBalance }}
               </td>
               <td
-                class="text-right yellow-td"
-                [ngStyle]="{ color: getMoneyColor(item.chiSaoKe) }"
+                class="text-right"
+                [ngStyle]="{ color: getMoneyColor(account.increaseNumber) }"
               >
-                {{ item.chiSaoKeFormat }}
+                {{ account.increase }}
               </td>
               <td
-                class="text-right yellow-td"
-                [ngStyle]="{ color: getMoneyColor(item.hoanTien) }"
+                class="text-right"
+                [ngStyle]="{ color: getMoneyColor(account.reduceNumber) }"
               >
-                {{ item.hoanTienFormat }}
-              </td>
-              <td class="text-right chenhlech-cells">
-                <strong
-                  [ngStyle]="{ color: getMoneyColor(item.chenhLechChi) }"
-                  >{{ item.chenhLechChiFormat }}</strong
-                >
+                {{ account.reduce }}
               </td>
               <td
-                class="text-right green-td"
-                [ngStyle]="{ color: getMoneyColor(item.duTheoSo) }"
+                class="text-right"
+                [ngStyle]="{
+                  color: getMoneyColor(account.currentBalananceNumber)
+                }"
               >
-                {{ item.duTheoSoFormat }}
-              </td>
-              <td
-                class="text-right green-td"
-                [ngStyle]="{ color: getMoneyColor(item.duTheoSaoKe) }"
-              >
-                {{ item.duTheoSaoKeFormat }}
-              </td>
-              <td class="text-right chenhlech-cells">
-                <strong [ngStyle]="{ color: getMoneyColor(item.chenhLech) }">{{
-                  item.chenhLechFormat
-                }}</strong>
+                <strong>{{ account.currentBalanace }}</strong>
               </td>
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
-
-    <div class="table-title px-3 py-2 mt-3 d-flex justify-content-between">
-      <div #name>
-        <span [matTooltip]="tooltipExchangeRateOfBankAccount"
-          >Dư theo tài khoản ngân hàng ({{
-            totalValueStatisticBankAccount?.valueFormat
-          }}
-          {{ defaultCurrencyCode }}) (E)
-        </span>
+  
+      <div class="table-title px-3 py-2 mt-3">
+        Request chi chưa thực thi nhưng có giao dịch ngân hàng
       </div>
-      <div #chenh_lech>
-        E - D1 =
-        <span
-          [ngClass]="roundToTwo(totalValueStatisticBankAccount?.value - totalValueStatisticByCurrency?.value) > 0
-              ? 'text-chenh': ''">
-          {{(roundToTwo(totalValueStatisticBankAccount?.value - totalValueStatisticByCurrency?.value) | formatMoney)}} {{ defaultCurrencyCode }}</span>
-      </div>
-      <div #bao_gom_btrans_pending>
-        <div class="d-inline-block float-right">
-          <mat-checkbox
-            [(ngModel)]="unIncludeBTransPending"
-            class="is-include-btrans-pending"
-            (ngModelChange)="GetBankAccountStatistics()"
-          >
-            <span style="font-size: 16px; font-weight: 500">Bao gồm biến động số dư pending</span>
-          </mat-checkbox>
-        </div>
-      </div>
-    </div>
-    <div class="table-responsive">
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th class="thead">Tên tài khoản</th>
-            <th class="thead">
-              Số dư đầu kì
-              <div><strong>(A)</strong></div>
-            </th>
-            <th class="thead">
-              Tăng trong kì
-              <div><strong>(B)</strong></div>
-            </th>
-            <th class="thead">
-              Giảm trong kì
-              <div><strong>(C)</strong></div>
-            </th>
-            <th class="thead">
-              Số dư hiện tại
-              <div><strong>(A+B+C)</strong></div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let account of listbankAccountStatistic">
-            <td>
-              <a
-                target="_blank"
-                class="link-primary pointer"
-                [href]="getUrlBankAccount(account.bankAccountId)"
-                >{{ account.bankAccountName }}</a
-              >
-            </td>
-            <td class="text-right">
-              {{ account.baseBalance }}
-            </td>
-            <td
-              class="text-right"
-              [ngStyle]="{ color: getMoneyColor(account.increaseNumber) }"
-            >
-              {{ account.increase }}
-            </td>
-            <td
-              class="text-right"
-              [ngStyle]="{ color: getMoneyColor(account.reduceNumber) }"
-            >
-              {{ account.reduce }}
-            </td>
-            <td
-              class="text-right"
-              [ngStyle]="{
-                color: getMoneyColor(account.currentBalananceNumber)
-              }"
-            >
-              <strong>{{ account.currentBalanace }}</strong>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="table-title px-3 py-2 mt-3">
-      Request chi chưa thực thi nhưng có giao dịch ngân hàng
-    </div>
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th colspan="3" class="yellow-thead text-left">
-              Request chi:
-              <span
-                class="mr-2"
-                *ngFor="let total of bankTransStatistic.totalOutcomingEntries"
-                >{{ total.valueFormat }}
-                <span
-                  [ngStyle]="{ color: getCurrencyColor(total.currencyName) }"
-                  >{{ total.currencyName }}</span
-                ></span
-              >
-            </th>
-            <th colspan="6" class="green-thead text-center">
-              <div class="d-flex">
-                <div class="col-8 text-left">
-                  <span>
-                    Xuất tiền:
-                    <span
-                      class="mr-2"
-                      *ngFor="
-                        let total of bankTransStatistic.totalBankTransactions
-                      "
-                      >{{ total.valueFormat }}
-                      <span
-                        [ngStyle]="{
-                          color: getCurrencyColor(total.currencyName)
-                        }"
-                        >{{ total.currencyName }}</span
-                      >
-                    </span>
-                  </span>
-                </div>
-                <div class="col-4 text-left">
-                  <span
-                    class="ml-3"
-                    *ngIf="bankTransStatistic?.totalHoanTien?.length > 0"
-                  >
-                    Hoàn tiền:
-                    <span *ngFor="let total of bankTransStatistic.totalHoanTien"
-                      >{{ total.valueFormat }}
-                      <span
-                        [ngStyle]="{
-                          color: getCurrencyColor(total.currencyName)
-                        }"
-                        >{{ total.currencyName }}</span
-                      >
-                    </span>
-                    &nbsp;&nbsp;&nbsp;
-                  </span>
-                </div>
-              </div>
-            </th>
-          </tr>
-          <tr>
-            <th class="yellow-thead">Tên</th>
-            <th class="yellow-thead">Trạng thái</th>
-            <th class="yellow-thead">Số tiền</th>
-            <th class="green-thead">Loại</th>
-            <th class="green-thead">
-              Tiền gửi -> nhận
-              <div>/Hoàn tiền</div>
-            </th>
-            <th class="green-thead">Ngày giao dịch</th>
-            <th class="green-thead">Tên giao dịch</th>
-            <th class="green-thead">Biến động số dư</th>
-            <th class="green-thead">Bank gửi -> nhận</th>
-          </tr>
-        </thead>
-        <tbody>
-          <ng-container *ngFor="let statistic of bankTransStatistic.result">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
             <tr>
-              <td
-                class="yellow-td"
-                [attr.rowspan]="
-                  statistic.bankTransactions.length +
-                  statistic.incomingInfos.length
-                "
-              >
-                <a
-                  class="link-primary pointer"
-                  target="_blank"
-                  [href]="getUrlOutcomingEntry(statistic.outcomingEntryId)"
-                  ><strong>#{{ statistic.outcomingEntryId }}</strong>
-                  {{ statistic.outcomingEntryName }}</a
-                >
-              </td>
-              <td
-                class="yellow-td text-center"
-                [attr.rowspan]="
-                  statistic.bankTransactions.length +
-                  statistic.incomingInfos.length
-                "
-              >
+              <th colspan="3" class="yellow-thead text-left">
+                Request chi:
                 <span
-                  [ngClass]="
-                    APP_CONSTANT.StatusStyle[
-                      statistic.outcomingEntryStatus.trim()
-                    ]
-                  "
-                >
-                  {{ statistic.outcomingEntryStatusName.trim() }}</span
-                >
-              </td>
-              <td
-                class="yellow-td text-right"
-                [attr.rowspan]="
-                  statistic.bankTransactions.length +
-                  statistic.incomingInfos.length
-                "
-              >
-                <strong>{{ statistic.money }}</strong>
-                <strong
-                  [ngStyle]="{
-                    color: getCurrencyColor(statistic.currencyName)
-                  }"
-                  class="ml-1"
-                  >{{ statistic.currencyName }}</strong
-                >
-              </td>
-              <td
-                [attr.rowspan]="statistic.bankTransactions.length"
-                class="banktrans-title green-td text-center"
-              >
-                <strong class="text-success">Xuất tiền </strong>
-                <div
-                  class="text-nowrap"
-                  *ngFor="let total of statistic.totalBankTransactions"
-                >
-                  <strong>
-                    {{ total.valueFormat }}
-                  </strong>
-                  <strong
+                  class="mr-2"
+                  *ngFor="let total of bankTransStatistic.totalOutcomingEntries"
+                  >{{ total.valueFormat }}
+                  <span
                     [ngStyle]="{ color: getCurrencyColor(total.currencyName) }"
-                  >
-                    {{ total.currencyName }}
-                  </strong>
+                    >{{ total.currencyName }}</span
+                  ></span
+                >
+              </th>
+              <th colspan="6" class="green-thead text-center">
+                <div class="d-flex">
+                  <div class="col-8 text-left">
+                    <span>
+                      Xuất tiền:
+                      <span
+                        class="mr-2"
+                        *ngFor="
+                          let total of bankTransStatistic.totalBankTransactions
+                        "
+                        >{{ total.valueFormat }}
+                        <span
+                          [ngStyle]="{
+                            color: getCurrencyColor(total.currencyName)
+                          }"
+                          >{{ total.currencyName }}</span
+                        >
+                      </span>
+                    </span>
+                  </div>
+                  <div class="col-4 text-left">
+                    <span
+                      class="ml-3"
+                      *ngIf="bankTransStatistic?.totalHoanTien?.length > 0"
+                    >
+                      Hoàn tiền:
+                      <span *ngFor="let total of bankTransStatistic.totalHoanTien"
+                        >{{ total.valueFormat }}
+                        <span
+                          [ngStyle]="{
+                            color: getCurrencyColor(total.currencyName)
+                          }"
+                          >{{ total.currencyName }}</span
+                        >
+                      </span>
+                      &nbsp;&nbsp;&nbsp;
+                    </span>
+                  </div>
                 </div>
-              </td>
-              <td class="green-td text-nowrap text-right">
-                <div
-                  *ngIf="
-                    isEqual(statistic.bankTransactions[0]);
-                    else bankTransValue
+              </th>
+            </tr>
+            <tr>
+              <th class="yellow-thead">Tên</th>
+              <th class="yellow-thead">Trạng thái</th>
+              <th class="yellow-thead">Số tiền</th>
+              <th class="green-thead">Loại</th>
+              <th class="green-thead">
+                Tiền gửi -> nhận
+                <div>/Hoàn tiền</div>
+              </th>
+              <th class="green-thead">Ngày giao dịch</th>
+              <th class="green-thead">Tên giao dịch</th>
+              <th class="green-thead">Biến động số dư</th>
+              <th class="green-thead">Bank gửi -> nhận</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let statistic of bankTransStatistic.result">
+              <tr>
+                <td
+                  class="yellow-td"
+                  [attr.rowspan]="
+                    statistic.bankTransactions.length +
+                    statistic.incomingInfos.length
                   "
                 >
-                  <strong>
-                    {{ statistic.bankTransactions[0]?.fromValue }}
-                  </strong>
+                  <a
+                    class="link-primary pointer"
+                    target="_blank"
+                    [href]="getUrlOutcomingEntry(statistic.outcomingEntryId)"
+                    ><strong>#{{ statistic.outcomingEntryId }}</strong>
+                    {{ statistic.outcomingEntryName }}</a
+                  >
+                </td>
+                <td
+                  class="yellow-td text-center"
+                  [attr.rowspan]="
+                    statistic.bankTransactions.length +
+                    statistic.incomingInfos.length
+                  "
+                >
+                  <span
+                    [ngClass]="
+                      APP_CONSTANT.StatusStyle[
+                        statistic.outcomingEntryStatus.trim()
+                      ]
+                    "
+                  >
+                    {{ statistic.outcomingEntryStatusName.trim() }}</span
+                  >
+                </td>
+                <td
+                  class="yellow-td text-right"
+                  [attr.rowspan]="
+                    statistic.bankTransactions.length +
+                    statistic.incomingInfos.length
+                  "
+                >
+                  <strong>{{ statistic.money }}</strong>
                   <strong
                     [ngStyle]="{
-                      color: getCurrencyColor(
-                        statistic.bankTransactions[0]?.fromCurrencyName
-                      )
+                      color: getCurrencyColor(statistic.currencyName)
                     }"
+                    class="ml-1"
+                    >{{ statistic.currencyName }}</strong
                   >
-                    {{ statistic.bankTransactions[0]?.fromCurrencyName }}
-                  </strong>
-                </div>
-                <ng-template #bankTransValue>
-                  <div class="text-nowrap text-right">
+                </td>
+                <td
+                  [attr.rowspan]="statistic.bankTransactions.length"
+                  class="banktrans-title green-td text-center"
+                >
+                  <strong class="text-success">Xuất tiền </strong>
+                  <div
+                    class="text-nowrap"
+                    *ngFor="let total of statistic.totalBankTransactions"
+                  >
+                    <strong>
+                      {{ total.valueFormat }}
+                    </strong>
+                    <strong
+                      [ngStyle]="{ color: getCurrencyColor(total.currencyName) }"
+                    >
+                      {{ total.currencyName }}
+                    </strong>
+                  </div>
+                </td>
+                <td class="green-td text-nowrap text-right">
+                  <div
+                    *ngIf="
+                      isEqual(statistic.bankTransactions[0]);
+                      else bankTransValue
+                    "
+                  >
                     <strong>
                       {{ statistic.bankTransactions[0]?.fromValue }}
                     </strong>
@@ -403,120 +397,122 @@
                       {{ statistic.bankTransactions[0]?.fromCurrencyName }}
                     </strong>
                   </div>
-                  <div class="text-nowrap text-right text-danger">
-                    <i class="fas fa-long-arrow-alt-right"></i>
-                    <strong>
-                      {{ statistic.bankTransactions[0]?.toValue }}
-                    </strong>
-                    <strong
-                      [ngStyle]="{
-                        color: getCurrencyColor(
-                          statistic.bankTransactions[0]?.toCurrencyName
-                        )
-                      }"
-                    >
-                      {{ statistic.bankTransactions[0]?.toCurrencyName }}
-                    </strong>
-                  </div>
-                </ng-template>
-              </td>
-
-              <td class="text-center green-td">
-                {{ statistic.bankTransactions[0]?.timeAt | dmyDateFormat }}
-              </td>
-              <td class="green-td">
-                <a
-                  class="link-primary pointer"
-                  target="_blank"
-                  [href]="
-                    getUrlBanktrans(
-                      statistic.bankTransactions[0]?.bankTransactionId
-                    )
-                  "
-                >
-                  {{ statistic.bankTransactions[0]?.bankTransactionName }}</a
-                >
-              </td>
-              <td class="green-td text-nowrap">
-                <ng-container
-                  *ngIf="statistic.bankTransactions[0]?.bTransactionId"
-                >
-                  <a
-                    [href]="
-                      getUrlBtrans(statistic.bankTransactions[0].bTransactionId)
-                    "
-                    class="link-primary pointer"
-                    target="_blank"
-                    >#{{ statistic.bankTransactions[0].bTransactionId }}
-                    <span
-                      ><span
-                        *ngIf="
-                          statistic.bankTransactions[0].valueMoneyBTransaction >
-                          0
-                        "
-                        >+</span
-                      >{{
-                        statistic.bankTransactions[0].moneyBTransaction
-                      }}</span
-                    >
-                    {{ statistic.bankTransactions[0].currencyBTransaction
-                    }}<br />
-                    TK: {{ statistic.bankTransactions[0].bTransactionName }}
-                  </a>
-                </ng-container>
-              </td>
-              <td class="green-td">
-                <div>
-                  From:
-                  <a
-                    class="link-primary pointer"
-                    target="_blank"
-                    [href]="
-                      getUrlBankAccount(
-                        statistic.bankTransactions[0]?.fromBankAccountId
-                      )
-                    "
-                    >{{ statistic.bankTransactions[0]?.fromBankAccountName }}</a
-                  >
-                </div>
-                <div>
-                  To:
-                  <a
-                    class="link-primary pointer"
-                    target="_blank"
-                    [href]="
-                      getUrlBankAccount(
-                        statistic.bankTransactions[0]?.toBankAccountId
-                      )
-                    "
-                    >{{ statistic.bankTransactions[0]?.toBankAccountName }}</a
-                  >
-                </div>
-              </td>
-            </tr>
-            <ng-container *ngIf="statistic.bankTransactions.length > 1">
-              <tr
-                *ngFor="
-                  let trans of statistic.bankTransactions | slice : 1;
-                  let i = index
-                "
-              >
-                <ng-container *ngIf="statistic.bankTransactions.length > 1">
-                  <td class="green-td text-nowrap text-right">
-                    <div *ngIf="isEqual(trans); else subBankTransValue">
+                  <ng-template #bankTransValue>
+                    <div class="text-nowrap text-right">
                       <strong>
-                        {{ trans.fromValue }}
+                        {{ statistic.bankTransactions[0]?.fromValue }}
                       </strong>
                       <strong
                         [ngStyle]="{
-                          color: getCurrencyColor(trans.fromCurrencyName)
+                          color: getCurrencyColor(
+                            statistic.bankTransactions[0]?.fromCurrencyName
+                          )
                         }"
                       >
-                        {{ trans.fromCurrencyName }}
+                        {{ statistic.bankTransactions[0]?.fromCurrencyName }}
                       </strong>
                     </div>
-                    <ng-template #subBankTransValue>
-                      <div class="text-nowrap text-right">
+                    <div class="text-nowrap text-right text-danger">
+                      <i class="fas fa-long-arrow-alt-right"></i>
+                      <strong>
+                        {{ statistic.bankTransactions[0]?.toValue }}
+                      </strong>
+                      <strong
+                        [ngStyle]="{
+                          color: getCurrencyColor(
+                            statistic.bankTransactions[0]?.toCurrencyName
+                          )
+                        }"
+                      >
+                        {{ statistic.bankTransactions[0]?.toCurrencyName }}
+                      </strong>
+                    </div>
+                  </ng-template>
+                </td>
+  
+                <td class="text-center green-td">
+                  {{ statistic.bankTransactions[0]?.timeAt | dmyDateFormat }}
+                </td>
+                <td class="green-td">
+                  <a
+                    class="link-primary pointer"
+                    target="_blank"
+                    [href]="
+                      getUrlBanktrans(
+                        statistic.bankTransactions[0]?.bankTransactionId
+                      )
+                    "
+                  >
+                    {{ statistic.bankTransactions[0]?.bankTransactionName }}</a
+                  >
+                </td>
+                <td class="green-td text-nowrap">
+                  <ng-container
+                    *ngIf="statistic.bankTransactions[0]?.bTransactionId"
+                  >
+                    <a
+                      [href]="
+                        getUrlBtrans(statistic.bankTransactions[0].bTransactionId)
+                      "
+                      class="link-primary pointer"
+                      target="_blank"
+                      >#{{ statistic.bankTransactions[0].bTransactionId }}
+                      <span
+                        ><span
+                          *ngIf="
+                            statistic.bankTransactions[0].valueMoneyBTransaction >
+                            0
+                          "
+                          >+</span
+                        >{{
+                          statistic.bankTransactions[0].moneyBTransaction
+                        }}</span
+                      >
+                      {{ statistic.bankTransactions[0].currencyBTransaction
+                      }}<br />
+                      TK: {{ statistic.bankTransactions[0].bTransactionName }}
+                    </a>
+                  </ng-container>
+                </td>
+                <td class="green-td">
+                  <div>
+                    From:
+                    <a
+                      class="link-primary pointer"
+                      target="_blank"
+                      [href]="
+                        getUrlBankAccount(
+                          statistic.bankTransactions[0]?.fromBankAccountId
+                        )
+                      "
+                      >{{ statistic.bankTransactions[0]?.fromBankAccountName }}</a
+                    >
+                  </div>
+                  <div>
+                    To:
+                    <a
+                      class="link-primary pointer"
+                      target="_blank"
+                      [href]="
+                        getUrlBankAccount(
+                          statistic.bankTransactions[0]?.toBankAccountId
+                        )
+                      "
+                      >{{ statistic.bankTransactions[0]?.toBankAccountName }}</a
+                    >
+                  </div>
+                </td>
+              </tr>
+              <ng-container *ngIf="statistic.bankTransactions.length > 1">
+                <tr
+                  *ngFor="
+                    let trans of statistic.bankTransactions | slice : 1;
+                    let i = index
+                  "
+                >
+                  <ng-container *ngIf="statistic.bankTransactions.length > 1">
+                    <td class="green-td text-nowrap text-right">
+                      <div *ngIf="isEqual(trans); else subBankTransValue">
                         <strong>
                           {{ trans.fromValue }}
                         </strong>
@@ -528,322 +524,336 @@
                           {{ trans.fromCurrencyName }}
                         </strong>
                       </div>
-                      <div class="text-nowrap text-right text-danger">
-                        <i class="fas fa-long-arrow-alt-right"></i>
-                        <strong>
-                          {{ trans.toValue }}
-                        </strong>
-                        <strong
-                          [ngStyle]="{
-                            color: getCurrencyColor(trans.toCurrencyName)
-                          }"
+                      <ng-template #subBankTransValue>
+                        <div class="text-nowrap text-right">
+                          <strong>
+                            {{ trans.fromValue }}
+                          </strong>
+                          <strong
+                            [ngStyle]="{
+                              color: getCurrencyColor(trans.fromCurrencyName)
+                            }"
+                          >
+                            {{ trans.fromCurrencyName }}
+                          </strong>
+                        </div>
+                        <div class="text-nowrap text-right text-danger">
+                          <i class="fas fa-long-arrow-alt-right"></i>
+                          <strong>
+                            {{ trans.toValue }}
+                          </strong>
+                          <strong
+                            [ngStyle]="{
+                              color: getCurrencyColor(trans.toCurrencyName)
+                            }"
+                          >
+                            {{ trans.toCurrencyName }}
+                          </strong>
+                        </div>
+                      </ng-template>
+                    </td>
+                    <td class="text-center green-td">
+                      {{ trans.timeAt | dmyDateFormat }}
+                    </td>
+                    <td class="green-td" style="max-width: 300px">
+                      <a
+                        class="link-primary pointer"
+                        target="_blank"
+                        [href]="getUrlBanktrans(trans.bankTransactionId)"
+                        >{{ trans.bankTransactionName }}</a
+                      >
+                    </td>
+                    <td class="green-td text-nowrap">
+                      <ng-container *ngIf="trans.bTransactionId">
+                        <a
+                          [href]="getUrlBtrans(trans.bTransactionId)"
+                          class="link-primary pointer"
+                          target="_blank"
+                          >#{{ trans.bTransactionId }}
+                          <span
+                            ><span *ngIf="trans.valueMoneyBTransaction > 0"
+                              >+</span
+                            >{{ trans.moneyBTransaction }}</span
+                          >
+                          {{ trans.currencyBTransaction }}<br />
+                          TK: {{ trans.bTransactionName }}
+                        </a>
+                      </ng-container>
+                    </td>
+                    <td class="green-td">
+                      <div>
+                        From:
+                        <a
+                          class="link-primary pointer"
+                          target="_blank"
+                          [href]="getUrlBankAccount(trans.fromBankAccountId)"
+                          >{{ trans.fromBankAccountName }}</a
                         >
-                          {{ trans.toCurrencyName }}
-                        </strong>
                       </div>
-                    </ng-template>
-                  </td>
-                  <td class="text-center green-td">
-                    {{ trans.timeAt | dmyDateFormat }}
-                  </td>
-                  <td class="green-td" style="max-width: 300px">
-                    <a
-                      class="link-primary pointer"
-                      target="_blank"
-                      [href]="getUrlBanktrans(trans.bankTransactionId)"
-                      >{{ trans.bankTransactionName }}</a
-                    >
-                  </td>
-                  <td class="green-td text-nowrap">
-                    <ng-container *ngIf="trans.bTransactionId">
-                      <a
-                        [href]="getUrlBtrans(trans.bTransactionId)"
-                        class="link-primary pointer"
-                        target="_blank"
-                        >#{{ trans.bTransactionId }}
-                        <span
-                          ><span *ngIf="trans.valueMoneyBTransaction > 0"
-                            >+</span
-                          >{{ trans.moneyBTransaction }}</span
+                      <div>
+                        To:
+                        <a
+                          class="link-primary pointer"
+                          target="_blank"
+                          [href]="getUrlBankAccount(trans.toBankAccountId)"
+                          >{{ trans.toBankAccountName }}</a
                         >
-                        {{ trans.currencyBTransaction }}<br />
-                        TK: {{ trans.bTransactionName }}
-                      </a>
-                    </ng-container>
-                  </td>
-                  <td class="green-td">
-                    <div>
-                      From:
-                      <a
-                        class="link-primary pointer"
-                        target="_blank"
-                        [href]="getUrlBankAccount(trans.fromBankAccountId)"
-                        >{{ trans.fromBankAccountName }}</a
-                      >
-                    </div>
-                    <div>
-                      To:
-                      <a
-                        class="link-primary pointer"
-                        target="_blank"
-                        [href]="getUrlBankAccount(trans.toBankAccountId)"
-                        >{{ trans.toBankAccountName }}</a
-                      >
-                    </div>
-                  </td>
-                </ng-container>
-              </tr>
-            </ng-container>
-            <tr *ngIf="statistic.incomingInfos.length > 0">
-              <td
-                [attr.rowspan]="statistic.incomingInfos.length"
-                class="refund-title refund-td text-center"
-              >
-                <strong class="text-danger"> Hoàn tiền </strong>
-                <!-- <div><strong>({{statistic.totalMoneyRelationInOut}})</strong></div> -->
-                <div
-                  class="text-nowrap"
-                  *ngFor="let total of statistic.totalHoanTien"
+                      </div>
+                    </td>
+                  </ng-container>
+                </tr>
+              </ng-container>
+              <tr *ngIf="statistic.incomingInfos.length > 0">
+                <td
+                  [attr.rowspan]="statistic.incomingInfos.length"
+                  class="refund-title refund-td text-center"
                 >
-                  <strong>
-                    {{ total.valueFormat }}
-                  </strong>
-                  <strong
-                    [ngStyle]="{ color: getCurrencyColor(total.currencyName) }"
+                  <strong class="text-danger"> Hoàn tiền </strong>
+                  <!-- <div><strong>({{statistic.totalMoneyRelationInOut}})</strong></div> -->
+                  <div
+                    class="text-nowrap"
+                    *ngFor="let total of statistic.totalHoanTien"
                   >
-                    {{ total.currencyName }}
-                  </strong>
-                </div>
-              </td>
-              <td class="refund-td text-nowrap text-right">
-                <div matTooltip="Hoàn tiền">
-                  <strong>
-                    {{ statistic.incomingInfos[0].valueFormat }}
-                  </strong>
-                  <strong
-                    [ngStyle]="{
-                      color: getCurrencyColor(
-                        statistic.incomingInfos[0]?.currencyName
-                      )
-                    }"
-                  >
-                    {{ statistic.incomingInfos[0].currencyName }}
-                  </strong>
-                </div>
-              </td>
-
-              <td class="text-center refund-td">
-                {{
-                  statistic.incomingInfos[0]?.bankTransactionInfo?.timeAt
-                    | dmyDateFormat
-                }}
-              </td>
-              <td class="refund-td">
-                <a
-                  class="link-primary pointer"
-                  target="_blank"
-                  [href]="
-                    getUrlBanktrans(
-                      statistic.incomingInfos[0]?.bankTransactionInfo
-                        ?.bankTransactionId
-                    )
-                  "
-                >
+                    <strong>
+                      {{ total.valueFormat }}
+                    </strong>
+                    <strong
+                      [ngStyle]="{ color: getCurrencyColor(total.currencyName) }"
+                    >
+                      {{ total.currencyName }}
+                    </strong>
+                  </div>
+                </td>
+                <td class="refund-td text-nowrap text-right">
+                  <div matTooltip="Hoàn tiền">
+                    <strong>
+                      {{ statistic.incomingInfos[0].valueFormat }}
+                    </strong>
+                    <strong
+                      [ngStyle]="{
+                        color: getCurrencyColor(
+                          statistic.incomingInfos[0]?.currencyName
+                        )
+                      }"
+                    >
+                      {{ statistic.incomingInfos[0].currencyName }}
+                    </strong>
+                  </div>
+                </td>
+  
+                <td class="text-center refund-td">
                   {{
-                    statistic.incomingInfos[0]?.bankTransactionInfo
-                      ?.bankTransactionName
-                  }}</a
-                >
-              </td>
-              <td class="refund-td text-nowrap">
-                <ng-container
-                  *ngIf="
-                    statistic.incomingInfos[0].bankTransactionInfo
-                      ?.bTransactionId
-                  "
-                >
+                    statistic.incomingInfos[0]?.bankTransactionInfo?.timeAt
+                      | dmyDateFormat
+                  }}
+                </td>
+                <td class="refund-td">
                   <a
-                    [href]="
-                      getUrlBtrans(
-                        statistic.incomingInfos[0].bankTransactionInfo
-                          ?.bTransactionId
-                      )
-                    "
                     class="link-primary pointer"
                     target="_blank"
-                    >#{{
+                    [href]="
+                      getUrlBanktrans(
+                        statistic.incomingInfos[0]?.bankTransactionInfo
+                          ?.bankTransactionId
+                      )
+                    "
+                  >
+                    {{
+                      statistic.incomingInfos[0]?.bankTransactionInfo
+                        ?.bankTransactionName
+                    }}</a
+                  >
+                </td>
+                <td class="refund-td text-nowrap">
+                  <ng-container
+                    *ngIf="
                       statistic.incomingInfos[0].bankTransactionInfo
                         ?.bTransactionId
-                    }}
-                    <span
-                      ><span
-                        *ngIf="
+                    "
+                  >
+                    <a
+                      [href]="
+                        getUrlBtrans(
                           statistic.incomingInfos[0].bankTransactionInfo
-                            ?.valueMoneyBTransaction > 0
-                        "
-                        >+</span
-                      >{{
+                            ?.bTransactionId
+                        )
+                      "
+                      class="link-primary pointer"
+                      target="_blank"
+                      >#{{
                         statistic.incomingInfos[0].bankTransactionInfo
-                          ?.moneyBTransaction
-                      }}</span
-                    >
-                    {{
-                      statistic.incomingInfos[0].bankTransactionInfo
-                        ?.currencyBTransaction
-                    }}<br />
-                    TK:
-                    {{
-                      statistic.incomingInfos[0].bankTransactionInfo
-                        ?.bTransactionName
-                    }}
-                  </a>
-                </ng-container>
-              </td>
-              <td class="refund-td">
-                <div>
-                  From:
-                  <a
-                    class="link-primary pointer"
-                    target="_blank"
-                    [href]="
-                      getUrlBankAccount(
-                        statistic.incomingInfos[0]?.bankTransactionInfo
-                          ?.fromBankAccountId
-                      )
-                    "
-                    >{{
-                      statistic.incomingInfos[0]?.bankTransactionInfo
-                        ?.fromBankAccountName
-                    }}</a
-                  >
-                </div>
-                <div>
-                  To:
-                  <a
-                    class="link-primary pointer"
-                    target="_blank"
-                    [href]="
-                      getUrlBankAccount(
-                        statistic.incomingInfos[0]?.bankTransactionInfo
-                          ?.toBankAccountId
-                      )
-                    "
-                    >{{
-                      statistic.incomingInfos[0]?.bankTransactionInfo
-                        ?.toBankAccountName
-                    }}</a
-                  >
-                </div>
-              </td>
-            </tr>
-            <ng-container
-              *ngIf="
-                statistic?.incomingInfos?.length > 1 &&
-                statistic.incomingInfos.length > 0
-              "
-            >
-              <tr
-                *ngFor="
-                  let income of statistic.incomingInfos | slice : 1;
-                  let i = index
-                "
-              >
-                <ng-container *ngIf="statistic.incomingInfos.length > 1">
-                  <td class="refund-td text-nowrap text-right">
-                    <div matTooltip="Hoàn tiền">
-                      <strong>
-                        {{ income.valueFormat }}
-                      </strong>
-                      <strong
-                        [ngStyle]="{
-                          color: getCurrencyColor(income.currencyName)
-                        }"
+                          ?.bTransactionId
+                      }}
+                      <span
+                        ><span
+                          *ngIf="
+                            statistic.incomingInfos[0].bankTransactionInfo
+                              ?.valueMoneyBTransaction > 0
+                          "
+                          >+</span
+                        >{{
+                          statistic.incomingInfos[0].bankTransactionInfo
+                            ?.moneyBTransaction
+                        }}</span
                       >
-                        {{ income.currencyName }}
-                      </strong>
-                    </div>
-                  </td>
-                  <td class="text-center refund-td">
-                    {{ income?.bankTransactionInfo?.timeAt | dmyDateFormat }}
-                  </td>
-                  <td class="refund-td" style="max-width: 300px">
+                      {{
+                        statistic.incomingInfos[0].bankTransactionInfo
+                          ?.currencyBTransaction
+                      }}<br />
+                      TK:
+                      {{
+                        statistic.incomingInfos[0].bankTransactionInfo
+                          ?.bTransactionName
+                      }}
+                    </a>
+                  </ng-container>
+                </td>
+                <td class="refund-td">
+                  <div>
+                    From:
                     <a
                       class="link-primary pointer"
                       target="_blank"
                       [href]="
-                        getUrlBanktrans(
-                          income?.bankTransactionInfo?.bankTransactionId
+                        getUrlBankAccount(
+                          statistic.incomingInfos[0]?.bankTransactionInfo
+                            ?.fromBankAccountId
                         )
                       "
-                      >{{ income?.bankTransactionInfo?.bankTransactionName }}</a
+                      >{{
+                        statistic.incomingInfos[0]?.bankTransactionInfo
+                          ?.fromBankAccountName
+                      }}</a
                     >
-                  </td>
-                  <td class="refund-td text-nowrap">
-                    <ng-container
-                      *ngIf="income?.bankTransactionInfo?.bTransactionId"
+                  </div>
+                  <div>
+                    To:
+                    <a
+                      class="link-primary pointer"
+                      target="_blank"
+                      [href]="
+                        getUrlBankAccount(
+                          statistic.incomingInfos[0]?.bankTransactionInfo
+                            ?.toBankAccountId
+                        )
+                      "
+                      >{{
+                        statistic.incomingInfos[0]?.bankTransactionInfo
+                          ?.toBankAccountName
+                      }}</a
                     >
-                      <a
-                        [href]="
-                          getUrlBtrans(
-                            income?.bankTransactionInfo?.bTransactionId
-                          )
-                        "
-                        class="link-primary pointer"
-                        target="_blank"
-                        >#{{ income?.bankTransactionInfo?.bTransactionId }}
-                        <span
-                          ><span
-                            *ngIf="
-                              income?.bankTransactionInfo
-                                ?.valueMoneyBTransaction > 0
-                            "
-                            >+</span
-                          >{{
-                            income?.bankTransactionInfo?.moneyBTransaction
-                          }}</span
-                        >
-                        {{ income?.bankTransactionInfo?.currencyBTransaction
-                        }}<br />
-                        TK: {{ income?.bankTransactionInfo?.bTransactionName }}
-                      </a>
-                    </ng-container>
-                  </td>
-                  <td class="refund-td">
-                    <div>
-                      From:
-                      <a
-                        class="link-primary pointer"
-                        target="_blank"
-                        [href]="
-                          getUrlBankAccount(
-                            income?.bankTransactionInfo?.fromBankAccountId
-                          )
-                        "
-                        >{{
-                          income?.bankTransactionInfo?.fromBankAccountName
-                        }}</a
-                      >
-                    </div>
-                    <div>
-                      To:
-                      <a
-                        class="link-primary pointer"
-                        target="_blank"
-                        [href]="
-                          getUrlBankAccount(
-                            income?.bankTransactionInfo?.toBankAccountId
-                          )
-                        "
-                        >{{ income?.bankTransactionInfo?.toBankAccountName }}</a
-                      >
-                    </div>
-                  </td>
-                </ng-container>
+                  </div>
+                </td>
               </tr>
+              <ng-container
+                *ngIf="
+                  statistic?.incomingInfos?.length > 1 &&
+                  statistic.incomingInfos.length > 0
+                "
+              >
+                <tr
+                  *ngFor="
+                    let income of statistic.incomingInfos | slice : 1;
+                    let i = index
+                  "
+                >
+                  <ng-container *ngIf="statistic.incomingInfos.length > 1">
+                    <td class="refund-td text-nowrap text-right">
+                      <div matTooltip="Hoàn tiền">
+                        <strong>
+                          {{ income.valueFormat }}
+                        </strong>
+                        <strong
+                          [ngStyle]="{
+                            color: getCurrencyColor(income.currencyName)
+                          }"
+                        >
+                          {{ income.currencyName }}
+                        </strong>
+                      </div>
+                    </td>
+                    <td class="text-center refund-td">
+                      {{ income?.bankTransactionInfo?.timeAt | dmyDateFormat }}
+                    </td>
+                    <td class="refund-td" style="max-width: 300px">
+                      <a
+                        class="link-primary pointer"
+                        target="_blank"
+                        [href]="
+                          getUrlBanktrans(
+                            income?.bankTransactionInfo?.bankTransactionId
+                          )
+                        "
+                        >{{ income?.bankTransactionInfo?.bankTransactionName }}</a
+                      >
+                    </td>
+                    <td class="refund-td text-nowrap">
+                      <ng-container
+                        *ngIf="income?.bankTransactionInfo?.bTransactionId"
+                      >
+                        <a
+                          [href]="
+                            getUrlBtrans(
+                              income?.bankTransactionInfo?.bTransactionId
+                            )
+                          "
+                          class="link-primary pointer"
+                          target="_blank"
+                          >#{{ income?.bankTransactionInfo?.bTransactionId }}
+                          <span
+                            ><span
+                              *ngIf="
+                                income?.bankTransactionInfo
+                                  ?.valueMoneyBTransaction > 0
+                              "
+                              >+</span
+                            >{{
+                              income?.bankTransactionInfo?.moneyBTransaction
+                            }}</span
+                          >
+                          {{ income?.bankTransactionInfo?.currencyBTransaction
+                          }}<br />
+                          TK: {{ income?.bankTransactionInfo?.bTransactionName }}
+                        </a>
+                      </ng-container>
+                    </td>
+                    <td class="refund-td">
+                      <div>
+                        From:
+                        <a
+                          class="link-primary pointer"
+                          target="_blank"
+                          [href]="
+                            getUrlBankAccount(
+                              income?.bankTransactionInfo?.fromBankAccountId
+                            )
+                          "
+                          >{{
+                            income?.bankTransactionInfo?.fromBankAccountName
+                          }}</a
+                        >
+                      </div>
+                      <div>
+                        To:
+                        <a
+                          class="link-primary pointer"
+                          target="_blank"
+                          [href]="
+                            getUrlBankAccount(
+                              income?.bankTransactionInfo?.toBankAccountId
+                            )
+                          "
+                          >{{ income?.bankTransactionInfo?.toBankAccountName }}</a
+                        >
+                      </div>
+                    </td>
+                  </ng-container>
+                </tr>
+              </ng-container>
             </ng-container>
-          </ng-container>
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
+</section>

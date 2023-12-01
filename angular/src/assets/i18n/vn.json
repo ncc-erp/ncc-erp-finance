@@ -133,7 +133,9 @@
     "status": "Trạng thái",
     "configuration": "Cài đặt",
     "lineChart": "Line Chart",
-    "circleChart": "Circle Chart"
+    "circleChart": "Circle Chart",
+    "bTransactionLog": "Lịch sử crawl giao dịch",
+    "auditLog": "Audit Log"
   },
   "menu3": {
     "m3_child1": "Tiền tệ",
@@ -142,7 +144,8 @@
     "m3_child4": "Chi nhánh",
     "m3_child5": "Loại thu",
     "m3_child6": "Loại chi",
-    "m3_child7": "Nhà cung cấp"
+    "m3_child7": "Nhà cung cấp",
+    "m3_child8": "Tỉ giá"
   },
   "menu4": {
     "m4_child1": "Tài khoản ngân hàng",
@@ -153,7 +156,12 @@
     "m5_child2": "Request chi",
     "m5_child3": "Giao dịch ngân hàng",
     "m5_child4": "Hóa đơn",
-    "m5_child5": "Khoản phải thu"
+    "m5_child5": "Khoản phải thu",
+    "m5_child6": "Đối soát mới",
+    "m5_child7": "Đối soát",
+    "m5_child8": "Biến động số dư",
+    "m5_child9": "Kì kế toán"
+
   },
   "m2_child4": {
     "name": "Tên",
@@ -408,6 +416,9 @@
     "file": "Tệp đính kèm",
     "tilteCreate": "Thêm mới khoản phải thu",
     "titleEdit": "Chỉnh sửa khoản phải thu"
+  },
+  "m5_child8": {
+    "title": "Biến động số dư tài khoản công ty"
   },
   "message": {
     "delete": "Bạn có chắc chắn muốn xóa",

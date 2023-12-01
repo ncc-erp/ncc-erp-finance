@@ -13,12 +13,13 @@ import { BankAccountService } from '@app/service/api/bank-account.service';
 import { PagedRequestBankAccount } from '../bank-account/bank-account.component';
 import { AccountTypeEnum } from '@shared/AppEnums';
 import { PagedResultResultDto } from '@shared/paged-listing-component-base';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UtilitiesService } from '@app/service/api/new-versions/utilities.service';
 import { PeriodService } from '@app/service/api/period.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { of } from 'rxjs';
 import { AppConsts } from '@shared/AppConsts';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-finance-review-old',
@@ -63,21 +64,55 @@ export class FinanceReviewOldComponent extends AppComponentBase implements OnIni
   totalDiffOutcomeVND: number = 0;
   totalDiffIncomeUSD: number = 0;
   totalDiffOutcomeUSD: number = 0;
+  title: any;
+  routeTitleFirstLevel;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.financeStatisticOld;
+  queryParams;
   bankAccountDefault = ["19132608283018", "19132608283026", "19034753904029", "490069"];
   constructor(
+    private route: ActivatedRoute,
     injector: Injector,
     private dashboardService: DashBoardService,
     private bankaccountService: BankAccountService,
     private periodService: PeriodService,
     private router: Router,
     public _utilities: UtilitiesService,
-    private _modalService: BsModalService) {
+    private _modalService: BsModalService,
+    private translate: TranslateService) {
     super(injector)
   }
 
   ngOnInit(): void {
     this.getStatistics()
     this.getBankAccount();
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+
+  onLangChange(){
+    this.translate.get("menu.menu5").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu5.m5_child7").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
   getStatistics() {
     this.toDate = moment(this.toDate).format("YYYY-MM-DD")

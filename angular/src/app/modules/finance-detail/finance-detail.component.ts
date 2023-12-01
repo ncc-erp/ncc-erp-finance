@@ -27,6 +27,8 @@ import { LinkToExpenditureRequestComponent } from "./link-to-expenditure-request
 import { OutcomingEntryBankTransactionServiceService } from "../../service/api/outcoming-entry-bank-transaction-service.service";
 import { RequestDetailService } from "../../service/api/request-detail.service";
 import { Time } from "@angular/common";
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 @Component({
   selector: "app-finance-detail",
   templateUrl: "./finance-detail.component.html",
@@ -94,6 +96,10 @@ export class FinanceDetailComponent
   formBankCurrency: string;
   toBankCurrency: string;
   tong: number;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankTransaction;
+  routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.revenueRecordDetail;
+  queryParams;
   outcomingEntrysByTransaction: expenditureRequestDto[] = [];
   constructor(
     private transactionService: TransactionService,
@@ -103,7 +109,8 @@ export class FinanceDetailComponent
     private bankAccountService: BankAccountService,
     injector: Injector,
     private outcomingEntryBankTransactionServiceService: OutcomingEntryBankTransactionServiceService,
-    private requestDetail: RequestDetailService
+    private requestDetail: RequestDetailService,
+    private translate: TranslateService
   ) {
     super(injector);
   }
@@ -117,10 +124,39 @@ export class FinanceDetailComponent
     this.getRevenueById();
     this.getBankAccount();
     this.refresh();
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu5").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu5.m5_child3").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title, url: this.routeUrlSecondLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.transaction.name , url: this.routeUrlThirdLevel + (queryParamsString ? '?' + queryParamsString : '') },
+    ];
   }
   getTransition() {
     this.transactionService.getById(this.paramId).subscribe((data) => {
       this.transaction = data.result;
+      this.route.queryParams.subscribe(params => {
+        this.queryParams = new HttpParams({ fromObject: params });
+        this.onLangChange();
+      });
     });
   }
   getOutComingEntryByTransaction(id: number): void {

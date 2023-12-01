@@ -10,15 +10,15 @@ button {
 }
 
 .type-and-status span {
-font-size: 14px;
-margin-left: 10px;
-position: relative;
+    font-size: 14px;
+    margin-left: 10px;
+    position: relative;
 }
 .stt {
     width: 50px;
 }
 .header{
-    margin-bottom: 5px;
+    margin-bottom: 8px;
 }
 .preReview{
     width: 100%;

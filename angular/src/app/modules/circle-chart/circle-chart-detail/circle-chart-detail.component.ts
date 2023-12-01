@@ -9,6 +9,7 @@ import { CircleChartDetailService } from '../../../service/api/circle-chart-deta
 import { CreateEditCircleChartDetailComponent } from './create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
 import { RevenueExpenseType } from '@shared/AppEnums';
 import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 
 @Component({
@@ -25,6 +26,11 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
   isIncome: boolean;
   isActive: boolean;
   title: any;
+  routeTitleFirstLevel;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.circleChart;
+  routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.circleChartDetail;
+  queryParams;
   constructor(
     injector: Injector, 
     private circleChartDetailService: CircleChartDetailService, 
@@ -59,23 +65,31 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
       this.translate.onLangChange.subscribe(() => {
         this.onLangChange();
       });
-      this.onLangChange();
+      this.route.queryParams.subscribe(params => {
+        this.queryParams = new HttpParams({ fromObject: params });
+        this.onLangChange();
+      });
     })
   }
 
   onLangChange(){
+    this.translate.get("menu.menu2").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
     this.translate.get("menu2.circleChart").subscribe((res: string) => {
       this.title = res;
       this.updateBreadCrumb();
     });
   }
   updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
-      { name: '<i class="fas fa-home"></i>', url: '' },
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title, url: '/app/circleChart' },
+      { name: this.title, url: this.routeUrlSecondLevel },
       {name: ' <i class="fas fa-chevron-right"></i> '}, 
-      {name: this.circleChartInfo.name }];
+      {name: this.circleChartInfo.name, url: this.routeUrlThirdLevel + (queryParamsString ? '?' + queryParamsString : '')  }];
   }
   public onCreate() {
     let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {
@@ -142,12 +156,10 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
 
   toggleEntryType(item){
     item.hideEntryType = !item.hideEntryType;
-    console.log(item.hideEntryType)
   }
 
   toggleClient(item){
     item.hideClient = !item.hideClient;
-    console.log(item.hideClient)
   }
 
   getRevenueExpenseTypeText(revenueExpenseType: RevenueExpenseType): string {

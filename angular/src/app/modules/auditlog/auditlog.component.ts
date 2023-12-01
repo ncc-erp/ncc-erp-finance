@@ -7,6 +7,9 @@ import { Injector } from '@angular/core';
 import { AuditlogDto } from './../../service/model/auditlog.model';
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-auditlog',
@@ -35,10 +38,15 @@ export class AuditlogComponent extends PagedListingComponentBase<AuditlogDto> im
   transDate: string = "";
   iconSort: string = "";
   iconCondition: string = "executionTime";
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.auditLog;
+  queryParams;
 
   constructor(
+    private route: ActivatedRoute,
     private auditlog: AuditLogService,
-    injector: Injector
+    injector: Injector,
+    private translate: TranslateService
   ) {
     super(injector);
   }
@@ -49,6 +57,33 @@ export class AuditlogComponent extends PagedListingComponentBase<AuditlogDto> im
     this.getListServiceName();
     this.refresh();
     this.sortData("executionTime");
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu2").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu2.auditLog").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
 
   getListEmailAddress() {

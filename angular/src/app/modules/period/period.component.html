@@ -1,17 +1,17 @@
 <div id="period">
     <section class="content-header">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-6">
-                    <h2>Kỳ kế toán</h2>
-                </div>
-                <div class="col-6 text-right">
-                    <button class="btn btn-primary" (click)="onCreate()" *ngIf="isShowCreateBtn()">
-                        <i class="fa fa-plus-square"></i>
-                        {{ 'action.create' | translate }}
-                    </button>
-                </div>
+          <div class="header d-flex justify-content-between align-items-center">
+            <div class="breadcrumb">
+                <app-bread-crumb [listBreadCrumb]="listBreadCrumb"></app-bread-crumb>
             </div>
+            <div class="col-6 text-right">
+                <button class="btn btn-primary" (click)="onCreate()" *ngIf="isShowCreateBtn()">
+                    <i class="fa fa-plus-square"></i>
+                    {{ 'action.create' | translate }}
+                </button>
+            </div>
+          </div>  
         </div>
     </section>
     <section class="content px-2">

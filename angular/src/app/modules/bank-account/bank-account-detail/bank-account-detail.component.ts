@@ -13,6 +13,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateBaseBalanaceComponent, UpdateBaseBalanaceData } from './update-base-balanace/update-base-balanace.component';
 import { number } from 'echarts';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 
 
@@ -35,6 +37,11 @@ export class BankAccountDetailComponent extends AppComponentBase implements OnIn
   firstBalance=0
   afterBalance = 0;
   isTableLoading:boolean =false
+  routeTitleFirstLevel;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu4;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankAccount;
+  routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.bankAccountDetail;
+  queryParams;
   ; constructor(
     private bankAccountService: BankAccountService,
     injector: Injector,
@@ -43,8 +50,8 @@ export class BankAccountDetailComponent extends AppComponentBase implements OnIn
     private currencyService: CurrencyService,
     private accountService: AccountantAccountService,
     private dialog: MatDialog,
-    private router: Router
-
+    private router: Router,
+    private translate: TranslateService
   ) {
     super(injector);
     this.subscriptions.push(
@@ -66,6 +73,7 @@ export class BankAccountDetailComponent extends AppComponentBase implements OnIn
   searchValue3: '';
   startDate
   endDate
+  title
 
   ngOnInit(): void {
     this.startDate = moment().add(-1, "years");
@@ -76,6 +84,35 @@ export class BankAccountDetailComponent extends AppComponentBase implements OnIn
     this.getAllBank();
     this.getAllCurrency();
     this.getBankAcountTransactionDetail();
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu4").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu4.m4_child1").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title, url: this.routeUrlSecondLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.bankDetail?.holderName , url: this.routeUrlThirdLevel + (queryParamsString ? '?' + queryParamsString : '')},
+    ];
   }
 
   cal(increase, decrease) {
@@ -89,6 +126,7 @@ export class BankAccountDetailComponent extends AppComponentBase implements OnIn
   getByPeriod() {
     this.bankAccountService.getByPeriod(this.bankAccountId).subscribe(data => {
       this.bankDetail = data.result
+      this.onLangChange();
     })
   }
 

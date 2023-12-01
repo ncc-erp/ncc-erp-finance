@@ -10,6 +10,9 @@ import {
 import { finalize } from "rxjs/operators";
 import { CreateEditLineChartSettingComponent } from "./create-edit-line-chart-setting/create-edit-line-chart-setting.component";
 import { PERMISSIONS_CONSTANT } from "@app/constant/permission.constant";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-line-chart-setting",
@@ -23,7 +26,7 @@ export class LineChartSettingComponent
   protected list(
     request: PagedRequestDto,
     pageNumber: number,
-    finishedCallback: Function
+    finishedCallback: Function,
   ): void {
     this.isTableLoading = true;
     this.linechartsettingService
@@ -41,11 +44,35 @@ export class LineChartSettingComponent
         },
         () => (this.isTableLoading = false)
       );
-      this.listBreadCrumb = [
-        {name: '<i class="fas fa-home"></i>',url:''}, 
-        {name: ' <i class="fas fa-chevron-right"></i> '}, 
-        {name: 'Line Chart' }];
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
   }
+
+  onLangChange(){
+    this.translate.get("menu.menu2").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu2.lineChart").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
+  }
+
   protected delete(entity: LineChartSettingDto): void {
     abp.message.confirm(`Delete setting: ${entity.name}`, "", (rs) => {
       if(rs){
@@ -60,11 +87,16 @@ export class LineChartSettingComponent
   }
 
   public lineChartSetting: LineChartSettingDto[] = [];
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.lineChart;
+  queryParams;
 
   constructor(
+    private route: ActivatedRoute,
     injector: Injector,
     private dialog: MatDialog,
-    private linechartsettingService: LinechartSettingService
+    private linechartsettingService: LinechartSettingService,
+    private translate: TranslateService
   ) {
     super(injector);
   }

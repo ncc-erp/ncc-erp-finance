@@ -7,6 +7,9 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { Component, Injector, OnInit } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { AppConsts } from '@shared/AppConsts';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-finance-review',
@@ -28,10 +31,17 @@ export class FinanceReviewComponent extends AppComponentBase implements OnInit {
   public tooltip: string = "";
   public tooltipExchangeRateOfBankAccount = "";
   public unIncludeBTransPending = true;
+  public title: any;
+  routeTitleFirstLevel;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.financeReview;
+  queryParams;
   constructor(
+    private route: ActivatedRoute,
     injector: Injector,
     private dashboardService: DashBoardService,
-    public _utilities: UtilitiesService,)
+    public _utilities: UtilitiesService,
+    private translate: TranslateService)
   {
     super(injector)
   }
@@ -41,6 +51,33 @@ export class FinanceReviewComponent extends AppComponentBase implements OnInit {
     AppConsts.periodId.asObservable().subscribe(rs => {
       this.getData();
     }))
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+
+  onLangChange(){
+    this.translate.get("menu.menu5").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu5.m5_child6").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
   private getData() {
     this.GetBankAccountStatistics()

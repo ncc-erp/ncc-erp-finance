@@ -234,7 +234,7 @@ namespace FinanceManagement.Helper
         public static string GetNameBankTransaction(InputGetNameBankTransaction input)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append($"TK {input.BankNumber}");
+            sb.Append($"TK {input.BankNumber} ");
             string plusOrSub = string.Empty;
             if (input.Money > 0) plusOrSub = "+";
             sb.AppendLine($"So tien GD: {plusOrSub}{string.Format("{0:#,##0}", input.Money)} {input.CurrencyName} luc {DateTimeUtils.FormatDateTime(input.TimeAt)}");

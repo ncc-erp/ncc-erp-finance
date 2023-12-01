@@ -25,8 +25,9 @@ import { AccountForDropdownDto, ValueAndNameModel } from "@app/service/model/com
 import { AccountService } from "@app/service/api/account.service";
 import { ActiveCompanyBankAccountComponent } from "./active-company-bank-account/active-company-bank-account.component";
 import { AccountTypeEnum } from "@shared/AppEnums";
-import { HttpErrorResponse } from "@angular/common/http";
+import { HttpErrorResponse, HttpParams } from "@angular/common/http";
 import { of } from "rxjs";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: "app-bank-account",
@@ -54,7 +55,10 @@ export class BankAccountComponent
   Account_Directory_BankAccount_Unlock =
     PERMISSIONS_CONSTANT.Account_Directory_BankAccount_LockUnlock;
   Account_Directory_BankAccount_ActiveDeactive = PERMISSIONS_CONSTANT.Account_Directory_BankAccount_ActiveDeactive;
-  Account_Directory_BankAccount_Export = PERMISSIONS_CONSTANT.Account_Directory_BankAccount_Export
+  Account_Directory_BankAccount_Export = PERMISSIONS_CONSTANT.Account_Directory_BankAccount_Export;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu4;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankAccount;
+  queryParams;
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     {
       propertyName: "holderName",
@@ -99,7 +103,8 @@ export class BankAccountComponent
     private accountService: AccountService,
     private commonService: CommonService,
     private dialog: MatDialog,
-    injector: Injector
+    injector: Injector,
+    private translate: TranslateService
   ) {
     super(injector);
   }
@@ -135,6 +140,36 @@ export class BankAccountComponent
     });
 
     this.refresh();
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu4").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu4.m4_child1").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+  getQueryParam(){
+
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
 
   protected list(

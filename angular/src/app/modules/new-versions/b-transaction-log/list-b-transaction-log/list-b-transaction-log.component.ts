@@ -9,6 +9,9 @@ import { EComparisor } from '@app/modules/revenue-managed/revenue-managed.compon
 import { DateSelectorEnum } from '@shared/AppEnums';
 import { DateFormat, DateTimeSelector } from '@shared/date-selector/date-selector.component';
 import { IFilterDateTimeParam } from '@app/service/interfaces/filter-date.interface';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-list-b-transaction-log',
@@ -17,6 +20,9 @@ import { IFilterDateTimeParam } from '@app/service/interfaces/filter-date.interf
 })
 export class ListBTransactionLogComponent extends PagedListingComponentBase<BTransactionLog> implements OnInit {
   public bTransactionLogs: BTransactionLog[] = [];
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bTransactionLog;
+  queryParams;
   searchDetail = {
     isValid: AppConsts.VALUE_OPTIONS_ALL
   };
@@ -30,12 +36,39 @@ export class ListBTransactionLogComponent extends PagedListingComponentBase<BTra
   defaultDateFilterType = DateSelectorEnum.ALL;
   searchWithDateTime: DateTimeSelector;
 
-  constructor(injector: Injector, private _bTransactionLogService: BTransactionLogService) {
+  constructor(private route: ActivatedRoute, injector: Injector, private _bTransactionLogService: BTransactionLogService, private translate: TranslateService) {
     super(injector);
   }
 
   ngOnInit(): void {
     this.getFirstPage();
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu2").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu2.bTransactionLog").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
 
   onDateChange($event): void {

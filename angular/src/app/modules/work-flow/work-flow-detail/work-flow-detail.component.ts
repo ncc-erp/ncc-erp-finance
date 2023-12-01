@@ -10,6 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { CreateEditStatusComponent } from '../create-edit-status/create-edit-status.component';
 import { CreateEditTransitionComponent } from '../create-edit-transition/create-edit-transition.component';
 import { EditTransitionComponent } from '../edit-transition/edit-transition.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-work-flow-detail',
@@ -22,9 +24,15 @@ export class WorkFlowDetailComponent extends AppComponentBase implements OnInit 
   searchText: string = '';
   statuses: any;
   transitions: WorkFlowStatus;
+  title: any;
+  routeTitleFirstLevel;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.workFlow;
+  routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.workFlowDetail;
+  queryParams;
 
-
-  constructor(injector: Injector, private _roleService: RoleService, private _workFlowStatusService: WorkFlowStatusService, private _workFlowTransitionService: WorkFlowTransitionService, private _workFlowService: WorkFlowService, private dialog: MatDialog, private route: ActivatedRoute) {
+  constructor(injector: Injector, private _roleService: RoleService, private _workFlowStatusService: WorkFlowStatusService, private _workFlowTransitionService: WorkFlowTransitionService, private _workFlowService: WorkFlowService, private dialog: MatDialog, private route: ActivatedRoute,
+    private translate: TranslateService) {
     super(injector);
   }
   paramId;
@@ -33,11 +41,40 @@ export class WorkFlowDetailComponent extends AppComponentBase implements OnInit 
     this.paramId = this.route.snapshot.queryParamMap.get('id');
     this.paramId1 = parseInt(this.paramId);
     this.refresh(this.paramId);
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+  }
+
+  onLangChange(){
+    this.translate.get("menu.menu2").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu2.workFlow").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title, url: this.routeUrlSecondLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.statuses.name , url: this.routeUrlThirdLevel + (queryParamsString ? '?' + queryParamsString : '') },
+    ];
   }
 
   refresh(id): void {
     this._workFlowService.getById(id).subscribe((item) => {
       this.statuses = item.result;
+      this.route.queryParams.subscribe(params => {
+        this.queryParams = new HttpParams({ fromObject: params });
+        this.onLangChange();
+      });
     })
   }
 

@@ -32,6 +32,8 @@ import { AppConsts, OPTION_ALL } from "@shared/AppConsts";
 import { IOption } from "@shared/components/custome-select/custome-select.component";
 import { Utils } from "@app/service/helpers/utils";
 import { TreeInOutTypeOption } from '@shared/components/tree-in-out-type/tree-in-out-type.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: "app-revenue-recording",
@@ -49,6 +51,10 @@ export class RevenueRecordingComponent
   totalValue: TotalByCurrencyDto[] = [];
   totalByCurrency: number = 0;
   CurrencyColor = CurrencyColor;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.revenueRecord;
+  queryParams;
+
 
   @ViewChild("inputSearchClient") inputSearchClient: ElementRef;
   @ViewChild("inputSearchIncoming") inputSearchIncoming: ElementRef;
@@ -170,6 +176,33 @@ export class RevenueRecordingComponent
           return (sum += item.totalValueToVND);
         }, 0);
       });
+    this.translate.onLangChange.subscribe(() => {
+      this.onLangChange();
+    });
+    this.route.queryParams.subscribe(params => {
+      this.queryParams = new HttpParams({ fromObject: params });
+      this.onLangChange();
+    });
+  }
+  
+  onLangChange(){
+    this.translate.get("menu.menu5").subscribe((res: string) => {
+      this.routeTitleFirstLevel = res;
+      this.updateBreadCrumb();
+    });
+    this.translate.get("menu5.m5_child1").subscribe((res: string) => {
+      this.title = res;
+      this.updateBreadCrumb();
+    });
+  }
+
+  updateBreadCrumb() {
+    let queryParamsString = this.queryParams.toString();
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    ];
   }
   protected delete(entity: RevenueRecordDto): void { }
 
@@ -179,7 +212,8 @@ export class RevenueRecordingComponent
     private commonService: CommonService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    injector: Injector
+    injector: Injector,
+    private translate: TranslateService
   ) {
     super(injector);
     const id = this.route.snapshot.queryParamMap.get("id");
