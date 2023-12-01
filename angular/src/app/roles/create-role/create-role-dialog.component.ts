@@ -81,7 +81,7 @@ export class CreateRoleDialogComponent extends AppComponentBase
   
       const role = new CreateRoleDto();
       role.init(this.role);
-      role.grantedPermissions = this.getCheckedPermissions();
+      role.grantedPermissions = [];
   
       this._roleService
         .create(role)
