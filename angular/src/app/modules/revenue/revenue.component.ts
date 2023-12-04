@@ -27,7 +27,7 @@ export class RevenueComponent extends AppComponentBase implements OnInit {
   searchText: string = "";
   title: any;
   routeTitleFirstLevel;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.incomingType;
   queryParams;
   constructor(

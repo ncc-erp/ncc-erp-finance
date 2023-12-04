@@ -38,7 +38,7 @@ export class AuditlogComponent extends PagedListingComponentBase<AuditlogDto> im
   transDate: string = "";
   iconSort: string = "";
   iconCondition: string = "executionTime";
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.auditLog;
   queryParams;
 

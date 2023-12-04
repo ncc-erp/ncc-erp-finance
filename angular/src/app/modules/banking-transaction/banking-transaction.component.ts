@@ -145,7 +145,7 @@ export class BankingTransactionComponent
   BANK_TRANSCATION_DATE_TIME_OPTIONS = BANK_TRANSCATION_DATE_TIME_OPTIONS;
   optionDate: BankTransactionFilterDateTimeType = BankTransactionFilterDateTimeType.NO_FILTER;
   BankTransactionFilterDateTimeTypeNO_FILTER = BankTransactionFilterDateTimeType.NO_FILTER
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankTransaction;
   queryParams;
 

@@ -32,7 +32,7 @@ export class SupplierListComponent extends PagedListingComponentBase<SupplierLis
   Directory_Supplier_Create = PERMISSIONS_CONSTANT.Directory_Supplier_Create;
   Directory_Supplier_Update = PERMISSIONS_CONSTANT.Directory_Supplier_Update;
   Directory_Supplier_Delete = PERMISSIONS_CONSTANT.Directory_Supplier_Delete;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.supplierList;
   queryParams;
 

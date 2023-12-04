@@ -37,7 +37,7 @@ export class AccountantAccountComponent
     PERMISSIONS_CONSTANT.Account_Directory_FinanceAccount_Edit;
   Account_Directory_BankAccount_ViewDetail =
   PERMISSIONS_CONSTANT.Account_Directory_BankAccount_ViewBankAccountDetail;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu4;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.account;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.accountantAccount;
   queryParams;
 

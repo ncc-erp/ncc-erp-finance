@@ -20,7 +20,7 @@ export class AccountTypeComponent extends PagedListingComponentBase<any>  {
   Directory_AccountType_Create = PERMISSIONS_CONSTANT.Directory_AccountType_Create;
   Directory_AccountType_Delete = PERMISSIONS_CONSTANT.Directory_AccountType_Delete;
   Directory_AccountType_Edit = PERMISSIONS_CONSTANT.Directory_AccountType_Edit;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.accountType;
   queryParams;
 

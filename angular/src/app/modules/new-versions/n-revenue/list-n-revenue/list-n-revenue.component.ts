@@ -42,7 +42,7 @@ export class ListNRevenueComponent extends PagedListingComponentBase<NRevenueByA
   revenueStatusOptions: ValueAndNameModel[] = [];
   revenueByAccounts: NRevenueByAccount[] = [];
   searchWithDateTime: DateTimeSelector;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.nrevenue;
   queryParams;
   searchDetail = {

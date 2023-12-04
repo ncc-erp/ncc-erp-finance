@@ -27,7 +27,7 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
   isActive: boolean;
   title: any;
   routeTitleFirstLevel;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.circleChart;
   routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.circleChartDetail;
   queryParams;

@@ -35,7 +35,7 @@ export class TenantsComponent extends PagedListingComponentBase<TenantDto> {
   keyword = '';
   isActive: boolean | number = -1;
   advancedFiltersVisible = false;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.tenants;
   queryParams;
 

@@ -30,7 +30,7 @@ export class ExpenditureComponent extends AppComponentBase implements OnInit {
   inputFilter: InputFilterEntryTypeDto = new InputFilterEntryTypeDto();
   title: any;
   routeTitleFirstLevel;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.outcomingType;
   queryParams;
 

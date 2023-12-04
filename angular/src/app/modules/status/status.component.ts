@@ -18,7 +18,7 @@ export class StatusComponent extends AppComponentBase implements OnInit {
   statuses: StatusDto[] = [];
   title: any;
   routeTitleFirstLevel;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.status;
   Admin_WorkflowStatus = PERMISSIONS_CONSTANT.Admin_WorkflowStatus;
   Admin_WorkflowStatus_Create = PERMISSIONS_CONSTANT.Admin_WorkflowStatus_Create;

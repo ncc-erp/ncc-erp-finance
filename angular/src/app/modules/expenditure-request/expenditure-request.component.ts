@@ -70,7 +70,7 @@ export class ExpenditureRequestComponent
     PERMISSIONS_CONSTANT.Finance_OutcomingEntry_ExportPdf;
   Finance_OutcomingEntry_UpdateReportDate =
     PERMISSIONS_CONSTANT.Finance_OutcomingEntry_UpdateReportDate;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.expenditureRequest;
   queryParams;
   fileParam: DropDownDataDto[] = [

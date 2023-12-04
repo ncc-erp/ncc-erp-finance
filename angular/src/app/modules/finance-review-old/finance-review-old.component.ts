@@ -66,7 +66,7 @@ export class FinanceReviewOldComponent extends AppComponentBase implements OnIni
   totalDiffOutcomeUSD: number = 0;
   title: any;
   routeTitleFirstLevel;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.financeStatisticOld;
   queryParams;
   bankAccountDefault = ["19132608283018", "19132608283026", "19034753904029", "490069"];

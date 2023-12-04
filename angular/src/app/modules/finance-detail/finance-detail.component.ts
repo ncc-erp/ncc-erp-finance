@@ -96,7 +96,7 @@ export class FinanceDetailComponent
   formBankCurrency: string;
   toBankCurrency: string;
   tong: number;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankTransaction;
   routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.revenueRecordDetail;
   queryParams;

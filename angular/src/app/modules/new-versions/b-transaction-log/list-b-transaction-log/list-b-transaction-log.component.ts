@@ -20,7 +20,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ListBTransactionLogComponent extends PagedListingComponentBase<BTransactionLog> implements OnInit {
   public bTransactionLogs: BTransactionLog[] = [];
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bTransactionLog;
   queryParams;
   searchDetail = {

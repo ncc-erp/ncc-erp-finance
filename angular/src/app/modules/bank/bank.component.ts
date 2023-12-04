@@ -22,7 +22,7 @@ export class BankComponent extends PagedListingComponentBase<any>{
   Directory_Bank_Create = PERMISSIONS_CONSTANT.Directory_Bank_Create;
   Directory_Bank_Delete = PERMISSIONS_CONSTANT.Directory_Bank_Delete;
   Directory_Bank_Edit = PERMISSIONS_CONSTANT.Directory_Bank_Edit;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.banks;
   queryParams;
   public readonly FILTER_CONFIG: InputFilterDto[] = [

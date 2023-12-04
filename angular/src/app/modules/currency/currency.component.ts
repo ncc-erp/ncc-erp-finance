@@ -25,7 +25,7 @@ export class CurrencyComponent extends PagedListingComponentBase<any> implements
   Directory_Currency_Delete = PERMISSIONS_CONSTANT.Directory_Currency_Delete;
   Directory_Currency_Edit = PERMISSIONS_CONSTANT.Directory_Currency_Edit;
   Directory_Currency_ChangeDefaultCurrency = PERMISSIONS_CONSTANT.Directory_Currency_ChangeDefaultCurrency;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.currencies;
   queryParams;
 

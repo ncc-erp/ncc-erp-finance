@@ -51,7 +51,7 @@ export class RevenueRecordingComponent
   totalValue: TotalByCurrencyDto[] = [];
   totalByCurrency: number = 0;
   CurrencyColor = CurrencyColor;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.revenueRecord;
   queryParams;
 

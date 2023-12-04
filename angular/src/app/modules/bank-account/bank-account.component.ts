@@ -56,7 +56,7 @@ export class BankAccountComponent
     PERMISSIONS_CONSTANT.Account_Directory_BankAccount_LockUnlock;
   Account_Directory_BankAccount_ActiveDeactive = PERMISSIONS_CONSTANT.Account_Directory_BankAccount_ActiveDeactive;
   Account_Directory_BankAccount_Export = PERMISSIONS_CONSTANT.Account_Directory_BankAccount_Export;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu4;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.account;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankAccount;
   queryParams;
   public readonly FILTER_CONFIG: InputFilterDto[] = [

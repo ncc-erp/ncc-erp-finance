@@ -62,11 +62,11 @@ export const APP_CONSTANT = {
 
   },
   UrlBreadcrumbFirstLevel: {
-    Menu1: "/app/home",
-    Menu2: "/app/b-transaction-log",
-    Menu3: "/app/supplierList",
-    Menu4: "/app/accountant-account",
-    Menu5: "/app/expenditure-request"
+    dashboard: "/app/home",
+    admin: "/app/b-transaction-log",
+    directory: "/app/supplierList",
+    account: "/app/accountant-account",
+    financeManagement: "/app/expenditure-request"
   },
   UrlBreadcrumbSecondLevel: {
     tenants: "/app/tenants",

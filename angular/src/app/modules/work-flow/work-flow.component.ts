@@ -20,7 +20,7 @@ export class WorkFlowComponent extends PagedListingComponentBase<any> implements
   Admin_Workflow_Delete=PERMISSIONS_CONSTANT.Admin_Workflow_Delete
   Admin_Workflow_ViewAll=PERMISSIONS_CONSTANT.Admin_Workflow_View
   Admin_Workflow_ViewDetail=PERMISSIONS_CONSTANT.Admin_Workflow_ViewDetail
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.workFlow;
   queryParams;
 

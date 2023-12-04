@@ -33,7 +33,7 @@ export class FinanceReviewComponent extends AppComponentBase implements OnInit {
   public unIncludeBTransPending = true;
   public title: any;
   routeTitleFirstLevel;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.financeReview;
   queryParams;
   constructor(

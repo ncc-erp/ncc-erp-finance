@@ -18,7 +18,7 @@ export class ExpenditureRequestDetailComponent extends AppComponentBase implemen
   requestDetail: any;
   title: any;
   routeTitleFirstLevel;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.expenditureRequest;
   routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.expenditureRequestDetail;
   queryParams;

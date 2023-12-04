@@ -83,7 +83,7 @@ namespace FinanceManagement.Managers.Dashboards.Dtos
         public string IncomingEntryType { get; set; }
         public bool IsDoanhThu { get; set; }
         public string TinhDoanhThu => IsDoanhThu ? "YES" : "NO";
-        public long BankTransactionId { get; set; }
+        public long? BankTransactionId { get; set; }
     }
 
     public class BaoCaoDto

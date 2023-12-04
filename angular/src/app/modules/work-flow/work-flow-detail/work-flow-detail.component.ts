@@ -26,7 +26,7 @@ export class WorkFlowDetailComponent extends AppComponentBase implements OnInit 
   transitions: WorkFlowStatus;
   title: any;
   routeTitleFirstLevel;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.workFlow;
   routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.workFlowDetail;
   queryParams;

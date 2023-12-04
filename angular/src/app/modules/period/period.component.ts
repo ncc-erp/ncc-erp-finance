@@ -28,7 +28,7 @@ export class PeriodComponent extends PagedListingComponentBase<PeriodDto> implem
   }
   public listPeriods: PeriodDto[] = [];
   public isTheFirstCreate :boolean = false;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu5;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.period;
   queryParams;
   protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {

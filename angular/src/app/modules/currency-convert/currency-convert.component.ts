@@ -46,7 +46,7 @@ export class CurrencyConvertComponent extends PagedListingComponentBase<Currency
   public sortDirection: number = null
   public sortDirectionEnum = SortDirectionEnum;
   public filterItems: FilterDto[] = [];
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.currencyConvert;
   queryParams;
 

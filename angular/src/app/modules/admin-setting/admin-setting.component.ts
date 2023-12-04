@@ -41,7 +41,7 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
   public hrmConfig = {} as internalToolConfig
   public title: any;
   routeTitleFirstLevel;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.configuration;
   queryParams;
 

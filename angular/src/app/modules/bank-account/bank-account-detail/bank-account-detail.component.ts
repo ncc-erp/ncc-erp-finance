@@ -38,7 +38,7 @@ export class BankAccountDetailComponent extends AppComponentBase implements OnIn
   afterBalance = 0;
   isTableLoading:boolean =false
   routeTitleFirstLevel;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu4;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.account;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankAccount;
   routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.bankAccountDetail;
   queryParams;

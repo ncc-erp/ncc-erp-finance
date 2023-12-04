@@ -22,7 +22,7 @@ export class BranchComponent extends PagedListingComponentBase<any> {
   Directory_Branch_Create = PERMISSIONS_CONSTANT.Directory_Branch_Create;
   Directory_Branch_Delete = PERMISSIONS_CONSTANT.Directory_Branch_Delete;
   Directory_Branch_Edit = PERMISSIONS_CONSTANT.Directory_Branch_Edit;
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu3;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.branch;
   queryParams;
   public readonly FILTER_CONFIG: InputFilterDto[] = [

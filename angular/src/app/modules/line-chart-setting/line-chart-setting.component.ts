@@ -87,7 +87,7 @@ export class LineChartSettingComponent
   }
 
   public lineChartSetting: LineChartSettingDto[] = [];
-  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.Menu2;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.lineChart;
   queryParams;
 
