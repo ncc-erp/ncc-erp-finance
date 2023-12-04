@@ -163,10 +163,11 @@ onLangChange(){
 }
 
 updateBreadCrumb() {
+  let queryParamsString = this.queryParams.toString();
   this.listBreadCrumb = [
     { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
     { name: ' <i class="fas fa-chevron-right"></i> ' },
-    { name: this.title , url: this.routeUrlSecondLevel}
+    { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
   ];
 }
   getEspecialIncomingEntryType() {
