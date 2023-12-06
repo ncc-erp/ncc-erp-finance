@@ -64,54 +64,37 @@ export class FinanceReviewOldComponent extends AppComponentBase implements OnIni
   totalDiffOutcomeVND: number = 0;
   totalDiffIncomeUSD: number = 0;
   totalDiffOutcomeUSD: number = 0;
-  title: any;
-  routeTitleFirstLevel;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.financeStatisticOld;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.financeStatisticOld;
-  queryParams;
-  bankAccountDefault = ["19132608283018", "19132608283026", "19034753904029", "490069"];
+    bankAccountDefault = ["19132608283018", "19132608283026", "19034753904029", "490069"];
   constructor(
-    private route: ActivatedRoute,
     injector: Injector,
     private dashboardService: DashBoardService,
     private bankaccountService: BankAccountService,
     private periodService: PeriodService,
     private router: Router,
     public _utilities: UtilitiesService,
-    private _modalService: BsModalService,
-    private translate: TranslateService) {
+    private _modalService: BsModalService) {
     super(injector)
   }
 
   ngOnInit(): void {
     this.getStatistics()
     this.getBankAccount();
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
 
-  onLangChange(){
-    this.translate.get("menu.menu5").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu5.m5_child7").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+  onRefreshCurrentPage(){
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
   getStatistics() {

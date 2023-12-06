@@ -70,10 +70,11 @@ export class ExpenditureRequestComponent
     PERMISSIONS_CONSTANT.Finance_OutcomingEntry_ExportPdf;
   Finance_OutcomingEntry_UpdateReportDate =
     PERMISSIONS_CONSTANT.Finance_OutcomingEntry_UpdateReportDate;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.expenditureRequest;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.expenditureRequest;
-  queryParams;
-  fileParam: DropDownDataDto[] = [
+    fileParam: DropDownDataDto[] = [
     { displayName: "No File Yet", value: 0 },
     { displayName: "Not Yet Confirmed", value: 1 },
     { displayName: "Confirmed", value: 2 },
@@ -269,32 +270,20 @@ export class ExpenditureRequestComponent
     //       return (sum += item.totalValueToCurrencyDefault);
     //     }, 0);
     //   });
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
   
-  onLangChange(){
-    this.translate.get("menu.menu5").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu5.m5_child2").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+  onRefreshCurrentPage(){
+    this.OnResetSearch()
+    this.onResetFilter()
+    this.refresh();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
 
@@ -312,8 +301,7 @@ export class ExpenditureRequestComponent
     public branchService: BranchService,
     public _utilities: UtilitiesService,
     private commonService: CommonService,
-    private outcomingEntryService: ExpenditureService,
-    private translate: TranslateService
+    private outcomingEntryService: ExpenditureService
   ) {
     super(injector);
     const status = this.route.snapshot.queryParamMap.get("status");
@@ -951,6 +939,12 @@ export class ExpenditureRequestComponent
       this.searchWithDateTime.toDate = moment(this.searchWithDateTime.toDate)
       this.defaultDateFilterType = this.searchWithDateTime.dateType
     }
+  }
+
+  async OnResetSearch() {
+    this.searchId = null;
+    this.searchMoney = null
+    this.searchText = ""
   }
 
   async onResetFilter() {

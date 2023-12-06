@@ -31,17 +31,14 @@ export class FinanceReviewComponent extends AppComponentBase implements OnInit {
   public tooltip: string = "";
   public tooltipExchangeRateOfBankAccount = "";
   public unIncludeBTransPending = true;
-  public title: any;
-  routeTitleFirstLevel;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.financeReview;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.financeReview;
-  queryParams;
-  constructor(
-    private route: ActivatedRoute,
+    constructor(
     injector: Injector,
     private dashboardService: DashBoardService,
-    public _utilities: UtilitiesService,
-    private translate: TranslateService)
+    public _utilities: UtilitiesService)
   {
     super(injector)
   }
@@ -51,32 +48,18 @@ export class FinanceReviewComponent extends AppComponentBase implements OnInit {
     AppConsts.periodId.asObservable().subscribe(rs => {
       this.getData();
     }))
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
 
-  onLangChange(){
-    this.translate.get("menu.menu5").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu5.m5_child6").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+  onRefreshCurrentPage(){
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
   private getData() {

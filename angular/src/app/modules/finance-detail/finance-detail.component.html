@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="header d-flex justify-content-between align-items-center">
       <div class="breadcrumb">
-          <app-bread-crumb [listBreadCrumb]="listBreadCrumb"></app-bread-crumb>
+          <app-bread-crumb [listBreadCrumb]="listBreadCrumb" (refreshCurrentPage)="onRefreshCurrentPage()"></app-bread-crumb>
       </div>
     </div>
   </div>
@@ -11,7 +11,7 @@
   <div class="container-fluid">
     <div class="row mb-4 card">
       <div class="col-12">
-        <mat-tab-group [selectedIndex]="tabIndex">
+        <mat-tab-group #tabGroup [selectedIndex]="tabIndex">
           <mat-tab label="Giao dịch ngân hàng">
             <div>
               <div class="card-body" *ngIf="transaction != null">

@@ -20,10 +20,11 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ListBTransactionLogComponent extends PagedListingComponentBase<BTransactionLog> implements OnInit {
   public bTransactionLogs: BTransactionLog[] = [];
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.bTransactionLog;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bTransactionLog;
-  queryParams;
-  searchDetail = {
+    searchDetail = {
     isValid: AppConsts.VALUE_OPTIONS_ALL
   };
 
@@ -36,43 +37,40 @@ export class ListBTransactionLogComponent extends PagedListingComponentBase<BTra
   defaultDateFilterType = DateSelectorEnum.ALL;
   searchWithDateTime: DateTimeSelector;
 
-  constructor(private route: ActivatedRoute, injector: Injector, private _bTransactionLogService: BTransactionLogService, private translate: TranslateService) {
+  constructor(injector: Injector, private _bTransactionLogService: BTransactionLogService) {
     super(injector);
   }
 
   ngOnInit(): void {
     this.getFirstPage();
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
   
-  onLangChange(){
-    this.translate.get("menu.menu2").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu2.bTransactionLog").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+  clearFilters(): void {
+    this.searchText = '';
+    this.searchDetail.isValid = AppConsts.VALUE_OPTIONS_ALL;
+    this.defaultDateFilterType = DateSelectorEnum.ALL;
+    this.searchWithDateTime = {
+      dateType: DateSelectorEnum.ALL,
+    } as DateTimeSelector;
+    this.getDataPage(1);
+  }
+
+  onRefreshCurrentPage(){
+    this.clearFilters();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
 
   onDateChange($event): void {
     this.searchWithDateTime = $event;
+    this.defaultDateFilterType = $event.dateType;
     this.getFirstPage();
   }
 

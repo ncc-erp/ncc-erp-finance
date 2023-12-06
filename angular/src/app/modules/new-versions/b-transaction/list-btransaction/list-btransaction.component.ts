@@ -107,10 +107,11 @@ export class ListBtransactionComponent
     TimeAt: "timeAt",
   };
   searchWithDateTime = {} as DateTimeSelector;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.btransaction;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.btransaction;
-  queryParams;
-
+  
   id?: number | string;
   @ViewChildren(MatMenuTrigger) menuTrigger: any;
   constructor(
@@ -120,8 +121,7 @@ export class ListBtransactionComponent
     public _utilities: UtilitiesService,
     public dialog: MatDialog,
     private _settingService: AppConfigurationService,
-    private route: ActivatedRoute,
-    private translate: TranslateService
+    private route: ActivatedRoute
   ) {
     super(injector);
     this.id = this.route.snapshot.queryParamMap.get("id");
@@ -142,32 +142,20 @@ export class ListBtransactionComponent
         this.refresh();
       }));
     this.getEspecialIncomingEntryType();
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
 }
 
-onLangChange(){
-  this.translate.get("menu.menu5").subscribe((res: string) => {
-    this.routeTitleFirstLevel = res;
-    this.updateBreadCrumb();
-  });
-  this.translate.get("menu5.m5_child8").subscribe((res: string) => {
-    this.title = res;
-    this.updateBreadCrumb();
-  });
-}
+onRefreshCurrentPage(){
+    this.OnResetSearch();
+    this.onResetFilter();
+    this.refresh();
+  }
 
-updateBreadCrumb() {
-  let queryParamsString = this.queryParams.toString();
+  updateBreadCrumb() {
   this.listBreadCrumb = [
     { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
     { name: ' <i class="fas fa-chevron-right"></i> ' },
-    { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+    { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
   ];
 }
   getEspecialIncomingEntryType() {
@@ -968,10 +956,16 @@ updateBreadCrumb() {
     }
   }
 
-  async onResetFilter() {
-    this.searchDetail.bankAccountId = OPTION_ALL
-    this.searchDetail.bTransactionStatus = OPTION_ALL
+  async OnResetSearch() {
+    this.id = null;
+    this.searchMoney.fromMoney = ""
+    this.searchMoney.toMoney = ""
+    this.searchText = ""
+  }
 
+  async onResetFilter() {
+    this.searchDetail.bankAccountId = AppConsts.VALUE_OPTIONS_ALL;
+    this.searchDetail.bTransactionStatus = this.transactionStatusOptionsPendding;
     this.searchWithDateTime = {
       dateType: DateSelectorEnum.ALL
     } as DateTimeSelector;

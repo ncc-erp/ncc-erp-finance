@@ -32,10 +32,11 @@ export class SupplierListComponent extends PagedListingComponentBase<SupplierLis
   Directory_Supplier_Create = PERMISSIONS_CONSTANT.Directory_Supplier_Create;
   Directory_Supplier_Update = PERMISSIONS_CONSTANT.Directory_Supplier_Update;
   Directory_Supplier_Delete = PERMISSIONS_CONSTANT.Directory_Supplier_Delete;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.supplierList;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.supplierList;
-  queryParams;
-
+  
 
 
   supplierList: SupplierDto[] = []
@@ -48,44 +49,34 @@ export class SupplierListComponent extends PagedListingComponentBase<SupplierLis
     { propertyName: 'taxNumber', comparisions: [0, 1, 2, 3, 4, 5], displayName: "filterSupplierList.Taxnumber" }
   ];
   constructor(
-    private route: ActivatedRoute,
     private dialog: MatDialog,
     injector: Injector,
-    private supplierService: SupplierService,
-    private translate: TranslateService
+    private supplierService: SupplierService
   ) {
     super(injector);
   }
   ngOnInit(): void {
     this.refresh()
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu3").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu3.m3_child7").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
+
+  onResetFilter() {
+    this.searchText = '';
+  }
+
   editSupplier(supplier: SupplierDto): void {
     this.showDialogSupplier(supplier,"edit");
   }

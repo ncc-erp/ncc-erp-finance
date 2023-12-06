@@ -42,10 +42,11 @@ export class ListNRevenueComponent extends PagedListingComponentBase<NRevenueByA
   revenueStatusOptions: ValueAndNameModel[] = [];
   revenueByAccounts: NRevenueByAccount[] = [];
   searchWithDateTime: DateTimeSelector;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.nrevenue;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.nrevenue;
-  queryParams;
-  searchDetail = {
+    searchDetail = {
     month: AppConsts.VALUE_OPTIONS_ALL,
     year: AppConsts.VALUE_OPTIONS_ALL,
     status: AppConsts.VALUE_OPTIONS_ALL
@@ -96,8 +97,7 @@ export class ListNRevenueComponent extends PagedListingComponentBase<NRevenueByA
     private _revenue: NRevenueService,
     private dialog: MatDialog,
     public _utilities: UtilitiesService,
-    private route: ActivatedRoute,
-    private translate: TranslateService
+    private route: ActivatedRoute
   ) {
     super(injector);
   }
@@ -112,33 +112,33 @@ export class ListNRevenueComponent extends PagedListingComponentBase<NRevenueByA
     this.setYears();
     this.getListAccount();
     this.getInvoiceRoutingFromHomepage();
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
 
-  onLangChange(){
-    this.translate.get("menu.menu5").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu5.m5_child5").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+  onRefreshCurrentPage(){
+    this.onResetFilter();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
+  }
+
+  onResetFilter() {
+    this.searchText = "";
+    this.allSelected = true
+    this.multiValueStatusFilter = []
+    this.searchDetail.year = AppConsts.VALUE_OPTIONS_ALL,
+    this.searchDetail.month = AppConsts.VALUE_OPTIONS_ALL,
+    this.isDoneDebt = false,
+    this.defaultDateFilterType = DateSelectorEnum.ALL;
+    this.searchWithDateTime = {
+      dateType: DateSelectorEnum.ALL,
+    } as DateTimeSelector;
+    this.refresh();
   }
 
   setYears() {
@@ -211,6 +211,7 @@ export class ListNRevenueComponent extends PagedListingComponentBase<NRevenueByA
 
   onDateChange(searchDate: DateTimeSelector): void {
     this.searchWithDateTime = searchDate;
+    this.defaultDateFilterType = searchDate.dateType;
     this.getFirstPage();
   }
 

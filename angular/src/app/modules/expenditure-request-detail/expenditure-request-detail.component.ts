@@ -16,13 +16,12 @@ export class ExpenditureRequestDetailComponent extends AppComponentBase implemen
   requestId: any
   currentUrl: string = ""
   requestDetail: any;
-  title: any;
-  routeTitleFirstLevel;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.expenditureRequest;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.expenditureRequest;
   routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.expenditureRequestDetail;
-  queryParams;
-  constructor(private route: ActivatedRoute, private router: Router, injector:Injector, private translate: TranslateService, private requestService: ExpenditureRequestService,) {
+    constructor(private route: ActivatedRoute, private router: Router, injector:Injector, private requestService: ExpenditureRequestService,) {
     super(injector)
   }
   ngOnInit(): void {
@@ -32,40 +31,26 @@ export class ExpenditureRequestDetailComponent extends AppComponentBase implemen
       this.requestId = this.route.snapshot.queryParamMap.get("id")
       this.currentUrl = this.router.url
     });
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
     this.getRequestById();
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu5").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu5.m5_child2").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title, url: this.routeUrlSecondLevel },
+      { name: this.routeTitleSecondLevel, url: this.routeUrlSecondLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.requestDetail.name , url: this.routeUrlThirdLevel + (queryParamsString ? '?' + queryParamsString : '') },
+      { name: this.requestDetail.name , url: this.routeUrlThirdLevel , queryParams: {id: this.requestId } },
     ];
   }
   getRequestById() {
     this.requestService.getById(this.requestId).subscribe(data => {
       this.requestDetail = data.result;
-      this.route.queryParams.subscribe(params => {
-        this.queryParams = new HttpParams({ fromObject: params });
-        this.onLangChange();
-      });
+      this.updateBreadCrumb();
     })
   }
 

@@ -61,6 +61,46 @@ export const APP_CONSTANT = {
     DONE: "bg-success"
 
   },
+
+  TitleBreadcrumbFirstLevel: {
+    dashboard: "Trang chủ",
+    admin: "Admin",
+    directory: "Quản trị danh mục",
+    account: "Quản lý tài khoản",
+    financeManagement: "Quản lý tài chính"
+  },
+
+  TitleBreadcrumbSecondLevel: {
+    tenants: "Công ty",
+    user: "Người dùng",
+    role: "Vai trò",
+    workFlow: "Work flow",
+    status: "Trạng thái",
+    configuration: "Cài đặt",
+    lineChart: "Line Chart",
+    circleChart: "Circle Chart",
+    bTransactionLog: "Lịch sử crawl giao dịch",
+    auditLog: "Audit Log",
+    currencies: "Tiền tệ",
+    currencyConvert: "Tỉ giá",
+    banks: "Ngân hàng",
+    accountType: "Loại đối tượng",
+    branch: "Chi nhánh",
+    incomingType: "Loại thu",
+    outcomingType: "Loại chi",
+    supplierList: "Nhà cung cấp",
+    bankAccount: "Tài khoản ngân hàng",
+    accountantAccount: "Đối tượng kế toán",
+    revenueRecord: "Ghi nhận thu",
+    expenditureRequest: "Request chi",
+    bankTransaction: "Giao dịch ngân hàng",
+    financeReview: "Đối soát",
+    financeStatisticOld: "Đối soát cũ",
+    btransaction: "Biến động số dư",
+    nrevenue: "Khoản phải thu",
+    period: "Kì kế toán"
+  },
+
   UrlBreadcrumbFirstLevel: {
     dashboard: "/app/home",
     admin: "/app/b-transaction-log",

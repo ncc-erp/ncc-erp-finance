@@ -25,10 +25,11 @@ export class CurrencyComponent extends PagedListingComponentBase<any> implements
   Directory_Currency_Delete = PERMISSIONS_CONSTANT.Directory_Currency_Delete;
   Directory_Currency_Edit = PERMISSIONS_CONSTANT.Directory_Currency_Edit;
   Directory_Currency_ChangeDefaultCurrency = PERMISSIONS_CONSTANT.Directory_Currency_ChangeDefaultCurrency;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.currencies;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.currencies;
-  queryParams;
-
+  
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     { propertyName: 'Name', comparisions: [0, 6, 7, 8], displayName: "filterDirectory.Name" },
     { propertyName: 'Code', comparisions: [0, 6, 7, 8], displayName: "filterDirectory.Code" },
@@ -36,13 +37,11 @@ export class CurrencyComponent extends PagedListingComponentBase<any> implements
   ];
 
   constructor(
-    private route: ActivatedRoute,
     injector: Injector,
     private _currencyService: CurrencyService,
     private _modalService: BsModalService,
     public _utilities: UtilitiesService,
-   private sessionService: SessionServiceProxy,
-   private translate: TranslateService
+   private sessionService: SessionServiceProxy
   ) {
     super(injector);
 
@@ -62,34 +61,26 @@ export class CurrencyComponent extends PagedListingComponentBase<any> implements
         this.currencies = result.result.items;
         this.showPaging(result.result, pageNumber);
       });
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu3").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu3.m3_child1").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
+
+  onResetFilter() {
+    this.searchText = '';
+    this.refresh();
+  }
+
   delete(currency: CurrencyDto): void {
     abp.message.confirm(
       this.l("Delete currency '") + currency.name + "'?",

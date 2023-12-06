@@ -4,7 +4,7 @@ import { ExportReportComponent } from './export-report/export-report.component';
 import { MatDialog } from '@angular/material/dialog';
 import { APP_CONSTANT } from './../constant/api.constant';
 import { DashBoardService } from './../service/api/dash-board.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Component, Injector, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -24,8 +24,6 @@ import { CircleChartService } from '@app/service/api/circle-chart.service';
 import { IOption } from '@shared/components/custome-select/custome-select.component';
 import { DateSelectorHomeEnum } from '@shared/AppEnums';
 import { DateTimeSelectorHome } from './date-selector-dashboard/date-selector-dashboard.component';
-import { TranslateService } from '@ngx-translate/core';
-import { HttpParams } from '@angular/common/http';
 
 @Component({
   templateUrl: './home.component.html',
@@ -57,16 +55,16 @@ export class HomeComponent extends AppComponentBase {
   public baoCaoToDate: any
   public baoCaoFilter = baoCaoFilterOption
   public debtStatistic = {} as HrmDebtDto
-  public title: any;
-
+  
   distanceFromAndToDate = '';
   viewChange = new FormControl(this.APP_CONSTANT.TypeViewHomePage.Month);
   activeView: number = 0;
   endDate = new FormControl(moment())
   startDate = new FormControl(moment());
   listCircleChart: IOption[] = []
+  
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.dashboard;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.dashboard;
-  queryParams;
 
   defaultDateFilterTypeBaoCaoThuChi: DateSelectorHomeEnum = DateSelectorHomeEnum.MONTH;
   searchWithDateTimeBaoCaoThuChi = {} as DateTimeSelectorHome;
@@ -137,31 +135,22 @@ export class HomeComponent extends AppComponentBase {
     this.overviewInvoiceStatistics()
     this.getHRMDebtStatistic()
     this.getCircleChartActive()
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu1").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
     this.listBreadCrumb = [
-      { name: this.title , url: this.routeUrlFirstLevel }
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel }
     ];
   }
 
-  constructor(injector: Injector, private router: Router, private route: ActivatedRoute, private dialog: MatDialog,
+  constructor(injector: Injector, private router: Router, private dialog: MatDialog,
     private dashBoardService: DashBoardService, private outcomeService: ExpenditureRequestService,
-    private periodService: PeriodService, private circleChartService: CircleChartService, private translate: TranslateService) {
+    private periodService: PeriodService, private circleChartService: CircleChartService) {
     super(injector);
 
   }

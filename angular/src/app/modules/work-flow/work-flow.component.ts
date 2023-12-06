@@ -20,48 +20,35 @@ export class WorkFlowComponent extends PagedListingComponentBase<any> implements
   Admin_Workflow_Delete=PERMISSIONS_CONSTANT.Admin_Workflow_Delete
   Admin_Workflow_ViewAll=PERMISSIONS_CONSTANT.Admin_Workflow_View
   Admin_Workflow_ViewDetail=PERMISSIONS_CONSTANT.Admin_Workflow_ViewDetail
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.workFlow;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.workFlow;
-  queryParams;
-
+  
   workFlows = [];
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     { propertyName: 'Name', comparisions: [0, 6, 7, 8], displayName: "filterWorkFlow.Name" },
     { propertyName: 'OutType', comparisions: [0, 6, 7, 8], displayName: "filterWorkFlow.OutType" },
   ];
 
-  constructor(private route: ActivatedRoute, injector: Injector, private _workFlowServices: WorkFlowService, private dialog: MatDialog, private translate: TranslateService) {
+  constructor(injector: Injector, private _workFlowServices: WorkFlowService, private dialog: MatDialog) {
     super(injector);
   }
 
   ngOnInit(): void {
     this.refresh();
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
 
-  onLangChange(){
-    this.translate.get("menu.menu2").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu2.workFlow").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+  onRefreshCurrentPage(){
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
 

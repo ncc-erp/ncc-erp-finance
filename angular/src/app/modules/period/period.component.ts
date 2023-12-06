@@ -19,19 +19,18 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class PeriodComponent extends PagedListingComponentBase<PeriodDto> implements OnInit {
   constructor(
-    private route: ActivatedRoute,
     injector: Injector,
     private periodService : PeriodService,
-    private dialog: MatDialog,
-    private translate: TranslateService) {
+    private dialog: MatDialog) {
     super(injector);
   }
   public listPeriods: PeriodDto[] = [];
   public isTheFirstCreate :boolean = false;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.period;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.period;
-  queryParams;
-  protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
+    protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
     this.isTableLoading = true;
     this.periodService.getAllPaging(request).subscribe((rs)=>{
       this.listPeriods = rs.result.items;
@@ -48,33 +47,24 @@ export class PeriodComponent extends PagedListingComponentBase<PeriodDto> implem
   ngOnInit(): void {
     this.refresh();
     this.isTheFirstRecord();
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu5").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu5.m5_child9").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
+  }
+
+  onResetFilter() {
+    this.searchText = '';
   }
 
   private onOpenDialog(period : PeriodDto, title: string, isEditting){

@@ -28,18 +28,15 @@ export class ExpenditureComponent extends AppComponentBase implements OnInit {
     name: "all",
   };
   inputFilter: InputFilterEntryTypeDto = new InputFilterEntryTypeDto();
-  title: any;
-  routeTitleFirstLevel;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.outcomingType;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.outcomingType;
-  queryParams;
-
+  
   constructor(
-    private route: ActivatedRoute,
     private dialog: MatDialog,
     private service: ExpenditureService,
-    injector: Injector,
-    private translate: TranslateService
+    injector: Injector
   ) {
     super(injector);
   }
@@ -48,34 +45,26 @@ export class ExpenditureComponent extends AppComponentBase implements OnInit {
 
   ngOnInit(): void {
     this.getAllData();
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu3").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu3.m3_child6").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
+
+  onResetFilter() {
+    this.inputFilter = new InputFilterEntryTypeDto();
+  }
+
   getByNum(enumValue: number, objectEnum: any) {
     for (let key in objectEnum) {
       if (enumValue == objectEnum[key]) {

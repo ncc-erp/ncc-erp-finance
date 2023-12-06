@@ -35,16 +35,15 @@ export class TenantsComponent extends PagedListingComponentBase<TenantDto> {
   keyword = '';
   isActive: boolean | number = -1;
   advancedFiltersVisible = false;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.tenants;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.tenants;
-  queryParams;
-
+  
   constructor(
-    private route: ActivatedRoute,
     injector: Injector,
     private _tenantService: TenantServiceProxy,
-    private _modalService: BsModalService,
-    private translate: TranslateService
+    private _modalService: BsModalService
   ) {
     super(injector);
   }
@@ -75,32 +74,18 @@ export class TenantsComponent extends PagedListingComponentBase<TenantDto> {
         this.tenants = result.items;
         this.showPaging(result, pageNumber);
       });
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu2").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu2.tenants").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.clearFilters();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
 

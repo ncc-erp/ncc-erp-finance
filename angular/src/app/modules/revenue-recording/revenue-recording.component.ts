@@ -51,10 +51,11 @@ export class RevenueRecordingComponent
   totalValue: TotalByCurrencyDto[] = [];
   totalByCurrency: number = 0;
   CurrencyColor = CurrencyColor;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.revenueRecord;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.revenueRecord;
-  queryParams;
-
+  
 
   @ViewChild("inputSearchClient") inputSearchClient: ElementRef;
   @ViewChild("inputSearchIncoming") inputSearchIncoming: ElementRef;
@@ -176,32 +177,18 @@ export class RevenueRecordingComponent
           return (sum += item.totalValueToVND);
         }, 0);
       });
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu5").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu5.m5_child1").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.handleClearFilter();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
   protected delete(entity: RevenueRecordDto): void { }
@@ -212,8 +199,7 @@ export class RevenueRecordingComponent
     private commonService: CommonService,
     private dialog: MatDialog,
     private route: ActivatedRoute,
-    injector: Injector,
-    private translate: TranslateService
+    injector: Injector
   ) {
     super(injector);
     const id = this.route.snapshot.queryParamMap.get("id");
@@ -322,6 +308,7 @@ export class RevenueRecordingComponent
   }
 
   handleClearFilter() {
+    this.searchText = "";
     this.searchId = undefined;
     this.searchMoney = undefined;
     this.selectedClient = [];
@@ -331,7 +318,6 @@ export class RevenueRecordingComponent
     this.searchWithDateTime = {
       dateType: DateSelectorEnum.ALL,
     } as DateTimeSelector;
-    this.defaultDateFilterType = DateSelectorEnum.ALL;
     this.searchRevenueCounted = OPTION_ALL
     this.refresh();
   }

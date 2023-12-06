@@ -25,18 +25,16 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
   circleChartInfo: CircleChartInfoDto;
   isIncome: boolean;
   isActive: boolean;
-  title: any;
-  routeTitleFirstLevel;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.circleChart;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.circleChart;
   routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.circleChartDetail;
-  queryParams;
-  constructor(
+    constructor(
     injector: Injector, 
     private circleChartDetailService: CircleChartDetailService, 
     private dialog: MatDialog, 
-    private route: ActivatedRoute,
-    private translate: TranslateService
+    private route: ActivatedRoute
     ) {
     super(injector);
   }
@@ -62,34 +60,21 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
       //   {name: this.circleChartInfo.name }];
       this.circleChartTypeName = this.circleChartInfo.circleChartTypeName;
       this.isActive = this.circleChartInfo.isActive;
-      this.translate.onLangChange.subscribe(() => {
-        this.onLangChange();
-      });
-      this.route.queryParams.subscribe(params => {
-        this.queryParams = new HttpParams({ fromObject: params });
-        this.onLangChange();
-      });
+      this.updateBreadCrumb();
     })
   }
 
-  onLangChange(){
-    this.translate.get("menu.menu2").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu2.circleChart").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+  onRefreshCurrentPage(){
+    this.ngOnInit();
   }
+
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title, url: this.routeUrlSecondLevel },
+      { name: this.routeTitleSecondLevel, url: this.routeUrlSecondLevel },
       {name: ' <i class="fas fa-chevron-right"></i> '}, 
-      {name: this.circleChartInfo.name, url: this.routeUrlThirdLevel + (queryParamsString ? '?' + queryParamsString : '')  }];
+      {name: this.circleChartInfo.name, url: this.routeUrlThirdLevel, queryParams: {id: this.paramId } }];
   }
   public onCreate() {
     let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {

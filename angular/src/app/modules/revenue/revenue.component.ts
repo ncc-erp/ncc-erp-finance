@@ -25,17 +25,14 @@ export class RevenueComponent extends AppComponentBase implements OnInit {
   };
   type = 2;
   searchText: string = "";
-  title: any;
-  routeTitleFirstLevel;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.incomingType;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.incomingType;
-  queryParams;
-  constructor(
-    private route: ActivatedRoute,
+    constructor(
     private dialog: MatDialog,
     private service: RevenueService,
-    injector: Injector,
-    private translate: TranslateService
+    injector: Injector
   ) {
     super(injector);
   }
@@ -47,34 +44,26 @@ export class RevenueComponent extends AppComponentBase implements OnInit {
       AppConsts.periodId.asObservable().subscribe((rs) => {
         this.getAllData();
       }));
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu3").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu3.m3_child5").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
+
+  onResetFilter() {
+    this.inputFilter = new InputFilterEntryTypeDto();
+  }
+
   getAllData() {
     this.service
       .getAllByStatus(this.inputFilter)

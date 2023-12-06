@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="header d-flex justify-content-between align-items-center">
         <div class="breadcrumb">
-            <app-bread-crumb [listBreadCrumb]="listBreadCrumb"></app-bread-crumb>
+            <app-bread-crumb [listBreadCrumb]="listBreadCrumb" (refreshCurrentPage)="onRefreshCurrentPage()"></app-bread-crumb>
         </div>
         <div class="col-8 text-right">
           <a *ngIf="isShowCreateBtn()" href="javascript:;" class="btn bg-blue mr-1" (click)="createTransaction()">
@@ -53,7 +53,7 @@
                 [(ngModel)]="searchText" (keyup.enter)="onSearch()" />
             </div>
             <div class="col-1">
-              <input type="text" mask="separator" placeholder="Id" thousandSeparator="" class="form-control"
+              <input type="text" mask="separator" thousandSeparator="" class="form-control"
                 name="bTransactionId" placeholder="Id" [(ngModel)]="id" (keyup.enter)="onFilterId()" />
             </div>
             <div class="col-1 item-group">

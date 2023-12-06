@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-7 d-flex align-items-center">
                 <div class="breadcrumb">
-                    <app-bread-crumb [listBreadCrumb]="listBreadCrumb"></app-bread-crumb>
+                    <app-bread-crumb [listBreadCrumb]="listBreadCrumb" (refreshCurrentPage)="onRefreshCurrentPage()"></app-bread-crumb>
                 </div>
                 <div class="type-and-status">
                     <span [ngClass]="isIncome ? 'badge badge-pill bg-primary' : 'badge badge-pill bg-danger'">

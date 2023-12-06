@@ -56,9 +56,10 @@ export class BankAccountComponent
     PERMISSIONS_CONSTANT.Account_Directory_BankAccount_LockUnlock;
   Account_Directory_BankAccount_ActiveDeactive = PERMISSIONS_CONSTANT.Account_Directory_BankAccount_ActiveDeactive;
   Account_Directory_BankAccount_Export = PERMISSIONS_CONSTANT.Account_Directory_BankAccount_Export;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.account;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.account;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.bankAccount;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankAccount;
-  queryParams;
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     {
       propertyName: "holderName",
@@ -98,13 +99,11 @@ export class BankAccountComponent
   ];
   requestParam: PagedRequestDto;
   constructor(
-    private route: ActivatedRoute,
     private bankaccountService: BankAccountService,
     private accountService: AccountService,
     private commonService: CommonService,
     private dialog: MatDialog,
-    injector: Injector,
-    private translate: TranslateService
+    injector: Injector
   ) {
     super(injector);
   }
@@ -140,36 +139,27 @@ export class BankAccountComponent
     });
 
     this.refresh();
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu4").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu4.m4_child1").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
-  }
-  getQueryParam(){
 
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
+  }
+
+  onResetFilter() {
+    this.searchText = "";
+    this.searchCurrency = -1;
+    this.searchStatus = Status.ACTIVE;
+    this.refresh();
   }
 
   protected list(
@@ -378,6 +368,7 @@ export class BankAccountComponent
         this.refresh()
       });
   }
+
 }
 
 export enum Status {

@@ -44,32 +44,18 @@ export class LineChartSettingComponent
         },
         () => (this.isTableLoading = false)
       );
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
 
-  onLangChange(){
-    this.translate.get("menu.menu2").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu2.lineChart").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+  onRefreshCurrentPage(){
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
 
@@ -87,16 +73,15 @@ export class LineChartSettingComponent
   }
 
   public lineChartSetting: LineChartSettingDto[] = [];
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.lineChart;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.lineChart;
-  queryParams;
-
+  
   constructor(
-    private route: ActivatedRoute,
     injector: Injector,
     private dialog: MatDialog,
-    private linechartsettingService: LinechartSettingService,
-    private translate: TranslateService
+    private linechartsettingService: LinechartSettingService
   ) {
     super(injector);
   }

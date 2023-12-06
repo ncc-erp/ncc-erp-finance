@@ -24,10 +24,11 @@ extends PagedListingComponentBase<CircleChartDto>
 implements OnInit 
 {
   Admin_CircleChart_CircleChartDetail_View = PERMISSIONS_CONSTANT.Admin_CircleChart_CircleChartDetail_View;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.circleChart;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.circleChart;
-  queryParams;
-  protected list(
+    protected list(
     request: PagedRequestDto,
     pageNumber: number,
     finishedCallback: Function
@@ -48,13 +49,7 @@ implements OnInit
         },
         () => (this.isTableLoading = false)
       );
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
       
   }
   protected delete(entity: CircleChartDto): void {
@@ -70,22 +65,15 @@ implements OnInit
     });
   }
 
-  onLangChange(){
-    this.translate.get("menu.menu2").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu2.circleChart").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+  onRefreshCurrentPage(){
+    this.ngOnInit();
   }
+
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
 
@@ -100,11 +88,9 @@ implements OnInit
   public circleChartDto: CircleChartDto[] = [];
 
   constructor(
-    private route: ActivatedRoute,
     injector: Injector,
     private dialog: MatDialog,
-    private circleChartService: CircleChartService,
-    private translate: TranslateService
+    private circleChartService: CircleChartService
   ) {
     super(injector);
   }

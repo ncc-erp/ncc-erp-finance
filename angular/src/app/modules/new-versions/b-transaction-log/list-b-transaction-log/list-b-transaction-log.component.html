@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="header d-flex justify-content-between align-items-center">
         <div class="breadcrumb">
-            <app-bread-crumb [listBreadCrumb]="listBreadCrumb"></app-bread-crumb>
+            <app-bread-crumb [listBreadCrumb]="listBreadCrumb" (refreshCurrentPage)="onRefreshCurrentPage()"></app-bread-crumb>
         </div>
       </div>
     </div>
@@ -52,6 +52,7 @@
               <app-date-selector
                 (onDateSelectorChange)="onDateChange($event)"
                 [type]="defaultDateFilterType"
+                [defaultDateFilter]="searchWithDateTime"
                 [label]="'Ngày giao dịch'"
               ></app-date-selector>
             </div>

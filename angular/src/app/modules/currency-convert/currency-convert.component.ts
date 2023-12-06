@@ -26,8 +26,7 @@ export class CurrencyConvertComponent extends PagedListingComponentBase<Currency
     private currencyConvertService: CurrencyConvertService,
     private _currencyService: CurrencyService,
     private route: ActivatedRoute,
-    public dialog: MatDialog,
-    private translate: TranslateService) {
+    public dialog: MatDialog) {
     super(injector);
     this.applyUrlFilters();
   }
@@ -46,10 +45,11 @@ export class CurrencyConvertComponent extends PagedListingComponentBase<Currency
   public sortDirection: number = null
   public sortDirectionEnum = SortDirectionEnum;
   public filterItems: FilterDto[] = [];
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.currencyConvert;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.currencyConvert;
-  queryParams;
-
+  
   async ngOnInit(){
     await this.getYearOfCurrencyConvert();
     this.getAllCurrency();
@@ -71,34 +71,29 @@ export class CurrencyConvertComponent extends PagedListingComponentBase<Currency
       this.showPaging(rs.result, pageNumber);
       this.isTableLoading = false;
     }, ()=> this.isTableLoading = false)
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu3").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu3.m3_child8").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  async onRefreshCurrentPage(){
+    this.onResetFilter();
+    await this.getYearOfCurrencyConvert();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
+
+  onResetFilter() {
+    this.searchText = '';
+    this.searchDetail.currencyId = AppConsts.VALUE_OPTIONS_ALL;
+    this.selectedMonth = AppConsts.VALUE_OPTIONS_ALL;
+    this.selectedYear = AppConsts.VALUE_OPTIONS_ALL;
+  }
+  
   protected delete(entity: CurrencyConvertComponent): void {
     throw new Error('Method not implemented.');
   }

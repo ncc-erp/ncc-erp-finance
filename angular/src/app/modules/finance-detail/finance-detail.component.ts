@@ -12,7 +12,7 @@ import {
   RevenueRecordDto,
 } from "./../revenue-recording/revenue-recording.component";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Component, OnInit, Injector } from "@angular/core";
+import { Component, OnInit, Injector, ViewChild } from "@angular/core";
 import { RevenueRecordService } from "@app/service/api/revenue-record.service";
 import { BankTransactionDto } from "../banking-transaction/banking-transaction.component";
 import { TransactionService } from "@app/service/api/transaction.service";
@@ -29,6 +29,7 @@ import { RequestDetailService } from "../../service/api/request-detail.service";
 import { Time } from "@angular/common";
 import { TranslateService } from '@ngx-translate/core';
 import { HttpParams } from '@angular/common/http';
+import { MatTabGroup } from '@angular/material/tabs';
 @Component({
   selector: "app-finance-detail",
   templateUrl: "./finance-detail.component.html",
@@ -96,11 +97,13 @@ export class FinanceDetailComponent
   formBankCurrency: string;
   toBankCurrency: string;
   tong: number;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.bankTransaction;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankTransaction;
   routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.revenueRecordDetail;
-  queryParams;
   outcomingEntrysByTransaction: expenditureRequestDto[] = [];
+  @ViewChild('tabGroup') tabGroup: MatTabGroup;
   constructor(
     private transactionService: TransactionService,
     private revenueService: RevenueRecordService,
@@ -109,8 +112,7 @@ export class FinanceDetailComponent
     private bankAccountService: BankAccountService,
     injector: Injector,
     private outcomingEntryBankTransactionServiceService: OutcomingEntryBankTransactionServiceService,
-    private requestDetail: RequestDetailService,
-    private translate: TranslateService
+    private requestDetail: RequestDetailService
   ) {
     super(injector);
   }
@@ -124,39 +126,33 @@ export class FinanceDetailComponent
     this.getRevenueById();
     this.getBankAccount();
     this.refresh();
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu5").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu5.m5_child3").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.onResetSearch();
+    this.tabGroup.selectedIndex = parseInt(this.tabIndex);
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title, url: this.routeUrlSecondLevel },
+      { name: this.routeTitleSecondLevel, url: this.routeUrlSecondLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.transaction.name , url: this.routeUrlThirdLevel + (queryParamsString ? '?' + queryParamsString : '') },
+      { name: this.transaction.name , url: this.routeUrlThirdLevel, queryParams: {id: this.paramId }  },
     ];
   }
+
+  onResetSearch() {
+    this.searchRecord = '';
+    this.searchText = '';
+    this.ngOnInit();
+  }
+
   getTransition() {
     this.transactionService.getById(this.paramId).subscribe((data) => {
       this.transaction = data.result;
-      this.route.queryParams.subscribe(params => {
-        this.queryParams = new HttpParams({ fromObject: params });
-        this.onLangChange();
-      });
+      this.updateBreadCrumb();
     });
   }
   getOutComingEntryByTransaction(id: number): void {

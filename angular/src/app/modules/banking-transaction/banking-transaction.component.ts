@@ -145,9 +145,10 @@ export class BankingTransactionComponent
   BANK_TRANSCATION_DATE_TIME_OPTIONS = BANK_TRANSCATION_DATE_TIME_OPTIONS;
   optionDate: BankTransactionFilterDateTimeType = BankTransactionFilterDateTimeType.NO_FILTER;
   BankTransactionFilterDateTimeTypeNO_FILTER = BankTransactionFilterDateTimeType.NO_FILTER
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.bankTransaction;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankTransaction;
-  queryParams;
 
   protected list(
     request: GetAllPagingBankTransactionDto,
@@ -190,32 +191,18 @@ export class BankingTransactionComponent
         });
         this.showPaging(data.result, pageNumber);
       });
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu5").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu5.m5_child3").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.handleClearFilter();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
 
@@ -226,8 +213,7 @@ export class BankingTransactionComponent
     private route: ActivatedRoute,
     private service: TransactionService,
     private currencyService: CurrencyService,
-    injector: Injector,
-    private translate: TranslateService
+    injector: Injector
   ) {
     super(injector);
     const id = route.snapshot.queryParamMap.get("id");

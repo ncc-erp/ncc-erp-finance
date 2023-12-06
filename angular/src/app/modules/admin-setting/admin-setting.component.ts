@@ -39,13 +39,12 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
   public isEditCoTheSuaThongTinCuaKiCu: boolean = false
   public isEnableCrawlBTransactionNoti: boolean = false
   public hrmConfig = {} as internalToolConfig
-  public title: any;
-  routeTitleFirstLevel;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.configuration;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.configuration;
-  queryParams;
 
-  constructor(private route: ActivatedRoute, private settingService: AppConfigurationService, private sessionService: SessionServiceProxy, injector: Injector, private translate: TranslateService) {
+  constructor(private settingService: AppConfigurationService, private sessionService: SessionServiceProxy, injector: Injector) {
     super(injector)
   }
 
@@ -56,32 +55,18 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
     this.getAllowChangeEntityInPeriodClosed()
     this.getEnableCrawlBTransactionNoti()
     this.getHRMConfig()
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb();
   }
 
-  onLangChange(){
-    this.translate.get("menu.menu2").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu2.configuration").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+  onRefreshCurrentPage(){
+    this.ngOnInit();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
   }
   getSetting() {

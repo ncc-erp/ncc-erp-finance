@@ -22,19 +22,18 @@ export class BankComponent extends PagedListingComponentBase<any>{
   Directory_Bank_Create = PERMISSIONS_CONSTANT.Directory_Bank_Create;
   Directory_Bank_Delete = PERMISSIONS_CONSTANT.Directory_Bank_Delete;
   Directory_Bank_Edit = PERMISSIONS_CONSTANT.Directory_Bank_Edit;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.banks;
   routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.banks;
-  queryParams;
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     { propertyName: 'Name', comparisions: [0, 6, 7, 8], displayName: "filterDirectory.Name" },
     { propertyName: 'Code', comparisions: [0, 6, 7, 8], displayName: "filterDirectory.Code" },
   ];
   constructor(
-    private route: ActivatedRoute,
     injector: Injector,
     private _bankService: BankService,
-    private dialog: MatDialog,
-    private translate: TranslateService
+    private dialog: MatDialog
   ) {
     super(injector);
   }
@@ -55,33 +54,24 @@ export class BankComponent extends PagedListingComponentBase<any>{
         this.banks = result.result.items;
         this.showPaging(result.result, pageNumber);
       });
-    this.translate.onLangChange.subscribe(() => {
-      this.onLangChange();
-    });
-    this.route.queryParams.subscribe(params => {
-      this.queryParams = new HttpParams({ fromObject: params });
-      this.onLangChange();
-    });
+    this.updateBreadCrumb()
   }
-  
-  onLangChange(){
-    this.translate.get("menu.menu3").subscribe((res: string) => {
-      this.routeTitleFirstLevel = res;
-      this.updateBreadCrumb();
-    });
-    this.translate.get("menu3.m3_child2").subscribe((res: string) => {
-      this.title = res;
-      this.updateBreadCrumb();
-    });
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.refresh();
   }
 
   updateBreadCrumb() {
-    let queryParamsString = this.queryParams.toString();
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
       { name: ' <i class="fas fa-chevron-right"></i> ' },
-      { name: this.title , url: this.routeUrlSecondLevel + (queryParamsString ? '?' + queryParamsString : '')}
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
     ];
+  }
+
+  onResetFilter() {
+    this.searchText = '';
   }
 
   delete(bank: BankDto): void {
