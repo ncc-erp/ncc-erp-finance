@@ -8,6 +8,9 @@ import { PeriodDto } from '../../service/model/period.dto'
 import { PAGE_SIZE_OPTIONS } from '../revenue-managed/revenue-managed.component';
 import { CloseAndCreatePeriodComponent } from './close-and-create-period/close-and-create-period.component';
 import { CreateEditPeriodComponent } from './create-edit-period/create-edit-period.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-period',
@@ -15,15 +18,19 @@ import { CreateEditPeriodComponent } from './create-edit-period/create-edit-peri
   styleUrls: ['./period.component.css']
 })
 export class PeriodComponent extends PagedListingComponentBase<PeriodDto> implements OnInit {
-  constructor(injector: Injector,
+  constructor(
+    injector: Injector,
     private periodService : PeriodService,
     private dialog: MatDialog) {
     super(injector);
   }
   public listPeriods: PeriodDto[] = [];
   public isTheFirstCreate :boolean = false;
-
-  protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.period;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.period;
+    protected list(request: PagedRequestDto, pageNumber: number, finishedCallback: Function): void {
     this.isTableLoading = true;
     this.periodService.getAllPaging(request).subscribe((rs)=>{
       this.listPeriods = rs.result.items;
@@ -40,6 +47,24 @@ export class PeriodComponent extends PagedListingComponentBase<PeriodDto> implem
   ngOnInit(): void {
     this.refresh();
     this.isTheFirstRecord();
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
+  onResetFilter() {
+    this.searchText = '';
   }
 
   private onOpenDialog(period : PeriodDto, title: string, isEditting){

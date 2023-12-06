@@ -1,5 +1,5 @@
 import { data } from 'jquery';
-import { Component, EventEmitter, Inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Injector, OnInit, Output } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { DashBoardService } from '@app/service/api/dash-board.service';
 import { BaoCaoChiDto, baoCaoFilterOption, BaoCaoThuDto } from '../home.component';
@@ -8,13 +8,16 @@ import * as FileSaver from 'file-saver';
 import {  ResultCircleChartDetailDto } from '@app/service/model/circle-chart.dto';
 import { CreateEditCircleChartDetailComponent } from '@app/modules/circle-chart/circle-chart-detail/create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
 import { CircleChartDetailService } from '@app/service/api/circle-chart-detail.service';
+import { AppComponentBase } from '@shared/app-component-base';
+import { Router } from '@angular/router';
+import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 
 @Component({
   selector: 'app-detail-baocao-chi',
   templateUrl: './detail-baocao-chi.component.html',
   styleUrls: ['./detail-baocao-chi.component.css']
 })
-export class DetailBaocaoChiComponent implements OnInit {
+export class DetailBaocaoChiComponent extends AppComponentBase implements OnInit {
   @Output() refreshDataEvent = new EventEmitter<any>();
   public baoCaoChi: BaoCaoChiDto[] = []
   public startDate: string = ""
@@ -24,19 +27,26 @@ export class DetailBaocaoChiComponent implements OnInit {
   public total: number = 0
   public currentPage: number = 1
   public itemPerPage:number = 10
+  public pageSizeType: number = 10;
   sortColumn: string;
   sortDirect: number;
   iconSort: string;
   sortedBaoCaoChi: BaoCaoChiDto[]=[];
   public circleChartDetail: ResultCircleChartDetailDto;
   public circleChart: any;
+  Finance_OutcomingEntry_ViewDetail =
+    PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail;
 
   constructor(
     private dashBoardService: DashBoardService,
     private circleChartDetailService: CircleChartDetailService,
     public dialogRef: MatDialogRef<DetailBaocaoChiComponent>,
     private dialog: MatDialog,
-    @Inject(MAT_DIALOG_DATA) public data) { }
+    @Inject(MAT_DIALOG_DATA) public data,
+    injector: Injector,
+    private router: Router) {
+       super(injector)
+    }
 
   ngOnInit(): void {
     this.startDate = this.data.startDate
@@ -45,17 +55,24 @@ export class DetailBaocaoChiComponent implements OnInit {
     this.expenseType = this.data.expenseType
     if (this.data.circleChartDetail) {
       this.circleChartDetail = this.data.circleChartDetail
+    }
+    if (this.data.circleChart){
+      this.circleChart = this.data.circleChart
+    }
+    this.refresh();
+  }
+
+  refresh(){
+    if (this.data.circleChartDetail) {
+      this.circleChartDetail = this.data.circleChartDetail
       this.getDetailBaoCaoChiForCircleChart()
     }
     else {
       this.getDetailBaoCaoChi()
     }
-    if (this.data.circleChart){
-      this.circleChart = this.data.circleChart
-    }
   }
 
-  refresh(){
+  refreshChart(){
     this.refreshDataEvent.emit();
     this.onClose();
   }
@@ -152,6 +169,11 @@ export class DetailBaocaoChiComponent implements OnInit {
       this.dialogRef.close()
     })
   }
+  changePageSize() {
+    this.currentPage = 1;
+    this.itemPerPage = this.pageSizeType;
+    this.refresh();
+  }
 
   public onViewDetail(id: number) {
     this.circleChartDetailService.GetCircleChartDetailInfoById(id).subscribe(data =>{
@@ -166,8 +188,29 @@ export class DetailBaocaoChiComponent implements OnInit {
         disableClose: true,
       });
       ref.componentInstance.onSaveChange.subscribe((data) => {
-        this.refresh()
+        this.refreshChart()
       });
     })
+  }
+  
+  showExpenditureRequestDetail(id: any) {
+    if (this.permission.isGranted(this.Finance_OutcomingEntry_ViewDetail)) {
+      const url = this.router.createUrlTree(["app/requestDetail/main"], {
+        queryParams: { id: id },
+      }).toString();
+  
+      // Create an anchor element
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+  
+      // Simulate a click on the link
+      link.click();
+    }
+  }
+
+  isAllowToRoutingExpenditureRequestDetail(){
+    return this.isGranted(this.Finance_OutcomingEntry_ViewDetail);
   }
 }

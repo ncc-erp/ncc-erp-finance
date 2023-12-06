@@ -1,7 +1,7 @@
 <div class="card-header move-cursor" cdkDrag cdkDragRootElement=".modal-content, .cdk-overlay-pane" cdkDragHandle>
     <div class="d-flex justify-content-between">
-        <div class="col-7 p-0">
-            <span *ngIf="!data.circleChartDetail" style="font-size: 30px;">
+        <div class="col-7 p-0 d-flex align-items-center">
+            <span *ngIf="!data.circleChartDetail" style="font-size: 20px;">
                 <ng-container *ngIf="data.expenseType === -1">
                     Tổng chi
                 </ng-container>
@@ -12,7 +12,7 @@
                     Chi không Thực
                 </ng-container>
             </span>
-            <span *ngIf="data.circleChartDetail" style="font-size: 30px;">
+            <span *ngIf="data.circleChartDetail" style="font-size: 20px;">
                 <ng-container>
                     {{this.circleChart}}
                     <i class="fas fa-chevron-right"></i>
@@ -26,14 +26,15 @@
                     data.branchName}}</span>
                 <span *ngIf="!data.circleChartDetail" class="badge bg-primary ml-2">{{this.data.tinhVaoChiPhi ? 'Tính vào chi phí' : ''}}</span>
                 <button *ngIf="data.circleChartDetail" 
-                class="viewBtn btn btn-outline-secondary btn-sm ml-2" 
+                class="viewBtn btn btn-outline-primary btn-sm ml-2" 
                 (click)="onViewDetail(circleChartDetail.id)">
                     <mat-icon style="font-size: 20px; vertical-align: middle; height: fit-content;">settings</mat-icon>
                 </button> 
             </div>
         </div>
 
-        <div>
+        <div class="d-flex align-items-center">
+            <span class="total mr-4"><strong>Tổng: {{total |formatMoney}}</strong></span>
             <button class="btn btn-success mr-4" (click)="exportBBC()">
                 <i class="fa fa-download mr-1"></i>Export
             </button>
@@ -43,66 +44,65 @@
     </div>
 </div>
 <div class="card-body" id="baocaochi">
-    <div class="total"><strong>Tổng: {{total |formatMoney}}</strong></div>
     <div class="table-responsive mt-3">
         <div class="fixTableHead">
             <table class="table table-hover table-striped">
                 <thead>
                     <tr>
-                        <th>Stt</th>
+                        <th class="align">Stt</th>
                         <th class="align" (click)="sortData('id')" style="cursor: pointer;">
                             {{ "ID" | localize }}
-                            <i [ngClass]="iconSort" *ngIf="sortColumn === 'id'"></i>
+                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'id'"></i>
                             <i *ngIf="sortColumn !== 'id'" class="fas fa-sort"></i>
                         </th>
                         <th class="align" (click)="sortData('branchName')" style="cursor: pointer;">
                             {{ "Chi nhánh" | localize }}
-                            <i [ngClass]="iconSort" *ngIf="sortColumn === 'branchName'"></i>
+                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'branchName'"></i>
                             <i *ngIf="sortColumn !== 'branchName'" class="fas fa-sort"></i>
                         </th>
                         <th class="align" (click)="sortData('name')" style="cursor: pointer;">
                             {{ "Tên request chi" | localize }}
-                            <i [ngClass]="iconSort" *ngIf="sortColumn === 'name'"></i>
+                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'name'"></i>
                             <i *ngIf="sortColumn !== 'name'" class="fas fa-sort"></i>
                         </th>
                         <th class="align" (click)="sortData('detailName')" style="cursor: pointer;">
                             {{ "Chi tiết chi" | localize }}
-                            <i [ngClass]="iconSort" *ngIf="sortColumn === 'detailName'"></i>
+                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'detailName'"></i>
                             <i *ngIf="sortColumn !== 'detailName'" class="fas fa-sort"></i>
                         </th>
                         <th class="align" (click)="sortData('reportDate')" style="cursor: pointer;">
                             {{ "Ngày tháng" | localize }}
-                            <i [ngClass]="iconSort" *ngIf="sortColumn === 'reportDate'"></i>
+                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'reportDate'"></i>
                             <i *ngIf="sortColumn !== 'reportDate'" class="fas fa-sort"></i>
                         </th>
                         <th class="align" (click)="sortData('total')" style="cursor: pointer;">
                             {{ "Số tiền" | localize }}
-                            <i [ngClass]="iconSort" *ngIf="sortColumn === 'total'"></i>
+                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'total'"></i>
                             <i *ngIf="sortColumn !== 'total'" class="fas fa-sort"></i>
                         </th>
                         <th class="align" (click)="sortData('currencyName')" style="cursor: pointer;">
                             {{ "Loại tiền" | localize }}
-                            <i [ngClass]="iconSort" *ngIf="sortColumn === 'currencyName'"></i>
+                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'currencyName'"></i>
                             <i *ngIf="sortColumn !== 'currencyName'" class="fas fa-sort"></i>
                         </th>
                         <th class="align" (click)="sortData('exchangeRate')" style="cursor: pointer;">
                             {{ "Tỉ giá" | localize }}
-                            <i [ngClass]="iconSort" *ngIf="sortColumn === 'exchangeRate'"></i>
+                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'exchangeRate'"></i>
                             <i *ngIf="sortColumn !== 'exchangeRate'" class="fas fa-sort"></i>
                         </th>
                         <th class="align" (click)="sortData('totalVND')" style="cursor: pointer;">
                             {{ "Thành tiền" | localize }}
-                            <i [ngClass]="iconSort" *ngIf="sortColumn === 'totalVND'"></i>
+                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'totalVND'"></i>
                             <i *ngIf="sortColumn !== 'totalVND'" class="fas fa-sort"></i>
                         </th>
                         <th class="align" (click)="sortData('outcomingEntryType')" style="cursor: pointer;">
                             {{ "Loại chi" | localize }}
-                            <i [ngClass]="iconSort" *ngIf="sortColumn === 'outcomingEntryType'"></i>
+                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'outcomingEntryType'"></i>
                             <i *ngIf="sortColumn !== 'outcomingEntryType'" class="fas fa-sort"></i>
                         </th>
                         <th class="align" (click)="sortData('laChiPhi')" style="cursor: pointer;">
                             {{ "Là chi phí" | localize }}
-                            <i [ngClass]="iconSort" *ngIf="sortColumn === 'laChiPhi'"></i>
+                            <i class="icon" [ngClass]="iconSort" *ngIf="sortColumn === 'laChiPhi'"></i>
                             <i *ngIf="sortColumn !== 'laChiPhi'" class="fas fa-sort"></i>
                         </th>
                     </tr>
@@ -111,7 +111,16 @@
                     <tr
                         *ngFor="let detail of sortedBaoCaoChi  | paginate: { itemsPerPage: itemPerPage, currentPage: currentPage }; let i = index">
                         <td>{{ (currentPage - 1) * itemPerPage + i + 1 }}</td>
-                        <td class="text-center">{{detail.id}}</td>
+                        <td class="text-center">
+                            <a *ngIf="isAllowToRoutingExpenditureRequestDetail(); else detailTemplate"
+                                class="hyperlink name-colum"
+                                (click)="showExpenditureRequestDetail(detail.id)">
+                                {{detail.id}}
+                            </a>
+                            <ng-template #detailTemplate>
+                                {{detail.id}}
+                            </ng-template>
+                        </td>
                         <td class="text-center">{{detail.branchName}}</td>
                         <td>{{detail.name}}</td>
                         <td>{{detail.detailName}}</td>
@@ -127,7 +136,27 @@
             </table>
         </div>
     </div>
-    <div class="mt-2">
-        <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+    <div class="mt-2 d-flex justify-content-between">
+        <div class="col-sm-4 col-4 text-sm-left text-center d-flex align-items-center">
+            <button class="btn btn-primary" (click)="refresh()">
+              <i class="fas fa-redo-alt"></i>
+            </button>
+            <mat-form-field class="pageSize" style=" width: 20%; margin-left: 30px;">
+              <mat-label>Number items</mat-label>
+              <mat-select [(ngModel)]="pageSizeType" (ngModelChange)="changePageSize()">
+                <mat-option [value]="5"> 5 </mat-option>
+                <mat-option [value]="10"> 10 </mat-option>
+                <mat-option [value]="20"> 20 </mat-option>
+                <mat-option [value]="50"> 50 </mat-option>
+                <mat-option [value]="100"> 100 </mat-option>
+              </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-sm-4 col-4 d-flex justify-content-center align-items-center">
+            <pagination-controls [(maxSize)]="itemPerPage" (pageChange)="currentPage = $event"></pagination-controls>
+        </div>
+        <div class="col-sm-4 col-4 d-flex justify-content-end align-items-center">
+            <p class="mb-0 ">Total: {{ sortedBaoCaoChi.length }}</p>
+        </div>
     </div>
 </div>

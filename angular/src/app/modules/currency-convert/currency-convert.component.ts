@@ -11,6 +11,8 @@ import { finalize } from 'rxjs/operators';
 import {CurrencyConvertService} from '../../service/api/currency-convert.service';
 import { EComparisor, PAGE_SIZE_OPTIONS } from '../revenue-managed/revenue-managed.component';
 import { CreateEditCurrencyConvertComponent } from './create-edit-currency-convert/create-edit-currency-convert.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-currency-convert',
@@ -43,7 +45,11 @@ export class CurrencyConvertComponent extends PagedListingComponentBase<Currency
   public sortDirection: number = null
   public sortDirectionEnum = SortDirectionEnum;
   public filterItems: FilterDto[] = [];
-
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.currencyConvert;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.currencyConvert;
+  
   async ngOnInit(){
     await this.getYearOfCurrencyConvert();
     this.getAllCurrency();
@@ -65,7 +71,29 @@ export class CurrencyConvertComponent extends PagedListingComponentBase<Currency
       this.showPaging(rs.result, pageNumber);
       this.isTableLoading = false;
     }, ()=> this.isTableLoading = false)
+    this.updateBreadCrumb()
   }
+
+  async onRefreshCurrentPage(){
+    this.onResetFilter();
+    await this.getYearOfCurrencyConvert();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
+  onResetFilter() {
+    this.searchText = '';
+    this.searchDetail.currencyId = AppConsts.VALUE_OPTIONS_ALL;
+    this.selectedMonth = AppConsts.VALUE_OPTIONS_ALL;
+    this.selectedYear = AppConsts.VALUE_OPTIONS_ALL;
+  }
+  
   protected delete(entity: CurrencyConvertComponent): void {
     throw new Error('Method not implemented.');
   }

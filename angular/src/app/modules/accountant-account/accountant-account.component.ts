@@ -18,6 +18,8 @@ import {
 import { ActivatedRoute } from "@angular/router";
 import { AccountTypeService } from "@app/service/api/account-type.service";
 import { PAGE_SIZE_OPTIONS } from "@app/modules/revenue-managed/revenue-managed.component";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
 @Component({
   selector: "app-accountant-account",
   templateUrl: "./accountant-account.component.html",
@@ -35,16 +37,19 @@ export class AccountantAccountComponent
     PERMISSIONS_CONSTANT.Account_Directory_FinanceAccount_Edit;
   Account_Directory_BankAccount_ViewDetail =
   PERMISSIONS_CONSTANT.Account_Directory_BankAccount_ViewBankAccountDetail;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.account;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.account;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.accountantAccount;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.accountantAccount;
 
   public readonly PAGE_OPTIONS = PAGE_SIZE_OPTIONS;
   public accountTypes: AccountTypeDto[] = [];
   public selectedAccountType: string = DEFAULT_VALUES.FILTER_VALUE;
   constructor(
-    private route: ActivatedRoute,
     injector: Injector,
     private _accountantAccountService: AccountantAccountService,
     private dialog: MatDialog,
-    private _accountTypeService: AccountTypeService
+    private _accountTypeService: AccountTypeService,
   ) {
     super(injector);
   }
@@ -95,7 +100,29 @@ export class AccountantAccountComponent
         this.accounts = result.result.items;
         this.showPaging(result.result, pageNumber);
       });
+    this.updateBreadCrumb();
   }
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
+  onResetFilter() {
+    this.searchText = "";
+    this.selectedAccountType = DEFAULT_VALUES.FILTER_VALUE;
+    this.searchStatus = 1;
+    this.searchBankAccountStatus = 1;
+    this.handleSearch();
+  }
+
   protected delete(account: AccountDto): void {
     abp.message.confirm(
       this.l("Delete account '") + account.name + "'?",

@@ -1,9 +1,9 @@
 <div id="accountant-account">
   <section class="content-header">
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-6">
-          <h1>{{ 'm4_child2.accounts' | translate }}</h1>
+      <div class="header d-flex justify-content-between align-items-center">
+        <div class="breadcrumb">
+            <app-bread-crumb [listBreadCrumb]="listBreadCrumb" (refreshCurrentPage)="onRefreshCurrentPage()"></app-bread-crumb>
         </div>
         <div class="col-6 text-right">
           <a href="javascript:;" class="btn bg-blue" *ngIf="permission.isGranted(Account_Directory_Account_Create)"

@@ -15,6 +15,9 @@ import { CreateUserDialogComponent } from './create-user/create-user-dialog.comp
 import { EditUserDialogComponent } from './edit-user/edit-user-dialog.component';
 import { ResetPasswordDialogComponent } from './reset-password/reset-password.component';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 
 const OPTION_ALL = -1
@@ -34,11 +37,15 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
   keyword = '';
   isActive: boolean | number = OPTION_ALL;
   advancedFiltersVisible = false;
-
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.user;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.user;
+  
   constructor(
     injector: Injector,
     private _userService: UserServiceProxy,
-    private _modalService: BsModalService,
+    private _modalService: BsModalService
   ) {
     super(injector);
 
@@ -89,6 +96,19 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
         this.users = result.items;
         this.showPaging(result, pageNumber);
       });
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.clearFilters();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
 
 

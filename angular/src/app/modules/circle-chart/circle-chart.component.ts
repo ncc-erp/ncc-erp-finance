@@ -10,6 +10,9 @@ import {
 import { finalize } from "rxjs/operators";
 import { CreateEditCircleChartComponent } from "./create-edit-circle-chart/create-edit-circle-chart.component";
 import { PERMISSIONS_CONSTANT } from "@app/constant/permission.constant";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: 'app-circle-chart',
@@ -20,8 +23,12 @@ export class CircleChartComponent
 extends PagedListingComponentBase<CircleChartDto>
 implements OnInit 
 {
-  Admin_CircleChart_CircleChartDetail_View = PERMISSIONS_CONSTANT.Admin_CircleChart_CircleChartDetail_View
-  protected list(
+  Admin_CircleChart_CircleChartDetail_View = PERMISSIONS_CONSTANT.Admin_CircleChart_CircleChartDetail_View;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.circleChart;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.circleChart;
+    protected list(
     request: PagedRequestDto,
     pageNumber: number,
     finishedCallback: Function
@@ -42,10 +49,8 @@ implements OnInit
         },
         () => (this.isTableLoading = false)
       );
-    this.listBreadCrumb = [
-      {name: '<i class="fas fa-home"></i>',url:''}, 
-      {name: ' <i class="fas fa-chevron-right"></i> '}, 
-      {name: 'Circle Chart' }];
+    this.updateBreadCrumb()
+      
   }
   protected delete(entity: CircleChartDto): void {
     abp.message.confirm(`Delete chart: ${entity.name}`, "", (rs) => {
@@ -58,6 +63,18 @@ implements OnInit
         });
       }
     });
+  }
+
+  onRefreshCurrentPage(){
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
 
   showDetail(id) {

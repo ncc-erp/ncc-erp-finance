@@ -14,6 +14,9 @@ import {
 import { CreateTenantDialogComponent } from './create-tenant/create-tenant-dialog.component';
 import { EditTenantDialogComponent } from './edit-tenant/edit-tenant-dialog.component';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 class PagedTenantsRequestDto extends PagedRequestDto {
   keyword: string;
@@ -32,7 +35,11 @@ export class TenantsComponent extends PagedListingComponentBase<TenantDto> {
   keyword = '';
   isActive: boolean | number = -1;
   advancedFiltersVisible = false;
-
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.tenants;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.tenants;
+  
   constructor(
     injector: Injector,
     private _tenantService: TenantServiceProxy,
@@ -67,6 +74,19 @@ export class TenantsComponent extends PagedListingComponentBase<TenantDto> {
         this.tenants = result.items;
         this.showPaging(result, pageNumber);
       });
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.clearFilters();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
 
   delete(tenant: TenantDto): void {

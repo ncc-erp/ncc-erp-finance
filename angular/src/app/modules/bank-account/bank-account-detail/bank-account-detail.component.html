@@ -1,9 +1,9 @@
 <section class="content-header" id="bank-account-detail">
-  <div class="row" style="padding-right: 15px">
-    <div class="col-md-4 col-form-label">
-      <h3>Chi tiết tài khoản ngân hàng </h3>
-    </div>
-    <div class="col-md-8 pt-1">
+  <div class="container-fluid">
+    <div class="header d-flex justify-content-between align-items-center">
+      <div class="breadcrumb">
+          <app-bread-crumb [listBreadCrumb]="listBreadCrumb" (refreshCurrentPage)="onRefreshCurrentPage()"></app-bread-crumb>
+      </div>
       <div class="text-right ml-2">
         <a
           href="javascript:;"

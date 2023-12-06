@@ -2,3 +2,7 @@
     color: #333;
     cursor: default;
 }
+
+.hyperlink {
+    cursor: pointer; 
+}

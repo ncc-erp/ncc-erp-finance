@@ -4,7 +4,7 @@ import { ExportReportComponent } from './export-report/export-report.component';
 import { MatDialog } from '@angular/material/dialog';
 import { APP_CONSTANT } from './../constant/api.constant';
 import { DashBoardService } from './../service/api/dash-board.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Component, Injector, ChangeDetectionStrategy, ViewChild, ElementRef } from '@angular/core';
 import { AppComponentBase } from '@shared/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
@@ -51,17 +51,20 @@ export class HomeComponent extends AppComponentBase {
   public YCTDStatus: string = "[YCTĐ] Chờ CEO duyệt"
   public selectedPeriod = {} as PeriodDto
   public baoCaoChung: BaoCaoChungDto[] = []
-  public baoCaoFromDate = AppConsts.periodStartDate
-  public baoCaoToDate = this.getLastDateOfMonth(moment())
+  public baoCaoFromDate: any
+  public baoCaoToDate: any
   public baoCaoFilter = baoCaoFilterOption
   public debtStatistic = {} as HrmDebtDto
-
+  
   distanceFromAndToDate = '';
   viewChange = new FormControl(this.APP_CONSTANT.TypeViewHomePage.Month);
   activeView: number = 0;
   endDate = new FormControl(moment())
   startDate = new FormControl(moment());
   listCircleChart: IOption[] = []
+  
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.dashboard;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.dashboard;
 
   defaultDateFilterTypeBaoCaoThuChi: DateSelectorHomeEnum = DateSelectorHomeEnum.MONTH;
   searchWithDateTimeBaoCaoThuChi = {} as DateTimeSelectorHome;
@@ -122,7 +125,6 @@ export class HomeComponent extends AppComponentBase {
           else {
             this.endDate.setValue(this.baoCaoToDate)
           }
-          this.baoCaoFromDate = period.startDate         
           this.overviewBTransactionStatistics()
           this.overviewOutcomingEntryStatistics()
           this.getDataForLineChart()
@@ -133,9 +135,20 @@ export class HomeComponent extends AppComponentBase {
     this.overviewInvoiceStatistics()
     this.getHRMDebtStatistic()
     this.getCircleChartActive()
+    this.updateBreadCrumb()
   }
 
-  constructor(injector: Injector, private router: Router, private route: ActivatedRoute, private dialog: MatDialog,
+  onRefreshCurrentPage(){
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel }
+    ];
+  }
+
+  constructor(injector: Injector, private router: Router, private dialog: MatDialog,
     private dashBoardService: DashBoardService, private outcomeService: ExpenditureRequestService,
     private periodService: PeriodService, private circleChartService: CircleChartService) {
     super(injector);
@@ -727,7 +740,8 @@ export class HomeComponent extends AppComponentBase {
 
   viewBaoCaoThuDetail(tinhVaoDoanhThu: boolean, isDoanhThu : any) {
     this.dialog.open(DetailBaocaoThuComponent, {
-      width: "80vw",
+      width: "90vw",
+      maxWidth: "90vw",
       data: {
         startDate: moment(this.baoCaoFromDate).format("YYYY-MM-DD"),
         endDate: moment(this.baoCaoToDate).format("YYYY-MM-DD"),
@@ -740,7 +754,8 @@ export class HomeComponent extends AppComponentBase {
 
   viewBaoCaoChiDetail(branchName:string,branchId:number, expenseType:number ) {
     this.dialog.open(DetailBaocaoChiComponent, {
-      width: "80vw",
+      width: "90vw",
+      maxWidth: "90vw",
       data: {
         startDate: moment(this.baoCaoFromDate).format("YYYY-MM-DD"),
         endDate: moment(this.baoCaoToDate).format("YYYY-MM-DD"),        
@@ -858,7 +873,8 @@ export interface BaoCaoThuDto {
   totalVNDFormat: string,
   incomingEntryType: number,
   isDoanhThu: boolean,
-  tinhDoanhThu: string
+  tinhDoanhThu: string,
+  bankTransactionId: number
 }
 
 export interface BaoCaoChiDto {
