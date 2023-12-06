@@ -9,6 +9,9 @@ import { EComparisor } from '@app/modules/revenue-managed/revenue-managed.compon
 import { DateSelectorEnum } from '@shared/AppEnums';
 import { DateFormat, DateTimeSelector } from '@shared/date-selector/date-selector.component';
 import { IFilterDateTimeParam } from '@app/service/interfaces/filter-date.interface';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-list-b-transaction-log',
@@ -17,7 +20,11 @@ import { IFilterDateTimeParam } from '@app/service/interfaces/filter-date.interf
 })
 export class ListBTransactionLogComponent extends PagedListingComponentBase<BTransactionLog> implements OnInit {
   public bTransactionLogs: BTransactionLog[] = [];
-  searchDetail = {
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.bTransactionLog;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bTransactionLog;
+    searchDetail = {
     isValid: AppConsts.VALUE_OPTIONS_ALL
   };
 
@@ -36,10 +43,34 @@ export class ListBTransactionLogComponent extends PagedListingComponentBase<BTra
 
   ngOnInit(): void {
     this.getFirstPage();
+    this.updateBreadCrumb()
+  }
+  
+  clearFilters(): void {
+    this.searchText = '';
+    this.searchDetail.isValid = AppConsts.VALUE_OPTIONS_ALL;
+    this.defaultDateFilterType = DateSelectorEnum.ALL;
+    this.searchWithDateTime = {
+      dateType: DateSelectorEnum.ALL,
+    } as DateTimeSelector;
+    this.getDataPage(1);
+  }
+
+  onRefreshCurrentPage(){
+    this.clearFilters();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
 
   onDateChange($event): void {
     this.searchWithDateTime = $event;
+    this.defaultDateFilterType = $event.dateType;
     this.getFirstPage();
   }
 

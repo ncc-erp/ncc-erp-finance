@@ -8,6 +8,9 @@ import { Component, Injector, OnInit } from "@angular/core";
 import { StatusEnum } from "@shared/AppEnums";
 import * as _ from "lodash";
 import { InputFilterEntryTypeDto } from "@app/service/model/common-DTO";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-expenditure",
@@ -25,7 +28,11 @@ export class ExpenditureComponent extends AppComponentBase implements OnInit {
     name: "all",
   };
   inputFilter: InputFilterEntryTypeDto = new InputFilterEntryTypeDto();
-
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.outcomingType;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.outcomingType;
+  
   constructor(
     private dialog: MatDialog,
     private service: ExpenditureService,
@@ -38,7 +45,26 @@ export class ExpenditureComponent extends AppComponentBase implements OnInit {
 
   ngOnInit(): void {
     this.getAllData();
+    this.updateBreadCrumb()
   }
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
+  onResetFilter() {
+    this.inputFilter = new InputFilterEntryTypeDto();
+  }
+
   getByNum(enumValue: number, objectEnum: any) {
     for (let key in objectEnum) {
       if (enumValue == objectEnum[key]) {

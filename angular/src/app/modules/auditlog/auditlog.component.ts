@@ -7,6 +7,9 @@ import { Injector } from '@angular/core';
 import { AuditlogDto } from './../../service/model/auditlog.model';
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-auditlog',
@@ -36,6 +39,11 @@ export class AuditlogComponent extends PagedListingComponentBase<AuditlogDto> im
   iconSort: string = "";
   iconCondition: string = "executionTime";
 
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.auditLog;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.auditLog;
+
   constructor(
     private auditlog: AuditLogService,
     injector: Injector
@@ -49,6 +57,27 @@ export class AuditlogComponent extends PagedListingComponentBase<AuditlogDto> im
     this.getListServiceName();
     this.refresh();
     this.sortData("executionTime");
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
+  onResetFilter() {
+    this.searchText = '';
+    this.serviceNameSelected = '';
+    this.methodNameSelected = '';
+    this.selecteduserId = '';
+    this.refresh();
   }
 
   getListEmailAddress() {

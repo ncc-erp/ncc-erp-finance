@@ -7,6 +7,9 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { Component, Injector, OnInit } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { AppConsts } from '@shared/AppConsts';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-finance-review',
@@ -28,10 +31,14 @@ export class FinanceReviewComponent extends AppComponentBase implements OnInit {
   public tooltip: string = "";
   public tooltipExchangeRateOfBankAccount = "";
   public unIncludeBTransPending = true;
-  constructor(
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.financeReview;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.financeReview;
+    constructor(
     injector: Injector,
     private dashboardService: DashBoardService,
-    public _utilities: UtilitiesService,)
+    public _utilities: UtilitiesService)
   {
     super(injector)
   }
@@ -41,6 +48,19 @@ export class FinanceReviewComponent extends AppComponentBase implements OnInit {
     AppConsts.periodId.asObservable().subscribe(rs => {
       this.getData();
     }))
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
   private getData() {
     this.GetBankAccountStatistics()

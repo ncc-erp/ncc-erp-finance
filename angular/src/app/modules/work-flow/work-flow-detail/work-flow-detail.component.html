@@ -1,4 +1,13 @@
-<section class="content px-2 pt-2" id="work-flow-detail">
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="header d-flex justify-content-between align-items-center">
+            <div class="breadcrumb">
+                <app-bread-crumb [listBreadCrumb]="listBreadCrumb" (refreshCurrentPage)="onRefreshCurrentPage()"></app-bread-crumb>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="content px-2" id="work-flow-detail">
     <div class="container-fluid">
         <div class="card">
             <div class="card-body table-responsive p-4">

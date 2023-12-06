@@ -39,6 +39,8 @@ import { CloneRequestComponent } from "./clone-request/clone-request.component";
 import { Utils } from "@app/service/helpers/utils";
 import { UpdateBranchComponent } from "../expenditure-request-detail/main-tab/update-branch/update-branch.component";
 import { TreeInOutTypeOption } from "@shared/components/tree-in-out-type/tree-in-out-type.component";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
 
 @Component({
   selector: "app-expenditure-request",
@@ -68,7 +70,11 @@ export class ExpenditureRequestComponent
     PERMISSIONS_CONSTANT.Finance_OutcomingEntry_ExportPdf;
   Finance_OutcomingEntry_UpdateReportDate =
     PERMISSIONS_CONSTANT.Finance_OutcomingEntry_UpdateReportDate;
-  fileParam: DropDownDataDto[] = [
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.expenditureRequest;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.expenditureRequest;
+    fileParam: DropDownDataDto[] = [
     { displayName: "No File Yet", value: 0 },
     { displayName: "Not Yet Confirmed", value: 1 },
     { displayName: "Confirmed", value: 2 },
@@ -264,6 +270,21 @@ export class ExpenditureRequestComponent
     //       return (sum += item.totalValueToCurrencyDefault);
     //     }, 0);
     //   });
+    this.updateBreadCrumb()
+  }
+  
+  onRefreshCurrentPage(){
+    this.OnResetSearch()
+    this.onResetFilter()
+    this.refresh();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
 
   protected delete(entity: ExpenditureRequestDto): void {
@@ -918,6 +939,12 @@ export class ExpenditureRequestComponent
       this.searchWithDateTime.toDate = moment(this.searchWithDateTime.toDate)
       this.defaultDateFilterType = this.searchWithDateTime.dateType
     }
+  }
+
+  async OnResetSearch() {
+    this.searchId = null;
+    this.searchMoney = null
+    this.searchText = ""
   }
 
   async onResetFilter() {

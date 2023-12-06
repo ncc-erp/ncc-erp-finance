@@ -25,6 +25,8 @@ import * as _ from 'lodash';
 import { ActivatedRoute } from '@angular/router';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
 import * as FileSaver from 'file-saver';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-list-n-revenue',
@@ -40,7 +42,11 @@ export class ListNRevenueComponent extends PagedListingComponentBase<NRevenueByA
   revenueStatusOptions: ValueAndNameModel[] = [];
   revenueByAccounts: NRevenueByAccount[] = [];
   searchWithDateTime: DateTimeSelector;
-  searchDetail = {
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.nrevenue;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.nrevenue;
+    searchDetail = {
     month: AppConsts.VALUE_OPTIONS_ALL,
     year: AppConsts.VALUE_OPTIONS_ALL,
     status: AppConsts.VALUE_OPTIONS_ALL
@@ -106,6 +112,33 @@ export class ListNRevenueComponent extends PagedListingComponentBase<NRevenueByA
     this.setYears();
     this.getListAccount();
     this.getInvoiceRoutingFromHomepage();
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
+  onResetFilter() {
+    this.searchText = "";
+    this.allSelected = true
+    this.multiValueStatusFilter = []
+    this.searchDetail.year = AppConsts.VALUE_OPTIONS_ALL,
+    this.searchDetail.month = AppConsts.VALUE_OPTIONS_ALL,
+    this.isDoneDebt = false,
+    this.defaultDateFilterType = DateSelectorEnum.ALL;
+    this.searchWithDateTime = {
+      dateType: DateSelectorEnum.ALL,
+    } as DateTimeSelector;
+    this.refresh();
   }
 
   setYears() {
@@ -178,6 +211,7 @@ export class ListNRevenueComponent extends PagedListingComponentBase<NRevenueByA
 
   onDateChange(searchDate: DateTimeSelector): void {
     this.searchWithDateTime = searchDate;
+    this.defaultDateFilterType = searchDate.dateType;
     this.getFirstPage();
   }
 

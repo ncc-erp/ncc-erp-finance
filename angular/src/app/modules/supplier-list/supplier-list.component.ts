@@ -7,6 +7,9 @@ import { PagedListingComponentBase } from '@shared/paged-listing-component-base'
 import { Component, Injector, OnInit } from '@angular/core';
 import { SupplierService } from '@app/service/api/supplier.service';
 import { CreateEditSupplierComponent } from './create-edit-supplier/create-edit-supplier.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-supplier-list',
@@ -29,6 +32,11 @@ export class SupplierListComponent extends PagedListingComponentBase<SupplierLis
   Directory_Supplier_Create = PERMISSIONS_CONSTANT.Directory_Supplier_Create;
   Directory_Supplier_Update = PERMISSIONS_CONSTANT.Directory_Supplier_Update;
   Directory_Supplier_Delete = PERMISSIONS_CONSTANT.Directory_Supplier_Delete;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.supplierList;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.supplierList;
+  
 
 
   supplierList: SupplierDto[] = []
@@ -43,13 +51,32 @@ export class SupplierListComponent extends PagedListingComponentBase<SupplierLis
   constructor(
     private dialog: MatDialog,
     injector: Injector,
-    private supplierService: SupplierService,
+    private supplierService: SupplierService
   ) {
     super(injector);
   }
   ngOnInit(): void {
     this.refresh()
+    this.updateBreadCrumb()
   }
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
+  onResetFilter() {
+    this.searchText = '';
+  }
+
   editSupplier(supplier: SupplierDto): void {
     this.showDialogSupplier(supplier,"edit");
   }

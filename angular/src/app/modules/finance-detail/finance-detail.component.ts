@@ -12,7 +12,7 @@ import {
   RevenueRecordDto,
 } from "./../revenue-recording/revenue-recording.component";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Component, OnInit, Injector } from "@angular/core";
+import { Component, OnInit, Injector, ViewChild } from "@angular/core";
 import { RevenueRecordService } from "@app/service/api/revenue-record.service";
 import { BankTransactionDto } from "../banking-transaction/banking-transaction.component";
 import { TransactionService } from "@app/service/api/transaction.service";
@@ -27,6 +27,9 @@ import { LinkToExpenditureRequestComponent } from "./link-to-expenditure-request
 import { OutcomingEntryBankTransactionServiceService } from "../../service/api/outcoming-entry-bank-transaction-service.service";
 import { RequestDetailService } from "../../service/api/request-detail.service";
 import { Time } from "@angular/common";
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { MatTabGroup } from '@angular/material/tabs';
 @Component({
   selector: "app-finance-detail",
   templateUrl: "./finance-detail.component.html",
@@ -94,7 +97,13 @@ export class FinanceDetailComponent
   formBankCurrency: string;
   toBankCurrency: string;
   tong: number;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.bankTransaction;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankTransaction;
+  routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.revenueRecordDetail;
   outcomingEntrysByTransaction: expenditureRequestDto[] = [];
+  @ViewChild('tabGroup') tabGroup: MatTabGroup;
   constructor(
     private transactionService: TransactionService,
     private revenueService: RevenueRecordService,
@@ -118,9 +127,32 @@ export class FinanceDetailComponent
     this.getBankAccount();
     this.refresh();
   }
+
+  onRefreshCurrentPage(){
+    this.onResetSearch();
+    this.tabGroup.selectedIndex = parseInt(this.tabIndex);
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel, url: this.routeUrlSecondLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.transaction.name , url: this.routeUrlThirdLevel, queryParams: {id: this.paramId }  },
+    ];
+  }
+
+  onResetSearch() {
+    this.searchRecord = '';
+    this.searchText = '';
+    this.ngOnInit();
+  }
+
   getTransition() {
     this.transactionService.getById(this.paramId).subscribe((data) => {
       this.transaction = data.result;
+      this.updateBreadCrumb();
     });
   }
   getOutComingEntryByTransaction(id: number): void {

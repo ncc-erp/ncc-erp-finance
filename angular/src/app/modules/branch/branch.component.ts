@@ -8,6 +8,9 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { finalize } from 'rxjs/operators';
 import { BranchService } from '../../service/api/branch.service';
 import { CreateEditBranchComponent } from './create-edit-branch/create-edit-branch.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-branch',
@@ -19,15 +22,18 @@ export class BranchComponent extends PagedListingComponentBase<any> {
   Directory_Branch_Create = PERMISSIONS_CONSTANT.Directory_Branch_Create;
   Directory_Branch_Delete = PERMISSIONS_CONSTANT.Directory_Branch_Delete;
   Directory_Branch_Edit = PERMISSIONS_CONSTANT.Directory_Branch_Edit;
-  public readonly FILTER_CONFIG: InputFilterDto[] = [
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.branch;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.branch;
+    public readonly FILTER_CONFIG: InputFilterDto[] = [
     { propertyName: 'Name', comparisions: [0, 6, 7, 8], displayName: "filterDirectory.Name" },
     { propertyName: 'Code', comparisions: [0, 6, 7, 8], displayName: "filterDirectory.Code" },
   ];
   constructor(
     injector: Injector,
     private _branchService: BranchService,
-    private dialog: MatDialog,
-
+    private dialog: MatDialog
   ) {
     super(injector);
   }
@@ -48,6 +54,24 @@ export class BranchComponent extends PagedListingComponentBase<any> {
         this.branches = result.result.items;
         this.showPaging(result.result, pageNumber);
       });
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.refresh();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+  
+  onResetFilter() {
+    this.searchText = '';
   }
 
   delete(branch: BranchDto): void {

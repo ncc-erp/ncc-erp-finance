@@ -60,5 +60,90 @@ export const APP_CONSTANT = {
     PENDING: "bg-warning",
     DONE: "bg-success"
 
+  },
+
+  TitleBreadcrumbFirstLevel: {
+    dashboard: "Trang chủ",
+    admin: "Admin",
+    directory: "Quản trị danh mục",
+    account: "Quản lý tài khoản",
+    financeManagement: "Quản lý tài chính"
+  },
+
+  TitleBreadcrumbSecondLevel: {
+    tenants: "Công ty",
+    user: "Người dùng",
+    role: "Vai trò",
+    workFlow: "Work flow",
+    status: "Trạng thái",
+    configuration: "Cài đặt",
+    lineChart: "Line Chart",
+    circleChart: "Circle Chart",
+    bTransactionLog: "Lịch sử crawl giao dịch",
+    auditLog: "Audit Log",
+    currencies: "Tiền tệ",
+    currencyConvert: "Tỉ giá",
+    banks: "Ngân hàng",
+    accountType: "Loại đối tượng",
+    branch: "Chi nhánh",
+    incomingType: "Loại thu",
+    outcomingType: "Loại chi",
+    supplierList: "Nhà cung cấp",
+    bankAccount: "Tài khoản ngân hàng",
+    accountantAccount: "Đối tượng kế toán",
+    revenueRecord: "Ghi nhận thu",
+    expenditureRequest: "Request chi",
+    bankTransaction: "Giao dịch ngân hàng",
+    financeReview: "Đối soát",
+    financeStatisticOld: "Đối soát cũ",
+    btransaction: "Biến động số dư",
+    nrevenue: "Khoản phải thu",
+    period: "Kì kế toán"
+  },
+
+  UrlBreadcrumbFirstLevel: {
+    dashboard: "/app/home",
+    admin: "/app/b-transaction-log",
+    directory: "/app/supplierList",
+    account: "/app/accountant-account",
+    financeManagement: "/app/expenditure-request"
+  },
+  UrlBreadcrumbSecondLevel: {
+    tenants: "/app/tenants",
+    user: "/app/users",
+    role: "/app/roles",
+    workFlow: "/app/workFlow",
+    status: "/app/status",
+    configuration: "/app/setting",
+    lineChart: "/app/lineChartSetting",
+    circleChart: "/app/circleChart",
+    bTransactionLog: "/app/b-transaction-log",
+    auditLog: "/app/auditlog",
+    currencies: "/app/currencies",
+    currencyConvert: "/app/currency-convert",
+    banks: "/app/banks",
+    accountType: "/app/accountType",
+    branch: "/app/branches",
+    incomingType: "/app/incomingType",
+    outcomingType: "/app/outcomingType",
+    supplierList: "/app/supplierList",
+    bankAccount: "/app/bank-account",
+    accountantAccount: "/app/accountant-account",
+    revenueRecord: "/app/revenue-record",
+    expenditureRequest: "/app/expenditure-request",
+    bankTransaction: "/app/bank-transaction",
+    financeReview: "/app/finance-review",
+    financeStatisticOld: "/app/finance-statistic-old",
+    btransaction: "/app/btransaction",
+    nrevenue: "/app/nrevenue",
+    period: "/app/period"
+  },
+  UrlBreadcrumbThirdLevel: {
+    workFlowDetail: "/app/workFlowDetail",
+    circleChartDetail: "/app/circleChartDetail",
+    bankAccountDetail: "/app/bankAccountDetail",
+    revenueRecordDetail: "/app/detail",
+    bankTransactionDetail: "/app/detail",
+    expenditureRequestDetail: "/app/requestDetail/main"
   }
 }

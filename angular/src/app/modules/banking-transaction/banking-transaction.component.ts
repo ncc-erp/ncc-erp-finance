@@ -33,6 +33,8 @@ import { AccountTypeEnum, BankTransactionFilterDateTimeType, CurrencyColor, Date
 import { IOption } from '@shared/components/custome-select/custome-select.component';
 import { Utils } from '@app/service/helpers/utils';
 import { DateTimeSelector } from '@shared/date-selector/date-selector.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: "app-banking-transaction",
@@ -143,6 +145,10 @@ export class BankingTransactionComponent
   BANK_TRANSCATION_DATE_TIME_OPTIONS = BANK_TRANSCATION_DATE_TIME_OPTIONS;
   optionDate: BankTransactionFilterDateTimeType = BankTransactionFilterDateTimeType.NO_FILTER;
   BankTransactionFilterDateTimeTypeNO_FILTER = BankTransactionFilterDateTimeType.NO_FILTER
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.bankTransaction;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankTransaction;
 
   protected list(
     request: GetAllPagingBankTransactionDto,
@@ -185,6 +191,19 @@ export class BankingTransactionComponent
         });
         this.showPaging(data.result, pageNumber);
       });
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.handleClearFilter();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
 
   listCurrency: CurrencyConvertDto[];

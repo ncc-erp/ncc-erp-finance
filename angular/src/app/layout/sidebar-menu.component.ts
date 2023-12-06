@@ -82,25 +82,25 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
           'Admin.Configuration'
         ),
         new MenuItem(
-          'Line Chart',
+          'menu2.lineChart',
           '/app/lineChartSetting',
           'fas fa-cogs',
           'Admin.LineChartSetting'
         ),
         new MenuItem(
-          'Circle Chart',
+          'menu2.circleChart',
           '/app/circleChart',
           'fas fa-cogs',
           'Admin.CircleChart'
         ),
         new MenuItem(
-          'Lịch sử crawl giao dịch',
+          'menu2.bTransactionLog',
           '/app/b-transaction-log',
           'fas fa-history',
           'Admin.CrawlHistory'
         ),
         new MenuItem(
-          'Audit Log',
+          'menu2.auditLog',
           '/app/auditlog',
           'fa fa-wrench',
           'Admin.Auditlog'
@@ -114,7 +114,7 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
           'Directory.Currency'
         ),
         new MenuItem(
-          'Tỉ giá',
+          'menu3.m3_child8',
           '/app/currency-convert',
           'fas fa-dollar-sign',
           'Directory.CurrencyConvert'
@@ -203,20 +203,20 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
         //   "Finance.Invoice"
         // ),
         new MenuItem(
-          'Đối soát mới',
+          'menu5.m5_child6',
           '/app/finance-review',
           'fas fa-search',
           "Finance.ComparativeStatisticNew"
         ),
         new MenuItem(
-          'Đối soát',
+          'menu5.m5_child7',
           '/app/finance-statistic-old',
           'fas fa-search',
           "Finance.ComparativeStatistic"
         ),
 
         new MenuItem(
-          'Biến động số dư',
+          'menu5.m5_child8',
           '/app/btransaction',
           'fas fa-dollar-sign',
           'Finance.BĐSD'
@@ -229,7 +229,7 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
           'Finance.Invoice'
         ),
         new MenuItem(
-          'Kỳ kế toán',
+          'menu5.m5_child9',
           '/app/period',
           'fas fa-business-time',
           'Finance.Period'

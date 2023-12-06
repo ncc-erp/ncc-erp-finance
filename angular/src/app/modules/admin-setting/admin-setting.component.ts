@@ -5,6 +5,9 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { SessionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { forkJoin } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { ActivatedRoute } from '@angular/router';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-setting',
@@ -36,6 +39,10 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
   public isEditCoTheSuaThongTinCuaKiCu: boolean = false
   public isEnableCrawlBTransactionNoti: boolean = false
   public hrmConfig = {} as internalToolConfig
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.configuration;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.configuration;
 
   constructor(private settingService: AppConfigurationService, private sessionService: SessionServiceProxy, injector: Injector) {
     super(injector)
@@ -48,6 +55,19 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
     this.getAllowChangeEntityInPeriodClosed()
     this.getEnableCrawlBTransactionNoti()
     this.getHRMConfig()
+    this.updateBreadCrumb();
+  }
+
+  onRefreshCurrentPage(){
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
   getSetting() {
     this.isLoading = true;

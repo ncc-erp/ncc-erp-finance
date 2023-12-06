@@ -7,6 +7,9 @@ import { CreateEditRevenueComponent } from "./create-edit-revenue/create-edit-re
 import { AppConsts, OPTION_ALL } from "@shared/AppConsts";
 import { StatusEnum } from "@shared/AppEnums";
 import { InputFilterEntryTypeDto } from "@app/service/model/common-DTO";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-revenue",
@@ -22,7 +25,11 @@ export class RevenueComponent extends AppComponentBase implements OnInit {
   };
   type = 2;
   searchText: string = "";
-  constructor(
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.incomingType;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.incomingType;
+    constructor(
     private dialog: MatDialog,
     private service: RevenueService,
     injector: Injector
@@ -37,7 +44,26 @@ export class RevenueComponent extends AppComponentBase implements OnInit {
       AppConsts.periodId.asObservable().subscribe((rs) => {
         this.getAllData();
       }));
+    this.updateBreadCrumb()
   }
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
+  onResetFilter() {
+    this.inputFilter = new InputFilterEntryTypeDto();
+  }
+
   getAllData() {
     this.service
       .getAllByStatus(this.inputFilter)
