@@ -76,8 +76,12 @@ export class PieChartComponent extends AppComponentBase implements OnInit {
               value: item.value,
               detail: item,
               itemStyle: {
-                color: item.color
-              }
+                color: item.color,
+              },
+              label: {
+                show: true,
+                formatter: '{b} ({d}%)', // Display name and percentage
+              },
             })),
             emphasis: {
               itemStyle: {
