@@ -10,6 +10,9 @@ import {
 import { finalize } from "rxjs/operators";
 import { CreateEditLineChartSettingComponent } from "./create-edit-line-chart-setting/create-edit-line-chart-setting.component";
 import { PERMISSIONS_CONSTANT } from "@app/constant/permission.constant";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-line-chart-setting",
@@ -23,7 +26,7 @@ export class LineChartSettingComponent
   protected list(
     request: PagedRequestDto,
     pageNumber: number,
-    finishedCallback: Function
+    finishedCallback: Function,
   ): void {
     this.isTableLoading = true;
     this.linechartsettingService
@@ -41,7 +44,21 @@ export class LineChartSettingComponent
         },
         () => (this.isTableLoading = false)
       );
+    this.updateBreadCrumb()
   }
+
+  onRefreshCurrentPage(){
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
   protected delete(entity: LineChartSettingDto): void {
     abp.message.confirm(`Delete setting: ${entity.name}`, "", (rs) => {
       if(rs){
@@ -56,7 +73,11 @@ export class LineChartSettingComponent
   }
 
   public lineChartSetting: LineChartSettingDto[] = [];
-
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.lineChart;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.lineChart;
+  
   constructor(
     injector: Injector,
     private dialog: MatDialog,

@@ -13,6 +13,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateBaseBalanaceComponent, UpdateBaseBalanaceData } from './update-base-balanace/update-base-balanace.component';
 import { number } from 'echarts';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 
 
@@ -35,6 +37,11 @@ export class BankAccountDetailComponent extends AppComponentBase implements OnIn
   firstBalance=0
   afterBalance = 0;
   isTableLoading:boolean =false
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.account;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.account;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.bankAccount;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankAccount;
+  routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.bankAccountDetail;
   ; constructor(
     private bankAccountService: BankAccountService,
     injector: Injector,
@@ -44,7 +51,6 @@ export class BankAccountDetailComponent extends AppComponentBase implements OnIn
     private accountService: AccountantAccountService,
     private dialog: MatDialog,
     private router: Router
-
   ) {
     super(injector);
     this.subscriptions.push(
@@ -78,6 +84,20 @@ export class BankAccountDetailComponent extends AppComponentBase implements OnIn
     this.getBankAcountTransactionDetail();
   }
 
+  onRefreshCurrentPage(){
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel, url: this.routeUrlSecondLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.bankDetail?.holderName , url: this.routeUrlThirdLevel, queryParams: {id: this.bankDetail?.id } },
+    ];
+  }
+
   cal(increase, decrease) {
     let result = 0
     result = this.balance + increase - decrease
@@ -89,6 +109,7 @@ export class BankAccountDetailComponent extends AppComponentBase implements OnIn
   getByPeriod() {
     this.bankAccountService.getByPeriod(this.bankAccountId).subscribe(data => {
       this.bankDetail = data.result
+      this.updateBreadCrumb();
     })
   }
 

@@ -1160,6 +1160,7 @@ namespace FinanceManagement.Managers.Dashboards
                     Month = x.Month,
                     Year = x.Year,
                     TransactionDate = x.TransactionDate,
+                    BankTransactionId = x.BankTransactionId
                 })
                 .OrderBy(x => x.TransactionDate)
                 .ToListAsync();
@@ -1183,6 +1184,7 @@ namespace FinanceManagement.Managers.Dashboards
                     Month = x.Invoices.Month,
                     Year = x.Invoices.Year,
                     TransactionDate = x.BTransactions.TimeAt,
+                    BankTransactionId = x.BankTransactionId,
                 });
         }
         public async Task<DebtStatisticFromHRMDto> GetHRMDebtStatistic(int? tenantId)

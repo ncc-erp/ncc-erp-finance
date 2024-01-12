@@ -8,6 +8,9 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { finalize } from 'rxjs/operators';
 import { BankService } from './../../service/api/bank.service';
 import { CreateEditBankComponent } from './create-edit-bank/create-edit-bank.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-bank',
@@ -19,6 +22,10 @@ export class BankComponent extends PagedListingComponentBase<any>{
   Directory_Bank_Create = PERMISSIONS_CONSTANT.Directory_Bank_Create;
   Directory_Bank_Delete = PERMISSIONS_CONSTANT.Directory_Bank_Delete;
   Directory_Bank_Edit = PERMISSIONS_CONSTANT.Directory_Bank_Edit;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.banks;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.banks;
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     { propertyName: 'Name', comparisions: [0, 6, 7, 8], displayName: "filterDirectory.Name" },
     { propertyName: 'Code', comparisions: [0, 6, 7, 8], displayName: "filterDirectory.Code" },
@@ -26,7 +33,7 @@ export class BankComponent extends PagedListingComponentBase<any>{
   constructor(
     injector: Injector,
     private _bankService: BankService,
-    private dialog: MatDialog,
+    private dialog: MatDialog
   ) {
     super(injector);
   }
@@ -47,6 +54,24 @@ export class BankComponent extends PagedListingComponentBase<any>{
         this.banks = result.result.items;
         this.showPaging(result.result, pageNumber);
       });
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.refresh();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
+  onResetFilter() {
+    this.searchText = '';
   }
 
   delete(bank: BankDto): void {

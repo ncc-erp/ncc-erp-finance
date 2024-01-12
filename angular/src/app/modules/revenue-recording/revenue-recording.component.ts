@@ -32,6 +32,8 @@ import { AppConsts, OPTION_ALL } from "@shared/AppConsts";
 import { IOption } from "@shared/components/custome-select/custome-select.component";
 import { Utils } from "@app/service/helpers/utils";
 import { TreeInOutTypeOption } from '@shared/components/tree-in-out-type/tree-in-out-type.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: "app-revenue-recording",
@@ -49,6 +51,11 @@ export class RevenueRecordingComponent
   totalValue: TotalByCurrencyDto[] = [];
   totalByCurrency: number = 0;
   CurrencyColor = CurrencyColor;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.revenueRecord;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.revenueRecord;
+  
 
   @ViewChild("inputSearchClient") inputSearchClient: ElementRef;
   @ViewChild("inputSearchIncoming") inputSearchIncoming: ElementRef;
@@ -170,6 +177,19 @@ export class RevenueRecordingComponent
           return (sum += item.totalValueToVND);
         }, 0);
       });
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.handleClearFilter();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
   protected delete(entity: RevenueRecordDto): void { }
 
@@ -288,6 +308,7 @@ export class RevenueRecordingComponent
   }
 
   handleClearFilter() {
+    this.searchText = "";
     this.searchId = undefined;
     this.searchMoney = undefined;
     this.selectedClient = [];
@@ -297,7 +318,6 @@ export class RevenueRecordingComponent
     this.searchWithDateTime = {
       dateType: DateSelectorEnum.ALL,
     } as DateTimeSelector;
-    this.defaultDateFilterType = DateSelectorEnum.ALL;
     this.searchRevenueCounted = OPTION_ALL
     this.refresh();
   }

@@ -1,5 +1,5 @@
-import { Router } from '@angular/router';
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-bread-crumb',
@@ -9,23 +9,28 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } fro
 })
 export class BreadCrumbComponent implements OnInit {
   @Output() navigate = new EventEmitter();
-  @Input() listBreadCrumb = [];
-  @Input() itemName: string;
-  constructor(private router: Router) { }
+  @Output() refreshCurrentPage = new EventEmitter();
 
-  ngOnInit(): void {
+  @Input() listBreadCrumb: BreadCrumbDto[] = [];
+  @Input() itemName: string;
+
+  constructor(private router: Router) {}
+
+  ngOnInit(): void {}
+
+  onRefreshCurrentPage() {
+    this.refreshCurrentPage.emit();
   }
 
-  public onNavigate(breadCrumb: BreadCrumbDto){
-    this.router.navigate([breadCrumb.url],{
-      queryParams: {
-        id : breadCrumb.queryParams
-      }
-    })
+  onNavigate(breadCrumb: BreadCrumbDto) {
+    this.router.navigate([breadCrumb.url], {
+      queryParams: breadCrumb.queryParams,
+    });
   }
 }
-export class BreadCrumbDto{
+
+export class BreadCrumbDto {
   name: string;
   url?: string;
-  queryParams?: Object
+  queryParams?: any;
 }

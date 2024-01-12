@@ -6,6 +6,9 @@ import { PagedListingComponentBase, PagedRequestDto, PagedResultResultDto } from
 import { finalize } from 'rxjs/operators';
 import { AccountTypeService } from './../../service/api/account-type.service';
 import { CreateEditAccountTypeComponent } from './create-edit-account-type/create-edit-account-type.component';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-account-type',
@@ -17,6 +20,10 @@ export class AccountTypeComponent extends PagedListingComponentBase<any>  {
   Directory_AccountType_Create = PERMISSIONS_CONSTANT.Directory_AccountType_Create;
   Directory_AccountType_Delete = PERMISSIONS_CONSTANT.Directory_AccountType_Delete;
   Directory_AccountType_Edit = PERMISSIONS_CONSTANT.Directory_AccountType_Edit;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.directory;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.directory;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.accountType;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.accountType;
 
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     { propertyName: 'Name', comparisions: [0, 6, 7, 8], displayName: "filterDirectory.Name" },
@@ -42,7 +49,26 @@ export class AccountTypeComponent extends PagedListingComponentBase<any>  {
         this.accountTypes = result.result.items;
         this.showPaging(result.result, pageNumber);
       });
+    this.updateBreadCrumb()
   }
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.refresh();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
+  onResetFilter() {
+    this.searchText = '';
+  }
+
   delete(accountType: AccountTypeDto): void {
     abp.message.confirm(
       this.l("Delete account type '") + accountType.name + "'?",

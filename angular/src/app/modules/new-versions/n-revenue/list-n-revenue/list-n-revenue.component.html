@@ -1,8 +1,8 @@
 <section class="content-header list-revenue">
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-6">
-        <h2>{{ "Khoản phải thu" | localize }}</h2>
+    <div class="header d-flex justify-content-between align-items-center">
+      <div class="breadcrumb">
+          <app-bread-crumb [listBreadCrumb]="listBreadCrumb" (refreshCurrentPage)="onRefreshCurrentPage()"></app-bread-crumb>
       </div>
       <div class="col-6 text-right">
         <a
@@ -90,7 +90,7 @@
               <mat-select
                 name="status"
                 placeholder="Status"
-                [(value)]="multiValueStatusFilter"
+                [(ngModel)]="multiValueStatusFilter"
                 (selectionChange)="onDropdownMultiFilter($event)"
                 disableOptionCentering="true"
                 multiple
@@ -111,7 +111,7 @@
               <mat-select
                 name="year"
                 placeholder="Year"
-                [(value)]="searchDetail.year"
+                [(ngModel)]="searchDetail.year"
                 (selectionChange)="handleSelectionChange()"
               >
                 <mat-option *ngFor="let item of years" [value]="item.value">
@@ -127,7 +127,7 @@
               <mat-select
                 name="month"
                 placeholder="Month"
-                [(value)]="searchDetail.month"
+                [(ngModel)]="searchDetail.month"
                 (selectionChange)="handleSelectionChange()"
               >
                 <mat-option *ngFor="let month of months" [value]="month.value">
@@ -143,7 +143,7 @@
               <mat-select
                 name="statusAccount"
                 placeholder="Status trả nợ"
-                [(value)]="isDoneDebt"
+                [(ngModel)]="isDoneDebt"
                 (selectionChange)="handleSelectionChange()"
               >
                 <mat-option
@@ -160,6 +160,7 @@
             <app-date-selector
               (onDateSelectorChange)="onDateChange($event)"
               [type]="defaultDateFilterType"
+              [defaultDateFilter]="searchWithDateTime"
               [label]="'Hạn thu'"
             ></app-date-selector>
           </div>

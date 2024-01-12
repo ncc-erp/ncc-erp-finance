@@ -14,6 +14,9 @@ import {
 import { CreateRoleDialogComponent } from './create-role/create-role-dialog.component';
 import { EditRoleDialogComponent } from './edit-role/edit-role-dialog.component';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 class PagedRolesRequestDto extends PagedRequestDto {
   keyword: string;
@@ -26,7 +29,11 @@ class PagedRolesRequestDto extends PagedRequestDto {
 export class RolesComponent extends PagedListingComponentBase<RoleDto> {
   roles: RoleDto[] = [];
   keyword = '';
-
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.role;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.role;
+  
   constructor(
     injector: Injector,
     private _rolesService: RoleServiceProxy,
@@ -53,6 +60,24 @@ export class RolesComponent extends PagedListingComponentBase<RoleDto> {
         this.roles = result.items;
         this.showPaging(result, pageNumber);
       });
+    this.updateBreadCrumb()
+  }
+
+  clearFilters(): void {
+    this.keyword = '';
+    this.getDataPage(1);
+  }
+
+  onRefreshCurrentPage(){
+    this.clearFilters();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
 
   delete(role: RoleDto): void {

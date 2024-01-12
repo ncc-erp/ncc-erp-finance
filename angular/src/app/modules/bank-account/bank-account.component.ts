@@ -25,8 +25,9 @@ import { AccountForDropdownDto, ValueAndNameModel } from "@app/service/model/com
 import { AccountService } from "@app/service/api/account.service";
 import { ActiveCompanyBankAccountComponent } from "./active-company-bank-account/active-company-bank-account.component";
 import { AccountTypeEnum } from "@shared/AppEnums";
-import { HttpErrorResponse } from "@angular/common/http";
+import { HttpErrorResponse, HttpParams } from "@angular/common/http";
 import { of } from "rxjs";
+import { TranslateService } from "@ngx-translate/core";
 
 @Component({
   selector: "app-bank-account",
@@ -54,7 +55,11 @@ export class BankAccountComponent
   Account_Directory_BankAccount_Unlock =
     PERMISSIONS_CONSTANT.Account_Directory_BankAccount_LockUnlock;
   Account_Directory_BankAccount_ActiveDeactive = PERMISSIONS_CONSTANT.Account_Directory_BankAccount_ActiveDeactive;
-  Account_Directory_BankAccount_Export = PERMISSIONS_CONSTANT.Account_Directory_BankAccount_Export
+  Account_Directory_BankAccount_Export = PERMISSIONS_CONSTANT.Account_Directory_BankAccount_Export;
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.account;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.account;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.bankAccount;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.bankAccount;
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     {
       propertyName: "holderName",
@@ -94,7 +99,6 @@ export class BankAccountComponent
   ];
   requestParam: PagedRequestDto;
   constructor(
-    private route: ActivatedRoute,
     private bankaccountService: BankAccountService,
     private accountService: AccountService,
     private commonService: CommonService,
@@ -134,6 +138,27 @@ export class BankAccountComponent
       this.getAccountDefault();
     });
 
+    this.refresh();
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.onResetFilter();
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
+  }
+
+  onResetFilter() {
+    this.searchText = "";
+    this.searchCurrency = -1;
+    this.searchStatus = Status.ACTIVE;
     this.refresh();
   }
 
@@ -343,6 +368,7 @@ export class BankAccountComponent
         this.refresh()
       });
   }
+
 }
 
 export enum Status {

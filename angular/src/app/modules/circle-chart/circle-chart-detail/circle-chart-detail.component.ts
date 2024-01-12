@@ -8,6 +8,8 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { CircleChartDetailService } from '../../../service/api/circle-chart-detail.service';
 import { CreateEditCircleChartDetailComponent } from './create-edit-circle-chart-detail/create-edit-circle-chart-detail.component';
 import { RevenueExpenseType } from '@shared/AppEnums';
+import { TranslateService } from '@ngx-translate/core';
+import { HttpParams } from '@angular/common/http';
 
 
 @Component({
@@ -23,11 +25,17 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
   circleChartInfo: CircleChartInfoDto;
   isIncome: boolean;
   isActive: boolean;
-  constructor(
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.circleChart;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.circleChart;
+  routeUrlThirdLevel = this.APP_CONSTANT.UrlBreadcrumbThirdLevel.circleChartDetail;
+    constructor(
     injector: Injector, 
     private circleChartDetailService: CircleChartDetailService, 
     private dialog: MatDialog, 
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute
+    ) {
     super(injector);
   }
   paramId;
@@ -44,15 +52,29 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
         item.hideEntryType = false;
       })
       this.isIncome = item.result.isIncome;
-      this.listBreadCrumb = [
-        {name: '<i class="fas fa-home fa-l"></i>',url:''}, 
-        {name: ' <i class="fas fa-chevron-right"></i> '}, 
-        {name: 'Circle Chart', url: '/app/circleChart'}, 
-        {name: ' <i class="fas fa-chevron-right"></i> '}, 
-        {name: this.circleChartInfo.name }];
+      // this.listBreadCrumb = [
+      //   {name: '<i class="fas fa-home fa-l"></i>',url:''}, 
+      //   {name: ' <i class="fas fa-chevron-right"></i> '}, 
+      //   {name: 'Circle Chart', url: '/app/circleChart'}, 
+      //   {name: ' <i class="fas fa-chevron-right"></i> '}, 
+      //   {name: this.circleChartInfo.name }];
       this.circleChartTypeName = this.circleChartInfo.circleChartTypeName;
       this.isActive = this.circleChartInfo.isActive;
+      this.updateBreadCrumb();
     })
+  }
+
+  onRefreshCurrentPage(){
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel, url: this.routeUrlSecondLevel },
+      {name: ' <i class="fas fa-chevron-right"></i> '}, 
+      {name: this.circleChartInfo.name, url: this.routeUrlThirdLevel, queryParams: {id: this.paramId } }];
   }
   public onCreate() {
     let ref = this.dialog.open(CreateEditCircleChartDetailComponent, {
@@ -119,12 +141,10 @@ export class CircleChartDetailComponent extends AppComponentBase implements OnIn
 
   toggleEntryType(item){
     item.hideEntryType = !item.hideEntryType;
-    console.log(item.hideEntryType)
   }
 
   toggleClient(item){
     item.hideClient = !item.hideClient;
-    console.log(item.hideClient)
   }
 
   getRevenueExpenseTypeText(revenueExpenseType: RevenueExpenseType): string {

@@ -1,5 +1,5 @@
 .total{
-    font-size: 18px;
+    font-size: 16px;
 }
 .move-cursor{
     cursor: move;
@@ -7,6 +7,14 @@
 ::ng-deep #baocaochi .ngx-pagination{
     padding: 0;
     margin: 0;
+}
+
+.hyperlink:hover {
+    cursor: pointer;
+    text-decoration: underline !important;
+}
+.hyperlink {
+    color: #007bff;
 }
 
 .viewBtn{
@@ -17,4 +25,34 @@
     height: 30px;
     border-radius: 50%; 
     border-style: none;
+}
+.align {
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+.icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.card-header {
+    padding: 0;
+    padding-bottom: 10px;
+}
+.card-body {
+    padding: 0
+}
+
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-wrapper {
+    padding-bottom: 0;
+}
+
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline {
+    bottom: 5px !important;
+}
+::ng-deep .mat-dialog-container {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }

@@ -13,12 +13,13 @@ import { BankAccountService } from '@app/service/api/bank-account.service';
 import { PagedRequestBankAccount } from '../bank-account/bank-account.component';
 import { AccountTypeEnum } from '@shared/AppEnums';
 import { PagedResultResultDto } from '@shared/paged-listing-component-base';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UtilitiesService } from '@app/service/api/new-versions/utilities.service';
 import { PeriodService } from '@app/service/api/period.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { of } from 'rxjs';
 import { AppConsts } from '@shared/AppConsts';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-finance-review-old',
@@ -63,7 +64,11 @@ export class FinanceReviewOldComponent extends AppComponentBase implements OnIni
   totalDiffOutcomeVND: number = 0;
   totalDiffIncomeUSD: number = 0;
   totalDiffOutcomeUSD: number = 0;
-  bankAccountDefault = ["19132608283018", "19132608283026", "19034753904029", "490069"];
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.financeStatisticOld;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.financeStatisticOld;
+    bankAccountDefault = ["19132608283018", "19132608283026", "19034753904029", "490069"];
   constructor(
     injector: Injector,
     private dashboardService: DashBoardService,
@@ -78,6 +83,19 @@ export class FinanceReviewOldComponent extends AppComponentBase implements OnIni
   ngOnInit(): void {
     this.getStatistics()
     this.getBankAccount();
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
   getStatistics() {
     this.toDate = moment(this.toDate).format("YYYY-MM-DD")

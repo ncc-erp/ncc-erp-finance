@@ -6,6 +6,9 @@ import { PagedListingComponentBase, PagedRequestDto } from '@shared/paged-listin
 import { catchError } from 'rxjs/operators';
 import { StatusService } from '../../service/api/status.service';
 import { CreateEditDialogStatusComponent } from './create-edit-dialog-status/create-edit-dialog-status.component';
+import { TranslateService } from '@ngx-translate/core';
+import { ActivatedRoute } from '@angular/router';
+import { HttpParams } from '@angular/common/http';
 @Component({
   selector: 'app-status',
   templateUrl: './status.component.html',
@@ -13,18 +16,35 @@ import { CreateEditDialogStatusComponent } from './create-edit-dialog-status/cre
 })
 export class StatusComponent extends AppComponentBase implements OnInit {
   statuses: StatusDto[] = [];
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.status;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.status;
   Admin_WorkflowStatus = PERMISSIONS_CONSTANT.Admin_WorkflowStatus;
   Admin_WorkflowStatus_Create = PERMISSIONS_CONSTANT.Admin_WorkflowStatus_Create;
   Admin_WorkflowStatus_Delete = PERMISSIONS_CONSTANT.Admin_WorkflowStatus_Delete;
   Admin_WorkflowStatus_Edit = PERMISSIONS_CONSTANT.Admin_WorkflowStatus_Edit;
   Admin_WorkflowStatus_ViewAll = PERMISSIONS_CONSTANT.Admin_WorkflowStatus_View;
-
+  
   constructor(private statusService: StatusService,private dialog: MatDialog,injector: Injector) {
     super(injector);
   }
 
   ngOnInit(): void {
     this.getStatus();
+    this.updateBreadCrumb()
+  }
+
+  onRefreshCurrentPage(){
+    this.ngOnInit();
+  }
+
+  updateBreadCrumb() {
+    this.listBreadCrumb = [
+      { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+      { name: ' <i class="fas fa-chevron-right"></i> ' },
+      { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+    ];
   }
   getStatus(): void {
     this.statusService.getAll().subscribe((item) => {

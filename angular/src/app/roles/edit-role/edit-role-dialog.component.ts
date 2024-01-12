@@ -86,7 +86,6 @@ export class EditRoleDialogComponent extends AppComponentBase
     
       this.getAllUsersInRole();
       this.getAllUsersNotInRole();
-      console.log(this.inputToAddUser)
   }
 
   isPermissionChecked(permissionName: string): boolean {

@@ -89,7 +89,6 @@ export class CreateEditRevenuemanagedComponent extends AppComponentBase implemen
   }
   getCurrencyDropDown() {
     this._currencyService.GetAllForDropdown().subscribe((res) => {
-      //console.log(res);
       this.currencies = res.result;
     })
   }
@@ -135,7 +134,6 @@ export class CreateEditRevenuemanagedComponent extends AppComponentBase implemen
       }, () => { this.isDisable = false })
     }
     else {
-      //console.log("dasdasd",this.listFiles)
       this._service.update(this.invoice).subscribe(rs => {
         if (rs.success) {
           this._service.revenueUploadFiles(this.listFiles, this.invoice.id).subscribe((res) => {

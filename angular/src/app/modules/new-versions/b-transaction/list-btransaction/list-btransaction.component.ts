@@ -65,6 +65,8 @@ import { AppConfigurationService } from "@app/service/api/app-configuration.serv
 import { MatMenuTrigger } from "@angular/material/menu";
 import * as FileSaver from "file-saver";
 import { RollbackClientPaidComponent } from "../rollback-client-paid/rollback-client-paid.component";
+import { TranslateService } from "@ngx-translate/core";
+import { HttpParams } from "@angular/common/http";
 
 @Component({
   selector: "app-list-btransaction",
@@ -105,7 +107,11 @@ export class ListBtransactionComponent
     TimeAt: "timeAt",
   };
   searchWithDateTime = {} as DateTimeSelector;
-
+  routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
+  routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
+  routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.btransaction;
+  routeUrlSecondLevel = this.APP_CONSTANT.UrlBreadcrumbSecondLevel.btransaction;
+  
   id?: number | string;
   @ViewChildren(MatMenuTrigger) menuTrigger: any;
   constructor(
@@ -136,7 +142,22 @@ export class ListBtransactionComponent
         this.refresh();
       }));
     this.getEspecialIncomingEntryType();
+    this.updateBreadCrumb()
+}
+
+onRefreshCurrentPage(){
+    this.OnResetSearch();
+    this.onResetFilter();
+    this.refresh();
   }
+
+  updateBreadCrumb() {
+  this.listBreadCrumb = [
+    { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
+    { name: ' <i class="fas fa-chevron-right"></i> ' },
+    { name: this.routeTitleSecondLevel , url: this.routeUrlSecondLevel }
+  ];
+}
   getEspecialIncomingEntryType() {
     this._settingService.getEspecialIncomingEntryType()
       .subscribe(async response => {
@@ -935,10 +956,16 @@ export class ListBtransactionComponent
     }
   }
 
-  async onResetFilter() {
-    this.searchDetail.bankAccountId = OPTION_ALL
-    this.searchDetail.bTransactionStatus = OPTION_ALL
+  async OnResetSearch() {
+    this.id = null;
+    this.searchMoney.fromMoney = ""
+    this.searchMoney.toMoney = ""
+    this.searchText = ""
+  }
 
+  async onResetFilter() {
+    this.searchDetail.bankAccountId = AppConsts.VALUE_OPTIONS_ALL;
+    this.searchDetail.bTransactionStatus = this.transactionStatusOptionsPendding;
     this.searchWithDateTime = {
       dateType: DateSelectorEnum.ALL
     } as DateTimeSelector;

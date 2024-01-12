@@ -130,7 +130,11 @@
     "role": "Roles",
     "workFlow": "Work flow",
     "status": "Status",
-    "configuration": "Configuration"
+    "configuration": "Configuration",
+    "lineChart": "Line Chart",
+    "circleChart": "Circle Chart",
+    "bTransactionLog": "Crawl History",
+    "auditLog": "Audit Log"
   },
   "menu3": {
     "m3_child1": "Currency",
@@ -139,7 +143,8 @@
     "m3_child4": "Branch",
     "m3_child5": "Revenue",
     "m3_child6": "Expenditure",
-    "m3_child7": "Supplier"
+    "m3_child7": "Supplier",
+    "m3_child8": "Currency Convert"
   },
   "menu4": {
     "m4_child1": "Bank Account",
@@ -150,7 +155,11 @@
     "m5_child2": "Expenditure Request",
     "m5_child3": "Bank Transaction",
     "m5_child4": "Invoice",
-    "m5_child5": "Revenue Managed"
+    "m5_child5": "Revenue Managed",
+    "m5_child6": "Đối soát mới",
+    "m5_child7": "Đối soát",
+    "m5_child8": "Biến động số dư",
+    "m5_child9": "Kì kế toán"
   },
   "m2_child4": {
     "name": "Name",
@@ -404,6 +413,9 @@
     "file": "Files",
     "titleCreate": "Create Revenue Managed",
     "titleEdit": "Edit Revenue Managed"
+  },
+  "m5_child8": {
+    "title": "Biến động số dư tài khoản công ty"
   },
   "message": {
     "delete": "Are you sure you want to delete",

@@ -1,9 +1,11 @@
 ﻿<div id="home" *ngIf="isDisplayHomePage()">
   <section class="content-header">
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="d-inline">{{ "menu.menu1" | translate }}</h1>
+      <div class="header d-flex justify-content-between align-items-center">
+        <div class="breadcrumb">
+            <app-bread-crumb [listBreadCrumb]="listBreadCrumb" (refreshCurrentPage)="onRefreshCurrentPage()"></app-bread-crumb>
+        </div>
+        <div>
           <button class="btn btn-success float-right" *ngIf="isShowExportBtn()" (click)="exportReport()">
             <i class="fas fa-download mr-1"></i>{{ "menu1.export" | translate }}
           </button>
@@ -278,7 +280,7 @@
                             >{{data.tongThuThucFormat}}</span>
                         </td>
                         <td [ngClass]="isTotal(i) ? 'text-bold chenhlech-cells' : ''"
-                          class="text-bold blue-td">
+                          class="text-right blue-td">
                           <span (click)="viewBaoCaoThuDetail(false,false)"
                           *ngIf="data.branchName === 'Tổng cộng'"
                           class="link pointer">{{data.thuKhongThucFormat}}</span>
