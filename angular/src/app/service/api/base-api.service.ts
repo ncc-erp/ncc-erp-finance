@@ -74,4 +74,8 @@ export abstract class BaseApiService {
     public exportBDSDByFilter(payload: BTransactionPagedRequestDto): Observable<any>{
         return this.http.post<any>(this.rootUrl + "/ExportBienDongSoDu",payload);
     }
+
+    public updateBranch(item: any): Observable<any> {
+        return this.http.put<any>(this.rootUrl + '/UpdateBranch', item);
+    }
 }

@@ -104,9 +104,17 @@
                 </abp-validation-summary>
               </td>
               <td class="w-110 text-center border-none align-middle">
-                <span class="w-100 text-center" *ngIf="!mode">
-                  {{ item.branchName }}
-                </span>
+                <!-- here -->
+                <div *ngIf="!mode">
+                  <span class="w-100 text-center">
+                    {{ item.branchName }}
+                  </span>
+                  <span style="float: right;">
+                    <i *ngIf="isShowUpdateBranchBtn()"
+                    class="fas fa-edit ml-2 pointer"
+                    (click)="onUpdateBranch(item)"></i>
+                  </span>
+                </div>
                 <mat-form-field
                   appearance="outline"
                   style="margin-top: -5px"
