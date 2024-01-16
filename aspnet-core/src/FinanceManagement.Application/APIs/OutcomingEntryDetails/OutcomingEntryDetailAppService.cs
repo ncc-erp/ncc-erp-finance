@@ -1,6 +1,7 @@
 ﻿using Abp.Authorization;
 using Abp.UI;
 using FinanceManagement.APIs.BankTransactions.Dto;
+using FinanceManagement.APIs.OutcomingEntries.Dto;
 using FinanceManagement.APIs.OutcomingEntryBankTransactions.Dto;
 using FinanceManagement.APIs.OutcomingEntryDetails.Dto;
 using FinanceManagement.Authorization;
@@ -76,6 +77,16 @@ namespace FinanceManagement.APIs.OutcomingEntryDetails
             await CurrentUnitOfWork.SaveChangesAsync();
 
             outcomingEntry.Value = outcomingEntry.OutcomingEntryDetails.Sum(x => x.Total);
+            return input;
+        }
+
+        [HttpPut]
+        [AbpAuthorize(PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_UpdateBranch)]
+        public async Task<UpdateRequestDetailBranchDto> UpdateBranch(UpdateRequestDetailBranchDto input)
+        {
+            var outcomingEntryDetail = await WorkScope.GetAsync<OutcomingEntryDetail>(input.RequestDetailId);
+            await WorkScope.UpdateAsync(ObjectMapper.Map(input, outcomingEntryDetail));
+            await CurrentUnitOfWork.SaveChangesAsync();
             return input;
         }
 
