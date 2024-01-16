@@ -567,7 +567,7 @@ export class MainTabComponent extends PagedListingComponentBase<any> implements 
     return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabGeneral_Clone);
   }
   isShowUpdateBranchBtn(){
-    return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcmingEntry_UpdateBranch);
+    return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_UpdateBranch);
   }
   isShowAddAndEditMyDiscussion(userId){
     return  this.isAllowAddMyDisuss() && userId == this.currentLogInUserId;

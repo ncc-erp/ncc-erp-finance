@@ -95,4 +95,8 @@ export class RequestDetailService extends BaseApiService {
     );
     return this.http.request(uploadReq);
   }
+  
+  public updateBranch(item: any): Observable<any> {
+    return this.http.put<any>(this.rootUrl + '/UpdateBranch', item);
+}
 }

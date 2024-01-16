@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BranchDto } from '@app/modules/branch/branch.component';
 import { BranchService } from '@app/service/api/branch.service';
 import { ExpenditureRequestService } from '@app/service/api/expenditure-request.service';
+import { RequestDetailService } from '@app/service/api/request-detail.service';
 
 @Component({
   selector: 'app-update-branch',
@@ -11,7 +12,7 @@ import { ExpenditureRequestService } from '@app/service/api/expenditure-request.
 })
 export class UpdateBranchComponent implements OnInit {
 
-  constructor(private service: ExpenditureRequestService,
+  constructor(private service: ExpenditureRequestService, private requestDetailService: RequestDetailService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<any>,
     private branchService: BranchService,
@@ -43,20 +44,38 @@ export class UpdateBranchComponent implements OnInit {
   }
 
   saveAndClose(){
-    let input = {
-      requestId :  this.data.requestId,
-      branchId :  this.branchId
-    } as UpdateBranchDto;
-    this.service.forceUpdateBranch(input).subscribe((rs)=>{
-      if(rs){
-        abp.notify.success("Update branch successful");
-        this.dialogRef.close(true);
-      }
-    },()=> this.dialogRef.close());
+    if (this.data.isRequestDetail == true){
+      let input = {
+        requestDetailId :  this.data.requestId,
+        branchId :  this.branchId
+      } as UpdateRequestDetailBranchDto;
+      this.requestDetailService.updateBranch(input).subscribe((rs)=>{
+        if(rs){
+          abp.notify.success("Update branch successful");
+          this.dialogRef.close(true);
+        }
+      },()=> this.dialogRef.close());
+    } else {
+      let input = {
+        requestId :  this.data.requestId,
+        branchId :  this.branchId
+      } as UpdateBranchDto;
+
+      this.service.forceUpdateBranch(input).subscribe((rs)=>{
+        if(rs){
+          abp.notify.success("Update branch successful");
+          this.dialogRef.close(true);
+        }
+      },()=> this.dialogRef.close());
+    }
+
   }
 }
 export class UpdateBranchDto{
   requestId: number;
   branchId: number;
 }
-
+export class UpdateRequestDetailBranchDto{
+  requestDetailId: number;
+  branchId: number;
+}
