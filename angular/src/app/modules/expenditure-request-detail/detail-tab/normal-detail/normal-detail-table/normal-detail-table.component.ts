@@ -29,6 +29,8 @@ import {
   GetOutcomingEntryDetailDto,
   RequestDetailDto,
 } from "../../detail-tab.component";
+import { UpdateBranchComponent } from '@app/modules/expenditure-request-detail/main-tab/update-branch/update-branch.component';
+import { log } from 'console';
 
 @Component({
   selector: "app-normal-detail-table",
@@ -257,6 +259,22 @@ export class NormalDetailTableComponent
       })
   }
 
+  onUpdateBranch(request){
+    var dia = this.dialog.open(UpdateBranchComponent, {
+      data: {
+        isRequestDetail: true,
+        requestId: request.id,
+        oldBranchId: request.branchId
+      },
+      width: "700px"
+    })
+    dia.afterClosed().subscribe((rs)=>{
+      if(rs){
+        this.refresh();
+      }
+    })
+  }
+
   isShowCreateBtn(){
     return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Create);
   }
@@ -269,6 +287,9 @@ export class NormalDetailTableComponent
   }
   isShowChangeStatusBtn(){
     return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_ActiveDeactive);
+  }
+  isShowUpdateBranchBtn(){
+    return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_UpdateBranch);
   }
 
 }

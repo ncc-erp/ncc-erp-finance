@@ -1000,7 +1000,7 @@ export class ExpenditureRequestComponent
 
   }
   isShowUpdateBranchBtn(){
-    return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcmingEntry_UpdateBranch);
+    return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_UpdateBranch);
   }
 }
 export class ExpenditureRequestDto {

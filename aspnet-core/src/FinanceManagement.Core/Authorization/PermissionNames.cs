@@ -252,6 +252,7 @@ namespace FinanceManagement.Authorization
         public const string Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_View = "Finance.OutcomingEntry.OutcomingEntryDetail.TabDetailInfo.View";
         public const string Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Create = "Finance.OutcomingEntry.OutcomingEntryDetail.TabDetailInfo.Create";
         public const string Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Edit = "Finance.OutcomingEntry.OutcomingEntryDetail.TabDetailInfo.Edit";
+        public const string Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_UpdateBranch = "Finance.OutcomingEntry.OutcomingEntryDetail.TabDetailInfo.UpdateBranch";
         public const string Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Delete = "Finance.OutcomingEntry.OutcomingEntryDetail.TabDetailInfo.Delete";
         public const string Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_ActiveDeactive = "Finance.OutcomingEntry.OutcomingEntryDetail.TabDetailInfo.ActiveDeactive";
 
@@ -586,6 +587,7 @@ namespace FinanceManagement.Authorization
                     PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_View,
                     PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Create,
                     PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Edit,
+                    PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_UpdateBranch,
                     PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Delete,
                     PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_ActiveDeactive,
 
@@ -1561,6 +1563,7 @@ namespace FinanceManagement.Authorization
                 new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Xem thông tin"},
                 new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Tạo mới"},
                 new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Chỉnh sửa"},
+                new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_UpdateBranch, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Chỉnh sửa chi nhánh"},
                 new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Xóa"},
                 new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_ActiveDeactive, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Đã trả/Chưa trả"},
                 
@@ -1961,6 +1964,7 @@ namespace FinanceManagement.Authorization
                                         new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Xem"},
                                         new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Create, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Tạo mới"},
                                         new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Chỉnh sửa"},
+                                        new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_UpdateBranch, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Chỉnh sửa chi nhánh"},
                                         new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Delete, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Xóa"},
                                         new SystemPermission{ Name = PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_ActiveDeactive, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant , DisplayName = "Thay đổi trạng thái Đã trả"},
                                         
