@@ -35,7 +35,7 @@
       </mat-form-field>
     </div>
     <div class="col-3 text-right">
-      <button *ngIf="isShowCreateBtn()" style="border: none" [disabled]="!isAllowed" (click)="addMore()"
+      <button *ngIf="isShowCreateBtn() && isStatusIsNotExecuted()" style="border: none" [disabled]="!isAllowed" (click)="addMore()"
         class="bg-blue ml-2 btn">
         <i class="fas fa-plus"></i>
         Add
@@ -220,13 +220,13 @@
               </td>
 
               <td class="text-center w-150 align-middle" *ngIf="!mode">
-                <button [disabled]="!isAllowed" *ngIf="isShowEditBtn()" class="btn btn-sm bg-secondary mr-1"
+                <button [disabled]="!isAllowed" *ngIf="isShowEditBtn() && isStatusIsNotExecuted()" class="btn btn-sm bg-secondary mr-1"
                   (click)="$event.stopPropagation(); editDetail(item)">
                   <i class="fas fa-pencil-alt"></i>
 
                   {{ "action.edit" | translate }}
                 </button>
-                <button *ngIf="isShowDeleteBtn()" class="btn btn-sm bg-danger ml-1"
+                <button *ngIf="isShowDeleteBtn() && isStatusIsNotExecuted()" class="btn btn-sm bg-danger ml-1"
                   (click)="deleteDetail(item); $event.stopPropagation()" #deleteBtn>
                   <i class="fas fa-trash"></i>
                   {{ "action.delete" | translate }}
