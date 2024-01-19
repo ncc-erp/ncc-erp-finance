@@ -275,6 +275,10 @@ export class NormalDetailTableComponent
     })
   }
 
+  isStatusIsNotExecuted(){
+    return this.expenditureRequest?.workflowStatusCode != "END";
+  }
+
   isShowCreateBtn(){
     return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Create);
   }
