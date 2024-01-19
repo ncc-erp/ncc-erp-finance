@@ -292,6 +292,10 @@ export class NormalDetailTableComponent
     return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_UpdateBranch);
   }
 
+  isStatusIsNotExecuted(){
+    return this.expenditureRequest?.workflowStatusCode != "END";
+  }
+
 }
 export class ResultGetOutcomingEntryDetailDto {
   paging: PagedResultDto;
