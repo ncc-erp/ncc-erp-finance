@@ -19,7 +19,7 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
   public tempOptions: ItemNode[] = [];
   public treeValue: IncomingEntryTypeOptions = new IncomingEntryTypeOptions();
   @Input() searchText: string = "";
-  @Input() undefinedValue: number = undefined;
+  @Input() undefinedValue: number[] = undefined;
   @Input() placeholderSearch: string = "";
   @Input() isDisable = false;
   @Input() isShowAll = true;
@@ -29,11 +29,11 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
   @Input() placeholder = "";
   @Input() space = 1;
   @ViewChild('input') input: ElementRef;
-  @Input() selected: number;
+  @Input() selected: number[] = [];
   @Input() removeIfNotIn = true;
   @Input() warnText = "Option của bạn không còn tồn tại trong list";
   @Input() filter = new TreeInOutTypeOption;
-  @Output() selectChange = new EventEmitter<number>();
+  @Output() selectChange = new EventEmitter<number[]>();
 
   constructor(
     injector: Injector,
@@ -49,12 +49,12 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
     this.common.GetTypeOptions(this.filter).subscribe(response => {
       this.treeValue = { item: { id: undefined, name: "", parentId: null }, children: [...response.result] };
       this.tempOptions = this.options = this.convertTreeToList(this.treeValue);
-      if(this.removeIfNotIn && this.selected != this.undefinedValue && !this.tempOptions.find(s => s.value == this.selected)) {
+      if(this.removeIfNotIn && this.selected.length > 0 && !this.tempOptions.some((option) => this.selected.includes(option.value))) {
         console.warn("selected", this.selected);
         console.warn("undefinedValue", this.undefinedValue);
         abp.notify.warn(this.warnText);
         this.selected = this.undefinedValue;
-        this.selectdChange();
+        this.selectedChange();
       }
       this.searchTextChange();
     })
@@ -76,7 +76,7 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
     if (!this.searchText) this.options = _.cloneDeep(this.tempOptions);
     this.filterItemNode(this.searchText);
   }
-  selectdChange(){
+  selectedChange(){
     this.selectChange.emit(this.selected);
   }
   filterItemNode(text = "") {

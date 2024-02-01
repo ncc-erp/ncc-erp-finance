@@ -56,9 +56,9 @@
                         </mat-form-field> -->
             <app-tree-in-out-type
               [filter]="treeInOutTypeOption"
-              [ngClass]="incomingEntryTypeId != -1 ? 'col-11' : 'col-12'"
-              [selected]="incomingEntryTypeId"
-              (selectChange)="incomingEntryTypeId = $event; onIncomeTypeFilter()"
+              [ngClass]="incomingEntryTypeIds.length > 0 ? 'col-11' : 'col-12'"
+              [selected]="incomingEntryTypeIds"
+              (selectChange)="incomingEntryTypeIds = $event; onListIncomeTypeFilter()"
               placeholderSearch="Search loại thu"
               [isRequired]="false"
               placeholder="Loại thu"
@@ -68,8 +68,8 @@
             </app-tree-in-out-type>
             <i
               class="fas fa-times fa-lg pointer"
-              *ngIf="incomingEntryTypeId != -1"
-              (click)="onCancelFilterOutcomeType()"
+              *ngIf="incomingEntryTypeIds.length > 0"
+              (click)="onCancelFilterListIncomeType()"
             ></i>
           </div>
           <div class="col-6">

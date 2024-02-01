@@ -13,11 +13,10 @@ namespace FinanceManagement.APIs.OutcomingEntries.Dto
         public double? Money { get; set; }
         public List<long> Requesters { get; set; }
         public List<long> Branchs { get; set; }
-        public long? OutComingEntryType { get; set; }
+        public List<long> OutComingEntryTypeIds { get; set; }
         public string OutComingStatusCode { get; set; }
         public string TempStatusCode { get; set; }
         public bool Accreditation { get; set; }
-        public long? OutcomingEntryTypeId { get; set; }
         public ExpenseType? ExpenseType { get; set; }
         public OutcomingEntryFilterDateTime FilterDateTimeParam { get; set; }
     }

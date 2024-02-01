@@ -109,7 +109,7 @@ export class RevenueRecordingComponent
   searchCurrency: number = OPTION_ALL;
   searchClient: string;
   selectedClient: number[];
-  incomingEntryTypeId: number = OPTION_ALL;
+  incomingEntryTypeIds: number[];
   searchIncoming: string = "";
   searchRevenueCounted: number = OPTION_ALL;
 
@@ -128,10 +128,7 @@ export class RevenueRecordingComponent
     request.id = this.searchId;
     request.money = this.searchMoney;
     request.clientAccountIds = this.selectedClient;
-
-    if (this.incomingEntryTypeId !== OPTION_ALL) {
-      request.incomingEntryTypeId = this.incomingEntryTypeId;
-    }
+    request.incomingEntryTypeIds = this.incomingEntryTypeIds;
 
     if (this.searchCurrency !== OPTION_ALL) {
       request.currencyId = this.searchCurrency;
@@ -312,7 +309,7 @@ export class RevenueRecordingComponent
     this.searchId = undefined;
     this.searchMoney = undefined;
     this.selectedClient = [];
-    this.incomingEntryTypeId = OPTION_ALL;
+    this.incomingEntryTypeIds = [];
     this.searchCurrency = OPTION_ALL;
     this.defaultDateFilterType = DateSelectorEnum.ALL;
     this.searchWithDateTime = {
@@ -339,14 +336,19 @@ export class RevenueRecordingComponent
     return buf;
   }
 
-  onCancelFilterOutcomeType() {
-    this.incomingEntryTypeId = OPTION_ALL
-    this.refresh()
-    this.setFilterToUrl('incomingEntryTypeId', OPTION_ALL)
+  onCancelFilterListIncomeType() {
+    this.incomingEntryTypeIds = [];
+    this.refresh();
+    this.setFilterToUrl('incomingEntryTypeIds', OPTION_ALL);
   }
 
-  onIncomeTypeFilter() {
-    this.onPageFilter('incomingEntryTypeId', this.incomingEntryTypeId)
+  onListIncomeTypeFilter() {
+    if (this.incomingEntryTypeIds.length === 0) {
+      this.onPageFilter('incomingEntryTypeIds', OPTION_ALL)
+    }
+    else {
+      this.onPageFilter('incomingEntryTypeIds', this.incomingEntryTypeIds)
+    }
   }
 
   onRevenueCountedFilter() {
@@ -383,7 +385,7 @@ export class RevenueRecordingComponent
   applyUrlFilters() {
     var querySnapshot = this.route.snapshot.queryParams
 
-    this.incomingEntryTypeId = querySnapshot['incomingEntryTypeId'] ? Utils.toNumber(querySnapshot['incomingEntryTypeId']) : OPTION_ALL;
+    this.incomingEntryTypeIds = querySnapshot['incomingEntryTypeIds'] ? JSON.parse(querySnapshot['incomingEntryTypeIds']) : [];
     this.searchRevenueCounted = querySnapshot['revenueCounted'] ? Utils.toNumber(querySnapshot['revenueCounted']) : OPTION_ALL;
     this.searchCurrency = querySnapshot['currencyId'] ? Utils.toNumber(querySnapshot['currencyId']) : OPTION_ALL;
     this.searchMoney = querySnapshot['money'] ? Utils.toNumber(querySnapshot['money']) : null;
@@ -401,7 +403,7 @@ export class RevenueRecordingComponent
 
   async onResetFilter() {
 
-    this.incomingEntryTypeId = OPTION_ALL
+    this.incomingEntryTypeIds = []
     this.searchRevenueCounted = OPTION_ALL
     this.searchCurrency = OPTION_ALL
     this.selectedClient = []
@@ -410,7 +412,7 @@ export class RevenueRecordingComponent
     } as DateTimeSelector;
 
     this.defaultDateFilterType = DateSelectorEnum.ALL;
-    await this.resetQueryParams(['incomingEntryTypeId', 'revenueCounted', 'currencyId', 'money', 'searchId', 'clientIds', 'dateFilter'])
+    await this.resetQueryParams(['incomingEntryTypeIds', 'revenueCounted', 'currencyId', 'money', 'searchId', 'clientIds', 'dateFilter'])
   }
 
   isShowDetail(){
@@ -471,7 +473,7 @@ export class GetAllPagingInComingEntry extends PagedRequestDto {
   id: number;
   clientAccountIds: number[];
   money: number;
-  incomingEntryTypeId: number;
+  incomingEntryTypeIds: number[];
   currencyId: number;
   filterDateTimeParam: {
     dateTimeType: number;

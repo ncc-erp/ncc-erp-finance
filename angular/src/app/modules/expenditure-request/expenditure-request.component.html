@@ -108,20 +108,20 @@
             </mat-form-field> -->
             <app-tree-in-out-type
               [filter]="treeInOutTypeOption"
-              [ngClass]="outcomingEntryTypeId != -1 ? 'col-11' : 'col-12'"
-              [selected]="outcomingEntryTypeId"
-              (selectChange)="outcomingEntryTypeId = $event;onFillterOutcomeType()"
+              [ngClass]="outcomingEntryTypeIds.length > 0 ? 'col-11' : 'col-12'"
+              [selected]="outcomingEntryTypeIds"
+              (selectChange)="outcomingEntryTypeIds = $event;onFilterListOutcomeType()"
               placeholderSearch="Search loại chi"
               [isRequired]="false"
               placeholder="Loại chi"
-              undefinedValue="-1"
+              [undefinedValue]="[]"
               label="Loại chi"
             >
             </app-tree-in-out-type>
             <i
               class="fas fa-times fa-lg pointer"
-              *ngIf="outcomingEntryTypeId != -1"
-              (click)="onCancelFilterOutcomeType()"
+              *ngIf="outcomingEntryTypeIds.length > 0"
+              (click)="onCancelFilterListOutcomeType()"
             ></i>
           </div>
           <div class="col-2">

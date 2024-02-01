@@ -222,7 +222,7 @@ namespace FinanceManagement.APIs.OutcomingEntries
         {
             var response = new ResultGetOutcomingEntryDto();
 
-            var query = BuildOutcomingQuery(input).FiltersByIncomingEntryGridParam(input);
+            var query = BuildOutcomingQuery(input).FiltersByOutcomingEntryGridParam(input);
             var resultPaging = await query.GetGridResult(query, input);
 
             var outcomingEntryIds = resultPaging.Items.Select(s => s.Id);
@@ -302,7 +302,8 @@ namespace FinanceManagement.APIs.OutcomingEntries
                             .ToList();
             var permission = WorkScope.GetAll<WorkflowStatusTransitionPermission>().Where(x => roledIds.Contains(x.RoleId));
 
-            var action = from wst in WorkScope.GetAll<WorkflowStatusTransition>().Where(x => permission.Select(t => t.TransitionId).Contains(x.Id))
+            var action = from wst in WorkScope.GetAll<WorkflowStatusTransition>()
+                         .Where(x => permission.Select(t => t.TransitionId).Contains(x.Id))
                          select new ActionDto
                          {
                              StatusTransitionId = wst.Id,
@@ -367,12 +368,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
 
             query = FilterOutComingStatusCode(query, input.OutComingStatusCode);
 
-            if (input.OutComingEntryType.HasValue)
-            {
-                var outcomingEntryTypeIds = _commonManager.GetAllNodeAndLeafEntryTypeIdByParentId<OutcomingEntryType>(new List<long> { input.OutComingEntryType.Value }, false);
-                query = query.Where(x => outcomingEntryTypeIds.Contains(x.OutcomingEntryTypeId));
-            }
-
             if (input.TempStatusCode.HasValue())
             {
                 var outComingsHasTemp = GetOutComingHasTemp(input.TempStatusCode);
@@ -418,7 +413,7 @@ namespace FinanceManagement.APIs.OutcomingEntries
         [AbpAuthorize(PermissionNames.Finance_OutcomingEntry_View, PermissionNames.Finance_OutcomingEntry_ViewOnlyMe)]
         public async Task<List<GetTotalValueOutComingEntryDto>> GetTotalValueOutcomingEntry(GetAllPagingOutComingEntryDto input)
         {
-            var query = BuildOutcomingQuery(input).FiltersByIncomingEntryGridParam(input);
+            var query = BuildOutcomingQuery(input).FiltersByOutcomingEntryGridParam(input);
             var outcomings = await query.FilterByGridParam(input);
 
             var currencyDefault = await GetCurrencyDefaultAsync();
@@ -971,7 +966,7 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 using (var wb = new XLWorkbook())
                 {
                     var incomeWS = wb.Worksheets.Add("Outcome");
-                    var qOutcomings = BuildOutcomingQuery(input).FiltersByIncomingEntryGridParam(input);
+                    var qOutcomings = BuildOutcomingQuery(input).FiltersByOutcomingEntryGridParam(input);
                     var outcomingEntries = await qOutcomings.FilterByGridParam(input);
                     var totalOutcoming = await GetTotalCurrencies(qOutcomings, input);
                     int currentRow = 0;

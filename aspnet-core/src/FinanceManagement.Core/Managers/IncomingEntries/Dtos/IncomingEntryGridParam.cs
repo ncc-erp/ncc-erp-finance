@@ -11,7 +11,7 @@ namespace FinanceManagement.Managers.IncomingEntries.Dtos
         public long? Id { get; set; }
         public List<long> ClientAccountIds { get; set; }
         public double? Money { get; set; }
-        public long? IncomingEntryTypeId { get; set; }
+        public List<long> IncomingEntryTypeIds { get; set; }
         public long? CurrencyId { get; set; }
         public bool? RevenueCounted { get; set; }
         public IncomingEntryFilterDateTime FilterDateTimeParam { get; set; }

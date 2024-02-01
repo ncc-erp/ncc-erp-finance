@@ -1,4 +1,5 @@
-﻿using Abp.Linq.Extensions;
+﻿using Abp.Collections.Extensions;
+using Abp.Linq.Extensions;
 using FinanceManagement.APIs.IncomingEntries.Dto;
 using FinanceManagement.Extension;
 using FinanceManagement.Managers.IncomingEntries.Dtos;
@@ -29,7 +30,7 @@ namespace FinanceManagement.APIs.IncomingEntries
         }
         public static IQueryable<IncomingEntryDto> FiltersByIncomingEntryType(this IQueryable<IncomingEntryDto> query, IncomingEntryGridParam gridParam)
         {
-            return query.WhereIf(gridParam.IncomingEntryTypeId.HasValue, s => s.IncomingEntryTypeId == gridParam.IncomingEntryTypeId.Value);
+            return query.WhereIf(!gridParam.IncomingEntryTypeIds.IsNullOrEmpty(), s => gridParam.IncomingEntryTypeIds.Contains(s.IncomingEntryTypeId));
         }
         public static IQueryable<IncomingEntryDto> FiltersById(this IQueryable<IncomingEntryDto> query, IncomingEntryGridParam gridParam)
         {
