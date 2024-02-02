@@ -9,9 +9,9 @@
           {{ label }}
         </mat-label>
         <mat-select
+          panelClass="custom-panel"
           [(ngModel)]="selected"
           name="selection_tree"
-          (ngModelChange)="selectedChange();"
           [required]="isRequired"
           [disabled]="isDisable"
           [placeholder]="placeholder"
@@ -55,16 +55,15 @@
             <ng-container *ngFor="let option of options">
               <mat-option
                 *ngIf="option.value"
-                [disabled]="option.hasChildren && isDisableParent"
                 [value]="option.value"
                 [hidden]="option.hidden"
                 [matTooltip]="option.name"
+                (click)="onSelectNode(option)"
+                [style.margin-left]="getMarginLeft(option.level)"
               >
-                <span
-                  [style]="'padding-left: ' + option.level * space + 'rem;'"
-                >
+              <span [style.font-weight]="option.hasChildren ? 'bold' : 'normal'">
                   {{ option.name }}
-                </span>
+              </span>
                 <span *ngIf="!option.isActive"> - inActive</span>
               </mat-option>
             </ng-container>

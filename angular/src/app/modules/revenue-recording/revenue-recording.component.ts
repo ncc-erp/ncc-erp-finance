@@ -31,7 +31,7 @@ import { ActivatedRoute, Params } from "@angular/router";
 import { AppConsts, OPTION_ALL } from "@shared/AppConsts";
 import { IOption } from "@shared/components/custome-select/custome-select.component";
 import { Utils } from "@app/service/helpers/utils";
-import { TreeInOutTypeOption } from '@shared/components/tree-in-out-type/tree-in-out-type.component';
+import { TreeInOutTypeComponent, TreeInOutTypeOption } from '@shared/components/tree-in-out-type/tree-in-out-type.component';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpParams } from '@angular/common/http';
 
@@ -59,6 +59,7 @@ export class RevenueRecordingComponent
 
   @ViewChild("inputSearchClient") inputSearchClient: ElementRef;
   @ViewChild("inputSearchIncoming") inputSearchIncoming: ElementRef;
+  @ViewChild('treeInOutType') treeInOutType: TreeInOutTypeComponent;
 
   public readonly FILTER_CONFIG: InputFilterDto[] = [
     {
@@ -340,6 +341,7 @@ export class RevenueRecordingComponent
     this.incomingEntryTypeIds = [];
     this.refresh();
     this.setFilterToUrl('incomingEntryTypeIds', OPTION_ALL);
+    this.treeInOutType.onClearSelected();
   }
 
   onListIncomeTypeFilter() {

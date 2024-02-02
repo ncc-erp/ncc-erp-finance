@@ -38,7 +38,7 @@ import { forEach } from "lodash-es";
 import { CloneRequestComponent } from "./clone-request/clone-request.component";
 import { Utils } from "@app/service/helpers/utils";
 import { UpdateBranchComponent } from "../expenditure-request-detail/main-tab/update-branch/update-branch.component";
-import { TreeInOutTypeOption } from "@shared/components/tree-in-out-type/tree-in-out-type.component";
+import { TreeInOutTypeComponent, TreeInOutTypeOption } from "@shared/components/tree-in-out-type/tree-in-out-type.component";
 import { TranslateService } from "@ngx-translate/core";
 import { HttpParams } from "@angular/common/http";
 
@@ -53,6 +53,7 @@ export class ExpenditureRequestComponent
   implements OnInit {
   @ViewChildren(MatMenuTrigger) trigger: any;
   @ViewChild("inputSearchOutcoming") inputSearchOutcoming: ElementRef;
+  @ViewChild('treeInOutType') treeInOutType: TreeInOutTypeComponent;
 
   Finance_OutcomingEntry_Create =
     PERMISSIONS_CONSTANT.Finance_OutcomingEntry_Create;
@@ -827,6 +828,7 @@ export class ExpenditureRequestComponent
     this.outcomingEntryTypeIds = []
     this.refresh()
     this.setFilterToUrl('outcomingEntryTypeIds', OPTION_ALL)
+    this.treeInOutType.onClearSelected();
   }
 
   onEditOutcomingType(data: OutcomingEntryDto) {

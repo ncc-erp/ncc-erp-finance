@@ -107,6 +107,7 @@
               </mat-select>
             </mat-form-field> -->
             <app-tree-in-out-type
+              #treeInOutType
               [filter]="treeInOutTypeOption"
               [ngClass]="outcomingEntryTypeIds.length > 0 ? 'col-11' : 'col-12'"
               [selected]="outcomingEntryTypeIds"

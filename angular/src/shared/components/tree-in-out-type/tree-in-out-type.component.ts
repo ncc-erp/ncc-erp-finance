@@ -1,4 +1,5 @@
-import { Component, ElementRef, EventEmitter, Injector, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Injector, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
+import { MatSelectChange } from '@angular/material/select';
 import { TreeOutcomingEntries } from '@app/modules/expenditure-request/expenditure-request.component';
 import { OptionIncomingEntryTypeDto } from '@app/modules/new-versions/b-transaction/currency-exchange/currency-exchange.component';
 import { IncomingEntryTypeOptions, OptionItem } from '@app/modules/new-versions/b-transaction/link-revenue-ecognition-dialog/link-revenue-ecognition-dialog.component';
@@ -18,6 +19,7 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
   public options: ItemNode[] = [];
   public tempOptions: ItemNode[] = [];
   public treeValue: IncomingEntryTypeOptions = new IncomingEntryTypeOptions();
+  public prevSelected: number[] = [];
   @Input() searchText: string = "";
   @Input() undefinedValue: number[] = undefined;
   @Input() placeholderSearch: string = "";
@@ -76,9 +78,45 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
     if (!this.searchText) this.options = _.cloneDeep(this.tempOptions);
     this.filterItemNode(this.searchText);
   }
-  selectedChange(){
+  selectedChange() {
+    this.prevSelected = this.selected;
     this.selectChange.emit(this.selected);
   }
+
+  onClearSelected() {
+    this.prevSelected = [];
+  }
+
+  onSelectNode(nodeSelected: ItemNode) {
+    const selectedIds = new Set(this.prevSelected); // The current set of selected item values
+    const toBeToggled = new Set<number>(); // Set to keep track of items to be toggled
+
+    // Function to recursively add all children of a node (including itself) to the toggle set
+    const addNodeAndChildren = (node: ItemNode) => {
+      if (!toBeToggled.has(node.value)) { // Check if the node has already been added
+        toBeToggled.add(node.value); // Add the node itself to the toggle set
+        this.tempOptions.forEach(child => {
+          if (child.pathId.includes(`|${node.value}|`)) {
+            addNodeAndChildren(child); // Recursively add children of the node
+          }
+        });
+      }
+    };
+
+    addNodeAndChildren(nodeSelected); // Add the option and its children (including itself) to the toggle set
+    
+    toBeToggled.forEach(value => {
+      if (this.prevSelected.includes(nodeSelected.value)) {
+        if (selectedIds.has(value))
+          selectedIds.delete(value); // If node is Selected, deselect
+      } else {
+        selectedIds.add(value); // If node is not Selected, select
+      }
+    });
+    this.selected = Array.from(selectedIds);
+    this.selectedChange();
+  }
+
   filterItemNode(text = "") {
     text = text.toLowerCase();
 
@@ -92,7 +130,9 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
       return s;
     });
   }
-
+  getMarginLeft(optionLevel: number): string {
+    return `${1 + optionLevel * this.space}rem`;
+  }
 
 }
 export class TreeInOutTypeOption {

@@ -2,6 +2,10 @@
     padding: .5em 0;
 }
 .options{
-    max-height: 20vh;
+    max-height: 60vh;
     overflow: auto;
+}
+::ng-deep .custom-panel {
+    min-width: 60vh !important;
+    max-height: 80vh !important; 
 }
