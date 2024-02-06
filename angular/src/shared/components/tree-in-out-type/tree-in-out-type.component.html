@@ -18,6 +18,7 @@
           #selection="ngModel"
           (openedChange)="selectedOpenedChange($event)"
           multiple
+          #matSelect
         >
           <div class="search-input">
             <mat-form-field class="w-100 px-3">
@@ -34,14 +35,26 @@
               />
             </mat-form-field>
           </div>
-          <div class="check-box-show-all" *ngIf="isShowAll">
-            <mat-checkbox
-              class="px-3"
-              [(ngModel)]="filter.isShowAll"
-              (ngModelChange)="getData()"
-            >
-              Show All
-            </mat-checkbox>
+          <div class="action-select-all-delete">
+            <div class="d-flex">
+              <button *ngIf="isShowAll && !filter.isShowAll" class="btn btn-link mr-10" (click)="showAllToggle()">
+                Show inActive option
+              </button>
+              <button *ngIf="isShowAll && filter.isShowAll" class="btn btn-link mr-10" (click)="showAllToggle()">
+                Hide inActive option
+              </button>
+              <button class="btn btn-default" (click)="handleClear()">
+                Clear
+              </button>
+            </div>
+            <div class="d-flex">
+              <button class="btn btn-default mr-10" (click)="onCancelSelect()">
+                Cancel
+              </button>
+              <button class="btn btn-primary" (click)="onSubmitSelect()">
+                Ok
+              </button>
+            </div>
           </div>
           <div class="options">
             <mat-option

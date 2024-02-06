@@ -6,6 +6,19 @@
     overflow: auto;
 }
 ::ng-deep .custom-panel {
-    min-width: 60vh !important;
+    min-width: 500px !important;
     max-height: 80vh !important; 
+}
+.action-select-all-delete {
+    display: flex;
+    padding: 10px 16px;
+    margin-top: -20px;
+    cursor: pointer;
+    justify-content: space-between;
+}
+.action-select-all-delete .btn {
+    height: 40px;
+}
+.mr-10{
+    margin-right: 10px;
 }

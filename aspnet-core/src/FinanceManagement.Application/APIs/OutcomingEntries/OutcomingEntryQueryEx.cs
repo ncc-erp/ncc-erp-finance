@@ -43,7 +43,9 @@ namespace FinanceManagement.APIs.OutcomingEntries
 
         public static IQueryable<GetOutcomingEntryDto> FiltersByOutcomingEntryType(this IQueryable<GetOutcomingEntryDto> query, GetAllPagingOutComingEntryDto gridParam)
         {
-            return query.WhereIf(!gridParam.OutComingEntryTypeIds.IsNullOrEmpty(), s => gridParam.OutComingEntryTypeIds.Contains(s.OutcomingEntryTypeId));
+            if (gridParam.OutComingEntryTypeIds == null || gridParam.OutComingEntryTypeIds.IsNullOrEmpty()) return query;
+            if (gridParam.OutComingEntryTypeIds.Count == 1) return query.Where(s => gridParam.OutComingEntryTypeIds[0] == s.OutcomingEntryTypeId);
+            return query.Where(s => gridParam.OutComingEntryTypeIds.Contains(s.OutcomingEntryTypeId));
         }
     }
 }

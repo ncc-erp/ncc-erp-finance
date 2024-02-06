@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Injector, Input, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
-import { MatSelectChange } from '@angular/material/select';
+import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { TreeOutcomingEntries } from '@app/modules/expenditure-request/expenditure-request.component';
 import { OptionIncomingEntryTypeDto } from '@app/modules/new-versions/b-transaction/currency-exchange/currency-exchange.component';
 import { IncomingEntryTypeOptions, OptionItem } from '@app/modules/new-versions/b-transaction/link-revenue-ecognition-dialog/link-revenue-ecognition-dialog.component';
@@ -31,6 +31,7 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
   @Input() placeholder = "";
   @Input() space = 1;
   @ViewChild('input') input: ElementRef;
+  @ViewChild("matSelect") matSelect: MatSelect;
   @Input() selected: number[] = [];
   @Input() removeIfNotIn = true;
   @Input() warnText = "Option của bạn không còn tồn tại trong list";
@@ -47,6 +48,12 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
   ngOnInit(): void {
     this.getData();
   }
+
+  showAllToggle(){
+    this.filter.isShowAll = !this.filter.isShowAll;
+    this.getData();
+  }
+
   getData() {
     this.common.GetTypeOptions(this.filter).subscribe(response => {
       this.treeValue = { item: { id: undefined, name: "", parentId: null }, children: [...response.result] };
@@ -79,6 +86,7 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
     this.filterItemNode(this.searchText);
   }
   selectedChange() {
+    this.searchText = "";
     this.prevSelected = this.selected;
     this.selectChange.emit(this.selected);
   }
@@ -114,7 +122,6 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
       }
     });
     this.selected = Array.from(selectedIds);
-    this.selectedChange();
   }
 
   filterItemNode(text = "") {
@@ -130,8 +137,25 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
       return s;
     });
   }
+
   getMarginLeft(optionLevel: number): string {
-    return `${1 + optionLevel * this.space}rem`;
+    return `${optionLevel * this.space}rem`;
+  }
+
+  handleClear() {
+    this.selected = [];
+  }
+
+  onCancelSelect() {
+    this.selected = this.prevSelected;
+    this.matSelect.close();
+    this.selectedChange();
+  }
+
+  onSubmitSelect() {
+    this.prevSelected = this.selected;
+    this.matSelect.close();
+    this.selectedChange();
   }
 
 }

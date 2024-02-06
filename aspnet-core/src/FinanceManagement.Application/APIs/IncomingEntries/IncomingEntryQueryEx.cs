@@ -30,7 +30,9 @@ namespace FinanceManagement.APIs.IncomingEntries
         }
         public static IQueryable<IncomingEntryDto> FiltersByIncomingEntryType(this IQueryable<IncomingEntryDto> query, IncomingEntryGridParam gridParam)
         {
-            return query.WhereIf(!gridParam.IncomingEntryTypeIds.IsNullOrEmpty(), s => gridParam.IncomingEntryTypeIds.Contains(s.IncomingEntryTypeId));
+            if (gridParam.IncomingEntryTypeIds == null || gridParam.IncomingEntryTypeIds.IsNullOrEmpty()) return query;
+            if (gridParam.IncomingEntryTypeIds.Count == 1) return query.Where(s => gridParam.IncomingEntryTypeIds[0] == s.IncomingEntryTypeId);
+            return query.Where(s => gridParam.IncomingEntryTypeIds.Contains(s.IncomingEntryTypeId));
         }
         public static IQueryable<IncomingEntryDto> FiltersById(this IQueryable<IncomingEntryDto> query, IncomingEntryGridParam gridParam)
         {
