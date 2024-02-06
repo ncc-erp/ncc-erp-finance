@@ -38,10 +38,10 @@
           <div class="action-select-all-delete">
             <div class="d-flex">
               <button *ngIf="isShowAll && !filter.isShowAll" class="btn btn-link mr-10" (click)="showAllToggle()">
-                Show inActive option
+                Show Inactive option
               </button>
               <button *ngIf="isShowAll && filter.isShowAll" class="btn btn-link mr-10" (click)="showAllToggle()">
-                Hide inActive option
+                Hide Inactive option
               </button>
               <button class="btn btn-default" (click)="handleClear()">
                 Clear
@@ -74,10 +74,12 @@
                 (click)="onSelectNode(option)"
                 [style.margin-left]="getMarginLeft(option.level)"
               >
-              <span [style.font-weight]="option.hasChildren ? 'bold' : 'normal'">
-                  {{ option.name }}
-              </span>
-                <span *ngIf="!option.isActive"> - inActive</span>
+                <div class="mat-option-text">
+                  <span class="data-name" [style.font-weight]="option.hasChildren ? 'bold' : 'normal'">
+                    {{ truncateNameOnMatOption(option.name, 45) }} </span>
+                  <span *ngIf="!option.isActive" class="data-type-label"> 
+                    Inactive</span>
+                </div>
               </mat-option>
             </ng-container>
           </div>

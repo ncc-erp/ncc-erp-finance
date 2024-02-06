@@ -166,6 +166,14 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
     this.selectedChange();
   }
 
+  truncateNameOnMatOption(text, maxLength) {
+    if (text.length > maxLength) {
+      return text.substring(0, maxLength - 3) + "...";
+    } else {
+      return text;
+    }
+  }
+
 }
 export class TreeInOutTypeOption {
   type: TypeFilterTypeOptions;
