@@ -19,7 +19,8 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
   public options: ItemNode[] = [];
   public tempOptions: ItemNode[] = [];
   public treeValue: IncomingEntryTypeOptions = new IncomingEntryTypeOptions();
-  public prevSelected: number[] = [];
+  public prevSelected: number[] = []; // Use for multi-select logic
+  public tempSelected: number[] = []; // Use for save value before submit
   @Input() searchText: string = "";
   @Input() undefinedValue: number[] = undefined;
   @Input() placeholderSearch: string = "";
@@ -47,6 +48,8 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
 
   ngOnInit(): void {
     this.getData();
+    this.tempSelected = this.selected;
+    this.prevSelected = this.selected;
   }
 
   showAllToggle(){
@@ -63,6 +66,8 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
         console.warn("undefinedValue", this.undefinedValue);
         abp.notify.warn(this.warnText);
         this.selected = this.undefinedValue;
+        this.tempSelected = this.undefinedValue;
+        this.prevSelected = this.undefinedValue;
         this.selectedChange();
       }
       this.searchTextChange();
@@ -87,11 +92,11 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
   }
   selectedChange() {
     this.searchText = "";
-    this.prevSelected = this.selected;
     this.selectChange.emit(this.selected);
   }
 
   onClearSelected() {
+    this.tempSelected = [];
     this.prevSelected = [];
   }
 
@@ -122,6 +127,7 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
       }
     });
     this.selected = Array.from(selectedIds);
+    this.prevSelected = this.selected;
   }
 
   filterItemNode(text = "") {
@@ -144,16 +150,18 @@ export class TreeInOutTypeComponent extends AppComponentBase implements OnInit {
 
   handleClear() {
     this.selected = [];
+    this.prevSelected = [];
   }
 
   onCancelSelect() {
-    this.selected = this.prevSelected;
+    this.selected = this.tempSelected;
+    this.prevSelected = this.tempSelected;
     this.matSelect.close();
     this.selectedChange();
   }
 
   onSubmitSelect() {
-    this.prevSelected = this.selected;
+    this.tempSelected = this.selected;
     this.matSelect.close();
     this.selectedChange();
   }
