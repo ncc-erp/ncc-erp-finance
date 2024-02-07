@@ -9,14 +9,16 @@
           {{ label }}
         </mat-label>
         <mat-select
+          panelClass="custom-panel"
           [(ngModel)]="selected"
           name="selection_tree"
-          (ngModelChange)="selectdChange();"
           [required]="isRequired"
           [disabled]="isDisable"
           [placeholder]="placeholder"
           #selection="ngModel"
           (openedChange)="selectedOpenedChange($event)"
+          multiple
+          #matSelect
         >
           <div class="search-input">
             <mat-form-field class="w-100 px-3">
@@ -33,14 +35,26 @@
               />
             </mat-form-field>
           </div>
-          <div class="check-box-show-all" *ngIf="isShowAll">
-            <mat-checkbox
-              class="px-3"
-              [(ngModel)]="filter.isShowAll"
-              (ngModelChange)="getData()"
-            >
-              Show All
-            </mat-checkbox>
+          <div class="action-select-all-delete">
+            <div class="d-flex">
+              <button *ngIf="isShowAll && !filter.isShowAll" class="btn btn-link mr-10" (click)="showAllToggle()">
+                Show Inactive option
+              </button>
+              <button *ngIf="isShowAll && filter.isShowAll" class="btn btn-link mr-10" (click)="showAllToggle()">
+                Hide Inactive option
+              </button>
+              <button class="btn btn-default" (click)="handleClear()">
+                Clear
+              </button>
+            </div>
+            <div class="d-flex">
+              <button class="btn btn-default mr-10" (click)="onCancelSelect()">
+                Cancel
+              </button>
+              <button class="btn btn-primary" (click)="onSubmitSelect()">
+                Ok
+              </button>
+            </div>
           </div>
           <div class="options">
             <mat-option
@@ -54,17 +68,18 @@
             <ng-container *ngFor="let option of options">
               <mat-option
                 *ngIf="option.value"
-                [disabled]="option.hasChildren && isDisableParent"
                 [value]="option.value"
                 [hidden]="option.hidden"
                 [matTooltip]="option.name"
+                (click)="onSelectNode(option)"
+                [style.margin-left]="getMarginLeft(option.level)"
               >
-                <span
-                  [style]="'padding-left: ' + option.level * space + 'rem;'"
-                >
-                  {{ option.name }}
-                </span>
-                <span *ngIf="!option.isActive"> - inActive</span>
+                <div class="mat-option-text">
+                  <span class="data-name" [style.font-weight]="option.hasChildren ? 'bold' : 'normal'">
+                    {{ truncateNameOnMatOption(option.name, 45) }} </span>
+                  <span *ngIf="!option.isActive" class="data-type-label"> 
+                    Inactive</span>
+                </div>
               </mat-option>
             </ng-container>
           </div>
