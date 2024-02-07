@@ -38,7 +38,7 @@ import { forEach } from "lodash-es";
 import { CloneRequestComponent } from "./clone-request/clone-request.component";
 import { Utils } from "@app/service/helpers/utils";
 import { UpdateBranchComponent } from "../expenditure-request-detail/main-tab/update-branch/update-branch.component";
-import { TreeInOutTypeOption } from "@shared/components/tree-in-out-type/tree-in-out-type.component";
+import { TreeInOutTypeComponent, TreeInOutTypeOption } from "@shared/components/tree-in-out-type/tree-in-out-type.component";
 import { TranslateService } from "@ngx-translate/core";
 import { HttpParams } from "@angular/common/http";
 
@@ -53,6 +53,7 @@ export class ExpenditureRequestComponent
   implements OnInit {
   @ViewChildren(MatMenuTrigger) trigger: any;
   @ViewChild("inputSearchOutcoming") inputSearchOutcoming: ElementRef;
+  @ViewChild('treeInOutType') treeInOutType: TreeInOutTypeComponent;
 
   Finance_OutcomingEntry_Create =
     PERMISSIONS_CONSTANT.Finance_OutcomingEntry_Create;
@@ -192,7 +193,7 @@ export class ExpenditureRequestComponent
   TABLE_NAME: "outcomeFilter";
   treeOutcomingEntries: TreeOutcomingEntries[] = [];
   tmpTreeOutcomingEntries: TreeOutcomingEntries[] = [];
-  outcomingEntryTypeId: number = OPTION_ALL
+  outcomingEntryTypeIds: number[];
   searchOutcoming: string = ""
   expenseType: number = OPTION_ALL
   selectedCurrencyId?: number = OPTION_ALL;
@@ -221,9 +222,7 @@ export class ExpenditureRequestComponent
     request.branchs = this.selectedBranch;
     request.requesters = this.selectedRequester;
     request.id = this.searchId;
-    if (this.outcomingEntryTypeId != OPTION_ALL) {
-      request.outComingEntryType = this.outcomingEntryTypeId
-    }
+    request.outComingEntryTypeIds = this.outcomingEntryTypeIds
 
     if (this.expenseType != OPTION_ALL) {
       request.expenseType = this.expenseType
@@ -825,10 +824,11 @@ export class ExpenditureRequestComponent
     this.treeOutcomingEntries = this.tmpTreeOutcomingEntries;
   }
 
-  onCancelFilterOutcomeType() {
-    this.outcomingEntryTypeId = OPTION_ALL
+  onCancelFilterListOutcomeType() {
+    this.outcomingEntryTypeIds = []
     this.refresh()
-    this.setFilterToUrl('outcomingEntryTypeId', this.outcomingEntryTypeId)
+    this.setFilterToUrl('outcomingEntryTypeIds', OPTION_ALL)
+    this.treeInOutType.onClearSelected();
   }
 
   onEditOutcomingType(data: OutcomingEntryDto) {
@@ -860,8 +860,13 @@ export class ExpenditureRequestComponent
     this.onPageFilter('currencyId', this.selectedCurrencyId)
   }
 
-  onFillterOutcomeType() {
-    this.onPageFilter('outcomingEntryTypeId', this.outcomingEntryTypeId)
+  onFilterListOutcomeType() {
+    if (this.outcomingEntryTypeIds.length === 0) {
+      this.onPageFilter('outcomingEntryTypeIds', OPTION_ALL)
+    }
+    else {
+      this.onPageFilter('outcomingEntryTypeIds', this.outcomingEntryTypeIds)
+    }
   }
 
   onFilterExpenseType() {
@@ -922,7 +927,7 @@ export class ExpenditureRequestComponent
     var querySnapshot = this.route.snapshot.queryParams
 
     this.selectedCurrencyId = querySnapshot['currencyId'] ? Utils.toNumber(querySnapshot['currencyId']) : OPTION_ALL;
-    this.outcomingEntryTypeId = querySnapshot['outcomingEntryTypeId'] ? Utils.toNumber(querySnapshot['outcomingEntryTypeId']) : OPTION_ALL;
+    this.outcomingEntryTypeIds = querySnapshot['outcomingEntryTypeIds'] ? JSON.parse(querySnapshot['outcomingEntryTypeIds']) : [];
     this.expenseType = querySnapshot['expenseType'] ? Utils.toNumber(querySnapshot['expenseType']) : OPTION_ALL;
     this.searchId = querySnapshot['searchId'] ? Utils.toNumber(querySnapshot['searchId']) : null;
     this.searchMoney = querySnapshot['money'] ? Utils.toNumber(querySnapshot['money']) : null;
@@ -949,7 +954,7 @@ export class ExpenditureRequestComponent
 
   async onResetFilter() {
     this.selectedCurrencyId = OPTION_ALL
-    this.outcomingEntryTypeId = OPTION_ALL
+    this.outcomingEntryTypeIds = []
     this.expenseType = OPTION_ALL
     this.selectedStatus = ""
     this.selectedStatusYCTD = ""
@@ -962,7 +967,7 @@ export class ExpenditureRequestComponent
     } as DateTimeSelector;
 
     this.defaultDateFilterType = DateSelectorEnum.ALL;
-    this.resetQueryParams(['currencyId', 'outcomingEntryTypeId', 'expenseType', 'searchId', 'money', 'status', 'statusRequestChange', 'accreditation', 'branchs', 'requesters', 'dateFilter'])
+    this.resetQueryParams(['currencyId', 'outcomingEntryTypeIds', 'expenseType', 'searchId', 'money', 'status', 'statusRequestChange', 'accreditation', 'branchs', 'requesters', 'dateFilter'])
   }
   onUpdateBranch(request){
     var dia = this.dialog.open(UpdateBranchComponent, {
@@ -1122,7 +1127,7 @@ export class GetAllPagingOutComingEntryDto extends PagedRequestDto {
   money: number;
   requesters: number[];
   branchs: number[];
-  outComingEntryType: number;
+  outComingEntryTypeIds: number[];
   tempStatusCode: string;
   outComingStatusCode: string;
   accreditation: boolean;
