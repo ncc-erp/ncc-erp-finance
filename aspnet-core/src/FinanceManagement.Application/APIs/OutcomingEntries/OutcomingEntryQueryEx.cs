@@ -1,4 +1,5 @@
 ﻿
+using Abp.Collections.Extensions;
 using Abp.Linq.Extensions;
 using FinanceManagement.APIs.OutcomingEntries.Dto;
 using FinanceManagement.Managers.TempOutcomingEntries.Dtos;
@@ -11,9 +12,10 @@ namespace FinanceManagement.APIs.OutcomingEntries
 {
     public static class OutcomingEntryQueryEx
     {
-        public static IQueryable<GetOutcomingEntryDto> FiltersByIncomingEntryGridParam(this IQueryable<GetOutcomingEntryDto> query, GetAllPagingOutComingEntryDto gridParam)
+        public static IQueryable<GetOutcomingEntryDto> FiltersByOutcomingEntryGridParam(this IQueryable<GetOutcomingEntryDto> query, GetAllPagingOutComingEntryDto gridParam)
         {
-            return query.FiltersByExpenseType(gridParam)
+            return query.FiltersByOutcomingEntryType(gridParam)
+                        .FiltersByExpenseType(gridParam)
                         .FiltersByDateTime(gridParam);
         }
         public static IQueryable<GetOutcomingEntryDto> FiltersByDateTime(this IQueryable<GetOutcomingEntryDto> query, GetAllPagingOutComingEntryDto gridParam)
@@ -41,7 +43,9 @@ namespace FinanceManagement.APIs.OutcomingEntries
 
         public static IQueryable<GetOutcomingEntryDto> FiltersByOutcomingEntryType(this IQueryable<GetOutcomingEntryDto> query, GetAllPagingOutComingEntryDto gridParam)
         {
-            return query.WhereIf(gridParam.OutcomingEntryTypeId.HasValue, s => s.OutcomingEntryTypeId == gridParam.OutcomingEntryTypeId.Value);
+            if (gridParam.OutComingEntryTypeIds.IsNullOrEmpty()) return query;
+            if (gridParam.OutComingEntryTypeIds.Count == 1) return query.Where(s => gridParam.OutComingEntryTypeIds[0] == s.OutcomingEntryTypeId);
+            return query.Where(s => gridParam.OutComingEntryTypeIds.Contains(s.OutcomingEntryTypeId));
         }
     }
 }
