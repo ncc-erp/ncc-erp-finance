@@ -53,7 +53,7 @@ namespace FinanceManagement.APIs.OutcomingEntryDetails
                 .FirstOrDefaultAsync();
             if (outcomingEntry?.WorkflowStatus?.Code != Constants.WORKFLOW_STATUS_START)
             {
-                throw new UserFriendlyException("Can only create OutcomingEntryDetail under new OutcomingEntry");
+                throw new UserFriendlyException("Chỉ có thể tạo mới khi Request Chi có trạng thái New");
             }
             input.Id = await WorkScope.InsertAndGetIdAsync(ObjectMapper.Map<OutcomingEntryDetail>(input));
 
@@ -69,7 +69,7 @@ namespace FinanceManagement.APIs.OutcomingEntryDetails
             var outcomingEntry = await WorkScope.GetAsync<OutcomingEntry>(input.OutcomingEntryId);
             if (outcomingEntry.WorkflowStatus.Code != Constants.WORKFLOW_STATUS_START)
             {
-                throw new UserFriendlyException("Can only create OutcomingEntryDetail under new OutcomingEntry");
+                throw new UserFriendlyException("Chỉ có thể chỉnh sửa khi Request Chi có trạng thái New");
             }
 
             var outcomingEntryDetail = await WorkScope.GetAsync<OutcomingEntryDetail>(input.Id);
@@ -158,7 +158,7 @@ namespace FinanceManagement.APIs.OutcomingEntryDetails
             var outcomingEntry = await WorkScope.GetAsync<OutcomingEntry>(oeDetail.OutcomingEntryId);
             if (outcomingEntry.WorkflowStatus.Code != Constants.WORKFLOW_STATUS_START)
             {
-                throw new UserFriendlyException("Can only create OutcomingEntryDetail under new OutcomingEntry");
+                throw new UserFriendlyException("Chỉ có thể xoá khi Request Chi có trạng thái New");
             }
             await WorkScope.DeleteAsync<OutcomingEntryDetail>(input.Id);
 
