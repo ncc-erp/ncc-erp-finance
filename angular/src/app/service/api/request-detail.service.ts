@@ -95,6 +95,10 @@ export class RequestDetailService extends BaseApiService {
     );
     return this.http.request(uploadReq);
   }
+
+  exportExcelOutcomingEntryDetail(request: DetailRequestDto): Observable<ApiResponse<any>> {
+    return this.http.post<any>(this.rootUrl + "/exportExcelOutcomingEntryDetail", request);
+  }
   
   public updateBranch(item: any): Observable<any> {
     return this.http.put<any>(this.rootUrl + '/UpdateBranch', item);

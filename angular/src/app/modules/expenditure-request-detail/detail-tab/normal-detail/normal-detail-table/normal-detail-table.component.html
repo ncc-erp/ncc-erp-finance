@@ -35,7 +35,7 @@
       </mat-form-field>
     </div>
     <div class="col-3 text-right">
-      <button *ngIf="isShowCreateBtn() && isStatusIsNotExecuted()" style="border: none" [disabled]="!isAllowed" (click)="addMore()"
+      <button *ngIf="isShowCreateBtn() && isStatusIsNew()" style="border: none" [disabled]="!isAllowed" (click)="addMore()"
         class="bg-blue ml-2 btn">
         <i class="fas fa-plus"></i>
         Add
@@ -45,9 +45,14 @@
         <i class="fa fa-download"></i>
         File mẫu
       </button>
-      <button style="border: none" [disabled]="!isAllowed" (click)="importDetail()" class="bg-success ml-2 btn">
+      <button *ngIf="isShowCreateBtn() && isStatusIsNew()" style="border: none" [disabled]="!isAllowed" (click)="importDetail()" class="bg-primary ml-2 btn">
         <i class="fa fa-upload"></i>
         Import
+      </button>
+      <button style="border: none" [disabled]="!isAllowed" (click)="exportExcelOutcomingEntryDetail()"
+        class="bg-success ml-2 btn">
+        <i class="fa fa-download"></i>
+        Export
       </button>
     </div>
   </div>
@@ -74,7 +79,7 @@
             ({{ requestListDetail?.totalMoney | number : "1.0" : "en-US" }})
           </th>
           <th class="w-90">Đã trả</th>
-          <th class="text-center w-150">{{ "action.actions" | translate }}</th>
+          <th *ngIf="isStatusIsNew()" class="text-center w-150">{{ "action.actions" | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -219,14 +224,14 @@
                 </div>
               </td>
 
-              <td class="text-center w-150 align-middle" *ngIf="!mode">
-                <button [disabled]="!isAllowed" *ngIf="isShowEditBtn() && isStatusIsNotExecuted()" class="btn btn-sm bg-secondary mr-1"
+              <td class="text-center w-150 align-middle" *ngIf="!mode && isStatusIsNew()">
+                <button [disabled]="!isAllowed" *ngIf="isShowEditBtn()" class="btn btn-sm bg-secondary mr-1"
                   (click)="$event.stopPropagation(); editDetail(item)">
                   <i class="fas fa-pencil-alt"></i>
 
                   {{ "action.edit" | translate }}
                 </button>
-                <button *ngIf="isShowDeleteBtn() && isStatusIsNotExecuted()" class="btn btn-sm bg-danger ml-1"
+                <button *ngIf="isShowDeleteBtn()" class="btn btn-sm bg-danger ml-1"
                   (click)="deleteDetail(item); $event.stopPropagation()" #deleteBtn>
                   <i class="fas fa-trash"></i>
                   {{ "action.delete" | translate }}

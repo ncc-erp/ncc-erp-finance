@@ -245,6 +245,17 @@ export class NormalDetailTableComponent
     })
   }
 
+  exportExcelOutcomingEntryDetail(){
+    this.requestDetailService.exportExcelOutcomingEntryDetail(this.detailRequest)
+    .subscribe(response => {
+      if(!response.success) return;
+      const file = new Blob([this.convertFile(atob(response.result))], {
+        type: "application/vnd.ms-excel;charset=utf-8",
+      });
+      FileSaver.saveAs(file, `Request_chi_chi_tiết.xlsx`);
+    })
+  }
+
   importDetail(){
       let ref = this.dialog.open(ImportDetailComponent, {
         width: "500px",
@@ -292,8 +303,8 @@ export class NormalDetailTableComponent
     return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_UpdateBranch);
   }
 
-  isStatusIsNotExecuted(){
-    return this.expenditureRequest?.workflowStatusCode != "END";
+  isStatusIsNew(){
+    return this.expenditureRequest?.workflowStatusCode == "START";
   }
 
 }
