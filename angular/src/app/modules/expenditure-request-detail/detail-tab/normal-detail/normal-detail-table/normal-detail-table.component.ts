@@ -245,6 +245,17 @@ export class NormalDetailTableComponent
     })
   }
 
+  exportExcelOutcomingEntryDetail(){
+    this.requestDetailService.exportExcelOutcomingEntryDetail(this.detailRequest)
+    .subscribe(response => {
+      if(!response.success) return;
+      const file = new Blob([this.convertFile(atob(response.result))], {
+        type: "application/vnd.ms-excel;charset=utf-8",
+      });
+      FileSaver.saveAs(file, `Request_chi_chi_tiết.xlsx`);
+    })
+  }
+
   importDetail(){
       let ref = this.dialog.open(ImportDetailComponent, {
         width: "500px",

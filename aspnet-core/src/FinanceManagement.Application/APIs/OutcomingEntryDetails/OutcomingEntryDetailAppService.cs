@@ -1,5 +1,6 @@
 ﻿using Abp.Authorization;
 using Abp.UI;
+using ClosedXML.Excel;
 using FinanceManagement.APIs.BankTransactions.Dto;
 using FinanceManagement.APIs.OutcomingEntries.Dto;
 using FinanceManagement.APIs.OutcomingEntryBankTransactions.Dto;
@@ -531,6 +532,49 @@ namespace FinanceManagement.APIs.OutcomingEntryDetails
 
             return new { Success = mapToEntity.Count, Fail = dataFile.Count - mapToEntity.Count};
         }
+
+        [HttpPost]
+        public async Task<byte[]> ExportExcelOutcomingEntryDetail(OutcomingEntryDetailFilterDto input)
+        {
+            try
+            {
+                using (var wb = new XLWorkbook())
+                {
+                    var incomeWS = wb.Worksheets.Add("Details");
+                    var query = GetAllByOutcomingEntry(input.OutcomingEntryId).FilterByOutcomingEntryDetailFilterDto(input);
+                    var result = await query.GetGridResult(query, input.param);
+                    int currentRow = 1;
+                    incomeWS.Cell(currentRow, 1).Value = "Nội dung";
+                    incomeWS.Cell(currentRow, 2).Value = "Chi nhánh";
+                    incomeWS.Cell(currentRow, 3).Value = "Số lượng";
+                    incomeWS.Cell(currentRow, 4).Value = "Đơn giá";
+                    incomeWS.Cell(currentRow, 5).Value = "Thành tiền";
+                    incomeWS.Cell(currentRow, 6).Value = "Đã trả";
+                    foreach (var outcome in result.Items)
+                    {
+                        currentRow++;
+                        incomeWS.Cell(currentRow, 1).Value = outcome.Name;
+                        incomeWS.Cell(currentRow, 2).Value = outcome.BranchName;
+                        incomeWS.Cell(currentRow, 3).Value = outcome.Quantity;
+                        incomeWS.Cell(currentRow, 4).Value = outcome.UnitPrice;
+                        incomeWS.Cell(currentRow, 5).Value = outcome.Total;
+                        incomeWS.Cell(currentRow, 6).Value = (outcome.IsNotDone) ? "No" : "Yes";
+                    }
+                    using (var stream = new MemoryStream())
+                    {
+                        wb.SaveAs(stream);
+                        var content = stream.ToArray();
+                        return content;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new UserFriendlyException(String.Format("error: " + ex.Message));
+            }
+
+        }
+
         private async Task<List<OutcomingEntryDetail>> MapToOutcomingEntryDetail(List<DataFileTemplateInputOutcomingEntryDetail> input, long outcomingEntryId)
         {
             var outcomingEntryDetails = new List<OutcomingEntryDetail>();
@@ -561,6 +605,10 @@ namespace FinanceManagement.APIs.OutcomingEntryDetails
                 }
                 else continue;
 
+                if (!string.IsNullOrEmpty(dto.IsDone))
+                {
+                    outcomingEntryDetail.IsNotDone = dto.IsDone == "No";
+                }
 
                 outcomingEntryDetail.Total = outcomingEntryDetail.Quantity * outcomingEntryDetail.UnitPrice;
                 outcomingEntryDetail.OutcomingEntryId = outcomingEntryId;
@@ -585,6 +633,7 @@ namespace FinanceManagement.APIs.OutcomingEntryDetails
                         BranchName = worksheet.Cells[index, 2].GetValue<string>(),
                         Quantity = worksheet.Cells[index, 3].GetValue<string>(),
                         Price = worksheet.Cells[index, 4].GetValue<string>(),
+                        IsDone = worksheet.Cells[index, 6].GetValue<string>(),
                     });
                 }
             }

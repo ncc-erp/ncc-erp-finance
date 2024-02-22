@@ -45,9 +45,14 @@
         <i class="fa fa-download"></i>
         File mẫu
       </button>
-      <button *ngIf="isShowCreateBtn() && isStatusIsNew()" style="border: none" [disabled]="!isAllowed" (click)="importDetail()" class="bg-success ml-2 btn">
+      <button *ngIf="isShowCreateBtn() && isStatusIsNew()" style="border: none" [disabled]="!isAllowed" (click)="importDetail()" class="bg-primary ml-2 btn">
         <i class="fa fa-upload"></i>
         Import
+      </button>
+      <button style="border: none" [disabled]="!isAllowed" (click)="exportExcelOutcomingEntryDetail()"
+        class="bg-success ml-2 btn">
+        <i class="fa fa-download"></i>
+        Export
       </button>
     </div>
   </div>
