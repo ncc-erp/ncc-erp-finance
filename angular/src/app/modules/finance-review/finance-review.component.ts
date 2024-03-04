@@ -30,7 +30,7 @@ export class FinanceReviewComponent extends AppComponentBase implements OnInit {
   public exchangeRates: ExchangeRates[] = [];
   public tooltip: string = "";
   public tooltipExchangeRateOfBankAccount = "";
-  public unIncludeBTransPending = true;
+  public isIncludeBTransPending = true;
   routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.financeManagement;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.financeManagement;
   routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.financeReview;
@@ -77,7 +77,7 @@ export class FinanceReviewComponent extends AppComponentBase implements OnInit {
   }
 
   GetBankAccountStatistics() {
-    this.dashboardService.GetBankAccountStatistics(!this.unIncludeBTransPending).subscribe(rs => {
+    this.dashboardService.GetBankAccountStatistics(this.isIncludeBTransPending).subscribe(rs => {
       this.listbankAccountStatistic = rs.result.statistics
       this.tooltipExchangeRateOfBankAccount = rs.result.exchangeRates.map(s => {
         return `1 ${s.currencyName} = ${s.exchangeRateFormat} ${this.defaultCurrencyCode} \n`
