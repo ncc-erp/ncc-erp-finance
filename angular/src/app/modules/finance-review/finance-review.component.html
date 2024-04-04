@@ -13,7 +13,7 @@
       <div class="col-12 mt-2">
         <div class="table-title px-3 py-2">
           <span [matTooltip]="tooltip"
-            >Dư theo loại tiền ({{ totalValueStatisticByCurrency?.valueFormat }}
+            >Dư sổ (theo thống kê thu/chi trên sổ) ({{ totalValueStatisticByCurrency?.valueFormat }}
             {{ defaultCurrencyCode }}) (D1)
           </span>
         </div>
@@ -146,7 +146,7 @@
       <div class="table-title px-3 py-2 mt-3 d-flex justify-content-between">
         <div #name>
           <span [matTooltip]="tooltipExchangeRateOfBankAccount"
-            >Dư theo tài khoản ngân hàng ({{
+            >Dư thực tế (theo tài khoản ngân hàng) ({{
               totalValueStatisticBankAccount?.valueFormat
             }}
             {{ defaultCurrencyCode }}) (E)
@@ -162,7 +162,7 @@
         <div #bao_gom_btrans_pending>
           <div class="d-inline-block float-right">
             <mat-checkbox
-              [(ngModel)]="unIncludeBTransPending"
+              [(ngModel)]="isIncludeBTransPending"
               class="is-include-btrans-pending"
               (ngModelChange)="GetBankAccountStatistics()"
             >
