@@ -10,5 +10,6 @@ namespace FinanceManagement.Managers.OutcomingEntries.Dtos
         public string BranchName { get; set; }
         public string Quantity { get; set; }
         public string Price { get; set; }
+        public string IsDone { get; set; }
     }
 }
