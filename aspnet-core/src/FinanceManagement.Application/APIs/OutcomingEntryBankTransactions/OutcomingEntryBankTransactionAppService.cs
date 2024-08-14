@@ -93,6 +93,7 @@ namespace FinanceManagement.APIs.OutcomingEntryBankTransactions
             var obt = await WorkScope.GetAll<OutcomingEntryBankTransaction>().Where(x => x.BankTransactionId == bankTransactionId).ToListAsync();
 
             var oed = WorkScope.GetAll<OutcomingEntryDetail>();
+
             var query = WorkScope.GetAll<OutcomingEntry>().Where(x => x.WorkflowStatus.Code == Constants.WORKFLOW_STATUS_END)
                         .Where(x => !obt.Select(y => y.OutcomingEntryId).Contains(x.Id))
                         .Select(x => new GetOutcomingEntryDto
