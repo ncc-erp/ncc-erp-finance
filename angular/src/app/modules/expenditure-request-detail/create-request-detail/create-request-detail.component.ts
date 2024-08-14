@@ -99,6 +99,7 @@ export class CreateRequestDetailComponent implements OnInit {
       });
     });
   }
+  
   getAllBranch() {
     this.branchService.GetAllForDropdown().subscribe(data => (this.branchList = data.result, this.tempBranchList = data.result))
   }
