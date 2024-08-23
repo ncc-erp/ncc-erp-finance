@@ -128,24 +128,29 @@ namespace FinanceManagement.APIs.RelationInOutEntrys
                 throw new UserFriendlyException("Relation in out entry existed.");
             }
 
-            var getInCurrency = await WorkScope.GetAll<IncomingEntry>()
+            var isClientPaidOrPrePaid = WorkScope.GetAll<IncomingEntry>()
                 .Where(s => s.Id == input.IncomingEntryId)
                 .Where(s => s.IncomingEntryType.IsClientPaid || s.IncomingEntryType.IsClientPrePaid)
-                .Select(s => s.BTransactions.BankAccount.CurrencyId)
-                .FirstOrDefaultAsync();
+                .Any();
 
-            if (getInCurrency != default)
+            if (isClientPaidOrPrePaid)
             {
-                throw new UserFriendlyException("Không thể link tới ghi nhận thu khách hàng trả nợ!");
+                throw new UserFriendlyException("Không thể link tới ghi nhận thu khách hàng TRẢ NỢ hoặc TRẢ TRƯỚC!");
             }
 
             var isAllowOutcomingEntryByMutipleCurrency = await IsAllowOutcomingEntryByMutipleCurrency();
+
+            var incomeCurrency = await WorkScope.GetAll<IncomingEntry>()
+            .Where(x => x.Id == input.IncomingEntryId)
+            .Select(x => new { x.CurrencyId, x.Currency.Name })
+            .FirstOrDefaultAsync();
+
             if (!isAllowOutcomingEntryByMutipleCurrency)
             {
-                var currencyDefault = await GetCurrencyDefaultAsync();
-                if (getInCurrency != currencyDefault.Id)
+                var defaultCurrency = await GetCurrencyDefaultAsync();
+                if (incomeCurrency.CurrencyId != defaultCurrency.Id)
                 {
-                    throw new UserFriendlyException($"Không thể link tới ghi nhận thu khác tiền {currencyDefault.Name}");
+                    throw new UserFriendlyException($"Không thể link tới ghi nhận thu khác tiền {defaultCurrency.Name}");
                 }
             }
             else if (input.IsRefund)
@@ -164,13 +169,10 @@ namespace FinanceManagement.APIs.RelationInOutEntrys
                 .Select(x => new { x.Id, x.WorkflowStatusId, x.CurrencyId, x.Currency.Name })
                 .FirstOrDefaultAsync(x => x.Id == input.OutcomingEntryId);
 
-            var currencyIncomingEntry = await WorkScope.GetAll<IncomingEntry>()
-                .Where(x => x.Id == input.IncomingEntryId)
-                .Select(x => new { x.CurrencyId, x.Currency.Name })
-                .FirstOrDefaultAsync();
+        
 
-            if (outcomingEntry.CurrencyId != currencyIncomingEntry.CurrencyId)
-                throw new UserFriendlyException($"Không thể link ghi nhận thu tiền {currencyIncomingEntry?.Name} với request chi tiền {outcomingEntry?.Name}");
+            if (outcomingEntry.CurrencyId != incomeCurrency.CurrencyId)
+                throw new UserFriendlyException($"Không thể link ghi nhận thu tiền {incomeCurrency?.Name} với request chi tiền {outcomingEntry?.Name}");
 
             if(!outcomingEntry.IsNullOrDefault() && outcomingEntry.WorkflowStatusId == statusEndId && input.IsRefund)
                 throw new UserFriendlyException($"Không thể link Ghi nhận thu tới Request chi đã [DONE] với trạng thái [HOÀN TIỀN] ");
