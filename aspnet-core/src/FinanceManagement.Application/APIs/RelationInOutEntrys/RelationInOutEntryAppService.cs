@@ -133,16 +133,20 @@ namespace FinanceManagement.APIs.RelationInOutEntrys
                 .Where(s => s.IncomingEntryType.IsClientPaid || s.IncomingEntryType.IsClientPrePaid)
                 .Select(s => s.BTransactions.BankAccount.CurrencyId)
                 .FirstOrDefaultAsync();
-
+            var currencyIncomingEntry = await WorkScope.GetAll<IncomingEntry>()
+              .Where(x => x.Id == input.IncomingEntryId)
+              .Select(x => new { x.CurrencyId, x.Currency.Name })
+              .FirstOrDefaultAsync();
+           
             if (getInCurrency != default)
             {
                 throw new UserFriendlyException("Không thể link tới ghi nhận thu khách hàng trả nợ!");
             }
 
+            var currencyDefault = await GetCurrencyDefaultAsync();
             var isAllowOutcomingEntryByMutipleCurrency = await IsAllowOutcomingEntryByMutipleCurrency();
-            if (!isAllowOutcomingEntryByMutipleCurrency)
+            if (!isAllowOutcomingEntryByMutipleCurrency && currencyIncomingEntry.Name != currencyDefault.Name)
             {
-                var currencyDefault = await GetCurrencyDefaultAsync();
                 if (getInCurrency != currencyDefault.Id)
                 {
                     throw new UserFriendlyException($"Không thể link tới ghi nhận thu khác tiền {currencyDefault.Name}");
@@ -164,10 +168,6 @@ namespace FinanceManagement.APIs.RelationInOutEntrys
                 .Select(x => new { x.Id, x.WorkflowStatusId, x.CurrencyId, x.Currency.Name })
                 .FirstOrDefaultAsync(x => x.Id == input.OutcomingEntryId);
 
-            var currencyIncomingEntry = await WorkScope.GetAll<IncomingEntry>()
-                .Where(x => x.Id == input.IncomingEntryId)
-                .Select(x => new { x.CurrencyId, x.Currency.Name })
-                .FirstOrDefaultAsync();
 
             if (outcomingEntry.CurrencyId != currencyIncomingEntry.CurrencyId)
                 throw new UserFriendlyException($"Không thể link ghi nhận thu tiền {currencyIncomingEntry?.Name} với request chi tiền {outcomingEntry?.Name}");
