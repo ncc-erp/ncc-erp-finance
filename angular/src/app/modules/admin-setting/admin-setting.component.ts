@@ -172,7 +172,6 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
       notificationPlatform: this.configuration.notificationPlatform,
       notifyToChannel: this.configuration.notifyToChannel
     };
-    console.log(input)
     let api1 = this.settingService.ChangeNotifyChannel(input);
     let api2 = this.settingService.SetEnableCrawlBTransactionNoti(this.isEnableCrawlBTransactionNoti)
     this.isLoading = true;
