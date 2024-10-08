@@ -134,11 +134,14 @@ namespace FinanceManagement.Configuration
         [AbpAuthorize(PermissionNames.Admin_Configuration)]
         public async Task<AppSettingDto> Get()
         {
+            var notificationPlatform = await MySettingManager.GetNotifyPlatformSettingAsync(AbpSession.TenantId);
+            var channel = notificationPlatform == "komu" ? await MySettingManager.GetNotifyKomuChannelIdAsync() : await MySettingManager.GetNotifyMezonChannelUrlAsync();
             return new AppSettingDto
             {
                 ClientAppId = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ClientAppId),
                 SecretKey = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.SecretKey),
-                NotifyToChannel = await MySettingManager.GetNotifyKomuChannelIdAsync(),
+                NotificationPlatform = notificationPlatform,
+                NotifyToChannel = notificationPlatform == "komu" ? channel : $"{_appConfiguration.GetValue<string>("Mezon:BaseAddress")}/{channel}",
             };
         }
         [AbpAuthorize(PermissionNames.Admin_Configuration_EditGoogleSetting)]
@@ -253,6 +256,16 @@ namespace FinanceManagement.Configuration
                 BaseAddress = _appConfiguration.GetValue<string>("HRMService:BaseAddress"),
                 SecurityCode = _appConfiguration.GetValue<string>("HRMService:SecurityCode")
             };
+        }
+
+        [AbpAuthorize(PermissionNames.Admin_Configuration_EditKomuSetting)]
+        public async Task ChangeNotifyChannel(NotifyToChannelDto input)
+        {
+            if (input.NotificationPlatform == "mezon")
+            {
+                input.NotifyToChannel = input.NotifyToChannel.Replace($"{_appConfiguration.GetValue<string>("Mezon:BaseAddress")}/", "");
+            }
+            await MySettingManager.SetNotifySettingAsync(input.NotificationPlatform, input.NotifyToChannel);
         }
     }
 }

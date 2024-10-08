@@ -16,6 +16,8 @@
         public const string ProjectUser = "ProjectUser";
         public const string ProjectPassword = "ProjectPassword";
         //public const string NotifyToChannel = "NotifyToChannel";
+        public const string HostNotifyToPlatform = "HostNotifyToPlatform";
+        public const string TenantNotifyPlatform = "TenantNotifyPlatform";
         public const string HostNotifyToChannel = "HostNotifyToChannel";
         public const string TenantNotifyChannel = "TenantNotifyChannel";
         public const string HostIncommingTypeCodeForPayingInvoice = "DebtClientCode";

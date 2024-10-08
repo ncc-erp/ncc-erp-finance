@@ -131,4 +131,8 @@ export class AppConfigurationService extends BaseApiService{
   getHRMConfig(): Observable<ApiResponse<any>>{
     return this.http.get<ApiResponse<string>>(this.rootUrl + '/GetHrmConfig');
   }
+
+  public ChangeNotifyChannel(input):Observable<any>{
+    return this.http.post(this.rootUrl + '/ChangeNotifyChannel', input);
+  }
 }
