@@ -21,6 +21,7 @@ using FinanceManagement.Enums;
 using FinanceManagement.Notifications.Komu;
 using FinanceManagement.Entities;
 using FinanceManagement.Managers.Settings;
+using FinanceManagement.Notifications.Mezon;
 
 namespace FinanceManagement.Web.Host.Startup
 {
@@ -34,6 +35,7 @@ namespace FinanceManagement.Web.Host.Startup
         private readonly IOptions<KomuNotificationConfig> _komuNotificationOptions;
         private const int TENANT_NULL_ID = -1;
         private readonly IKomuNotification _komuNotification;
+        private readonly IMezonNotification _mezonNotification;
         public IMySettingManager MySettingManager { get; set; }
 
         public CrawlBTransactionBackgroundWorker(
@@ -43,7 +45,8 @@ namespace FinanceManagement.Web.Host.Startup
             FirebaseService firebaseService,
             IOptions<FirebaseConfig> options,
             IOptions<KomuNotificationConfig> komuNotificationOptions,
-            IKomuNotification komuNotification
+            IKomuNotification komuNotification,
+            IMezonNotification mezonNotification
         ) : base(timer)
         {
             _context = iocResolver.Resolve<FinanceManagementDbContext>();
@@ -54,6 +57,7 @@ namespace FinanceManagement.Web.Host.Startup
             Timer.Period = _firesbaseOptions.Value.IntervalMilisecond;
             _komuNotificationOptions = komuNotificationOptions;
             _komuNotification = komuNotification;
+            _mezonNotification = mezonNotification;
         }
         protected override void DoWork()
         {
@@ -187,6 +191,7 @@ namespace FinanceManagement.Web.Host.Startup
                             );
 
                             _komuNotification.NotifyWithMessage(contentNotify, tenantId);
+                            _mezonNotification.NotifyWithMessage(contentNotify, tenantId);
                         }
 
                         logger.BTransactionId = bTransaction.Id;

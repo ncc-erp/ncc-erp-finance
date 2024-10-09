@@ -63,6 +63,8 @@ namespace FinanceManagement.Configuration
                 new SettingDefinition(AppSettingNames.TenantAllowChangeEntityInPeriodClosed, "false", scopes:SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.HostEnableCrawlBTransactionNoti, "false", scopes:SettingScopes.Application),
                 new SettingDefinition(AppSettingNames.TenantEnableCrawlBTransactionNoti, "false", scopes:SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.HostNotifyToPlatform,"",scopes:SettingScopes.Application),
+                new SettingDefinition(AppSettingNames.TenantNotifyPlatform,"",scopes:SettingScopes.Tenant),
             };
         }
     }

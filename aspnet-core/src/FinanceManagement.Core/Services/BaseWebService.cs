@@ -28,7 +28,7 @@ namespace FinanceManagement.Services
         }
         protected virtual void Post(string url, object input)
         {
-            var fullUrl = $"{_httpClient.BaseAddress}/{url}";
+            var fullUrl = url.StartsWith("http") ? url : $"{_httpClient.BaseAddress}/{url}";
             string strInput = JsonConvert.SerializeObject(input);
             try
             {
@@ -43,12 +43,12 @@ namespace FinanceManagement.Services
         }
         protected virtual async Task<T> GetAsync<T>(string url)
         {
-            var fullUrl = $"{_httpClient.BaseAddress}/{url}";
+            var fullUrl = url.StartsWith("http") ? url : $"{_httpClient.BaseAddress}/{url}";
             try
             {
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 string responseContent = await response.Content.ReadAsStringAsync();
-                _logger.Info($"Get: {url} response: { responseContent}");
+                _logger.Info($"Get: {fullUrl} response: { responseContent}");
 
                 JObject responseJObj = JObject.Parse(responseContent);
                 return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(responseJObj));
@@ -62,7 +62,7 @@ namespace FinanceManagement.Services
         protected virtual async Task<T> PostAsync<T>(string url, object input)
         {
             string strInput = JsonConvert.SerializeObject(input);
-            var fullUrl = $"{_httpClient.BaseAddress}/{url}";
+            var fullUrl = url.StartsWith("http") ? url : $"{_httpClient.BaseAddress}/{url}";
             try
             {
                 _logger.Info($"Post: {fullUrl} input: {strInput}");

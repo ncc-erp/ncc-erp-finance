@@ -13,20 +13,20 @@
             <div class="card col-6 col-md-6 col-xs-12 mr-2">
                 <div class="card-header">
                     <div class="row">
-                        <h4 class="center-y mb-0">Komu setting</h4>
+                        <h4 class="center-y mb-0">Notification setting</h4>
                         <div class="ml-2">
-                            <button *ngIf="isShowEditKomuSettingBtn()" class="btn bg-blue mr-3" (click)=" isEditKomuChanel = !isEditKomuChanel;
-                            notifyToChannel.focus()" [hidden]="isEditKomuChanel">
+                            <button *ngIf="isShowEditNotiSettingBtn()" class="btn bg-blue mr-3" (click)=" isEditNotification = !isEditNotification;
+                            notifyToChannel.focus()" [hidden]="isEditNotification">
                                 <i class="fas fa-edit"></i>
                                 {{ 'action.edit' | translate }}
                             </button>
                             <button class="btn bg-red mr-3"
-                                (click)="changeNotifyKomuChannel();isEditKomuChanel = !isEditKomuChanel"
-                                [hidden]="!isEditKomuChanel">
+                                (click)="changeNotifyChannel();isEditNotification = !isEditNotification"
+                                [hidden]="!isEditNotification">
                                 {{ 'action.save' | translate }}
                             </button>
-                            <button class="btn bg-secondary" (click)="isEditKomuChanel= !isEditKomuChanel;
-                            getSetting()" [hidden]="!isEditKomuChanel">
+                            <button class="btn bg-secondary" (click)="isEditNotification= !isEditNotification;
+                            getSetting()" [hidden]="!isEditNotification">
                                 {{ 'action.cancel' | translate }}
                             </button>
                         </div>
@@ -34,14 +34,20 @@
                 </div>
                 <div class="card-body row">
                     <div class="w-100">
+                        <mat-radio-group [disabled]="!isEditNotification" aria-label="Notify to" [(ngModel)]="configuration.notificationPlatform">
+                            <mat-radio-button class="mr-2" value="komu">Komu</mat-radio-button>
+                            <mat-radio-button value="mezon">Mezon</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                    <div class="w-100">
                         <mat-form-field class="w-100">
-                            <input [readonly]="!isEditKomuChanel" class="w-100" type="text" matInput
+                            <input [readonly]="!isEditNotification" class="w-100" type="text" matInput
                                 placeholder="Notify to channel" [(ngModel)]="configuration.notifyToChannel"
                                 #notifyToChannel />
                         </mat-form-field>
                     </div>
                     <div class="mt-3" >
-                        <mat-checkbox [disabled]="!isEditKomuChanel"
+                        <mat-checkbox [disabled]="!isEditNotification"
                             [(ngModel)]="isEnableCrawlBTransactionNoti">Gửi noti khi crawl biến động số dư</mat-checkbox>
                     </div>
                 </div>

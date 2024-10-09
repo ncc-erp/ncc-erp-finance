@@ -9,6 +9,7 @@ using FinanceManagement.Managers.OutcomingEntries;
 using FinanceManagement.Managers.OutcomingEntries.Dtos;
 using FinanceManagement.Notifications;
 using FinanceManagement.Notifications.Komu;
+using FinanceManagement.Notifications.Mezon;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -24,11 +25,13 @@ namespace FinanceManagement.APIs.HRMs
         private readonly IKomuNotification _komuNotification;
         private readonly ICommonManager _commonManager;
         private readonly IOutcomingEntryManager _outcomingEntryManager;
-        public HRMv2AppService(IWorkScope workScope, IKomuNotification komuNotification, ICommonManager commonManager, IOutcomingEntryManager outcomingEntryManager) : base(workScope)
+        private readonly IMezonNotification _mezonNotification;
+        public HRMv2AppService(IWorkScope workScope, IKomuNotification komuNotification, ICommonManager commonManager, IOutcomingEntryManager outcomingEntryManager, IMezonNotification mezonNotification) : base(workScope)
         {
             _komuNotification = komuNotification;
             _commonManager = commonManager;
             _outcomingEntryManager = outcomingEntryManager;
+            _mezonNotification = mezonNotification;
         }
 
         [NccAuth]
@@ -114,6 +117,7 @@ namespace FinanceManagement.APIs.HRMs
                 await CurrentUnitOfWork.SaveChangesAsync();
 
                 _komuNotification.NotifySalary(newOutcomeEntryId);
+                _mezonNotification.NotifySalary(newOutcomeEntryId);
             }
         }
 
