@@ -28,7 +28,7 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
   public isEditGoogleKey: boolean = false
   public isEditProject: boolean = false
   public isEditLinkOutComing: boolean = false
-  public isEditKomuChanel: boolean = false;
+  public isEditNotification: boolean = false;
   public linkOutComing = {} as LinkOutcomingConfigurationDto;
   public isLoading: boolean = false;
   public canApplyMutltiCurrencyOutcome: boolean = false
@@ -167,18 +167,19 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
     }, () => this.isLoading = false);
   }
 
-  public changeNotifyKomuChannel() {
+  public changeNotifyChannel() {
     let input = {
+      notificationPlatform: this.configuration.notificationPlatform,
       notifyToChannel: this.configuration.notifyToChannel
     };
-    let api1 = this.settingService.ChangeNotifyKomuChannel(input);
+    let api1 = this.settingService.ChangeNotifyChannel(input);
     let api2 = this.settingService.SetEnableCrawlBTransactionNoti(this.isEnableCrawlBTransactionNoti)
     this.isLoading = true;
 
     forkJoin(api1,
       api2)
       .subscribe(() => {
-        abp.notify.success("Change notify komu channel succesful");
+        abp.notify.success("Change notify channel succesful");
         this.isLoading = false;
         this.getEnableCrawlBTransactionNoti()
         this.getSetting()
@@ -217,7 +218,7 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
     })
   }
 
-  isShowEditKomuSettingBtn() {
+  isShowEditNotiSettingBtn() {
     return this.isGranted(PERMISSIONS_CONSTANT.Admin_Configuration_EditKomuSetting);
   }
   isShowEditGoogleSettingBtn() {
@@ -243,6 +244,7 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
 export class ConfigurationDto {
   clientAppId: string;
   secretKey: string;
+  notificationPlatform: string;
   notifyToChannel: string;
 }
 export class RequestChiSettingDto {

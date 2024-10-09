@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FinanceManagement.Managers.Settings
 {
-    public interface IMySettingManager : IInvoiceSetting, IOutcomingEntrySetting, IKomuSetting, ISingletonDependency, IRequestChiSetting
+    public interface IMySettingManager : IInvoiceSetting, IOutcomingEntrySetting, IKomuSetting, ISingletonDependency, IRequestChiSetting, IMezonSetting
     {
         bool GetAllowChangeEntityInPeriodClosed();
         void SetAllowChangeEntityInPeriodClosed(string config);

@@ -261,7 +261,7 @@ namespace FinanceManagement.Managers.Settings
 
         public async Task<string> GetEnableCrawlBTransactionNoti(int? tenantId = int.MinValue)
         {
-          return await GetValueSettingAsync(AppSettingNames.HostEnableCrawlBTransactionNoti, AppSettingNames.TenantEnableCrawlBTransactionNoti, tenantId);
+            return await GetValueSettingAsync(AppSettingNames.HostEnableCrawlBTransactionNoti, AppSettingNames.TenantEnableCrawlBTransactionNoti, tenantId);
         }
 
         public async Task SetEnableCrawlBTransactionNoti(bool isEnable)
@@ -280,7 +280,7 @@ namespace FinanceManagement.Managers.Settings
         public bool GetAllowChangeEntityInPeriodClosed()
         {
             var config = GetValueSetting(AppSettingNames.HostAllowChangeEntityInPeriodClosed, AppSettingNames.TenantAllowChangeEntityInPeriodClosed);
-            if(bool.TryParse(config, out bool result))
+            if (bool.TryParse(config, out bool result))
             {
                 return result;
             }
@@ -294,7 +294,7 @@ namespace FinanceManagement.Managers.Settings
         private async Task<string> GetValueSettingAsync(string hostSettingName, string tenantSettingName, int? tenantId = int.MinValue)
         {
             var currentTenant = _session.TenantId;
-            if(tenantId != int.MinValue)
+            if (tenantId != int.MinValue)
             {
                 currentTenant = tenantId;
             }
@@ -338,6 +338,69 @@ namespace FinanceManagement.Managers.Settings
             {
                 await SettingManager.ChangeSettingForApplicationAsync(hostSettingName, value);
             }
+        }
+
+        public string GetNotifyMezonChannelUrl(int? tenantId)
+        {
+            return GetValueSetting(AppSettingNames.HostNotifyToChannel, AppSettingNames.HostNotifyToChannel, tenantId);
+        }
+
+        public async Task<string> GetNotifyMezonChannelUrlAsync(int? tenantId)
+        {
+            return await GetValueSettingAsync(AppSettingNames.HostNotifyToChannel, AppSettingNames.HostNotifyToChannel, tenantId);
+        }
+
+        public void SetNotifyMezonChannelUrl(string channelUrl)
+        {
+            SetValueSetting(AppSettingNames.HostNotifyToChannel, AppSettingNames.TenantNotifyChannel, channelUrl);
+        }
+
+        public async Task SetNotifyMezonChannelUrlAsync(string channelUrl)
+        {
+            await SetValueSettingAsync(AppSettingNames.HostNotifyToChannel, AppSettingNames.TenantNotifyChannel, channelUrl);
+        }
+
+        public void SetNotifySetting(string platform, string notifyToChannel)
+        {
+            SetValueSetting(AppSettingNames.HostNotifyToPlatform, AppSettingNames.TenantNotifyPlatform, platform);
+            if (platform == "komu")
+            {
+                SetNotifyKomuChannelId(notifyToChannel);
+            }
+            if (platform == "mezon")
+            {
+                SetNotifyMezonChannelUrl(notifyToChannel);
+            }
+            if (platform != "komu" && platform != "mezon")
+            {
+               SetValueSetting(AppSettingNames.HostNotifyToChannel, AppSettingNames.TenantNotifyChannel, "");
+            }
+        }
+        public string GetNotifyPlatformSetting(int? tenantId)
+        {
+            return GetValueSetting(AppSettingNames.HostNotifyToPlatform, AppSettingNames.TenantNotifyPlatform, tenantId);
+        }
+
+        public async Task SetNotifySettingAsync(string platform, string notifyToChannel)
+        {
+            SetValueSetting(AppSettingNames.HostNotifyToPlatform, AppSettingNames.TenantNotifyPlatform, platform);
+            if (platform == "komu")
+            {
+                await SetNotifyKomuChannelIdAsync(notifyToChannel);
+            }
+            if (platform == "mezon")
+            {
+                await SetNotifyMezonChannelUrlAsync(notifyToChannel);
+            }
+            if (platform != "komu" && platform != "mezon")
+            {
+                await SetValueSettingAsync(AppSettingNames.HostNotifyToChannel, AppSettingNames.TenantNotifyChannel, "");
+            }
+        }
+
+        public async Task<string> GetNotifyPlatformSettingAsync(int? tenantId)
+        {
+            return await GetValueSettingAsync(AppSettingNames.HostNotifyToPlatform, AppSettingNames.TenantNotifyPlatform, tenantId);
         }
         #endregion
     }

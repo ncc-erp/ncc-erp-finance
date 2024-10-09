@@ -121,6 +121,7 @@ namespace FinanceManagement.Web.Host.Startup
             services.Configure<FirebaseConfig>(_appConfiguration.GetSection("Firebase"));
             services.Configure<ApplicationConfig>(_appConfiguration.GetSection("App"));
             services.Configure<KomuNotificationConfig>(_appConfiguration.GetSection("KomuService"));
+            services.Configure<MezonNotificationConfig>(_appConfiguration.GetSection("Mezon"));
 
             FinfastStatics.EnableFirebaseService = _appConfiguration.GetValue<bool?>("Firebase:EnableFirebaseService") ?? true;
             // Configure Abp and Dependency Injection

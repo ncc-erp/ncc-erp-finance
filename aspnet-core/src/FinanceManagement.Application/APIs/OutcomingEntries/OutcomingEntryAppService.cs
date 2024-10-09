@@ -40,6 +40,7 @@ using FinanceManagement.Managers.Commons;
 using Abp.Linq.Extensions;
 using FinanceManagement.Managers.BTransactions.Dtos;
 using Org.BouncyCastle.Asn1.Ocsp;
+using FinanceManagement.Notifications.Mezon;
 
 namespace FinanceManagement.APIs.OutcomingEntries
 {
@@ -53,6 +54,7 @@ namespace FinanceManagement.APIs.OutcomingEntries
         private readonly ITempOutcomingEntryManager _tempOutcomingEntryManager;
         private readonly IOptions<ApplicationConfig> _options;
         private readonly ICommonManager _commonManager;
+        private readonly IMezonNotification _mezonNotification;
         public OutcomingEntryAppService(
                    IWebHostEnvironment webHostEnvironment,
                    IWorkScope workScope,
@@ -61,7 +63,8 @@ namespace FinanceManagement.APIs.OutcomingEntries
                    IKomuNotification komuNotification,
                    ITempOutcomingEntryManager tempOutcomingEntryManager,
                    IOptions<ApplicationConfig> options,
-                   ICommonManager commonManager
+                   ICommonManager commonManager,
+                   IMezonNotification mezonNotification
         ) : base(workScope)
         {
             _hostingEnvironment = webHostEnvironment;
@@ -71,6 +74,7 @@ namespace FinanceManagement.APIs.OutcomingEntries
             _tempOutcomingEntryManager = tempOutcomingEntryManager;
             _options = options;
             _commonManager = commonManager;
+            _mezonNotification = mezonNotification;
         }
 
         [HttpPost]
@@ -556,7 +560,9 @@ namespace FinanceManagement.APIs.OutcomingEntries
 
             await CurrentUnitOfWork.SaveChangesAsync();
 
+            
             _komuNotification.NotifyChangeStatus(Input.OutcomingEntryId, statusTransition.ToTransitionName.Trim());
+            _mezonNotification.NotifyChangeStatus(Input.OutcomingEntryId, statusTransition.ToTransitionName.Trim());
 
             await _outcomingEntryManager.CreateOutcomingStatusHistory(new CreateOutcomingEntryStatusHistoryDto
             {
@@ -624,6 +630,7 @@ namespace FinanceManagement.APIs.OutcomingEntries
         {
             var transitionName = await _tempOutcomingEntryManager.SendTemp(tempOutcomingEntryId);
             _komuNotification.NotifyRequestChangePending(tempOutcomingEntryId, transitionName);
+            _mezonNotification.NotifyRequestChangePending(tempOutcomingEntryId, transitionName);
         }
         [HttpGet]
        // [AbpAuthorize(PermissionNames.Finance_TempOutcomingEntry_RejectMyRequestChange, PermissionNames.Finance_TempOutcomingEntry_RejectAllRequestChange)]
@@ -631,6 +638,7 @@ namespace FinanceManagement.APIs.OutcomingEntries
         {
             var transitionName = await _tempOutcomingEntryManager.RejectTemp(tempOutcomingEntryId);
             _komuNotification.NotifyRequestChangeReject(tempOutcomingEntryId, transitionName);
+            _mezonNotification.NotifyRequestChangeReject(tempOutcomingEntryId, transitionName);
         }
         [HttpGet]
      //   [AbpAuthorize(PermissionNames.Finance_TempOutcomingEntry_ApproveRequestChange)]
@@ -638,6 +646,7 @@ namespace FinanceManagement.APIs.OutcomingEntries
         {
             var transitionName = await _tempOutcomingEntryManager.ApprovedTemp(tempOutcomingEntryId);
             _komuNotification.NotifyRequestChangeApprove(tempOutcomingEntryId, transitionName);
+            _mezonNotification.NotifyRequestChangeApprove(tempOutcomingEntryId, transitionName);
         }
         [HttpPost]
      //   [AbpAuthorize(PermissionNames.Finance_TempOutcomingEntry_CreateTempDetail)]
@@ -736,12 +745,13 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 rq.WorkflowStatusId = approveStatusId.Id;
                 await WorkScope.UpdateAsync(rq);
             }
-            _komuNotification.NotifyWithMessage(
-                new StringBuilder()
+            var message = new StringBuilder()
                 .AppendLine($"Chào bạn, CFO vừa mới chuyển tiền cho **{allRequestApproved.Count()}** Request")
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=TRANSFERED")
-                .ToString()
-            );
+                .ToString();
+
+            _komuNotification.NotifyWithMessage(message);
+            _mezonNotification.NotifyWithMessage(message);
 
             return $"Đã xuất tiền {allRequestApproved.Count()} Request Chi";
         }
@@ -796,13 +806,13 @@ namespace FinanceManagement.APIs.OutcomingEntries
             var countPendingCEO = await WorkScope.GetAll<OutcomingEntry>()
                 .Where(x => x.WorkflowStatus.Code.ToLower() == Constants.WORKFLOW_STATUS_PENDINGCEO.ToLower())
                 .CountAsync();
-
-            _komuNotification.NotifyWithMessage(
-                new StringBuilder()
+            var message = new StringBuilder()
                 .AppendLine($"Chào bạn, hiện tại có **{countPendingCEO} request ** đang chờ bạn duyệt")
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=PENDINGCEO")
-                .ToString()
-            );
+                .ToString();
+
+            _komuNotification.NotifyWithMessage(message);
+            _mezonNotification.NotifyWithMessage(message);
         }
 
         [HttpGet]
@@ -812,13 +822,13 @@ namespace FinanceManagement.APIs.OutcomingEntries
             var countPendingCEO = await WorkScope.GetAll<TempOutcomingEntry>()
                 .Where(x => x.WorkflowStatus.Code.ToLower() == Constants.WORKFLOW_STATUS_PENDINGCEO.ToLower())
                 .CountAsync();
-
-            _komuNotification.NotifyWithMessage(
-                new StringBuilder()
+            var message = new StringBuilder()
                 .AppendLine($"Chào bạn, hiện tại có **{countPendingCEO} yêu cầu thay đổi ** đang chờ bạn duyệt")
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&statusRequestChange=PENDINGCEO")
-                .ToString()
-            );
+                .ToString();
+
+            _komuNotification.NotifyWithMessage(message);
+            _mezonNotification.NotifyWithMessage(message);
         }
 
         [HttpGet]
@@ -828,12 +838,13 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 .Where(x => x.WorkflowStatus.Code.ToLower() == Constants.WORKFLOW_STATUS_PENDINGCFO.ToLower())
                 .CountAsync();
 
-            _komuNotification.NotifyWithMessage(
-                new StringBuilder()
+            var message = new StringBuilder()
                 .AppendLine($"Chào bạn, hiện tại có **{countApproved}** request đang chờ bạn chuyển tiền.")
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=PENDINGCFO")
-                .ToString()
-            );
+                .ToString();
+
+            _komuNotification.NotifyWithMessage(message);
+            _mezonNotification.NotifyWithMessage(message);
         }
 
         [AbpAuthorize(PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabGeneral_AttachFile)]
