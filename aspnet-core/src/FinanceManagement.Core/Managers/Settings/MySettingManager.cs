@@ -5,7 +5,6 @@ using FinanceManagement.Entities;
 using FinanceManagement.Extension;
 using FinanceManagement.IoC;
 using FinanceManagement.Managers.Settings.Dtos;
-using FinanceManagement.Managers.Settings.Intefaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -371,6 +370,10 @@ namespace FinanceManagement.Managers.Settings
             if (platform == "mezon")
             {
                 SetNotifyMezonChannelUrl(notifyToChannel);
+            }
+            if (platform != "komu" && platform != "mezon")
+            {
+               SetValueSetting(AppSettingNames.HostNotifyToChannel, AppSettingNames.TenantNotifyChannel, "");
             }
         }
         public string GetNotifyPlatformSetting(int? tenantId)
