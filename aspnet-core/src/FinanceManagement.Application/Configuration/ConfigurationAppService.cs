@@ -141,7 +141,7 @@ namespace FinanceManagement.Configuration
                 ClientAppId = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ClientAppId),
                 SecretKey = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.SecretKey),
                 NotificationPlatform = notificationPlatform,
-                NotifyToChannel = notificationPlatform == "komu" ? channel : $"{_appConfiguration.GetValue<string>("Mezon:BaseAddress")}/{channel}",
+                NotifyToChannel = channel,
             };
         }
         [AbpAuthorize(PermissionNames.Admin_Configuration_EditGoogleSetting)]
@@ -261,10 +261,6 @@ namespace FinanceManagement.Configuration
         [AbpAuthorize(PermissionNames.Admin_Configuration_EditKomuSetting)]
         public async Task ChangeNotifyChannel(NotifyToChannelDto input)
         {
-            if (input.NotificationPlatform == "mezon")
-            {
-                input.NotifyToChannel = input.NotifyToChannel.Replace($"{_appConfiguration.GetValue<string>("Mezon:BaseAddress")}/", "");
-            }
             await MySettingManager.SetNotifySettingAsync(input.NotificationPlatform, input.NotifyToChannel);
         }
     }

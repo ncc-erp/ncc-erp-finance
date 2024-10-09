@@ -36,7 +36,6 @@ namespace FinanceManagement.Web.Host.Startup
         private const int TENANT_NULL_ID = -1;
         private readonly IKomuNotification _komuNotification;
         private readonly IMezonNotification _mezonNotification;
-        private readonly IOptions<MezonNotificationConfig> _mezonNotificationOptions;
         public IMySettingManager MySettingManager { get; set; }
 
         public CrawlBTransactionBackgroundWorker(
@@ -47,8 +46,7 @@ namespace FinanceManagement.Web.Host.Startup
             IOptions<FirebaseConfig> options,
             IOptions<KomuNotificationConfig> komuNotificationOptions,
             IKomuNotification komuNotification,
-            IMezonNotification mezonNotification,
-            IOptions<MezonNotificationConfig> mezonNotificationOptions
+            IMezonNotification mezonNotification
         ) : base(timer)
         {
             _context = iocResolver.Resolve<FinanceManagementDbContext>();
@@ -60,7 +58,6 @@ namespace FinanceManagement.Web.Host.Startup
             _komuNotificationOptions = komuNotificationOptions;
             _komuNotification = komuNotification;
             _mezonNotification = mezonNotification;
-            _mezonNotificationOptions = mezonNotificationOptions;
         }
         protected override void DoWork()
         {
