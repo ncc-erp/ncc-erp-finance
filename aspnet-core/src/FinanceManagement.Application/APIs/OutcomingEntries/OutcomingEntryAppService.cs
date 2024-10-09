@@ -745,18 +745,13 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 rq.WorkflowStatusId = approveStatusId.Id;
                 await WorkScope.UpdateAsync(rq);
             }
-            _komuNotification.NotifyWithMessage(
-                new StringBuilder()
+            var message = new StringBuilder()
                 .AppendLine($"Chào bạn, CFO vừa mới chuyển tiền cho **{allRequestApproved.Count()}** Request")
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=TRANSFERED")
-                .ToString()
-            );
-            _mezonNotification.NotifyWithMessage(
-                new StringBuilder()
-                .AppendLine($"Chào bạn, CFO vừa mới chuyển tiền cho **{allRequestApproved.Count()}** Request")
-                .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=TRANSFERED")
-                .ToString()
-            );
+                .ToString();
+
+            _komuNotification.NotifyWithMessage(message);
+            _mezonNotification.NotifyWithMessage(message);
 
             return $"Đã xuất tiền {allRequestApproved.Count()} Request Chi";
         }
@@ -811,19 +806,13 @@ namespace FinanceManagement.APIs.OutcomingEntries
             var countPendingCEO = await WorkScope.GetAll<OutcomingEntry>()
                 .Where(x => x.WorkflowStatus.Code.ToLower() == Constants.WORKFLOW_STATUS_PENDINGCEO.ToLower())
                 .CountAsync();
+            var message = new StringBuilder()
+                .AppendLine($"Chào bạn, hiện tại có **{countPendingCEO} request ** đang chờ bạn duyệt")
+                .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=PENDINGCEO")
+                .ToString();
 
-            _komuNotification.NotifyWithMessage(
-                new StringBuilder()
-                .AppendLine($"Chào bạn, hiện tại có **{countPendingCEO} request ** đang chờ bạn duyệt")
-                .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=PENDINGCEO")
-                .ToString()
-            );
-            _mezonNotification.NotifyWithMessage(
-                new StringBuilder()
-                .AppendLine($"Chào bạn, hiện tại có **{countPendingCEO} request ** đang chờ bạn duyệt")
-                .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=PENDINGCEO")
-                .ToString()
-            );
+            _komuNotification.NotifyWithMessage(message);
+            _mezonNotification.NotifyWithMessage(message);
         }
 
         [HttpGet]
@@ -833,19 +822,13 @@ namespace FinanceManagement.APIs.OutcomingEntries
             var countPendingCEO = await WorkScope.GetAll<TempOutcomingEntry>()
                 .Where(x => x.WorkflowStatus.Code.ToLower() == Constants.WORKFLOW_STATUS_PENDINGCEO.ToLower())
                 .CountAsync();
+            var message = new StringBuilder()
+                .AppendLine($"Chào bạn, hiện tại có **{countPendingCEO} yêu cầu thay đổi ** đang chờ bạn duyệt")
+                .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&statusRequestChange=PENDINGCEO")
+                .ToString();
 
-            _komuNotification.NotifyWithMessage(
-                new StringBuilder()
-                .AppendLine($"Chào bạn, hiện tại có **{countPendingCEO} yêu cầu thay đổi ** đang chờ bạn duyệt")
-                .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&statusRequestChange=PENDINGCEO")
-                .ToString()
-            );
-            _mezonNotification.NotifyWithMessage(
-                new StringBuilder()
-                .AppendLine($"Chào bạn, hiện tại có **{countPendingCEO} yêu cầu thay đổi ** đang chờ bạn duyệt")
-                .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&statusRequestChange=PENDINGCEO")
-                .ToString()
-            );
+            _komuNotification.NotifyWithMessage(message);
+            _mezonNotification.NotifyWithMessage(message);
         }
 
         [HttpGet]
@@ -855,18 +838,13 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 .Where(x => x.WorkflowStatus.Code.ToLower() == Constants.WORKFLOW_STATUS_PENDINGCFO.ToLower())
                 .CountAsync();
 
-            _komuNotification.NotifyWithMessage(
-                new StringBuilder()
+            var message = new StringBuilder()
                 .AppendLine($"Chào bạn, hiện tại có **{countApproved}** request đang chờ bạn chuyển tiền.")
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=PENDINGCFO")
-                .ToString()
-            );
-            _mezonNotification.NotifyWithMessage(
-                new StringBuilder()
-                .AppendLine($"Chào bạn, hiện tại có **{countApproved}** request đang chờ bạn chuyển tiền.")
-                .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=PENDINGCFO")
-                .ToString()
-            );
+                .ToString();
+
+            _komuNotification.NotifyWithMessage(message);
+            _mezonNotification.NotifyWithMessage(message);
         }
 
         [AbpAuthorize(PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabGeneral_AttachFile)]
