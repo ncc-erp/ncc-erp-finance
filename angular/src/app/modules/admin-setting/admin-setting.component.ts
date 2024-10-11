@@ -187,6 +187,27 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
       () => this.isLoading = false)
   }
 
+  get notifyFloatLabel() {
+    if (this.configuration.notificationPlatform == "mezon") {
+      return "Mezon Webhook Url"
+    }
+    if (this.configuration.notificationPlatform == "komu") {
+      return "ChannelId or ThreadId"
+    } 
+    return "Notify to Channel"
+  }
+
+  get notifyPlaceholder() {
+    if (this.configuration.notificationPlatform == "mezon") {
+      let exampleUrl = "https://webhook.mezon.ai/webhooks/..."
+      return exampleUrl
+    }
+    if (this.configuration.notificationPlatform == "komu") {
+      return "475182341782896651"
+    } 
+    return "Select platform"
+  }
+
   public updateRequestChiSetting()
   {
     this.isLoading = true;

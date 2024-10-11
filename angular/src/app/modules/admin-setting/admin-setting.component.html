@@ -41,8 +41,9 @@
                     </div>
                     <div class="w-100">
                         <mat-form-field class="w-100">
+                            <mat-label>{{ notifyFloatLabel}}</mat-label>
                             <input [readonly]="!isEditNotification" class="w-100" type="text" matInput
-                                placeholder="Notify to channel" [(ngModel)]="configuration.notifyToChannel"
+                                [placeholder]="notifyPlaceholder" [(ngModel)]="configuration.notifyToChannel"
                                 #notifyToChannel />
                         </mat-form-field>
                     </div>
