@@ -246,7 +246,7 @@ namespace FinanceManagement.Managers.Settings
 
         public async Task<string> GetNotifyKomuChannelIdAsync(int? tenantId = int.MinValue)
         {
-            return await GetValueSettingAsync(AppSettingNames.HostNotifyToChannel, AppSettingNames.TenantNotifyChannel);
+            return await GetValueSettingAsync(AppSettingNames.HostNotifyToChannel, AppSettingNames.TenantNotifyChannel, tenantId);
         }
 
         public void SetNotifyKomuChannelId(string komuChannelId)
@@ -342,12 +342,12 @@ namespace FinanceManagement.Managers.Settings
 
         public string GetNotifyMezonChannelUrl(int? tenantId)
         {
-            return GetValueSetting(AppSettingNames.HostNotifyToChannel, AppSettingNames.HostNotifyToChannel, tenantId);
+            return GetValueSetting(AppSettingNames.HostNotifyToChannel, AppSettingNames.TenantNotifyChannel, tenantId);
         }
 
         public async Task<string> GetNotifyMezonChannelUrlAsync(int? tenantId)
         {
-            return await GetValueSettingAsync(AppSettingNames.HostNotifyToChannel, AppSettingNames.HostNotifyToChannel, tenantId);
+            return await GetValueSettingAsync(AppSettingNames.HostNotifyToChannel, AppSettingNames.TenantNotifyChannel, tenantId);
         }
 
         public void SetNotifyMezonChannelUrl(string channelUrl)
@@ -383,7 +383,7 @@ namespace FinanceManagement.Managers.Settings
 
         public async Task SetNotifySettingAsync(string platform, string notifyToChannel)
         {
-            SetValueSetting(AppSettingNames.HostNotifyToPlatform, AppSettingNames.TenantNotifyPlatform, platform);
+            await SetValueSettingAsync(AppSettingNames.HostNotifyToPlatform, AppSettingNames.TenantNotifyPlatform, platform);
             if (platform == "komu")
             {
                 await SetNotifyKomuChannelIdAsync(notifyToChannel);
