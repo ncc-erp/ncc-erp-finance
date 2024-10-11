@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using FinanceManagement.Services.Firebase;
 using FinanceManagement.Services.HRM;
+using FinanceManagement.Services.Mezon;
 
 namespace FinanceManagement.Services
 {
@@ -36,6 +37,10 @@ namespace FinanceManagement.Services
              {
                  options.BaseAddress = new Uri(_appConfiguration.GetValue<string>("Firebase:Url"));
              });
+            services.AddHttpClient<IMezonWebService, MezonWebService>(options =>
+            {
+                //options.BaseAddress = new Uri(_appConfiguration.GetValue<string>("Mezon:BaseAddress", "https://webhook.mezon.ai"));
+            });
             return services;
         }
     }

@@ -8,6 +8,7 @@ namespace FinanceManagement.Configuration.Dto
     {
         public string ClientAppId { get; set; }
         public string SecretKey { get; set; }
+        public string NotificationPlatform { get; set; }
         public string NotifyToChannel { get; set; }
     }
 
@@ -23,6 +24,7 @@ namespace FinanceManagement.Configuration.Dto
 
     public class NotifyToChannelDto
     {
+        public string NotificationPlatform { get; set; }
         public string NotifyToChannel { get; set; }
     }
 }

@@ -134,11 +134,15 @@ namespace FinanceManagement.Configuration
         [AbpAuthorize(PermissionNames.Admin_Configuration)]
         public async Task<AppSettingDto> Get()
         {
+            var notificationPlatform = await MySettingManager.GetNotifyPlatformSettingAsync(AbpSession.TenantId);
+            var channel = notificationPlatform == "komu" ? await MySettingManager.GetNotifyKomuChannelIdAsync(AbpSession.TenantId) 
+                                                         : await MySettingManager.GetNotifyMezonChannelUrlAsync(AbpSession.TenantId);
             return new AppSettingDto
             {
                 ClientAppId = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ClientAppId),
                 SecretKey = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.SecretKey),
-                NotifyToChannel = await MySettingManager.GetNotifyKomuChannelIdAsync(),
+                NotificationPlatform = notificationPlatform,
+                NotifyToChannel = channel,
             };
         }
         [AbpAuthorize(PermissionNames.Admin_Configuration_EditGoogleSetting)]
@@ -253,6 +257,12 @@ namespace FinanceManagement.Configuration
                 BaseAddress = _appConfiguration.GetValue<string>("HRMService:BaseAddress"),
                 SecurityCode = _appConfiguration.GetValue<string>("HRMService:SecurityCode")
             };
+        }
+
+        [AbpAuthorize(PermissionNames.Admin_Configuration_EditKomuSetting)]
+        public async Task ChangeNotifyChannel(NotifyToChannelDto input)
+        {
+            await MySettingManager.SetNotifySettingAsync(input.NotificationPlatform, input.NotifyToChannel);
         }
     }
 }
