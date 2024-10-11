@@ -135,7 +135,8 @@ namespace FinanceManagement.Configuration
         public async Task<AppSettingDto> Get()
         {
             var notificationPlatform = await MySettingManager.GetNotifyPlatformSettingAsync(AbpSession.TenantId);
-            var channel = notificationPlatform == "komu" ? await MySettingManager.GetNotifyKomuChannelIdAsync() : await MySettingManager.GetNotifyMezonChannelUrlAsync();
+            var channel = notificationPlatform == "komu" ? await MySettingManager.GetNotifyKomuChannelIdAsync(AbpSession.TenantId) 
+                                                         : await MySettingManager.GetNotifyMezonChannelUrlAsync(AbpSession.TenantId);
             return new AppSettingDto
             {
                 ClientAppId = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ClientAppId),
