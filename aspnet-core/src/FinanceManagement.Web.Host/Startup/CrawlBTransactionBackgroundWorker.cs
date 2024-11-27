@@ -190,7 +190,7 @@ namespace FinanceManagement.Web.Host.Startup
                                 duSo: currentBalanceNumber
                             );
 
-                            _komuNotification.NotifyWithMessage(contentNotify, tenantId);
+                        //    _komuNotification.NotifyWithMessage(contentNotify, tenantId);
                             _mezonNotification.NotifyWithMessage(contentNotify, tenantId);
                         }
 
