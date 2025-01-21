@@ -12,6 +12,7 @@ using FinanceManagement.Services.Mezon;
 using FinanceManagement.Notifications.Komu.Dtos;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 
 namespace FinanceManagement.Notifications.Mezon
 {
@@ -95,9 +96,9 @@ namespace FinanceManagement.Notifications.Mezon
             outcomingEntryInfo.Verifier = GetUsernameLoginBySessionUserId();
             outcomingEntryInfo.StatusCode = statusCode;
 
-            var message = GetContentNotifyChangeStatus(outcomingEntryInfo);
+            var message = GetContentNotifyChangeStatusObject(outcomingEntryInfo);
             string channelUrl = GetNotifyToChannelUrl();
-            _mezonWebService.NotifyToChannel(channelUrl, message);
+            _mezonWebService.NotifyToChannelMezon(channelUrl, message);
         }
 
         public async Task NotifyChangeStatusAsync(long outcomingEntryId, string statusCode)
@@ -113,12 +114,89 @@ namespace FinanceManagement.Notifications.Mezon
         }
         private string GetContentNotifyChangeStatus(OutcomingEntryNotificationInfo outcomingEntryInfo)
         {
-            var message = new StringBuilder()
-             .AppendLine(outcomingEntryInfo.MessageSubContentChangeStatus)
-             .AppendLine($"{_options.Value.ClientRootAddress}app/requestDetail/main?id={outcomingEntryInfo.Id}")
-             .AppendLine(outcomingEntryInfo.MessageMainContentChangeStatus);
-            return message.ToString();
+            var url = $"{_options.Value.ClientRootAddress}app/requestDetail/main?id={outcomingEntryInfo.Id}";
+
+            var cleanSubContent = outcomingEntryInfo.MessageSubContentChangeStatus.Replace("*", "");
+            if (!cleanSubContent.StartsWith("@"))
+            {
+                cleanSubContent = "@" + cleanSubContent;
+            }
+            var cleanMainContent = outcomingEntryInfo.MessageMainContentChangeStatus
+                .Replace("*", "")
+                .Replace("`", "");
+
+            var username = cleanSubContent.Split(' ')[0].TrimStart('@');
+            var usernameLength = username.Length + 2;
+            var mentionEndIndex = cleanSubContent.Length;
+            var urlStartIndex = mentionEndIndex + 1;
+            var urlEndIndex = urlStartIndex + url.Length + 1;
+            var textStartIndex = urlEndIndex;
+            var textEndIndex = textStartIndex + cleanMainContent.Length + 1;
+
+            var webhookMessage = new
+            {
+                t = $" {cleanSubContent}\n{url}\n{cleanMainContent}",
+                mk = new[]
+                    {
+        new { type = "lk", s = urlStartIndex, e = urlEndIndex },
+        new { type = "t", s = textStartIndex, e = textEndIndex }
+    },
+                mentions = new[]
+                    {
+        new
+        {
+            username = username, 
+            s = 0,
+            e = usernameLength
         }
+    }
+            };
+
+            return System.Text.Json.JsonSerializer.Serialize(webhookMessage);
+        }
+
+
+        private OutcomingEntryMessageDto GetContentNotifyChangeStatusObject(OutcomingEntryNotificationInfo outcomingEntryInfo)
+        {
+            var url = $"{_options.Value.ClientRootAddress}app/requestDetail/main?id={outcomingEntryInfo.Id}";
+
+            var cleanSubContent = outcomingEntryInfo.MessageSubContentChangeStatus.Replace("*", "");
+            if (!cleanSubContent.StartsWith("@"))
+            {
+                cleanSubContent = "@" + cleanSubContent;
+            }
+            var cleanMainContent = outcomingEntryInfo.MessageMainContentChangeStatus
+                .Replace("*", "")
+                .Replace("`", "");
+            var username = cleanSubContent.Split(' ')[0].TrimStart('@');
+            var usernameLength = username.Length + 2;
+            var mentionEndIndex = cleanSubContent.Length;
+            var urlStartIndex = mentionEndIndex + 1;
+            var urlEndIndex = urlStartIndex + url.Length + 1;
+            var textStartIndex = urlEndIndex;
+            var textEndIndex = textStartIndex + cleanMainContent.Length + 1;
+
+            return new OutcomingEntryMessageDto
+            {
+
+                t = $" {cleanSubContent}\n{url}\n{cleanMainContent}",
+                mk = new List<MkDto>
+                {
+                    new MkDto { type = "lk", s = urlStartIndex, e = urlEndIndex },
+                    new MkDto { type = "t", s = textStartIndex, e = textEndIndex }
+                },
+                mentions = new List<MentionDto>
+                {
+                    new MentionDto
+                    {
+                        username = username,
+                        s = 0,
+                        e = usernameLength
+                    }
+                }
+            };
+}
+
         #endregion
 
         #region Notify Request Change
@@ -220,7 +298,7 @@ namespace FinanceManagement.Notifications.Mezon
                        CurrencyCode = outcom.Currency.Code,
                        BranchName = outcom.Branch.Name,
                        CreationTime = outcom.CreationTime,
-                       CreatedBy = _userRepo.GetAll().Where(x => x.Id == outcom.CreatorUserId).Select(x => x.FullName).FirstOrDefault()
+                       CreatedBy = _userRepo.GetAll().Where(x => x.Id == outcom.CreatorUserId).Select(x => x.UserName).FirstOrDefault()
                    };
         }
         private async Task<string> GetNotifyToChannelUrlAsync(int? tenantId = int.MinValue)

@@ -28,7 +28,18 @@ namespace FinanceManagement.Services.Mezon
                 return;
             }
             var channelUrlToSend = string.IsNullOrEmpty(_mezonDevChannelUrl) ? mezonUrl : _mezonDevChannelUrl;
-            Post(channelUrlToSend, new { type = "FINFAST", message = new {username="Finfast", t = mezonMessage } });
+            Post(channelUrlToSend, new { type = "hook", message = mezonMessage });
+        }
+
+        public void NotifyToChannelMezon(string mezonUrl, OutcomingEntryMessageDto mezonMessage)
+        {
+            if (_isNotifyToMezon != "true")
+            {
+                _logger.Info("_isNotifyToMezon=" + _isNotifyToMezon + " => stop");
+                return;
+            }
+            var channelUrlToSend = mezonUrl;
+            Post(channelUrlToSend, new { type = "hook", message = mezonMessage });
         }
 
         public async Task NotifyToChannelAsync(string mezonUrl, string mezonMessage)
