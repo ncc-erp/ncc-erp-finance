@@ -96,7 +96,7 @@ namespace FinanceManagement.Notifications.Mezon
             outcomingEntryInfo.Verifier = GetUsernameLoginBySessionUserId();
             outcomingEntryInfo.StatusCode = statusCode;
 
-            var message = GetContentNotifyChangeStatusObject(outcomingEntryInfo);
+            var message = GetContentNotifyChangeStatusMezon(outcomingEntryInfo);
             string channelUrl = GetNotifyToChannelUrl();
             _mezonWebService.NotifyToChannelMezon(channelUrl, message);
         }
@@ -114,49 +114,15 @@ namespace FinanceManagement.Notifications.Mezon
         }
         private string GetContentNotifyChangeStatus(OutcomingEntryNotificationInfo outcomingEntryInfo)
         {
-            var url = $"{_options.Value.ClientRootAddress}app/requestDetail/main?id={outcomingEntryInfo.Id}";
-
-            var cleanSubContent = outcomingEntryInfo.MessageSubContentChangeStatus.Replace("*", "");
-            if (!cleanSubContent.StartsWith("@"))
-            {
-                cleanSubContent = "@" + cleanSubContent;
-            }
-            var cleanMainContent = outcomingEntryInfo.MessageMainContentChangeStatus
-                .Replace("*", "")
-                .Replace("`", "");
-
-            var username = cleanSubContent.Split(' ')[0].TrimStart('@');
-            var usernameLength = username.Length + 2;
-            var mentionEndIndex = cleanSubContent.Length;
-            var urlStartIndex = mentionEndIndex + 1;
-            var urlEndIndex = urlStartIndex + url.Length + 1;
-            var textStartIndex = urlEndIndex;
-            var textEndIndex = textStartIndex + cleanMainContent.Length + 1;
-
-            var webhookMessage = new
-            {
-                t = $" {cleanSubContent}\n{url}\n{cleanMainContent}",
-                mk = new[]
-                    {
-        new { type = "lk", s = urlStartIndex, e = urlEndIndex },
-        new { type = "t", s = textStartIndex, e = textEndIndex }
-    },
-                mentions = new[]
-                    {
-        new
-        {
-            username = username, 
-            s = 0,
-            e = usernameLength
-        }
-    }
-            };
-
-            return System.Text.Json.JsonSerializer.Serialize(webhookMessage);
+            var message = new StringBuilder()
+              .AppendLine(outcomingEntryInfo.MessageSubContentChangeStatus)
+              .AppendLine($"{_options.Value.ClientRootAddress}app/requestDetail/main?id={outcomingEntryInfo.Id}")
+              .AppendLine(outcomingEntryInfo.MessageMainContentChangeStatus);
+            return message.ToString();
         }
 
 
-        private OutcomingEntryMessageDto GetContentNotifyChangeStatusObject(OutcomingEntryNotificationInfo outcomingEntryInfo)
+        private OutcomingEntryMessageDto GetContentNotifyChangeStatusMezon(OutcomingEntryNotificationInfo outcomingEntryInfo)
         {
             var url = $"{_options.Value.ClientRootAddress}app/requestDetail/main?id={outcomingEntryInfo.Id}";
 
