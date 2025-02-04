@@ -1,5 +1,6 @@
 ﻿using Abp.Runtime.Session;
 using FinanceManagement.MultiTenancy;
+using FinanceManagement.Notifications.Mezon.Dto;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -40,6 +41,26 @@ namespace FinanceManagement.Services.Mezon
             }
             var channelUrlToSend = string.IsNullOrEmpty(_mezonDevChannelUrl) ? mezonUrl : _mezonDevChannelUrl;
             await PostAsync<object>(channelUrlToSend, new { type = "FINFAST", message = new { t = mezonMessage } });
+        }
+        public void NotifyToChannelMezon(MezonMessage message, string channelId)
+        {
+            if (_isNotifyToMezon != "true")
+            {
+                _logger.Info("_isNotifyToMezon=" + _isNotifyToMezon + " => stop");
+                return;
+            }
+            var channelIdToSend = string.IsNullOrEmpty(_mezonDevChannelUrl) ? channelId : _mezonDevChannelUrl;
+            Post(channelIdToSend, new { type = "hook", message = message });
+        }
+        public async Task NotifyToChannelMezonAsync(MezonMessage message, string channelId)
+        {
+            if (_isNotifyToMezon != "true")
+            {
+                _logger.Info("_isNotifyToMezon=" + _isNotifyToMezon + " => stop");
+                return;
+            }
+            var channelIdToSend = string.IsNullOrEmpty(_mezonDevChannelUrl) ? channelId : _mezonDevChannelUrl;
+            await PostAsync<object>(channelIdToSend, new { type = "hook", message = message });
         }
     }
 }

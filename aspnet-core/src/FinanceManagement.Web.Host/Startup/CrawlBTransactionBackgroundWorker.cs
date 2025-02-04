@@ -22,6 +22,7 @@ using FinanceManagement.Notifications.Komu;
 using FinanceManagement.Entities;
 using FinanceManagement.Managers.Settings;
 using FinanceManagement.Notifications.Mezon;
+using FinanceManagement.Notifications.Mezon.Dto;
 
 namespace FinanceManagement.Web.Host.Startup
 {
@@ -189,9 +190,14 @@ namespace FinanceManagement.Web.Host.Startup
                                 duTheoMessage: remainMoneyDetection.Result,
                                 duSo: currentBalanceNumber
                             );
+                            var mezonMessage = new MezonMessage
+                            {
+                                t = contentNotify,
+                                mentions = new List<Mentions>()
+                            };
 
-                        //    _komuNotification.NotifyWithMessage(contentNotify, tenantId);
-                            _mezonNotification.NotifyWithMessage(contentNotify, tenantId);
+                            //    _komuNotification.NotifyWithMessage(contentNotify, tenantId);
+                            _mezonNotification.NotifyWithMezonMessage(mezonMessage, tenantId);
                         }
 
                         logger.BTransactionId = bTransaction.Id;
@@ -280,14 +286,14 @@ namespace FinanceManagement.Web.Host.Startup
         )
         {
             var sb = new StringBuilder()
-                        .AppendLine($"**BĐSD** TK: {bankAccountName} ({bankNumber}) **{(money > 0 ? "+" : "")}{Helpers.FormatMoney(money)}** {currencyName} lúc {timeAt}")
-                        .AppendLine($"```{message}");
+                        .AppendLine($"BĐSD TK: {bankAccountName} ({bankNumber}) {(money > 0 ? "+" : "")}{Helpers.FormatMoney(money)}** {currencyName} lúc {timeAt} ." )
+                        .AppendLine($"{message}");
             if (duSo >= 0)
-                sb.AppendLine($"\nDư sổ(A): {Helpers.FormatMoney(duSo)} {(duSo == duTheoMessage ? "" : "KHÁC")} dư theo BĐSD(B): {Helpers.FormatMoney(duTheoMessage)} => Chênh lệch(B-A): {Helpers.FormatMoney(duTheoMessage - duSo)}```");
-            else
-                sb.AppendLine("```");
+                sb.AppendLine($"\nDư sổ(A): {Helpers.FormatMoney(duSo)} {(duSo == duTheoMessage ? "" : "KHÁC")} dư theo BĐSD(B): {Helpers.FormatMoney(duTheoMessage)} => Chênh lệch(B-A): {Helpers.FormatMoney(duTheoMessage - duSo)}");
+
             return sb.ToString();
         }
+
         private double GetCurrentBalanance(long periodId, long bankAccountId)
         {
             var duDauKy = _context.PeriodBankAccounts

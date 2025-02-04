@@ -12,6 +12,8 @@ using FinanceManagement.Services.Mezon;
 using FinanceManagement.Notifications.Komu.Dtos;
 using System.Linq;
 using System.Text;
+using FinanceManagement.Notifications.Mezon.Dto;
+using System.Collections.Generic;
 
 namespace FinanceManagement.Notifications.Mezon
 {
@@ -47,7 +49,11 @@ namespace FinanceManagement.Notifications.Mezon
             string channelUrl = GetNotifyToChannelUrl();
             _mezonWebService.NotifyToChannel(channelUrl, message);
         }
-
+        public void NotifyWithMezonMessage(MezonMessage message, int? tenantId = int.MinValue)
+        {
+            string channelUrl = GetNotifyToChannelUrl();
+            _mezonWebService.NotifyToChannelMezon(message,channelUrl);
+        }
         public async Task NotifyByMessageAsync(string message, int? tenantId = int.MinValue)
         {
             string channelUrl = GetNotifyToChannelUrl();
@@ -95,9 +101,9 @@ namespace FinanceManagement.Notifications.Mezon
             outcomingEntryInfo.Verifier = GetUsernameLoginBySessionUserId();
             outcomingEntryInfo.StatusCode = statusCode;
 
-            var message = GetContentNotifyChangeStatus(outcomingEntryInfo);
+            var message = outcomingEntryInfo.GenerateMezonMessage(_options.Value.ClientRootAddress);
             string channelUrl = GetNotifyToChannelUrl();
-            _mezonWebService.NotifyToChannel(channelUrl, message);
+            _mezonWebService.NotifyToChannelMezon(message ,channelUrl);
         }
 
         public async Task NotifyChangeStatusAsync(long outcomingEntryId, string statusCode)
@@ -107,17 +113,9 @@ namespace FinanceManagement.Notifications.Mezon
             outcomingEntryInfo.Verifier = GetUsernameLoginBySessionUserId();
             outcomingEntryInfo.StatusCode = statusCode;
 
-            var message = GetContentNotifyChangeStatus(outcomingEntryInfo);
+            var message = outcomingEntryInfo.GenerateMezonMessage(_options.Value.ClientRootAddress);
             string channelUrl = GetNotifyToChannelUrl();
-            await _mezonWebService.NotifyToChannelAsync(channelUrl, message);
-        }
-        private string GetContentNotifyChangeStatus(OutcomingEntryNotificationInfo outcomingEntryInfo)
-        {
-            var message = new StringBuilder()
-             .AppendLine(outcomingEntryInfo.MessageSubContentChangeStatus)
-             .AppendLine($"{_options.Value.ClientRootAddress}app/requestDetail/main?id={outcomingEntryInfo.Id}")
-             .AppendLine(outcomingEntryInfo.MessageMainContentChangeStatus);
-            return message.ToString();
+            await _mezonWebService.NotifyToChannelMezonAsync(message , channelUrl );
         }
         #endregion
 
@@ -187,7 +185,6 @@ namespace FinanceManagement.Notifications.Mezon
             string channelUrl = GetNotifyToChannelUrl();
             await _mezonWebService.NotifyToChannelAsync(channelUrl, requestChange.MessageApprove);
         }
-
         private IQueryable<ContentNotificationRequestChange> IQGetRequestChange(long tempOutcomingEntryId)
         {
             return from temp in _tempOutcomingEntryRepo.GetAll().Where(x => x.Id == tempOutcomingEntryId)
@@ -220,7 +217,7 @@ namespace FinanceManagement.Notifications.Mezon
                        CurrencyCode = outcom.Currency.Code,
                        BranchName = outcom.Branch.Name,
                        CreationTime = outcom.CreationTime,
-                       CreatedBy = _userRepo.GetAll().Where(x => x.Id == outcom.CreatorUserId).Select(x => x.FullName).FirstOrDefault()
+                       CreatedBy = _userRepo.GetAll().Where(x => x.Id == outcom.CreatorUserId).Select(x => x.UserName).FirstOrDefault()
                    };
         }
         private async Task<string> GetNotifyToChannelUrlAsync(int? tenantId = int.MinValue)
