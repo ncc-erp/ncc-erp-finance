@@ -249,12 +249,12 @@ namespace FinanceManagement.Helper
         )
         {
             var message = new StringBuilder();
-            message.AppendLine("```");
+         //   message.AppendLine("```");
             message.AppendLine($"Nội dung: {outcomingEntryName}");
             message.AppendLine($"Loại: {outcomingEntryTypeCode}");
             message.AppendLine($"Chi nhánh: {branchName}");
             message.AppendLine($"Tạo bởi: {createdByName} lúc {DateTimeUtils.FormatDateTime(creationTime)}");
-            message.AppendLine("```");
+         //   message.AppendLine("```");
             return message.ToString();
         }
         public static string GetSubContentSendNotifyKomu(
@@ -265,7 +265,7 @@ namespace FinanceManagement.Helper
             string currencyCode
         )
         {
-            return $"{verifier} ***[{statusCode}]*** request chi **#{outcomingEntryId}** số tiền **{money} {currencyCode}**";
+            return $"{verifier}  [{statusCode}] request chi #{outcomingEntryId} số tiền {money} {currencyCode}";
         }
         public static string GetContentSalarySendNotifyKomu(
             long outcomingEntryId,
@@ -274,7 +274,7 @@ namespace FinanceManagement.Helper
             string statusCode
         )
         {
-            return $"**[HRM Tool]** created request chi **#{outcomingEntryId} {outcomingEntryName}** số tiền **{money} VND** ({statusCode})";
+            return $"[HRM Tool] created request chi #{outcomingEntryId} {outcomingEntryName} số tiền {money} VND ({statusCode})";
         }
 
         public static string GetContentTeamBuildingSendNotifyKomu(
@@ -284,7 +284,7 @@ namespace FinanceManagement.Helper
             string statusCode
         )
         {
-            return $"**[Timesheet Tool]** created request chi **#{outcomingEntryId} {outcomingEntryName}** số tiền **{money} VND** ({statusCode})";
+            return $"[Timesheet Tool] created request chi #{outcomingEntryId} {outcomingEntryName} số tiền {money} VND ({statusCode})";
         }
 
         /// <summary>
@@ -313,7 +313,7 @@ namespace FinanceManagement.Helper
             string oldCurrencyCode = FinanceManagementConsts.VND_CURRENCY_NAME
         )
         {
-            return $"{verifier} ***[{statusCode}]*** **YÊU CẦU THAY ĐỔI** request chi **#{outcomingEntryId} {outcomingEntryName}** số tiền từ **{FormatMoneyVND(oldMoney)} {oldCurrencyCode}** => **{FormatMoneyVND(money)} {currencyCode}** "
+            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode} "
                 + (string.IsNullOrEmpty(reason) ? "" : $"``` Lý do thay đổi:\n {reason} ```")
                 + (string.IsNullOrEmpty(reason) ? "\n" : "") + 
                 $"{url}";
@@ -342,7 +342,7 @@ namespace FinanceManagement.Helper
             string oldCurrencyCode = FinanceManagementConsts.VND_CURRENCY_NAME
         )
         {
-            return $"{verifier} ***[{statusCode}]*** **YÊU CẦU THAY ĐỔI** request chi **#{outcomingEntryId} {outcomingEntryName}** số tiền từ **{FormatMoneyVND(oldMoney)} {oldCurrencyCode}** => **{FormatMoneyVND(money)} {currencyCode}**\n {url}";
+            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}\n {url}";
         }
         /// <summary>
         /// Lấy nội dung thông báo yêu cầu thay đổi khi từ chối
@@ -368,7 +368,7 @@ namespace FinanceManagement.Helper
             string oldCurrencyCode = FinanceManagementConsts.VND_CURRENCY_NAME
         )
         {
-            return $"{verifier} ***[{statusCode}]*** **YÊU CẦU THAY ĐỔI** request chi **#{outcomingEntryId} {outcomingEntryName}** số tiền từ **{FormatMoneyVND(oldMoney)} {oldCurrencyCode}** => **{FormatMoneyVND(money)} {currencyCode}**\n {url}";
+            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}\n {url}";
         }
         public static string NumberToText(double inputNumber)
         {
