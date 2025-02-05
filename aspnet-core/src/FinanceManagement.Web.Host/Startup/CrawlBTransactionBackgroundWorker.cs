@@ -195,8 +195,7 @@ namespace FinanceManagement.Web.Host.Startup
                                 t = contentNotify,
                                 mentions = new List<Mentions>()
                             };
-
-                            //    _komuNotification.NotifyWithMessage(contentNotify, tenantId);
+                            _komuNotification.NotifyWithMessage(contentNotify, tenantId);
                             _mezonNotification.NotifyWithMezonMessage(mezonMessage, tenantId);
                         }
 
