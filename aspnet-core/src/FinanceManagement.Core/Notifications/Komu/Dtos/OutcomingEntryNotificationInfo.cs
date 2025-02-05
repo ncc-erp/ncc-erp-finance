@@ -30,8 +30,9 @@ namespace FinanceManagement.Notifications.Komu.Dtos
         {
             var message = new StringBuilder()
              .AppendLine(MessageSubContentChangeStatus)
-             .AppendLine($"{address}app/requestDetail/main?id={Id}")
-             .AppendLine(MessageMainContentChangeStatus);
+             .Append($"{address}app/requestDetail/main?id={Id}")
+             .Append(" ")
+             .Append($"{MessageMainContentChangeStatus}");
             return new MezonMessage
             {
                 t = message.ToString(),
@@ -45,6 +46,7 @@ namespace FinanceManagement.Notifications.Komu.Dtos
                 }
             };
         }
-        
+       
+
     }
 }

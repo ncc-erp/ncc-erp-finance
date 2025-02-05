@@ -23,15 +23,15 @@ namespace FinanceManagement.Uitls
                     s = match.Index,
                     e = match.Index + match.Length,
                 });
-                tmp = match.Index + match.Length - 1;
+                tmp = match.Index + match.Length ;
             }
-            var pos = message.IndexOf(".");
+            var pos = message.IndexOf(".") +1;
             if (pos == -1)
             {
                 links.Add(new MK
                 {
-                    type = "t",
-                    s = pos,
+                    type = "pre",
+                    s = pos ,
                     e = message.Length,
                 });
                 return links;
@@ -39,8 +39,8 @@ namespace FinanceManagement.Uitls
             tmp = tmp == 0 ? pos : tmp;
             links.Add(new MK
             {
-                type = "t",
-                s = tmp,
+                type = "pre",
+                s = tmp ,
                 e = message.Length ,
             });
             return links;

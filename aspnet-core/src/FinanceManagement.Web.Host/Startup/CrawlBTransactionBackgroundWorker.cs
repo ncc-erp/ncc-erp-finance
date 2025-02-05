@@ -286,10 +286,10 @@ namespace FinanceManagement.Web.Host.Startup
         )
         {
             var sb = new StringBuilder()
-                        .AppendLine($"BĐSD TK: {bankAccountName} ({bankNumber}) {(money > 0 ? "+" : "")}{Helpers.FormatMoney(money)}** {currencyName} lúc {timeAt} ." )
-                        .AppendLine($"{message}");
+                        .Append($"BĐSD TK: {bankAccountName} ({bankNumber}) {(money > 0 ? "+" : "")}{Helpers.FormatMoney(money)}** {currencyName} lúc {timeAt} ." )
+                        .Append($"{message}");
             if (duSo >= 0)
-                sb.AppendLine($"\nDư sổ(A): {Helpers.FormatMoney(duSo)} {(duSo == duTheoMessage ? "" : "KHÁC")} dư theo BĐSD(B): {Helpers.FormatMoney(duTheoMessage)} => Chênh lệch(B-A): {Helpers.FormatMoney(duTheoMessage - duSo)}");
+                sb.Append($"\nDư sổ(A): {Helpers.FormatMoney(duSo)} {(duSo == duTheoMessage ? "" : "KHÁC")} dư theo BĐSD(B): {Helpers.FormatMoney(duTheoMessage)} => Chênh lệch(B-A): {Helpers.FormatMoney(duTheoMessage - duSo)}");
 
             return sb.ToString();
         }
