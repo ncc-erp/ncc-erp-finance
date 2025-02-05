@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using FinanceManagement.Notifications.Mezon.Dto;
+using System.Threading.Tasks;
 
 namespace FinanceManagement.Services.Mezon
 {
@@ -6,5 +7,7 @@ namespace FinanceManagement.Services.Mezon
     {
         void NotifyToChannel(string mezonUrl, string mezonMessage);
         Task NotifyToChannelAsync(string komuMessage, string channelId);
+        void NotifyToChannelMezon(MezonMessage message, string channelId);
+        Task NotifyToChannelMezonAsync(MezonMessage message, string channelId);
     }
 }
