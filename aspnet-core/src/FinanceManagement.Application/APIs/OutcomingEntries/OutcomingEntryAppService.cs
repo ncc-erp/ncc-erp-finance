@@ -561,7 +561,7 @@ namespace FinanceManagement.APIs.OutcomingEntries
             await CurrentUnitOfWork.SaveChangesAsync();
 
             
-            _komuNotification.NotifyChangeStatus(Input.OutcomingEntryId, statusTransition.ToTransitionName.Trim());
+            // _komuNotification.NotifyChangeStatus(Input.OutcomingEntryId, statusTransition.ToTransitionName.Trim());
             _mezonNotification.NotifyChangeStatus(Input.OutcomingEntryId, statusTransition.ToTransitionName.Trim());
 
             await _outcomingEntryManager.CreateOutcomingStatusHistory(new CreateOutcomingEntryStatusHistoryDto

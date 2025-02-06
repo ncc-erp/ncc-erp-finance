@@ -286,7 +286,7 @@ namespace FinanceManagement.Web.Host.Startup
         )
         {
             var sb = new StringBuilder()
-                        .Append($"BĐSD TK: {bankAccountName} ({bankNumber}) {(money > 0 ? "+" : "")}{Helpers.FormatMoney(money)}** {currencyName} lúc {timeAt} ." )
+                        .Append($"BĐSD TK: {bankAccountName} ({bankNumber}) {(money > 0 ? "+" : "")}{Helpers.FormatMoney(money)} {currencyName} lúc {timeAt} ." )
                         .Append($"{message}");
             if (duSo >= 0)
                 sb.Append($"\nDư sổ(A): {Helpers.FormatMoney(duSo)} {(duSo == duTheoMessage ? "" : "KHÁC")} dư theo BĐSD(B): {Helpers.FormatMoney(duTheoMessage)} => Chênh lệch(B-A): {Helpers.FormatMoney(duTheoMessage - duSo)}");

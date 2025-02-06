@@ -314,7 +314,7 @@ namespace FinanceManagement.Helper
         )
         {
             return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode} "
-                + (string.IsNullOrEmpty(reason) ? "" : $"``` Lý do thay đổi:\n {reason} ```")
+                + (string.IsNullOrEmpty(reason) ? "" : $" Lý do thay đổi:\n {reason} ")
                 + (string.IsNullOrEmpty(reason) ? "\n" : "") + 
                 $"{url}";
         }

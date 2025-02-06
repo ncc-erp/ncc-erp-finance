@@ -51,7 +51,7 @@ namespace FinanceManagement.Notifications.Mezon
         }
         public void NotifyWithMezonMessage(MezonMessage message, int? tenantId = int.MinValue)
         {
-            string channelUrl = GetNotifyToChannelUrl();
+            string channelUrl = GetNotifyToChannelUrl(tenantId);
             _mezonWebService.NotifyToChannelMezon(message,channelUrl);
         }
         public async Task NotifyByMessageAsync(string message, int? tenantId = int.MinValue)
@@ -217,7 +217,7 @@ namespace FinanceManagement.Notifications.Mezon
                        CurrencyCode = outcom.Currency.Code,
                        BranchName = outcom.Branch.Name,
                        CreationTime = outcom.CreationTime,
-                       CreatedBy = _userRepo.GetAll().Where(x => x.Id == outcom.CreatorUserId).Select(x => x.UserName).FirstOrDefault()
+                       CreatedBy = _userRepo.GetAll().Where(x => x.Id == outcom.CreatorUserId).Select(x => x.FullName).FirstOrDefault()
                    };
         }
         private async Task<string> GetNotifyToChannelUrlAsync(int? tenantId = int.MinValue)
@@ -232,11 +232,11 @@ namespace FinanceManagement.Notifications.Mezon
         {
             var username = _userRepo.GetAll()
                 .Where(x => x.Id == _session.UserId)
-                .Select(x => x.UserName)
+                .Select(x => x.EmailAddress)
                 .FirstOrDefault();
             if (string.IsNullOrEmpty(username))
                 return string.Empty;
-            return username;
+            return username.Split('@')[0];
         }
         #endregion
     }

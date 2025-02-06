@@ -25,28 +25,25 @@ namespace FinanceManagement.Notifications.Komu.Dtos
         public string MessageTeamBuildingFromTimesheet => Helpers.GetContentTeamBuildingSendNotifyKomu(Id, OutcomingEntryName, Helpers.FormatMoneyVND(OutcomingEntryValue), FinanceManagementConsts.WORKFLOW_STATUS_START);
         public string MessageMainContentChangeStatus => Helpers.GetContentSendNotifyKomu(OutcomingEntryName,OutcomingEntryTypeCode,BranchName, CreatedBy, CreationTime);
         public string MessageSubContentChangeStatus => Helpers.GetSubContentSendNotifyKomu(Verifier, StatusCode, Id, Helpers.FormatMoneyVND(OutcomingEntryValue), CurrencyCode);
- 
         public MezonMessage GenerateMezonMessage(string address)
         {
-            var message = new StringBuilder()
-             .AppendLine(MessageSubContentChangeStatus)
-             .Append($"{address}app/requestDetail/main?id={Id}")
-             .Append(" ")
-             .Append($"{MessageMainContentChangeStatus}");
+            string message = $"{MessageSubContentChangeStatus}\n{address}app/requestDetail/main?id={Id} {MessageMainContentChangeStatus}";
+
             return new MezonMessage
             {
-                t = message.ToString(),
+                t = message,
                 mentions = new List<Mentions>
-                {
-                    new Mentions
-                    {
-                        username = Verifier,
-                        s = message.ToString().IndexOf(Verifier)
-                    }
-                }
+        {
+            new Mentions
+            {
+                username = Verifier,
+                s = message.IndexOf(Verifier)
+            }
+        }
             };
         }
-       
+
+
 
     }
 }
