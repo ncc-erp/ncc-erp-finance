@@ -18,7 +18,7 @@ namespace FinanceManagement.Services
     {
         public static IServiceCollection AddWebServices(this IServiceCollection services, IConfigurationRoot _appConfiguration)
         {
-            services.AddHttpClient<IKomuService, KomuService>(options =>
+            services.AddHttpClient<KomuService>(options =>
              {
                  options.BaseAddress = new Uri(_appConfiguration.GetValue<string>("KomuService:BaseAddress"));
                  options.DefaultRequestHeaders.Add("X-Secret-Key", _appConfiguration.GetValue<string>("KomuService:SecurityCode"));
@@ -37,7 +37,7 @@ namespace FinanceManagement.Services
              {
                  options.BaseAddress = new Uri(_appConfiguration.GetValue<string>("Firebase:Url"));
              });
-            services.AddHttpClient<IMezonWebService, MezonWebService>(options =>
+            services.AddHttpClient<MezonWebService>(options =>
             {
                 //options.BaseAddress = new Uri(_appConfiguration.GetValue<string>("Mezon:BaseAddress", "https://webhook.mezon.ai"));
             });

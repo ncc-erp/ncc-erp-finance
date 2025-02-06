@@ -35,8 +35,8 @@ namespace FinanceManagement.Web.Host.Startup
         private readonly IOptions<FirebaseConfig> _firesbaseOptions;
         private readonly IOptions<KomuNotificationConfig> _komuNotificationOptions;
         private const int TENANT_NULL_ID = -1;
-        private readonly IKomuNotification _komuNotification;
-        private readonly IMezonNotification _mezonNotification;
+        private readonly KomuNotification _komuNotification;
+        private readonly MezonNotification _mezonNotification;
         public IMySettingManager MySettingManager { get; set; }
 
         public CrawlBTransactionBackgroundWorker(
@@ -46,8 +46,8 @@ namespace FinanceManagement.Web.Host.Startup
             FirebaseService firebaseService,
             IOptions<FirebaseConfig> options,
             IOptions<KomuNotificationConfig> komuNotificationOptions,
-            IKomuNotification komuNotification,
-            IMezonNotification mezonNotification
+            KomuNotification komuNotification,
+            MezonNotification mezonNotification
         ) : base(timer)
         {
             _context = iocResolver.Resolve<FinanceManagementDbContext>();
@@ -70,7 +70,7 @@ namespace FinanceManagement.Web.Host.Startup
             //using HashSet to save key exists
             InitHashSetKey();
 
-            var dicBankTransactions = GetDicBankNumberToBankAccountInfo();
+             var dicBankTransactions = GetDicBankNumberToBankAccountInfo();
             var dicPeriods = GetDicTenantIdToActivePeriodId();
 
             //get data using httpclient call to firebase
@@ -190,14 +190,9 @@ namespace FinanceManagement.Web.Host.Startup
                                 duTheoMessage: remainMoneyDetection.Result,
                                 duSo: currentBalanceNumber
                             );
-                            var mezonMessage = new MezonMessage
-                            {
-                                t = contentNotify,
-                                mentions = new List<Mentions>()
-                            };
 
                             //    _komuNotification.NotifyWithMessage(contentNotify, tenantId);
-                            _mezonNotification.NotifyWithMezonMessage(mezonMessage, tenantId);
+                            _mezonNotification.NotifyWithMessage(contentNotify, tenantId);
                         }
 
                         logger.BTransactionId = bTransaction.Id;

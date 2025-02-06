@@ -18,12 +18,12 @@ namespace FinanceManagement.APIs.TimesheetTool
 {
     public class TimesheetToolAppService : FinanceManagementAppServiceBase
     {
-        private readonly IKomuNotification _komuNotification;
+        private readonly KomuNotification _komuNotification;
         private readonly ICommonManager _commonManager;
         private readonly IOutcomingEntryManager _outcomingEntryManager;
-        private readonly IMezonNotification _mezonNotification;
+        private readonly MezonNotification _mezonNotification;
 
-        public TimesheetToolAppService(IWorkScope workScope, IKomuNotification komuNotification, ICommonManager commonManager, IOutcomingEntryManager outcomingEntryManager, IMezonNotification mezonNotification) : base(workScope)
+        public TimesheetToolAppService(IWorkScope workScope, KomuNotification komuNotification, ICommonManager commonManager, IOutcomingEntryManager outcomingEntryManager, MezonNotification mezonNotification) : base(workScope)
         {
             _komuNotification = komuNotification;
             _commonManager = commonManager;

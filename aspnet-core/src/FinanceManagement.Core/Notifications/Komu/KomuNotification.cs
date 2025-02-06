@@ -9,6 +9,7 @@ using FinanceManagement.GeneralModels;
 using FinanceManagement.Helper;
 using FinanceManagement.Managers.Settings;
 using FinanceManagement.Notifications.Komu.Dtos;
+using FinanceManagement.Notifications.Mezon.Dto;
 using FinanceManagement.Services.Komu;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -20,9 +21,9 @@ using System.Threading.Tasks;
 
 namespace FinanceManagement.Notifications.Komu
 {
-    public class KomuNotification : DomainService, IKomuNotification
+    public class KomuNotification : DomainService, INotification
     {
-        private readonly IKomuService _komuService;
+        private readonly KomuService _komuService;
         private readonly IRepository<OutcomingEntry, long> _outcomingEntryRepo;
         private readonly IRepository<TempOutcomingEntry, long> _tempOutcomingEntryRepo;
         private readonly IRepository<User, long> _userRepo;
@@ -30,7 +31,7 @@ namespace FinanceManagement.Notifications.Komu
         private readonly IOptions<ApplicationConfig> _options;
         private readonly IMySettingManager _mySettingManager;
         public KomuNotification(
-            IKomuService komuService,
+            KomuService komuService,
             IRepository<OutcomingEntry, long> outcomingEntryRepo,
             IRepository<TempOutcomingEntry, long> tempOutcomingEntryRepo,
             IRepository<User, long> userRepo,

@@ -22,12 +22,12 @@ namespace FinanceManagement.APIs.HRMs
 {
     public class HRMv2AppService : FinanceManagementAppServiceBase
     {
-        private readonly IKomuNotification _komuNotification;
+        private readonly KomuNotification _komuNotification;
         private readonly ICommonManager _commonManager;
         private readonly IOutcomingEntryManager _outcomingEntryManager;
-        private readonly IMezonNotification _mezonNotification;
-        public HRMv2AppService(IWorkScope workScope, IKomuNotification komuNotification, ICommonManager commonManager, IOutcomingEntryManager outcomingEntryManager, IMezonNotification mezonNotification) : base(workScope)
-        {
+        private readonly MezonNotification _mezonNotification;
+        public HRMv2AppService(IWorkScope workScope, KomuNotification komuNotification, ICommonManager commonManager, IOutcomingEntryManager outcomingEntryManager, MezonNotification mezonNotification) : base(workScope)
+        {   
             _komuNotification = komuNotification;
             _commonManager = commonManager;
             _outcomingEntryManager = outcomingEntryManager;

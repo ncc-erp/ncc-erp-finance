@@ -50,21 +50,21 @@ namespace FinanceManagement.APIs.OutcomingEntries
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IOutcomingEntryManager _outcomingEntryManager;
         private readonly IMyUserManager _myUserManager;
-        private readonly IKomuNotification _komuNotification;
+        private readonly KomuNotification _komuNotification;
         private readonly ITempOutcomingEntryManager _tempOutcomingEntryManager;
         private readonly IOptions<ApplicationConfig> _options;
         private readonly ICommonManager _commonManager;
-        private readonly IMezonNotification _mezonNotification;
+        private readonly MezonNotification _mezonNotification;
         public OutcomingEntryAppService(
                    IWebHostEnvironment webHostEnvironment,
                    IWorkScope workScope,
                    IOutcomingEntryManager outcomingEntryManager,
                    IMyUserManager myUserManager,
-                   IKomuNotification komuNotification,
+                   KomuNotification komuNotification,
                    ITempOutcomingEntryManager tempOutcomingEntryManager,
                    IOptions<ApplicationConfig> options,
                    ICommonManager commonManager,
-                   IMezonNotification mezonNotification
+                   MezonNotification mezonNotification
         ) : base(workScope)
         {
             _hostingEnvironment = webHostEnvironment;
@@ -746,11 +746,11 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 await WorkScope.UpdateAsync(rq);
             }
             var message = new StringBuilder()
-                .AppendLine($"Chào bạn, CFO vừa mới chuyển tiền cho **{allRequestApproved.Count()}** Request")
+                .AppendLine($"Chào bạn, CFO vừa mới chuyển tiền cho {allRequestApproved.Count()} Request")
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=TRANSFERED")
                 .ToString();
 
-            _komuNotification.NotifyWithMessage(message);
+            // _komuNotification.NotifyWithMessage(message);
             _mezonNotification.NotifyWithMessage(message);
 
             return $"Đã xuất tiền {allRequestApproved.Count()} Request Chi";
@@ -807,11 +807,11 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 .Where(x => x.WorkflowStatus.Code.ToLower() == Constants.WORKFLOW_STATUS_PENDINGCEO.ToLower())
                 .CountAsync();
             var message = new StringBuilder()
-                .AppendLine($"Chào bạn, hiện tại có **{countPendingCEO} request ** đang chờ bạn duyệt")
+                .AppendLine($"Chào bạn, hiện tại có {countPendingCEO} request  đang chờ bạn duyệt")
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=PENDINGCEO")
                 .ToString();
 
-            _komuNotification.NotifyWithMessage(message);
+           // _komuNotification.NotifyWithMessage(message);
             _mezonNotification.NotifyWithMessage(message);
         }
 
@@ -823,11 +823,11 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 .Where(x => x.WorkflowStatus.Code.ToLower() == Constants.WORKFLOW_STATUS_PENDINGCEO.ToLower())
                 .CountAsync();
             var message = new StringBuilder()
-                .AppendLine($"Chào bạn, hiện tại có **{countPendingCEO} yêu cầu thay đổi ** đang chờ bạn duyệt")
+                .AppendLine($"Chào bạn, hiện tại có {countPendingCEO} yêu cầu thay đổi  đang chờ bạn duyệt")
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&statusRequestChange=PENDINGCEO")
                 .ToString();
 
-            _komuNotification.NotifyWithMessage(message);
+            //_komuNotification.NotifyWithMessage(message);
             _mezonNotification.NotifyWithMessage(message);
         }
 
@@ -839,11 +839,11 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 .CountAsync();
 
             var message = new StringBuilder()
-                .AppendLine($"Chào bạn, hiện tại có **{countApproved}** request đang chờ bạn chuyển tiền.")
+                .AppendLine($"Chào bạn, hiện tại có {countApproved} request đang chờ bạn chuyển tiền.")
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=PENDINGCFO")
                 .ToString();
 
-            _komuNotification.NotifyWithMessage(message);
+           // _komuNotification.NotifyWithMessage(message);
             _mezonNotification.NotifyWithMessage(message);
         }
 

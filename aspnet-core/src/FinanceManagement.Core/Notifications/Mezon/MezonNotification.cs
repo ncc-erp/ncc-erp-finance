@@ -17,9 +17,9 @@ using System.Collections.Generic;
 
 namespace FinanceManagement.Notifications.Mezon
 {
-    public class MezonNotification : DomainService, IMezonNotification
+    public class MezonNotification : DomainService, INotification
     {
-        private readonly IMezonWebService _mezonWebService;
+        private readonly MezonWebService _mezonWebService;
         private readonly IRepository<OutcomingEntry, long> _outcomingEntryRepo;
         private readonly IRepository<TempOutcomingEntry, long> _tempOutcomingEntryRepo;
         private readonly IRepository<User, long> _userRepo;
@@ -27,7 +27,7 @@ namespace FinanceManagement.Notifications.Mezon
         private readonly IOptions<ApplicationConfig> _options;
         private readonly IMySettingManager _mySettingManager;
 
-        public MezonNotification(IMezonWebService mezonWebService,
+        public MezonNotification(MezonWebService mezonWebService,
                                  IRepository<OutcomingEntry, long> outcomingEntryRepo,
                                  IRepository<TempOutcomingEntry, long> tempOutcomingEntryRepo,
                                  IRepository<User, long> userRepo,
@@ -47,17 +47,15 @@ namespace FinanceManagement.Notifications.Mezon
         public void NotifyWithMessage(string message, int? tenantId = int.MinValue)
         {
             string channelUrl = GetNotifyToChannelUrl();
-            _mezonWebService.NotifyToChannel(channelUrl, message);
+            var messageMezon = ConvertStringToMezonMessage(message);
+            _mezonWebService.NotifyToChannelMezon(messageMezon, channelUrl);
         }
-        public void NotifyWithMezonMessage(MezonMessage message, int? tenantId = int.MinValue)
-        {
-            string channelUrl = GetNotifyToChannelUrl(tenantId);
-            _mezonWebService.NotifyToChannelMezon(message,channelUrl);
-        }
+
         public async Task NotifyByMessageAsync(string message, int? tenantId = int.MinValue)
         {
             string channelUrl = GetNotifyToChannelUrl();
-            await _mezonWebService.NotifyToChannelAsync(channelUrl, message);
+            var messageMezon = ConvertStringToMezonMessage(message);
+            await _mezonWebService.NotifyToChannelMezonAsync(messageMezon, channelUrl);
         }
         #endregion
 
@@ -66,14 +64,16 @@ namespace FinanceManagement.Notifications.Mezon
         {
             var outcomingEntryInfo = IQGetOutcomingEntryNotificationInfo(outcomingEntryId).FirstOrDefault();
             string channelUrl = GetNotifyToChannelUrl();
-            _mezonWebService.NotifyToChannel(channelUrl, outcomingEntryInfo.MessageSalaryFromHRM);
+            var mezonMessage = ConvertStringToMezonMessage(outcomingEntryInfo.MessageSalaryFromHRM);
+            _mezonWebService.NotifyToChannelMezon(mezonMessage, channelUrl);
         }
 
         public async Task NotifySalaryAsync(long outcomingEntryId)
         {
             var outcomingEntryInfo = IQGetOutcomingEntryNotificationInfo(outcomingEntryId).FirstOrDefault();
             string channelUrl = GetNotifyToChannelUrl();
-            await _mezonWebService.NotifyToChannelAsync(channelUrl, outcomingEntryInfo.MessageSalaryFromHRM);
+            var mezonMessage = ConvertStringToMezonMessage(outcomingEntryInfo.MessageSalaryFromHRM);
+            await _mezonWebService.NotifyToChannelMezonAsync(mezonMessage, channelUrl);
         }
         #endregion
 
@@ -82,17 +82,27 @@ namespace FinanceManagement.Notifications.Mezon
         {
             var outcomingEntryInfo = IQGetOutcomingEntryNotificationInfo(outcomingEntryId).FirstOrDefault();
             string channelUrl = GetNotifyToChannelUrl();
-            _mezonWebService.NotifyToChannel(channelUrl, outcomingEntryInfo.MessageTeamBuildingFromTimesheet);
+            var mezonMessage = ConvertStringToMezonMessage(outcomingEntryInfo.MessageTeamBuildingFromTimesheet);
+            _mezonWebService.NotifyToChannelMezon(mezonMessage, channelUrl);
         }
 
         public async Task NotifyTeamBuildingAsync(long outcomingEntryId)
         {
             var outcomingEntryInfo = IQGetOutcomingEntryNotificationInfo(outcomingEntryId).FirstOrDefault();
             string channelUrl = GetNotifyToChannelUrl();
-            await _mezonWebService.NotifyToChannelAsync(channelUrl, outcomingEntryInfo.MessageTeamBuildingFromTimesheet);
-        }
+            var mezonMessage = ConvertStringToMezonMessage(outcomingEntryInfo.MessageTeamBuildingFromTimesheet);
+            await _mezonWebService.NotifyToChannelMezonAsync(mezonMessage,channelUrl);
+        }     
         #endregion
-
+         private MezonMessage ConvertStringToMezonMessage(string message)
+        {
+            return new MezonMessage()
+            {
+                t = message,
+                mentions = new List<Mentions> { }
+            };
+           
+        }
         #region Notify Change Status
         public void NotifyChangeStatus(long outcomingEntryId, string statusCode)
         {
@@ -128,7 +138,8 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            _mezonWebService.NotifyToChannel(channelUrl, requestChange.MessagePending);
+            var mezonMessage = ConvertStringRequestChangeToMezonMessage(requestChange.MessagePending, requestChange.Verifier);
+            _mezonWebService.NotifyToChannelMezon(mezonMessage, channelUrl);
         }
 
         public async Task NotifyRequestChangePendingAsync(long tempOutcomingEntryId, string transitionName)
@@ -139,7 +150,8 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            await _mezonWebService.NotifyToChannelAsync(channelUrl, requestChange.MessagePending);
+            var mezonMessage = ConvertStringRequestChangeToMezonMessage(requestChange.MessagePending, requestChange.Verifier);
+            await _mezonWebService.NotifyToChannelMezonAsync(mezonMessage, channelUrl);
         }
 
         public void NotifyRequestChangeReject(long tempOutcomingEntryId, string transitionName)
@@ -150,7 +162,8 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            _mezonWebService.NotifyToChannel(channelUrl, requestChange.MessageReject);
+            var mezonMessage = ConvertStringRequestChangeToMezonMessage(requestChange.MessageReject, requestChange.Verifier);
+            _mezonWebService.NotifyToChannelMezon(mezonMessage,channelUrl);
         }
 
         public async Task NotifyRequestChangeRejectAsync(long tempOutcomingEntryId, string transitionName)
@@ -161,7 +174,8 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            await _mezonWebService.NotifyToChannelAsync(channelUrl, requestChange.MessageReject);
+            var mezonMessage = ConvertStringRequestChangeToMezonMessage(requestChange.MessageReject, requestChange.Verifier);
+            await _mezonWebService.NotifyToChannelMezonAsync(mezonMessage, channelUrl);
         }
 
         public void NotifyRequestChangeApprove(long tempOutcomingEntryId, string transitionName)
@@ -172,7 +186,8 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            _mezonWebService.NotifyToChannel(channelUrl, requestChange.MessageApprove);
+            var mezonMessage = ConvertStringRequestChangeToMezonMessage(requestChange.MessageApprove, requestChange.Verifier);
+            _mezonWebService.NotifyToChannelMezon(mezonMessage, channelUrl);        
         }
 
         public async Task NotifyRequestChangeApproveAsync(long tempOutcomingEntryId, string transitionName)
@@ -183,7 +198,25 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            await _mezonWebService.NotifyToChannelAsync(channelUrl, requestChange.MessageApprove);
+            var mezonMessage = ConvertStringRequestChangeToMezonMessage(requestChange.MessageApprove, requestChange.Verifier);
+            await _mezonWebService.NotifyToChannelMezonAsync(mezonMessage, channelUrl);
+        }
+
+        private MezonMessage ConvertStringRequestChangeToMezonMessage(string message, string verifier)
+        {
+            return new MezonMessage
+            {
+                t = message,
+                mentions = new List<Mentions>
+                {
+                        new Mentions
+                        {
+                           username = verifier,
+                           s = message.IndexOf(verifier)
+                        }
+
+                }
+            };
         }
         private IQueryable<ContentNotificationRequestChange> IQGetRequestChange(long tempOutcomingEntryId)
         {
@@ -230,13 +263,13 @@ namespace FinanceManagement.Notifications.Mezon
         }
         private string GetUsernameLoginBySessionUserId()
         {
-            var username = _userRepo.GetAll()
+            var emailAddress = _userRepo.GetAll()
                 .Where(x => x.Id == _session.UserId)
                 .Select(x => x.EmailAddress)
                 .FirstOrDefault();
-            if (string.IsNullOrEmpty(username))
+            if (string.IsNullOrEmpty(emailAddress))
                 return string.Empty;
-            return username.Split('@')[0];
+            return emailAddress.Split('@')[0];
         }
         #endregion
     }

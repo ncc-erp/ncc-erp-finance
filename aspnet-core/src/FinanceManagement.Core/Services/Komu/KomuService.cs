@@ -13,7 +13,7 @@ using Abp.Runtime.Session;
 
 namespace FinanceManagement.Services.Komu
 {
-    public class KomuService : BaseWebService, IKomuService
+    public class KomuService : BaseWebService
     {
         private readonly string _channelIdDevMode;
         private readonly string _isNotifyToKomu;
