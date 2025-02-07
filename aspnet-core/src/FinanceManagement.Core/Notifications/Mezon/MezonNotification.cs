@@ -9,7 +9,6 @@ using FinanceManagement.Managers.Settings;
 using Microsoft.Extensions.Options;
 using System.Threading.Tasks;
 using FinanceManagement.Services.Mezon;
-using FinanceManagement.Notifications.Komu.Dtos;
 using System.Linq;
 using System.Text;
 using FinanceManagement.Notifications.Mezon.Dto;
@@ -46,14 +45,14 @@ namespace FinanceManagement.Notifications.Mezon
         #region Core Notification
         public void NotifyWithMessage(string message, int? tenantId = int.MinValue)
         {
-            string channelUrl = GetNotifyToChannelUrl();
+            string channelUrl = GetNotifyToChannelUrl(tenantId);
             var messageMezon = ConvertStringToMezonMessage(message);
             _mezonWebService.NotifyToChannelMezon(messageMezon, channelUrl);
         }
 
         public async Task NotifyByMessageAsync(string message, int? tenantId = int.MinValue)
         {
-            string channelUrl = GetNotifyToChannelUrl();
+            string channelUrl = GetNotifyToChannelUrl(tenantId);
             var messageMezon = ConvertStringToMezonMessage(message);
             await _mezonWebService.NotifyToChannelMezonAsync(messageMezon, channelUrl);
         }
@@ -65,7 +64,7 @@ namespace FinanceManagement.Notifications.Mezon
             var outcomingEntryInfo = IQGetOutcomingEntryNotificationInfo(outcomingEntryId).FirstOrDefault();
             string channelUrl = GetNotifyToChannelUrl();
             var mezonMessage = ConvertStringToMezonMessage(outcomingEntryInfo.MessageSalaryFromHRM);
-            _mezonWebService.NotifyToChannelMezon(mezonMessage, channelUrl);
+            _mezonWebService.NotifyToChannelMezon( mezonMessage,channelUrl);
         }
 
         public async Task NotifySalaryAsync(long outcomingEntryId)

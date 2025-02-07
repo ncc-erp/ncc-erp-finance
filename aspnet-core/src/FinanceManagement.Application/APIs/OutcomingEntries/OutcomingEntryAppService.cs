@@ -29,7 +29,6 @@ using FinanceManagement.IoC;
 using FinanceManagement.Managers.OutcomingEntries;
 using FinanceManagement.Managers.OutcomingEntries.Dtos;
 using FinanceManagement.Managers.Users;
-using FinanceManagement.Notifications.Komu;
 using FinanceManagement.Managers.TempOutcomingEntries.Dtos;
 using FinanceManagement.Managers.TempOutcomingEntries;
 using FinanceManagement.Entities.NewEntities;
@@ -50,7 +49,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IOutcomingEntryManager _outcomingEntryManager;
         private readonly IMyUserManager _myUserManager;
-        private readonly KomuNotification _komuNotification;
         private readonly ITempOutcomingEntryManager _tempOutcomingEntryManager;
         private readonly IOptions<ApplicationConfig> _options;
         private readonly ICommonManager _commonManager;
@@ -60,7 +58,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
                    IWorkScope workScope,
                    IOutcomingEntryManager outcomingEntryManager,
                    IMyUserManager myUserManager,
-                   KomuNotification komuNotification,
                    ITempOutcomingEntryManager tempOutcomingEntryManager,
                    IOptions<ApplicationConfig> options,
                    ICommonManager commonManager,
@@ -70,7 +67,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
             _hostingEnvironment = webHostEnvironment;
             _outcomingEntryManager = outcomingEntryManager;
             _myUserManager = myUserManager;
-            _komuNotification = komuNotification;
             _tempOutcomingEntryManager = tempOutcomingEntryManager;
             _options = options;
             _commonManager = commonManager;
@@ -561,7 +557,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
             await CurrentUnitOfWork.SaveChangesAsync();
 
             
-            // _komuNotification.NotifyChangeStatus(Input.OutcomingEntryId, statusTransition.ToTransitionName.Trim());
             _mezonNotification.NotifyChangeStatus(Input.OutcomingEntryId, statusTransition.ToTransitionName.Trim());
 
             await _outcomingEntryManager.CreateOutcomingStatusHistory(new CreateOutcomingEntryStatusHistoryDto
@@ -629,7 +624,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
         public async Task SendTemp(long tempOutcomingEntryId)
         {
             var transitionName = await _tempOutcomingEntryManager.SendTemp(tempOutcomingEntryId);
-            _komuNotification.NotifyRequestChangePending(tempOutcomingEntryId, transitionName);
             _mezonNotification.NotifyRequestChangePending(tempOutcomingEntryId, transitionName);
         }
         [HttpGet]
@@ -637,7 +631,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
         public async Task RejectTemp(long tempOutcomingEntryId)
         {
             var transitionName = await _tempOutcomingEntryManager.RejectTemp(tempOutcomingEntryId);
-            _komuNotification.NotifyRequestChangeReject(tempOutcomingEntryId, transitionName);
             _mezonNotification.NotifyRequestChangeReject(tempOutcomingEntryId, transitionName);
         }
         [HttpGet]
@@ -645,7 +638,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
         public async Task ApproveTemp(long tempOutcomingEntryId)
         {
             var transitionName = await _tempOutcomingEntryManager.ApprovedTemp(tempOutcomingEntryId);
-            _komuNotification.NotifyRequestChangeApprove(tempOutcomingEntryId, transitionName);
             _mezonNotification.NotifyRequestChangeApprove(tempOutcomingEntryId, transitionName);
         }
         [HttpPost]
@@ -750,7 +742,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=TRANSFERED")
                 .ToString();
 
-            // _komuNotification.NotifyWithMessage(message);
             _mezonNotification.NotifyWithMessage(message);
 
             return $"Đã xuất tiền {allRequestApproved.Count()} Request Chi";
@@ -811,7 +802,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=PENDINGCEO")
                 .ToString();
 
-           // _komuNotification.NotifyWithMessage(message);
             _mezonNotification.NotifyWithMessage(message);
         }
 
@@ -827,7 +817,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&statusRequestChange=PENDINGCEO")
                 .ToString();
 
-            //_komuNotification.NotifyWithMessage(message);
             _mezonNotification.NotifyWithMessage(message);
         }
 
@@ -843,7 +832,6 @@ namespace FinanceManagement.APIs.OutcomingEntries
                 .AppendLine($"{_options.Value.ClientRootAddress}app/expenditure-request?pageNumber=1&pageSize=20&searchText=&filterItems=[]&status=PENDINGCFO")
                 .ToString();
 
-           // _komuNotification.NotifyWithMessage(message);
             _mezonNotification.NotifyWithMessage(message);
         }
 

@@ -7,7 +7,7 @@ using FinanceManagement.Entities;
 using FinanceManagement.IoC;
 using FinanceManagement.Managers.Commons;
 using FinanceManagement.Managers.OutcomingEntries;
-using FinanceManagement.Notifications.Komu;
+
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using FinanceManagement.Managers.OutcomingEntries.Dtos;
@@ -18,14 +18,13 @@ namespace FinanceManagement.APIs.TimesheetTool
 {
     public class TimesheetToolAppService : FinanceManagementAppServiceBase
     {
-        private readonly KomuNotification _komuNotification;
         private readonly ICommonManager _commonManager;
         private readonly IOutcomingEntryManager _outcomingEntryManager;
         private readonly MezonNotification _mezonNotification;
 
-        public TimesheetToolAppService(IWorkScope workScope, KomuNotification komuNotification, ICommonManager commonManager, IOutcomingEntryManager outcomingEntryManager, MezonNotification mezonNotification) : base(workScope)
+        public TimesheetToolAppService(IWorkScope workScope, ICommonManager commonManager, IOutcomingEntryManager outcomingEntryManager, MezonNotification mezonNotification) : base(workScope)
         {
-            _komuNotification = komuNotification;
+
             _commonManager = commonManager;
             _outcomingEntryManager = outcomingEntryManager;
             _mezonNotification = mezonNotification;
@@ -124,7 +123,6 @@ namespace FinanceManagement.APIs.TimesheetTool
 
                 await CurrentUnitOfWork.SaveChangesAsync();
 
-                _komuNotification.NotifyTeamBuilding(newOutcomingEntryId);
                 _mezonNotification.NotifyTeamBuilding(newOutcomingEntryId);
             }
         }

@@ -8,7 +8,6 @@ using FinanceManagement.Managers.Commons;
 using FinanceManagement.Managers.OutcomingEntries;
 using FinanceManagement.Managers.OutcomingEntries.Dtos;
 using FinanceManagement.Notifications;
-using FinanceManagement.Notifications.Komu;
 using FinanceManagement.Notifications.Mezon;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,19 +21,17 @@ namespace FinanceManagement.APIs.HRMs
 {
     public class HRMv2AppService : FinanceManagementAppServiceBase
     {
-        private readonly KomuNotification _komuNotification;
         private readonly ICommonManager _commonManager;
         private readonly IOutcomingEntryManager _outcomingEntryManager;
         private readonly MezonNotification _mezonNotification;
-        public HRMv2AppService(IWorkScope workScope, KomuNotification komuNotification, ICommonManager commonManager, IOutcomingEntryManager outcomingEntryManager, MezonNotification mezonNotification) : base(workScope)
+        public HRMv2AppService(IWorkScope workScope,ICommonManager commonManager, IOutcomingEntryManager outcomingEntryManager, MezonNotification mezonNotification) : base(workScope)
         {   
-            _komuNotification = komuNotification;
             _commonManager = commonManager;
             _outcomingEntryManager = outcomingEntryManager;
             _mezonNotification = mezonNotification;
         }
 
-        [NccAuth]
+       [NccAuth]
         public async Task CreateOucomingEntryByHRM(InputCreateOutcomeEntryFormHrmDto input)
         {
             using (CurrentUnitOfWork.SetTenantId(AbpSession.TenantId))
@@ -116,7 +113,6 @@ namespace FinanceManagement.APIs.HRMs
 
                 await CurrentUnitOfWork.SaveChangesAsync();
 
-                _komuNotification.NotifySalary(newOutcomeEntryId);
                 _mezonNotification.NotifySalary(newOutcomeEntryId);
             }
         }

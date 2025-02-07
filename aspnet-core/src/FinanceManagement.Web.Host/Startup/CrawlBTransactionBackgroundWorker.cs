@@ -18,7 +18,6 @@ using Abp.Threading.Timers;
 using FinanceManagement.Services.Firebase;
 using FinanceManagement.GeneralModels;
 using FinanceManagement.Enums;
-using FinanceManagement.Notifications.Komu;
 using FinanceManagement.Entities;
 using FinanceManagement.Managers.Settings;
 using FinanceManagement.Notifications.Mezon;
@@ -35,7 +34,6 @@ namespace FinanceManagement.Web.Host.Startup
         private readonly IOptions<FirebaseConfig> _firesbaseOptions;
         private readonly IOptions<KomuNotificationConfig> _komuNotificationOptions;
         private const int TENANT_NULL_ID = -1;
-        private readonly KomuNotification _komuNotification;
         private readonly MezonNotification _mezonNotification;
         public IMySettingManager MySettingManager { get; set; }
 
@@ -46,7 +44,6 @@ namespace FinanceManagement.Web.Host.Startup
             FirebaseService firebaseService,
             IOptions<FirebaseConfig> options,
             IOptions<KomuNotificationConfig> komuNotificationOptions,
-            KomuNotification komuNotification,
             MezonNotification mezonNotification
         ) : base(timer)
         {
@@ -57,7 +54,6 @@ namespace FinanceManagement.Web.Host.Startup
             _firesbaseOptions = options;
             Timer.Period = _firesbaseOptions.Value.IntervalMilisecond;
             _komuNotificationOptions = komuNotificationOptions;
-            _komuNotification = komuNotification;
             _mezonNotification = mezonNotification;
         }
         protected override void DoWork()

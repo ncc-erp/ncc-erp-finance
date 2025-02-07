@@ -37,7 +37,7 @@ namespace FinanceManagement.Services.Komu
         {
             if (_isNotifyToKomu != "true")
             {
-                _logger.Info("_isNotifyToKomu=" + _isNotifyToKomu + " => stop");
+                Logger.LogInformation("_isNotifyToKomu=" + _isNotifyToKomu + " => stop");
                 return;
             }
             var channelIdToSend = string.IsNullOrEmpty(_channelIdDevMode) ? channelId : _channelIdDevMode;
@@ -47,7 +47,7 @@ namespace FinanceManagement.Services.Komu
         {
             if (_isNotifyToKomu != "true")
             {
-                _logger.Info("_isNotifyToKomu=" + _isNotifyToKomu + " => stop");
+                Logger.LogInformation("_isNotifyToKomu=" + _isNotifyToKomu + " => stop");
                 return;
             }
             var channelIdToSend = string.IsNullOrEmpty(_channelIdDevMode) ? channelId : _channelIdDevMode;
