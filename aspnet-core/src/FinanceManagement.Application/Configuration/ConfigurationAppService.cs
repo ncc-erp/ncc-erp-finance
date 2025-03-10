@@ -35,7 +35,8 @@ namespace FinanceManagement.Configuration
             {
                 GoogleClientId = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ClientAppId),
                 EnableNormalLogin = bool.Parse(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.EnableNormalLogin)),
-            };
+                MezonClientId = _appConfiguration.GetValue<string>("Oauth2Mezon:Client_Id")
+			};
         }
         public async Task ChangeUiTheme(ChangeUiThemeInput input)
         {
@@ -256,6 +257,19 @@ namespace FinanceManagement.Configuration
             {
                 BaseAddress = _appConfiguration.GetValue<string>("HRMService:BaseAddress"),
                 SecurityCode = _appConfiguration.GetValue<string>("HRMService:SecurityCode")
+            };
+        }
+
+        public Oauth2MezonConfig GetOauth2MezonConfig()
+        {
+            return new Oauth2MezonConfig
+            {
+                Client_Id = _appConfiguration.GetValue<string>("Oauth2Mezon:Client_Id"),
+                Client_Secret = _appConfiguration.GetValue<string>("Oauth2Mezon:Client_Secret"),
+                Redirect_URI = _appConfiguration.GetValue<string>("Oauth2Mezon:Redirect_URI"),
+                Url_Oauth2Mezon = _appConfiguration.GetValue<string>("Oauth2Mezon:Url_Oauth2Mezon"),
+                Grant_Type = _appConfiguration.GetValue<string>("Oauth2Mezon:Grant_Type"),
+                Url_UserInfo = _appConfiguration.GetValue<string>("Oauth2Mezon:Url_UserInfo"),
             };
         }
 

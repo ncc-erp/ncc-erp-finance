@@ -39,6 +39,7 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
   public isEditCoTheSuaThongTinCuaKiCu: boolean = false
   public isEnableCrawlBTransactionNoti: boolean = false
   public hrmConfig = {} as internalToolConfig
+  public oauth2MezonConfig = {} as Oauth2MezonConfig
   routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.configuration;
@@ -55,7 +56,8 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
     this.getAllowChangeEntityInPeriodClosed()
     this.getEnableCrawlBTransactionNoti()
     this.getHRMConfig()
-    this.updateBreadCrumb();
+    this.updateBreadCrumb
+    this.getOauth2MezonConfig();
   }
 
   onRefreshCurrentPage(){
@@ -239,6 +241,11 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
     })
   }
 
+  getOauth2MezonConfig(){
+    this.settingService.getOauth2MezonConfig().subscribe(rs => {
+      this.oauth2MezonConfig = rs.result
+    })
+  }
   isShowEditNotiSettingBtn() {
     return this.isGranted(PERMISSIONS_CONSTANT.Admin_Configuration_EditKomuSetting);
   }
@@ -279,4 +286,11 @@ export interface internalToolConfig{
   baseAddress:string,
   securityCode:string
 }
-
+export interface Oauth2MezonConfig{
+    client_Id: string,
+    client_Secret: string,
+    redirect_URI: string,
+    grant_Type: string,
+    url_Oauth2Mezon: string,
+    url_UserInfo: string,
+}

@@ -1,4 +1,5 @@
 ﻿using FinanceManagement.Notifications.Mezon.Dto;
+using FinanceManagement.Services.Mezon.Dto;
 using System.Threading.Tasks;
 
 namespace FinanceManagement.Services.Mezon
@@ -9,5 +10,6 @@ namespace FinanceManagement.Services.Mezon
         Task NotifyToChannelAsync(string komuMessage, string channelId);
         void NotifyToChannelMezon(MezonMessage message, string channelId);
         Task NotifyToChannelMezonAsync(MezonMessage message, string channelId);
+        Task<AuthOauth2Mezon> GetTokenForOauth2Mezon(string code);
     }
 }
