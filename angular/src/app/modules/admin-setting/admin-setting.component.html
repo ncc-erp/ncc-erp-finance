@@ -248,10 +248,59 @@
                     </mat-form-field>
                 </div>
             </div>
-            <div class=" col-6 col-md-6 col-xs-12 ml-2">
-
-            </div>
+            <div class="col-lg-6 col-xs-12" >
+                <div class="card">
+                  <div class="card-header">
+                    <div class="row">
+                      <div class="col-md-11 row">
+                        <div class="title">Oauth2 Mezon Setting</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col col-12 col-md-12">
+                        <mat-form-field class="w-100 mt-2">
+                          <input readonly class="w-100" type="text" matInput placeholder="Client Id"
+                            [(ngModel)]="oauth2MezonConfig.client_Id" />
+                        </mat-form-field>
+                      </div>
+                      <div class="col col-12 col-md-12">
+                        <mat-form-field class="w-100 mt-2">
+                          <input readonly class="w-100" type="text" matInput placeholder="Client Secret"
+                            [(ngModel)]="oauth2MezonConfig.client_Secret" #clientSecretKey />
+                        </mat-form-field>
+                      </div>
+                      
+                      <div class="col col-12 col-md-12">
+                        <mat-form-field class="w-100 mt-2">
+                          <input readonly class="w-100" type="text" matInput placeholder="Redirect Uri"
+                            [(ngModel)]="oauth2MezonConfig.redirect_URI" #redirectUri />                
+                        </mat-form-field>
+                      </div>
+                      <div class="col col-12 col-md-12">
+                        <mat-form-field class="w-100 mt-2">
+                          <input readonly class="w-100" type="text" matInput placeholder="Grant Type"
+                            [(ngModel)]="oauth2MezonConfig.grant_Type" #grantType />
+                        </mat-form-field>
+                      </div>
+                      <div class="col col-12 col-md-12">
+                        <mat-form-field class="w-100 mt-2">
+                          <input readonly class="w-100" type="text" matInput placeholder="Url Oauth2 Mezon"
+                            [(ngModel)]="oauth2MezonConfig.url_Oauth2Mezon" #urlOauth2Mezon />
+                        </mat-form-field>
+                      </div>
+                      <div class="col col-12 col-md-12">
+                        <mat-form-field class="w-100 mt-2">
+                          <input readonly class="w-100" type="text" matInput placeholder="Url User Info"
+                            [(ngModel)]="oauth2MezonConfig.url_UserInfo" #talentUri />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>  
+          </div>
 
         </div>
-    </div>
 </section>

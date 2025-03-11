@@ -74,11 +74,16 @@
         </button>
       </div>
     </div>
-    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-top: 25px;">
+    <!-- <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-top: 25px;">
       <button mat-flat-button type="button" (click)="signInWithGoogle()" color="primary" style="width: 100%">
           Log In With Google
       </button>
-  </div>
+  </div> -->
+  <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center" style="margin-top: 25px;">
+    <button mat-flat-button type="button" (click)="signInWithMezon()" color="primary" style="width: 100%">
+        Log In With Mezon
+    </button>
+</div>
   </form>
   <!-- <p *ngIf="isSelfRegistrationAllowed" class="mb-1">
     <a [routerLink]="['../register']">
