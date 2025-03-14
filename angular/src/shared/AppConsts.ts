@@ -7,6 +7,7 @@ export class AppConsts {
   static googleClientId: string;
   static enableNormalLogin: boolean;
   static appBaseUrl: string;
+  static mezonClientId: string;
   static appBaseHref: string; // returns angular's base-href parameter value if used during the publish
   static periodId = new BehaviorSubject<number>(0)
   static periodStartDate = null
@@ -89,3 +90,8 @@ export const BANK_TRANSCATION_DATE_TIME_OPTIONS = [
   { name: "Ngày giao dịch", value: BankTransactionFilterDateTimeType.TRANSACTION_TIME },
   { name: "Ngày tạo", value: BankTransactionFilterDateTimeType.CREATE_TIME },
 ];
+export const Oauth2Mezon =
+  {
+    OAUTH2_AUTHORIZE_URL:"https://oauth2.mezon.ai/oauth2/auth",
+    REDIRECT_URI:AppConsts.appBaseUrl+"/account/login",
+  }

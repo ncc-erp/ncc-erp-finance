@@ -18,6 +18,8 @@ using FinanceManagement.Authorization.Users;
 using FinanceManagement.Models.TokenAuth;
 using FinanceManagement.MultiTenancy;
 using FinanceManagement.Controllers.Dto;
+using FinanceManagement.Services.Mezon;
+using FinanceManagement.Services.Mezon.Dto;
 
 namespace FinanceManagement.Controllers
 {
@@ -31,7 +33,7 @@ namespace FinanceManagement.Controllers
         private readonly IExternalAuthConfiguration _externalAuthConfiguration;
         private readonly IExternalAuthManager _externalAuthManager;
         private readonly UserRegistrationManager _userRegistrationManager;
-
+        private readonly IMezonWebService _mezonWebService;
         public TokenAuthController(
             LogInManager logInManager,
             ITenantCache tenantCache,
@@ -39,7 +41,8 @@ namespace FinanceManagement.Controllers
             TokenAuthConfiguration configuration,
             IExternalAuthConfiguration externalAuthConfiguration,
             IExternalAuthManager externalAuthManager,
-            UserRegistrationManager userRegistrationManager)
+            UserRegistrationManager userRegistrationManager,
+            IMezonWebService mezonWebService)
         {
             _logInManager = logInManager;
             _tenantCache = tenantCache;
@@ -48,6 +51,7 @@ namespace FinanceManagement.Controllers
             _externalAuthConfiguration = externalAuthConfiguration;
             _externalAuthManager = externalAuthManager;
             _userRegistrationManager = userRegistrationManager;
+            _mezonWebService = mezonWebService;
         }
 
         [HttpPost]
@@ -93,12 +97,43 @@ namespace FinanceManagement.Controllers
             };
         }
 
+        [HttpPost]
+        public async Task<AuthenticateResultModel> MezonAuthenticate(string codeOauth2Mezon)
+        {
+			var userInfo = await _mezonWebService.GetTokenForOauth2Mezon(codeOauth2Mezon);
+			var loginResult = await GetLoginResultMezonAsync(userInfo, GetTenancyNameOrNull());
+
+			Logger.Info("MezonAuthentication");
+
+			var accessToken = CreateAccessToken(CreateJwtClaims(loginResult.Identity));
+
+			return new AuthenticateResultModel
+			{
+				AccessToken = accessToken,
+				EncryptedAccessToken = GetEncryptedAccessToken(accessToken),
+				ExpireInSeconds = (int)_configuration.Expiration.TotalSeconds,
+				UserId = loginResult.User.Id
+			};
+		}
+
+        private async Task<AbpLoginResult<Tenant, User>> GetLoginResultMezonAsync(AuthOauth2Mezon input, string tenancyName)
+        {
+			Logger.Info("GetLoginResultMezonAsync");
+			var loginResult = await _logInManager.LoginAsyncNoPassWithMezon(input, tenancyName, false);
+			switch (loginResult.Result)
+			{
+				case AbpLoginResultType.Success:
+					return loginResult;
+				default:
+					throw _abpLoginResultTypeHelper.CreateExceptionForFailedLoginAttempt(loginResult.Result, null, tenancyName);
+			}
+		}
         private async Task<AbpLoginResult<Tenant, User>> GetLoginResultGoogleAsync(string token, string tenancyName, string secretCode)
         {
             Logger.Info("GetLoginResultGoogleAsync");
-            var loginResult = await _logInManager.LoginAsyncNoPass(token, secretCode, tenancyName, false);
+			var loginResult = await _logInManager.LoginAsyncNoPass(token, tenancyName, false);
 
-            switch (loginResult.Result)
+			switch (loginResult.Result)
             {
                 case AbpLoginResultType.Success:
                     return loginResult;

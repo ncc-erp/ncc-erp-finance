@@ -1,7 +1,9 @@
-﻿using Abp.Runtime.Session;
+﻿using Abp.Dependency;
+using Abp.Runtime.Session;
 using Abp.UI;
 using Castle.Core.Logging;
 using FinanceManagement.MultiTenancy;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -15,31 +17,58 @@ namespace FinanceManagement.Services
     public class BaseWebService
     {
         protected readonly HttpClient _httpClient;
-        protected readonly ILogger _logger;
-        public readonly IAbpSession _session;
+		protected readonly ILogger<BaseWebService> Logger;
+		public readonly IAbpSession _session;
         private readonly TenantManager _tenantManager;
         public BaseWebService(HttpClient httpClient, TenantManager tenantManager, IAbpSession abpSession)
         {
             _httpClient = httpClient;
-            _logger = NullLogger.Instance;
-            _tenantManager = tenantManager;
+			Logger = IocManager.Instance.Resolve<ILogger<BaseWebService>>();
+			_tenantManager = tenantManager;
             _session = abpSession;
             AddAbpTenantNameHeaders();
         }
-        protected virtual void Post(string url, object input)
+
+		public void SetAuthorizationToken(string token)
+		{
+			if (!string.IsNullOrEmpty(token))
+			{
+				_httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+			}
+		}
+		protected virtual void Post(string url, object input)
         {
             var fullUrl = url.StartsWith("http") ? url : $"{_httpClient.BaseAddress}/{url}";
             string strInput = JsonConvert.SerializeObject(input);
             try
             {
-                _logger.Info($"Post: {fullUrl} input: {strInput}");
+				Logger.LogInformation($"Post: {fullUrl} input: {strInput}");
                 var contentString = new StringContent(strInput, Encoding.UTF8, "application/json");
                 _httpClient.PostAsync(url, contentString);
             }
             catch (Exception e)
             {
-                _logger.Error($"Post: {fullUrl} input: {strInput} Error: {e.Message}");
+				Logger.LogError($"Post: {fullUrl} input: {strInput} Error: {e.Message}");
             }
+        }
+
+        protected virtual async Task<T> PostFormUrlEncodedAsync<T>(string url, Dictionary<string, string> formData)
+        {
+            var content = new FormUrlEncodedContent(formData);
+            try
+            {
+                var response = await _httpClient.PostAsync(url, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    return JsonConvert.DeserializeObject<T>(responseContent);
+                }
+            }
+            catch (Exception ex)
+            {
+				Logger.LogError($"Post: {url}  Error: {ex.Message}");
+            }
+            return default;
         }
         protected virtual async Task<T> GetAsync<T>(string url)
         {
@@ -48,14 +77,14 @@ namespace FinanceManagement.Services
             {
                 HttpResponseMessage response = await _httpClient.GetAsync(url);
                 string responseContent = await response.Content.ReadAsStringAsync();
-                _logger.Info($"Get: {fullUrl} response: { responseContent}");
+				Logger.LogInformation($"Get: {fullUrl} response: { responseContent}");
 
                 JObject responseJObj = JObject.Parse(responseContent);
                 return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(responseJObj));
             }
             catch (Exception ex)
             {
-                _logger.Error($"Post: {fullUrl} Error: {ex.Message}");
+				Logger.LogError($"Post: {fullUrl} Error: {ex.Message}");
             }
             return default;
         }
@@ -65,19 +94,19 @@ namespace FinanceManagement.Services
             var fullUrl = url.StartsWith("http") ? url : $"{_httpClient.BaseAddress}/{url}";
             try
             {
-                _logger.Info($"Post: {fullUrl} input: {strInput}");
+				Logger.LogInformation($"Post: {fullUrl} input: {strInput}");
                 var contentString = new StringContent(strInput, Encoding.UTF8, "application/json");
 
                 HttpResponseMessage response = await _httpClient.PostAsync(url, contentString);
                 string responseContent = await response.Content.ReadAsStringAsync();
 
-                _logger.Info($"Post: {fullUrl} input: {strInput} response: {responseContent}");
+				Logger.LogInformation($"Post: {fullUrl} input: {strInput} response: {responseContent}");
                 JObject responseJObj = JObject.Parse(responseContent);
                 return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(responseJObj)); ;
             }
             catch (Exception e)
             {
-                _logger.Error($"Post: {fullUrl} input: {strInput} Error: {e.Message}");
+				Logger.LogError($"Post: {fullUrl} input: {strInput} Error: {e.Message}");
             }
 
             return default;

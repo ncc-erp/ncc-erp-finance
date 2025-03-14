@@ -19,13 +19,21 @@ using Newtonsoft.Json;
 using FinanceManagement.Configuration;
 using System.Linq;
 using Abp.UI;
+using FinanceManagement.Services.Mezon.Dto;
+using FinanceManagement.Enums;
+using static FinanceManagement.Enums.TypeLogin;
+using System.Net.Mail;
+using FinanceManagement.Services;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace FinanceManagement.Authorization
 {
     public class LogInManager : AbpLogInManager<Tenant, Role, User>
     {
-        private ILogger Logger { get; set; }
-        public LogInManager(
+		private ILogger<BaseWebService> Logger;
+        private readonly IConfiguration _configuration;
+		public LogInManager(
             UserManager userManager,
             IMultiTenancyConfig multiTenancyConfig,
             IRepository<Tenant> tenantRepository,
@@ -36,7 +44,8 @@ namespace FinanceManagement.Authorization
             IIocResolver iocResolver,
             IPasswordHasher<User> passwordHasher,
             RoleManager roleManager,
-            UserClaimsPrincipalFactory claimsPrincipalFactory)
+			IConfiguration configuration,
+			UserClaimsPrincipalFactory claimsPrincipalFactory)
             : base(
                   userManager,
                   multiTenancyConfig,
@@ -50,40 +59,67 @@ namespace FinanceManagement.Authorization
                   roleManager,
                   claimsPrincipalFactory)
         {
-            Logger = NullLogger.Instance;
-        }
+			Logger = IocManager.Instance.Resolve<ILogger<BaseWebService>>();
+            _configuration = configuration;
+		}
         [UnitOfWork]
-        public async Task<AbpLoginResult<Tenant, User>> LoginAsyncNoPass(string token, string secretCode = "", string tenancyName = null, bool shouldLockout = true)
+        public async Task<AbpLoginResult<Tenant, User>> LoginAsyncNoPass(string token, string tenancyName = null, bool shouldLockout = true)
         {
-            Logger.Info("LoginAsyncNoPass");
-            var result = await LoginAsyncInternalNoPass(token, secretCode, tenancyName, shouldLockout);
+			Logger.LogInformation("LoginAsyncNoPass");
+            var result = await LoginAsyncInternalNoPass(TypeLoginOauth2.Google,token, tenancyName, shouldLockout,null);
             var user = result.User;
             SaveLoginAttempt(result, tenancyName, user == null ? null : user.EmailAddress);
             return result;
         }
 
-        public async Task<AbpLoginResult<Tenant, User>> LoginAsyncInternalNoPass(string token, string secretCode, string tenancyName, bool shouldLockout)
+        [UnitOfWork]
+        public async Task<AbpLoginResult<Tenant,User>> LoginAsyncNoPassWithMezon(AuthOauth2Mezon input, string tenancyName = null, bool shouldLockout = true)
+		{
+			Logger.LogInformation("LoginAsyncNoPassWithMezon");
+			var result = await LoginAsyncInternalNoPass(TypeLoginOauth2.Mezon, null, tenancyName, shouldLockout, input);
+			var user = result.User;
+			SaveLoginAttempt(result, tenancyName, user == null ? null : user.EmailAddress);
+			return result;
+		}
+        public async Task<AbpLoginResult<Tenant, User>> LoginAsyncInternalNoPass(TypeLoginOauth2 type, string token, string tenancyName, bool shouldLockout, AuthOauth2Mezon input)
         {
-            Logger.Info("LoginAsyncInternalNoPass");
-            if (token.IsNullOrEmpty())
-            {
-                throw new ArgumentNullException(nameof(token));
-            }
+			Logger.LogInformation("LoginAsyncInternalNoPass");
+           
             try
             {
-                GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(token);
-                var emailAddress = payload.Email;
-                Logger.Info("Payload: " + JsonConvert.SerializeObject(payload));
-                // checking
-                var clientAppId = await SettingManager.GetSettingValueAsync(AppSettingNames.ClientAppId);//get clientAppId from setting
-                Logger.Info("ClientAppId: " + clientAppId);
-                var correctAudience = payload.AudienceAsList.Any(s => s == clientAppId);
-                var correctIssuer = payload.Issuer == "accounts.google.com" || payload.Issuer == "https://accounts.google.com";
-                var correctExpriryTime = payload.ExpirationTimeSeconds != null || payload.ExpirationTimeSeconds > 0;
+				var emailAddress = "";
+				var clientAppId = "";
+				var correctAudience = false;
+				var correctIssuer = false;
+				var correctExpriryTime = false;
+				if (type == TypeLoginOauth2.Google)
+                {
+					if (token.IsNullOrEmpty())
+					{
+						throw new ArgumentNullException(nameof(token));
+					}
+					GoogleJsonWebSignature.Payload payload = await GoogleJsonWebSignature.ValidateAsync(token);
+					emailAddress = payload.Email;
+					Logger.LogInformation("Payload: " + JsonConvert.SerializeObject(payload));
+					// checking
+				    clientAppId = await SettingManager.GetSettingValueAsync(AppSettingNames.ClientAppId);//get clientAppId from setting
+					Logger.LogInformation("ClientAppId: " + clientAppId);
+				    correctAudience = payload.AudienceAsList.Any(s => s == clientAppId);
+					correctIssuer = payload.Issuer == "accounts.google.com" || payload.Issuer == "https://accounts.google.com";
+					correctExpriryTime = payload.ExpirationTimeSeconds != null || payload.ExpirationTimeSeconds > 0;
+				}else if(type == TypeLoginOauth2.Mezon)
+                {
+					emailAddress = input.sub;
+					clientAppId = _configuration.GetValue<string>("Oauth2Mezon:Client_Id");
+					correctAudience = input.aud.Any(s => s == clientAppId);
+					correctIssuer = input.iss == "https://oauth2.mezon.ai";
+					correctExpriryTime = input.auth_time != null || input.auth_time > 0;
+				}
+               
 
                 Tenant tenant = null;
 
-                Logger.Info("correctAudience: " + correctAudience + ", correctIssuer: " + correctIssuer + ", correctExpriryTime: " + correctExpriryTime);
+				Logger.LogInformation("correctAudience: " + correctAudience + ", correctIssuer: " + correctIssuer + ", correctExpriryTime: " + correctExpriryTime);
                 if (correctAudience && correctIssuer && correctExpriryTime)
                 {
                     //Get and check tenant
