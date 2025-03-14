@@ -26,4 +26,10 @@ export class GoogleLoginService extends BaseApiService{
       '/api/TokenAuth/GoogleAuthenticate', {googleToken: googleToken});
   }
 
+  mezonAuthenticate(mezonToken: string):Observable<any>{
+    
+    return this.http.post(AppConsts.remoteServiceBaseUrl+
+      '/api/TokenAuth/MezonAuthenticate?codeOauth2Mezon='+mezonToken,{}
+    )
+  }
 }

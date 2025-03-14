@@ -132,6 +132,10 @@ export class AppConfigurationService extends BaseApiService{
     return this.http.get<ApiResponse<string>>(this.rootUrl + '/GetHrmConfig');
   }
 
+  getOauth2MezonConfig():Observable<ApiResponse<any>>{
+    return this.http.get<ApiResponse<any>>(this.rootUrl + '/GetOauth2MezonConfig');
+  }
+
   public ChangeNotifyChannel(input):Observable<any>{
     return this.http.post(this.rootUrl + '/ChangeNotifyChannel', input);
   }
