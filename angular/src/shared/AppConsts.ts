@@ -8,6 +8,8 @@ export class AppConsts {
   static enableNormalLogin: boolean;
   static appBaseUrl: string;
   static mezonClientId: string;
+  static enableLoginMezon: boolean;
+  static enableLoginGoogle: boolean;
   static appBaseHref: string; // returns angular's base-href parameter value if used during the publish
   static periodId = new BehaviorSubject<number>(0)
   static periodStartDate = null

@@ -12,5 +12,6 @@ namespace FinanceManagement.Managers.Settings.Dtos
 		public string Redirect_URI { get; set; }
 		public string Url_Oauth2Mezon { get; set; }
 		public string Url_UserInfo { get; set; }
+		public bool EnableLoginMezon { get; set; }
 	}
 }

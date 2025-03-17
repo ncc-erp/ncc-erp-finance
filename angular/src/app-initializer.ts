@@ -174,6 +174,8 @@ export class AppInitializer {
       AppConsts.googleClientId = rs.result.googleClientId
       AppConsts.enableNormalLogin = rs.result.enableNormalLogin
       AppConsts.mezonClientId = rs.result.mezonClientId
+      AppConsts.enableLoginMezon = rs.result.enableLoginMezon
+      AppConsts.enableLoginGoogle = rs.result.enableLoginGoogle
     })
   }
 }
