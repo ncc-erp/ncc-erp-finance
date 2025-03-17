@@ -33,9 +33,11 @@ namespace FinanceManagement.Configuration
         {
             return new LoginSettingDto
             {
+                EnableLoginGoogle = bool.Parse(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.EnableLoginGoogle)),
                 GoogleClientId = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ClientAppId),
                 EnableNormalLogin = bool.Parse(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.EnableNormalLogin)),
-                MezonClientId = _appConfiguration.GetValue<string>("Oauth2Mezon:Client_Id")
+                MezonClientId = _appConfiguration.GetValue<string>("Oauth2Mezon:Client_Id"),
+                EnableLoginMezon = bool.Parse(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.EnableLoginMezon)),
 			};
         }
         public async Task ChangeUiTheme(ChangeUiThemeInput input)
@@ -140,16 +142,50 @@ namespace FinanceManagement.Configuration
                                                          : await MySettingManager.GetNotifyMezonChannelUrlAsync(AbpSession.TenantId);
             return new AppSettingDto
             {
+                EnableLoginGoogle = bool.Parse(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.EnableLoginGoogle)),
                 ClientAppId = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ClientAppId),
                 SecretKey = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.SecretKey),
                 NotificationPlatform = notificationPlatform,
                 NotifyToChannel = channel,
+                EnableNormalLogin = bool.Parse(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.EnableNormalLogin)),
             };
         }
+        [AbpAuthorize(PermissionNames.Admin_Configuration)]
+        public async Task<Oauth2MezonConfig> GetOauth2MezonConfig()
+        {
+            return new Oauth2MezonConfig
+            {
+                Client_Id = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ClientIdOauth2Mezon),
+                Client_Secret = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.ClientSecretOauth2Mezon),
+                Redirect_URI = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.RedirectURI),
+                Url_Oauth2Mezon = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.URLOauth2Mezon),
+                Grant_Type = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.GrantTypeOauth2Mezon),
+                Url_UserInfo = await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.URLUserInfo),
+                EnableLoginMezon = bool.Parse(await SettingManager.GetSettingValueForApplicationAsync(AppSettingNames.EnableLoginMezon)),
+            };
+        }
+        [AbpAuthorize(PermissionNames.Admin_Configuration_EditOauth2Mezon)]
+        public async Task<Oauth2MezonConfig> SetOauth2Mezon(Oauth2MezonConfig input)
+        {
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.ClientIdOauth2Mezon, input.Client_Id);
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.ClientSecretOauth2Mezon, input.Client_Secret);
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.RedirectURI, input.Redirect_URI);
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.GrantTypeOauth2Mezon, input.Grant_Type);
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.URLOauth2Mezon, input.Url_Oauth2Mezon);
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.URLUserInfo, input.Url_UserInfo);
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.EnableLoginMezon,input.EnableLoginMezon.ToString());
+            return input;
+        }
+
         [AbpAuthorize(PermissionNames.Admin_Configuration_EditGoogleSetting)]
         public async Task ChangeClientAppId(ClienAppDto input)
         {
             await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.ClientAppId, input.ClientAppId);
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.EnableLoginGoogle, input.EnableLoginGoogle.ToString());
+        }
+        public async Task ChangeEnableLogin(EnableNormalLoginDto input)
+        {
+            await SettingManager.ChangeSettingForApplicationAsync(AppSettingNames.EnableNormalLogin, input.EnableNormalLogin.ToString());
         }
         [AbpAuthorize(PermissionNames.Admin_Configuration_EditSecretKey)]
         public async Task ChangeFinanceSecretKey(SecretKeyDto input)
@@ -260,18 +296,7 @@ namespace FinanceManagement.Configuration
             };
         }
 
-        public Oauth2MezonConfig GetOauth2MezonConfig()
-        {
-            return new Oauth2MezonConfig
-            {
-                Client_Id = _appConfiguration.GetValue<string>("Oauth2Mezon:Client_Id"),
-                Client_Secret = _appConfiguration.GetValue<string>("Oauth2Mezon:Client_Secret"),
-                Redirect_URI = _appConfiguration.GetValue<string>("Oauth2Mezon:Redirect_URI"),
-                Url_Oauth2Mezon = _appConfiguration.GetValue<string>("Oauth2Mezon:Url_Oauth2Mezon"),
-                Grant_Type = _appConfiguration.GetValue<string>("Oauth2Mezon:Grant_Type"),
-                Url_UserInfo = _appConfiguration.GetValue<string>("Oauth2Mezon:Url_UserInfo"),
-            };
-        }
+
 
         [AbpAuthorize(PermissionNames.Admin_Configuration_EditKomuSetting)]
         public async Task ChangeNotifyChannel(NotifyToChannelDto input)

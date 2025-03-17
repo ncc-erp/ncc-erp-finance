@@ -1,8 +1,11 @@
-﻿namespace FinanceManagement.Configuration
+﻿using System.Web;
+
+namespace FinanceManagement.Configuration
 {
     public static class AppSettingNames
     {
         public const string EnableNormalLogin = "App.EnableNormalLogin";
+        public const string EnableLoginGoogle = "App.EnableLoginGoogle";
         public const string UiTheme = "App.UiTheme";
         public const string ClientAppId = "App.ClientAppId";
         public const string StorageLocation = "StorageLocation";
@@ -53,5 +56,13 @@
         public const string TenantAllowChangeEntityInPeriodClosed = "TenantAllowChangeEntityInPeriodClosed";
         public const string HostEnableCrawlBTransactionNoti = "HostEnableCrawlBTransactionNoti";
         public const string TenantEnableCrawlBTransactionNoti = "TenantEnableCrawlBTransactionNoti";
+
+        public const string ClientIdOauth2Mezon = "ClientIdOauth2Mezon";
+        public const string ClientSecretOauth2Mezon = "ClientSecretOauth2Mezon";
+        public const string GrantTypeOauth2Mezon = "GrantTypeOauth2Mezon";
+        public const string RedirectURI = "RedirectURI";
+        public const string URLOauth2Mezon = "URLOauth2Mezon";
+        public const string URLUserInfo = "URLUserInfo";
+        public const string EnableLoginMezon = "EnableLoginMezon";
     }
 }

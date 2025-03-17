@@ -7,7 +7,9 @@ namespace FinanceManagement.Configuration.Dto
     public class LoginSettingDto
     {
         public string GoogleClientId { get; set; }
+        public bool EnableLoginGoogle { get; set; }
         public bool EnableNormalLogin { get; set; }
         public string MezonClientId {  get; set; }
+        public bool EnableLoginMezon { get; set; }
     }
 }
