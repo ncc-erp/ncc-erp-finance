@@ -62,7 +62,7 @@ export const PERMISSIONS_CONSTANT = {
     Admin_Configuration_ViewRequestChiSetting : "Admin.Configuration.ViewRequestChiSetting",
     Admin_Configuration_EditRequestChiSetting : "Admin.Configuration.EditRequestChiSetting",
     Admin_Configuration_EditCoTheSuaThongTinCuaKiCu : "Admin.Configuration.EditCoTheSuaThongTinCuaKiCu",
-
+    Admin_Configuration_EditOauth2Mezon : "Admin.Configuration.EditOauth2Mezon",
 
     //Line Chart setting
 

@@ -88,6 +88,9 @@ export class AppConfigurationService extends BaseApiService{
     return this.http.post(this.rootUrl + '/ChangeClientAppId', input);
   }
 
+  public ChangeLoginSetting(input):Observable<any>{
+    return this.http.post(this.rootUrl + '/ChangeLoginSetting', input);
+  }
   GetRequestChiSetting(): Observable<ApiResponse<any>>{
     return this.http.get<ApiResponse<any>>(this.rootUrl + '/GetRequestChiSetting');
   }
@@ -139,4 +142,5 @@ export class AppConfigurationService extends BaseApiService{
   public ChangeNotifyChannel(input):Observable<any>{
     return this.http.post(this.rootUrl + '/ChangeNotifyChannel', input);
   }
+
 }

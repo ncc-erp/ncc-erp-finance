@@ -8,8 +8,54 @@
     </div>
 </section>
 <section class="content pl-2 pr-4" [busy]="isLoading">
-    <div class="container-fluid">
-        <div class="d-flex">
+     
+    <div class="container-fluid">       
+        <div class="d-flex">   
+            <div class="card col-6 col-md-6 col-xs-12 mr-3">
+                <div class="card-header">
+                    <div class="row">
+                        <h4 class="center-y mb-0">Login Setting</h4>
+                        <div class="ml-2">
+                            <a href="javascript:;" class="btn bg-blue mr-3" 
+                                (click)="isEditNormalLogin = !isEditNormalLogin; secretKey.focus()"
+                                [hidden]="isEditNormalLogin">
+                                <i class="fas fa-edit"></i>
+                                {{ 'action.edit' | translate }}
+                            </a>
+                            <a href="javascript:;" class="btn bg-red mr-3"
+                                (click)="changeEnableNormalLogin();isEditNormalLogin =! isEditNormalLogin"
+                                [hidden]="!isEditNormalLogin">
+                                {{ 'action.save' | translate }}
+                            </a>
+
+                            <a href="javascript:;" class="btn bg-secondary"
+                                (click)="isEditNormalLogin =! isEditNormalLogin; getSetting()" [hidden]="!isEditNormalLogin">
+                                {{ 'action.cancel' | translate }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col col-12 col-md-12 my-3">
+                        <mat-checkbox class="example-margin" [disabled]="!isEditNormalLogin"
+                          [checked]="configuration.enableNormalLogin" (change)="isEnableNormalLogin($event.checked)">
+                          Enable Normal Login
+                        </mat-checkbox>
+                      </div>  
+                      <div class="col col-12 col-md-12 my-3">
+                        <mat-checkbox class="example-margin" [disabled]="!isEditNormalLogin"
+                          [checked]="configuration.enableLoginGoogle" (change)="isEnableLoginGoogle($event.checked)">
+                          Enable login Google
+                        </mat-checkbox>
+                      </div>
+                      <div class="col col-12 col-md-12 my-3">
+                        <mat-checkbox class="example-margin" [disabled]="!isEditNormalLogin"
+                          [checked]="configuration.enableLoginMezon" (change)="isEnableNormalLoginMezon($event.checked)">
+                          Enable login Mezon
+                        </mat-checkbox>
+                      </div>         
+                </div>
+            </div>       
             <div class="card col-6 col-md-6 col-xs-12 mr-2">
                 <div class="card-header">
                     <div class="row">
@@ -53,39 +99,6 @@
                     </div>
                 </div>
             </div>
-            <div class="card col-6 col-md-6 col-xs-12 ml-2">
-                <div class="card-header">
-                    <div class="row">
-                        <h4 class="center-y mb-0">Secret key</h4>
-                        <div class="ml-2">
-                            <a href="javascript:;" class="btn bg-blue mr-3" *ngIf="isShowEditSecretKeyBtn()"
-                                (click)="isEditSecretKey = !isEditSecretKey; secretKey.focus()"
-                                [hidden]="isEditSecretKey">
-                                <i class="fas fa-edit"></i>
-                                {{ 'action.edit' | translate }}
-                            </a>
-                            <a href="javascript:;" class="btn bg-red mr-3"
-                                (click)="changeFinanceSecretKey();isEditSecretKey =! isEditSecretKey"
-                                [hidden]="!isEditSecretKey">
-                                {{ 'action.save' | translate }}
-                            </a>
-
-                            <a href="javascript:;" class="btn bg-secondary"
-                                (click)="isEditSecretKey =! isEditSecretKey; getSetting()" [hidden]="!isEditSecretKey">
-                                {{ 'action.cancel' | translate }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <mat-form-field class="w-100 ml-1">
-                            <input [readonly]="!isEditSecretKey" class="w-100" type="text" matInput
-                                placeholder="Secret key" [(ngModel)]="configuration.secretKey" #secretKey />
-                        </mat-form-field>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="d-flex">
             <div class="card col-6 col-md-6 col-xs-12 mr-2">
@@ -111,10 +124,11 @@
                     </div>
                 </div>
                 <div class="card-body row">
+                    <div>
                     <mat-form-field class="w-100 ml-1">
                         <input [readonly]="!isEditClientId" class="w-100" type="text" matInput
                             placeholder="Google Client App" [(ngModel)]="configuration.clientAppId" #clientId />
-                    </mat-form-field>
+                    </mat-form-field></div>
                 </div>
             </div>
             <div class="card col-6 col-md-6 col-xs-12 ml-2">
@@ -239,68 +253,110 @@
                 </div>
                 <div class="card-body row">
                     <mat-form-field class="w-100 ml-1">
-                        <input [readonly]="true" class="w-100" type="text" matInput
-                            placeholder="BaseAddress" [(ngModel)]="hrmConfig.baseAddress"  />
+                        <input [readonly]="true" class="w-100" type="text" matInput placeholder="BaseAddress"
+                            [(ngModel)]="hrmConfig.baseAddress" />
                     </mat-form-field>
                     <mat-form-field class="w-100 ml-1">
-                        <input [readonly]="true" class="w-100" type="text" matInput
-                            placeholder="SecurityCode" [(ngModel)]="hrmConfig.securityCode"  />
+                        <input [readonly]="true" class="w-100" type="text" matInput placeholder="SecurityCode"
+                            [(ngModel)]="hrmConfig.securityCode" />
                     </mat-form-field>
                 </div>
             </div>
-            <div class="col-lg-6 col-xs-12" >
+        
+            <div class="col-lg-6 col-xs-12">
                 <div class="card">
-                  <div class="card-header">
-                    <div class="row">
-                      <div class="col-md-11 row">
-                        <div class="title">Oauth2 Mezon Setting</div>
-                      </div>
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-11 row">
+                                <div class="title">Oauth2 Mezon Setting</div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="card-body">
-                    <div class="row">
-                      <div class="col col-12 col-md-12">
-                        <mat-form-field class="w-100 mt-2">
-                          <input readonly class="w-100" type="text" matInput placeholder="Client Id"
-                            [(ngModel)]="oauth2MezonConfig.client_Id" />
-                        </mat-form-field>
-                      </div>
-                      <div class="col col-12 col-md-12">
-                        <mat-form-field class="w-100 mt-2">
-                          <input readonly class="w-100" type="text" matInput placeholder="Client Secret"
-                            [(ngModel)]="oauth2MezonConfig.client_Secret" #clientSecretKey />
-                        </mat-form-field>
-                      </div>
-                      
-                      <div class="col col-12 col-md-12">
-                        <mat-form-field class="w-100 mt-2">
-                          <input readonly class="w-100" type="text" matInput placeholder="Redirect Uri"
-                            [(ngModel)]="oauth2MezonConfig.redirect_URI" #redirectUri />                
-                        </mat-form-field>
-                      </div>
-                      <div class="col col-12 col-md-12">
-                        <mat-form-field class="w-100 mt-2">
-                          <input readonly class="w-100" type="text" matInput placeholder="Grant Type"
-                            [(ngModel)]="oauth2MezonConfig.grant_Type" #grantType />
-                        </mat-form-field>
-                      </div>
-                      <div class="col col-12 col-md-12">
-                        <mat-form-field class="w-100 mt-2">
-                          <input readonly class="w-100" type="text" matInput placeholder="Url Oauth2 Mezon"
-                            [(ngModel)]="oauth2MezonConfig.url_Oauth2Mezon" #urlOauth2Mezon />
-                        </mat-form-field>
-                      </div>
-                      <div class="col col-12 col-md-12">
-                        <mat-form-field class="w-100 mt-2">
-                          <input readonly class="w-100" type="text" matInput placeholder="Url User Info"
-                            [(ngModel)]="oauth2MezonConfig.url_UserInfo" #talentUri />
-                        </mat-form-field>
-                      </div>
+        
+                    <div class="card-body">
+                        <div class="row">    
+                            <div class="col-12">
+                                <mat-form-field class="w-100 ml-1">
+                                    <input [readonly] class="w-100" type="text" matInput placeholder="Client Id"
+                                        [(ngModel)]="oauth2MezonConfig.client_Id" #clientId />
+                                </mat-form-field>
+                            </div>
+        
+                            <div class="col-12">
+                                <mat-form-field class="w-100 ml-1">
+                                    <input [readonly] class="w-100" type="text" matInput
+                                        placeholder="Client Secret" [(ngModel)]="oauth2MezonConfig.client_Secret"
+                                        #clientSecretKey />
+                                </mat-form-field>
+                            </div>
+        
+                            <div class="col-12">
+                                <mat-form-field class="w-100 ml-1">
+                                    <input [readonly] class="w-100" type="text" matInput placeholder="Redirect Uri"
+                                        [(ngModel)]="oauth2MezonConfig.redirect_URI" #redirectUri />
+                                </mat-form-field>
+                            </div>
+        
+                            <div class="col-12">
+                                <mat-form-field class="w-100 ml-1">
+                                    <input [readonly] class="w-100" type="text" matInput placeholder="Grant Type"
+                                        [(ngModel)]="oauth2MezonConfig.grant_Type" #grantType />
+                                </mat-form-field>
+                            </div>
+        
+                            <div class="col-12">
+                                <mat-form-field class="w-100 ml-1">
+                                    <input [readonly] class="w-100" type="text" matInput
+                                        placeholder="Url Oauth2 Mezon" [(ngModel)]="oauth2MezonConfig.url_Oauth2Mezon"
+                                        #urlOauth2Mezon />
+                                </mat-form-field>
+                            </div>
+        
+                            <div class="col-12">
+                                <mat-form-field class="w-100 ml-1">
+                                    <input [readonly] class="w-100" type="text" matInput placeholder="Url User Info"
+                                        [(ngModel)]="oauth2MezonConfig.url_UserInfo" />
+                                </mat-form-field>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>  
-          </div>
+            </div>
+        </div>  
+        <div class="d-flex">
+            <div class="card col-6 col-md-6 col-xs-12 ml-2">
+                <div class="card-header">
+                    <div class="row">
+                        <h4 class="center-y mb-0">Secret key</h4>
+                        <div class="ml-2">
+                            <a href="javascript:;" class="btn bg-blue mr-3" *ngIf="isShowEditSecretKeyBtn()"
+                                (click)="isEditSecretKey = !isEditSecretKey; secretKey.focus()"
+                                [hidden]="isEditSecretKey">
+                                <i class="fas fa-edit"></i>
+                                {{ 'action.edit' | translate }}
+                            </a>
+                            <a href="javascript:;" class="btn bg-red mr-3"
+                                (click)="changeFinanceSecretKey();isEditSecretKey =! isEditSecretKey"
+                                [hidden]="!isEditSecretKey">
+                                {{ 'action.save' | translate }}
+                            </a>
 
+                            <a href="javascript:;" class="btn bg-secondary"
+                                (click)="isEditSecretKey =! isEditSecretKey; getSetting()" [hidden]="!isEditSecretKey">
+                                {{ 'action.cancel' | translate }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <mat-form-field class="w-100 ml-1">
+                            <input [readonly]="!isEditSecretKey" class="w-100" type="text" matInput
+                                placeholder="Secret key" [(ngModel)]="configuration.secretKey" #secretKey />
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>      
         </div>
 </section>

@@ -8,6 +8,7 @@ import { forkJoin } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpParams } from '@angular/common/http';
+import { event } from '@node_modules/@types/jquery';
 
 @Component({
   selector: 'app-admin-setting',
@@ -27,8 +28,10 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
   public isEditFinanceUrl: boolean = false
   public isEditGoogleKey: boolean = false
   public isEditProject: boolean = false
+  public isEditOauth2Mezon: boolean = false
   public isEditLinkOutComing: boolean = false
   public isEditNotification: boolean = false;
+  public isEditNormalLogin: boolean = false;
   public linkOutComing = {} as LinkOutcomingConfigurationDto;
   public isLoading: boolean = false;
   public canApplyMutltiCurrencyOutcome: boolean = false
@@ -63,7 +66,16 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
   onRefreshCurrentPage(){
     this.ngOnInit();
   }
-
+  
+  isEnableNormalLogin(value) {
+    this.configuration.enableNormalLogin = value
+  }
+  isEnableLoginGoogle(value) {
+    this.configuration.enableLoginGoogle = value
+  }
+  isEnableNormalLoginMezon(value) {
+    this.configuration.enableLoginMezon = value
+  }
   updateBreadCrumb() {
     this.listBreadCrumb = [
       { name: this.routeTitleFirstLevel , url: this.routeUrlFirstLevel },
@@ -78,6 +90,8 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
       this.isLoading = false;
     }, () => this.isLoading = false);
   }
+
+  
   getConfigLinkOutComing() {
     this.settingService.getCanLinkWithOutComingEnd().subscribe(response => {
       if (!response.success) return;
@@ -151,8 +165,6 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
       abp.notify.success("update successful")
     })
   }
-
-
 
 
   public changeClientAppId() {
@@ -234,6 +246,21 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
     }, () => this.isLoading = false);
   }
 
+  public changeEnableNormalLogin() {
+    let input = {
+      enableNormalLogin: this.configuration.enableNormalLogin,
+      enableLoginGoogle: this.configuration.enableLoginGoogle,
+      enableLoginMezon: this.configuration.enableLoginMezon
+    }
+    this.isLoading = true;
+    this.settingService.ChangeLoginSetting(input).subscribe((rs) => {
+      if (rs) {
+        abp.notify.success("Change  login setting successful");
+        this.getSetting();
+        this.isLoading = false;
+      }
+    }, () => this.isLoading = false);
+  }
 
   getHRMConfig(){
     this.settingService.getHRMConfig().subscribe(rs => {
@@ -252,6 +279,10 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
   isShowEditGoogleSettingBtn() {
     return this.isGranted(PERMISSIONS_CONSTANT.Admin_Configuration_EditGoogleSetting);
   }
+  isShowEditOauth2MezonSettingBtn() {
+    return this.isGranted(PERMISSIONS_CONSTANT.Admin_Configuration_EditOauth2Mezon);
+  }
+  
   isShowEditSecretKeyBtn() {
     return this.isGranted(PERMISSIONS_CONSTANT.Admin_Configuration_EditSecretKey);
   }
@@ -270,10 +301,13 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
 
 }
 export class ConfigurationDto {
+  enableLoginGoogle: boolean;
   clientAppId: string;
   secretKey: string;
   notificationPlatform: string;
   notifyToChannel: string;
+  enableNormalLogin: boolean;
+  enableLoginMezon: boolean;
 }
 export class RequestChiSettingDto {
   canApplyMutltiCurrencyOutcome: boolean;
@@ -293,4 +327,5 @@ export interface Oauth2MezonConfig{
     grant_Type: string,
     url_Oauth2Mezon: string,
     url_UserInfo: string,
+    enableLoginMezon: boolean
 }
