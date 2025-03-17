@@ -12,21 +12,17 @@ namespace FinanceManagement.Configuration.Dto
         public string NotificationPlatform { get; set; }
         public string NotifyToChannel { get; set; }
         public bool EnableNormalLogin { get; set; }
+        public bool EnableLoginMezon {  get; set; }
     }
 
     public class ClienAppDto
     {
-        public bool EnableLoginGoogle { get; set; }
         public string ClientAppId { get; set; }
     }
 
     public class SecretKeyDto
     {
         public string SecretKey { get; set; }
-    }
-    public class EnableNormalLoginDto
-    {
-        public bool EnableNormalLogin { get; set; }
     }
     public class NotifyToChannelDto
     {

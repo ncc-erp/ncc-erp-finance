@@ -74,7 +74,7 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
     this.configuration.enableLoginGoogle = value
   }
   isEnableNormalLoginMezon(value) {
-    this.oauth2MezonConfig.enableLoginMezon = value
+    this.configuration.enableLoginMezon = value
   }
   updateBreadCrumb() {
     this.listBreadCrumb = [
@@ -166,32 +166,9 @@ export class AdminSettingComponent extends AppComponentBase implements OnInit {
     })
   }
 
-public changeOauth2MezonConfig() {
-  let input = {
-    client_Id: this.oauth2MezonConfig.client_Id,
-    client_Secret: this.oauth2MezonConfig.client_Secret,
-    redirect_URI: this.oauth2MezonConfig.redirect_URI,
-    grant_Type: this.oauth2MezonConfig.grant_Type,
-    url_Oauth2Mezon: this.oauth2MezonConfig.url_Oauth2Mezon,
-    url_UserInfo: this.oauth2MezonConfig.url_UserInfo,
-    enableLoginMezon: this.oauth2MezonConfig.enableLoginMezon
-  };
-  this.isLoading = true;
-  this.settingService.setOauth2Mezon(input).subscribe((rs) => {
-    if (rs) {
-      abp.notify.success("Change Oauth2 Mezon Config successful");
-      this.getOauth2MezonConfig();
-      this.isLoading = false;
-    }
-  }, () => this.isLoading = false);
-}
-  
-
-
 
   public changeClientAppId() {
     let input = {
-      enableLoginGoogle: this.configuration.enableLoginGoogle,
       clientAppId: this.configuration.clientAppId
     };
     this.isLoading = true;
@@ -271,12 +248,14 @@ public changeOauth2MezonConfig() {
 
   public changeEnableNormalLogin() {
     let input = {
-      enableNormalLogin: this.configuration.enableNormalLogin
+      enableNormalLogin: this.configuration.enableNormalLogin,
+      enableLoginGoogle: this.configuration.enableLoginGoogle,
+      enableLoginMezon: this.configuration.enableLoginMezon
     }
     this.isLoading = true;
-    this.settingService.ChangeEnableNormalLogin(input).subscribe((rs) => {
+    this.settingService.ChangeLoginSetting(input).subscribe((rs) => {
       if (rs) {
-        abp.notify.success("Change enable normal login successful");
+        abp.notify.success("Change  login setting successful");
         this.getSetting();
         this.isLoading = false;
       }
@@ -328,6 +307,7 @@ export class ConfigurationDto {
   notificationPlatform: string;
   notifyToChannel: string;
   enableNormalLogin: boolean;
+  enableLoginMezon: boolean;
 }
 export class RequestChiSettingDto {
   canApplyMutltiCurrencyOutcome: boolean;

@@ -63,6 +63,6 @@ namespace FinanceManagement.Configuration
         public const string RedirectURI = "RedirectURI";
         public const string URLOauth2Mezon = "URLOauth2Mezon";
         public const string URLUserInfo = "URLUserInfo";
-        public const string EnableLoginMezon = "EnableLoginMezon";
+        public const string EnableLoginMezon = "App.EnableLoginMezon";
     }
 }
