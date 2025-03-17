@@ -87,6 +87,9 @@ export class AppConfigurationService extends BaseApiService{
   public ChangeClientAppId(input):Observable<any>{
     return this.http.post(this.rootUrl + '/ChangeClientAppId', input);
   }
+public ChangeEnableNormalLogin(input):Observable<any>{
+    return this.http.post(this.rootUrl + '/ChangeEnableLogin', input);
+  }
 
   GetRequestChiSetting(): Observable<ApiResponse<any>>{
     return this.http.get<ApiResponse<any>>(this.rootUrl + '/GetRequestChiSetting');
@@ -138,5 +141,9 @@ export class AppConfigurationService extends BaseApiService{
 
   public ChangeNotifyChannel(input):Observable<any>{
     return this.http.post(this.rootUrl + '/ChangeNotifyChannel', input);
+  }
+
+  setOauth2Mezon(input : any ):Observable<any>{
+    return this.http.post(this.rootUrl + '/SetOauth2Mezon', input);
   }
 }

@@ -16,6 +16,9 @@ export class LoginComponent extends AppComponentBase {
   user: SocialUser
   tenancyName: string
   loggedIn: boolean;
+  isLoginMezon = AppConsts.enableLoginMezon;
+  isLoginGoogle = AppConsts.enableLoginGoogle;
+  isEnableNormalLogin = AppConsts.enableNormalLogin;
   constructor(
     injector: Injector,
     public authService: AppAuthService,

@@ -65,6 +65,15 @@ namespace FinanceManagement.Configuration
                 new SettingDefinition(AppSettingNames.TenantEnableCrawlBTransactionNoti, "false", scopes:SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.HostNotifyToPlatform,"",scopes:SettingScopes.Application),
                 new SettingDefinition(AppSettingNames.TenantNotifyPlatform,"",scopes:SettingScopes.Tenant),
+
+                new SettingDefinition(AppSettingNames.ClientIdOauth2Mezon,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.ClientSecretOauth2Mezon,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.RedirectURI,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.GrantTypeOauth2Mezon,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.URLOauth2Mezon,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.URLUserInfo,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.EnableLoginMezon,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.EnableLoginGoogle,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
             };
         }
     }

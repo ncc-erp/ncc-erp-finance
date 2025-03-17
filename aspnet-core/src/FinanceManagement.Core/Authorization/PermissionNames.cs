@@ -75,6 +75,7 @@ namespace FinanceManagement.Authorization
         public const string Admin_Configuration_ViewRequestChiSetting = "Admin.Configuration.ViewRequestChiSetting";
         public const string Admin_Configuration_EditRequestChiSetting = "Admin.Configuration.EditRequestChiSetting";
         public const string Admin_Configuration_EditCoTheSuaThongTinCuaKiCu = "Admin.Configuration.EditCoTheSuaThongTinCuaKiCu";
+        public const string Admin_Configuration_EditOauth2Mezon = "Admin.Configuration.EditOauth2Mezon";
 
         //Line Chart setting
 
@@ -347,7 +348,7 @@ namespace FinanceManagement.Authorization
         public const string Finance_Period_Create = "Finance.Period.Create";
         public const string Finance_Period_Edit = "Finance.Period.Edit";
         public const string Finance_Period_CloseAndCreate = "Finance.Period.CloseAndCreate";
-
+        
         
 
        
@@ -424,6 +425,7 @@ namespace FinanceManagement.Authorization
                     PermissionNames.Admin_Configuration_ViewRequestChiSetting,
                     PermissionNames.Admin_Configuration_EditRequestChiSetting,
                     PermissionNames.Admin_Configuration_EditCoTheSuaThongTinCuaKiCu,
+                    PermissionNames.Admin_Configuration_EditOauth2Mezon,
 
                     PermissionNames.Admin_CrawlHistory,
                     PermissionNames.Admin_CrawlHistory_View,
@@ -747,6 +749,7 @@ namespace FinanceManagement.Authorization
                     PermissionNames.Admin_Configuration_EditSecretKey,
                     PermissionNames.Admin_Configuration_EditLinkToRequestChiDaHoanThanh,
                     PermissionNames.Admin_Configuration_EditCoTheSuaThongTinCuaKiCu,
+                    PermissionNames.Admin_Configuration_EditOauth2Mezon,
 
                     PermissionNames.Admin_CrawlHistory,
                     PermissionNames.Admin_CrawlHistory_View,
@@ -1407,7 +1410,8 @@ namespace FinanceManagement.Authorization
                 new SystemPermission{ Name =  PermissionNames.Admin_Configuration_ViewRequestChiSetting,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xem request chi setting"},
                 new SystemPermission{ Name =  PermissionNames.Admin_Configuration_EditRequestChiSetting,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa request chi setting"},
                 new SystemPermission{ Name =  PermissionNames.Admin_Configuration_EditCoTheSuaThongTinCuaKiCu,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa cho phép sửa thông tin trong kì cũ"},
-                
+                 new SystemPermission{ Name =  PermissionNames.Admin_Configuration_EditOauth2Mezon,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa config oauth2 mezon"},
+
                 //Line Chart Setting
                 new SystemPermission{ Name =  PermissionNames.Admin_LineChartSetting, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Line Chart setting" },
                 new SystemPermission{ Name =  PermissionNames.Admin_LineChartSetting_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xem tất cả" },
@@ -1740,7 +1744,8 @@ namespace FinanceManagement.Authorization
                                  new SystemPermission{ Name =  PermissionNames.Admin_Configuration_EditLinkToRequestChiDaHoanThanh, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Liên kết/ Bỏ liên kết đến request chi đã hoàn thành"},
                                  new SystemPermission{ Name =  PermissionNames.Admin_Configuration_ViewRequestChiSetting,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xem request chi setting"},
                                  new SystemPermission{ Name =  PermissionNames.Admin_Configuration_EditRequestChiSetting,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa request chi setting"},
-                                 new SystemPermission{ Name =  PermissionNames.Admin_Configuration_EditCoTheSuaThongTinCuaKiCu,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa cho phép sửa thông tin trong kì cũ"}
+                                 new SystemPermission{ Name =  PermissionNames.Admin_Configuration_EditCoTheSuaThongTinCuaKiCu,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa cho phép sửa thông tin trong kì cũ"},
+                                                  new SystemPermission{ Name =  PermissionNames.Admin_Configuration_EditOauth2Mezon,MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa config oauth2 mezon"},
                             }
                         },
                        new SystemPermission{ Name =  PermissionNames.Admin_CrawlHistory, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Crawl history",
