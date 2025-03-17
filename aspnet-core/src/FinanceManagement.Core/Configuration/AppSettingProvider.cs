@@ -18,7 +18,7 @@ namespace FinanceManagement.Configuration
         {
             return new[]
             {
-                new SettingDefinition(AppSettingNames.EnableNormalLogin,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.EnableNormalLogin,"false",scopes:SettingScopes.Application|SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.UiTheme, "red", scopes: SettingScopes.Application | SettingScopes.Tenant | SettingScopes.User, isVisibleToClients: true),
                 new SettingDefinition(AppSettingNames.ClientAppId,"ClientAppId",scopes:SettingScopes.Application| SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.SecretKey, "SecretKey", scopes: SettingScopes.Application | SettingScopes.Tenant, isVisibleToClients: true),
@@ -66,14 +66,8 @@ namespace FinanceManagement.Configuration
                 new SettingDefinition(AppSettingNames.HostNotifyToPlatform,"",scopes:SettingScopes.Application),
                 new SettingDefinition(AppSettingNames.TenantNotifyPlatform,"",scopes:SettingScopes.Tenant),
 
-                new SettingDefinition(AppSettingNames.ClientIdOauth2Mezon,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
-                new SettingDefinition(AppSettingNames.ClientSecretOauth2Mezon,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
-                new SettingDefinition(AppSettingNames.RedirectURI,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
-                new SettingDefinition(AppSettingNames.GrantTypeOauth2Mezon,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
-                new SettingDefinition(AppSettingNames.URLOauth2Mezon,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
-                new SettingDefinition(AppSettingNames.URLUserInfo,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
                 new SettingDefinition(AppSettingNames.EnableLoginMezon,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
-                new SettingDefinition(AppSettingNames.EnableLoginGoogle,"True",scopes:SettingScopes.Application|SettingScopes.Tenant),
+                new SettingDefinition(AppSettingNames.EnableLoginGoogle,"false",scopes:SettingScopes.Application|SettingScopes.Tenant),
             };
         }
     }
