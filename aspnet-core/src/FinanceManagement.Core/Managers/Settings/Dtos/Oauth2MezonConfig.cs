@@ -14,4 +14,11 @@ namespace FinanceManagement.Managers.Settings.Dtos
 		public string Url_UserInfo { get; set; }
 		public bool EnableLoginMezon { get; set; }
 	}
+
+	public class ConfigEnableLogin
+	{
+		public bool EnableNormalLogin { get; set; }
+		public bool EnableLoginMezon { set; get; }
+		public bool EnableLoginGoogle { get; set; }
+	}
 }
