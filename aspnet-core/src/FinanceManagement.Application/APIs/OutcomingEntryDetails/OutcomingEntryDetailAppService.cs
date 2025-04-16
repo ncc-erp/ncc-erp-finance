@@ -62,6 +62,58 @@ namespace FinanceManagement.APIs.OutcomingEntryDetails
             await WorkScope.UpdateAsync(outcomingEntry);
             return input;
         }
+        
+        [HttpPost]
+        [AbpAuthorize(PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Create)]
+        public async Task<object> CreateMany([FromBody] List<GetOutcomingEntryDetailDto> inputList)
+        {
+            if (inputList == null || !inputList.Any())
+            {
+                throw new UserFriendlyException("Danh sách dữ liệu trống.");
+            }
+
+            var outcomingEntryId = inputList.First().OutcomingEntryId;
+
+            var outcomingEntry = await WorkScope.GetAll<OutcomingEntry>()
+                .Include(s => s.WorkflowStatus)
+                .Include(s => s.OutcomingEntryDetails)
+                .Where(s => s.Id == outcomingEntryId)
+                .FirstOrDefaultAsync();
+
+            if (outcomingEntry == null)
+            {
+                throw new UserFriendlyException("Không tìm thấy Request chi.");
+            }
+
+            if (outcomingEntry.WorkflowStatus?.Code?.Trim() != FinanceManagementConsts.WORKFLOW_STATUS_START)
+            {
+                throw new UserFriendlyException("Chỉ có thể tạo mới khi Request chi có trạng thái [START]");
+            }
+
+            var success = 0;
+            var fail = 0;
+
+            foreach (var input in inputList)
+            {
+                try
+                {
+                    var entity = ObjectMapper.Map<OutcomingEntryDetail>(input);
+                    await WorkScope.InsertAsync(entity);
+                    success++;
+                }
+                catch
+                {
+                    fail++;
+                }
+            }
+
+            await CurrentUnitOfWork.SaveChangesAsync();
+
+            outcomingEntry.Value = outcomingEntry.OutcomingEntryDetails.Sum(x => x.Total);
+            await WorkScope.UpdateAsync(outcomingEntry);
+
+            return new { Success = success, Fail = fail };
+        }
 
         [HttpPut]
         [AbpAuthorize(PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Edit)]
@@ -512,6 +564,9 @@ namespace FinanceManagement.APIs.OutcomingEntryDetails
                 }
             }
         }
+        
+        
+        
         public async Task<object> ImportFileOutcomingEntryDetail([FromForm] ImportFileOutcomingEntryDetailDto input)
         {
             var outcomingEntry = await WorkScope.GetAsync<OutcomingEntry>(input.OutcomingEntryId);

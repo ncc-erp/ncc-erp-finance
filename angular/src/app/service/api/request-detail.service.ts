@@ -79,28 +79,59 @@ export class RequestDetailService extends BaseApiService {
   delete(payload: DeleteOutcomingEntryDetailDto): Observable<any> {
     return this.http.post<any>(this.rootUrl + `/Delete`, payload);
   }
-  downloadFileTemplate(): Observable<ApiResponse<any>>{
-    return this.http.get<any>(this.rootUrl + "/GetTemplateInputOutcomingEntryDetail");
+  downloadFileTemplate(): Observable<ApiResponse<any>> {
+    return this.http.get<any>(
+      this.rootUrl + "/GetTemplateInputOutcomingEntryDetail"
+    );
   }
 
   importFileOutcomingEntryDetail(file, id): Observable<any> {
     const formData = new FormData();
-    formData.append('FileInput', file);
-    formData.append('OutcomingEntryId', id);
+    formData.append("FileInput", file);
+    formData.append("OutcomingEntryId", id);
     const uploadReq = new HttpRequest(
-      'POST', this.rootUrl + "/ImportFileOutcomingEntryDetail", formData,
+      "POST",
+      this.rootUrl + "/ImportFileOutcomingEntryDetail",
+      formData,
       {
-        reportProgress: true
+        reportProgress: true,
       }
     );
     return this.http.request(uploadReq);
   }
 
-  exportExcelOutcomingEntryDetail(request: DetailRequestDto): Observable<ApiResponse<any>> {
-    return this.http.post<any>(this.rootUrl + "/exportExcelOutcomingEntryDetail", request);
+  exportExcelOutcomingEntryDetail(
+    request: DetailRequestDto
+  ): Observable<ApiResponse<any>> {
+    return this.http.post<any>(
+      this.rootUrl + "/exportExcelOutcomingEntryDetail",
+      request
+    );
   }
-  
+
   public updateBranch(item: any): Observable<any> {
-    return this.http.put<any>(this.rootUrl + '/UpdateBranch', item);
-}
+    return this.http.put<any>(this.rootUrl + "/UpdateBranch", item);
+  }
+  createMany(details: any[]): Observable<any> {
+    const url = this.rootUrl + "/CreateMany";
+    return this.http.post(url, details, { observe: "response" });
+  }
+
+  extractFile(file: File | null, url: string): Observable<any> {
+    const formData = new FormData();
+
+    formData.append("file", file ?? "");
+    formData.append("url", file ? "" : url);
+    formData.append("google_api_key", "");
+    formData.append("model_name", "gemini-2.0-flash");
+    formData.append(
+      "authentication_key",
+      "01961f05-4823-703c-a28b-9c8ff10fe9c2"
+    );
+
+    return this.http.post(
+      "http://172.16.100.195:8001/api/v1/extract",
+      formData
+    );
+  }
 }

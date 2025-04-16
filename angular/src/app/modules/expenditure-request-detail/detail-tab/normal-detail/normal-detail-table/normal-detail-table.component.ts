@@ -1,5 +1,6 @@
-import { ImportDetailComponent } from './../import-detail/import-detail.component';
-import { MatDialog } from '@angular/material/dialog';
+import { ImportDetailComponent } from "./../import-detail/import-detail.component";
+import { ExtractDetailComponent } from "./../extract-detail/extract-detail.component";
+import { MatDialog } from "@angular/material/dialog";
 import {
   Component,
   EventEmitter,
@@ -29,8 +30,8 @@ import {
   GetOutcomingEntryDetailDto,
   RequestDetailDto,
 } from "../../detail-tab.component";
-import { UpdateBranchComponent } from '@app/modules/expenditure-request-detail/main-tab/update-branch/update-branch.component';
-import { log } from 'console';
+import { UpdateBranchComponent } from "@app/modules/expenditure-request-detail/main-tab/update-branch/update-branch.component";
+import { log } from "console";
 
 @Component({
   selector: "app-normal-detail-table",
@@ -98,18 +99,18 @@ export class NormalDetailTableComponent
   public requestListDetail: ResultGetOutcomingEntryDetailDto;
   public defaultfilterValue = {
     branch: -1,
-    isDone: -1
-  }
+    isDone: -1,
+  };
   public searchPaid: number = -1;
   public searchBranch = "";
-  public isSaving =false;
-  public isRequestChiIncludedInCost:boolean = false;
+  public isSaving = false;
+  public isRequestChiIncludedInCost: boolean = false;
   constructor(
     injector: Injector,
     private branchService: BranchService,
     private requestDetailService: RequestDetailService,
     private accountService: AccountService,
-    private dialog:MatDialog
+    private dialog: MatDialog
   ) {
     super(injector);
   }
@@ -125,7 +126,7 @@ export class NormalDetailTableComponent
     this.getAllBranch();
     this.refresh();
   }
-  setDefaultFilter(){
+  setDefaultFilter() {
     this.detailRequest.branchId = "";
     this.detailRequest.isNotDone = "";
   }
@@ -171,10 +172,10 @@ export class NormalDetailTableComponent
       }
     );
   }
-  branchSelectOpenedChange(isOpen: boolean){
-    if(isOpen){
+  branchSelectOpenedChange(isOpen: boolean) {
+    if (isOpen) {
       this.onFilterBranch();
-    }else{
+    } else {
       this.branchList = this.tempBranchList;
     }
   }
@@ -183,31 +184,37 @@ export class NormalDetailTableComponent
     this.requestListDetail?.paging.items.unshift({
       createMode: true,
       outcomingEntryId: this.expenditureRequest.id,
-      quantity: 1
+      quantity: 1,
     } as GetOutcomingEntryDetailDto);
     this.isAllowed = false;
     this.action = ActionTypeEnum.NEW;
   }
   saveRequestDetail(item: GetOutcomingEntryDetailDto) {
-    this.isSaving = true
+    this.isSaving = true;
     if (this.action == ActionTypeEnum.NEW) {
-      this.requestDetailService.create(item).subscribe((res) => {
-        abp.notify.success("Created new detail ");
-        this.isAllowed = true;
-        this.readMode.emit(true);
-        this.refresh();
-        this.isSaving = false
-      },
-      () => {this.isSaving = false});
+      this.requestDetailService.create(item).subscribe(
+        (res) => {
+          abp.notify.success("Created new detail ");
+          this.isAllowed = true;
+          this.readMode.emit(true);
+          this.refresh();
+          this.isSaving = false;
+        },
+        () => {
+          this.isSaving = false;
+        }
+      );
     } else {
-      this.requestDetailService.update(item).subscribe((res) => {
-        abp.notify.success("Edited detail");
-        this.isAllowed = true;
-        this.readMode.emit(true);
-        this.refresh();
-        this.isSaving = false
-      },
-      () => this.isSaving = false);
+      this.requestDetailService.update(item).subscribe(
+        (res) => {
+          abp.notify.success("Edited detail");
+          this.isAllowed = true;
+          this.readMode.emit(true);
+          this.refresh();
+          this.isSaving = false;
+        },
+        () => (this.isSaving = false)
+      );
     }
   }
   calculateTempTotal(price, quantity) {
@@ -229,84 +236,112 @@ export class NormalDetailTableComponent
     this.readMode.emit(true);
   }
 
-  onFilterBranch(){
-    this.branchList = this.tempBranchList.filter(x => x.name.toLowerCase().trim()
-    .includes(this.searchBranch.toLowerCase().trim()))
+  onFilterBranch() {
+    this.branchList = this.tempBranchList.filter((x) =>
+      x.name
+        .toLowerCase()
+        .trim()
+        .includes(this.searchBranch.toLowerCase().trim())
+    );
   }
 
-  downloadFileTemplate(){
-    this.requestDetailService.downloadFileTemplate()
-    .subscribe(response => {
-      if(!response.success) return;
+  downloadFileTemplate() {
+    this.requestDetailService.downloadFileTemplate().subscribe((response) => {
+      if (!response.success) return;
       const file = new Blob([this.convertFile(atob(response.result))], {
         type: "application/vnd.ms-excel;charset=utf-8",
       });
       FileSaver.saveAs(file, `Template_mẫu_request_chi_chi_tiết.xlsx`);
-    })
+    });
   }
 
-  exportExcelOutcomingEntryDetail(){
-    this.requestDetailService.exportExcelOutcomingEntryDetail(this.detailRequest)
-    .subscribe(response => {
-      if(!response.success) return;
-      const file = new Blob([this.convertFile(atob(response.result))], {
-        type: "application/vnd.ms-excel;charset=utf-8",
+  exportExcelOutcomingEntryDetail() {
+    this.requestDetailService
+      .exportExcelOutcomingEntryDetail(this.detailRequest)
+      .subscribe((response) => {
+        if (!response.success) return;
+        const file = new Blob([this.convertFile(atob(response.result))], {
+          type: "application/vnd.ms-excel;charset=utf-8",
+        });
+        FileSaver.saveAs(file, `Request_chi_chi_tiết.xlsx`);
       });
-      FileSaver.saveAs(file, `Request_chi_chi_tiết.xlsx`);
-    })
   }
 
-  importDetail(){
-      let ref = this.dialog.open(ImportDetailComponent, {
-        width: "500px",
-        data: {
-          id: this.expenditureRequest.id
-        }
-      })
-      ref.afterClosed().subscribe(rs => {
-        if(rs){
-          this.refresh()
-        }
-      })
+  importDetail() {
+    let ref = this.dialog.open(ImportDetailComponent, {
+      width: "500px",
+      data: {
+        id: this.expenditureRequest.id,
+      },
+    });
+    ref.afterClosed().subscribe((rs) => {
+      if (rs) {
+        this.refresh();
+      }
+    });
   }
 
-  onUpdateBranch(request){
+  extractData() {
+    const ref = this.dialog.open(ExtractDetailComponent, {
+      width: "80%",
+      data: {
+        outcomingEntryId: this.expenditureRequest.id,
+      },
+    });
+
+    ref.afterClosed().subscribe((rs) => {
+      if (rs) {
+        this.refresh();
+      }
+    });
+  }
+
+  onUpdateBranch(request) {
     var dia = this.dialog.open(UpdateBranchComponent, {
       data: {
         isRequestDetail: true,
         requestId: request.id,
-        oldBranchId: request.branchId
+        oldBranchId: request.branchId,
       },
-      width: "700px"
-    })
-    dia.afterClosed().subscribe((rs)=>{
-      if(rs){
+      width: "700px",
+    });
+    dia.afterClosed().subscribe((rs) => {
+      if (rs) {
         this.refresh();
       }
-    })
+    });
   }
 
-  isShowCreateBtn(){
-    return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Create);
+  isShowCreateBtn() {
+    return this.isGranted(
+      PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Create
+    );
   }
 
-  isShowEditBtn(){
-    return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Edit);
+  isShowEditBtn() {
+    return this.isGranted(
+      PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Edit
+    );
   }
-  isShowDeleteBtn(){
-    return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Delete);
+  isShowDeleteBtn() {
+    return this.isGranted(
+      PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Delete
+    );
   }
-  isShowChangeStatusBtn(){
-    return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_ActiveDeactive);
+  isShowChangeStatusBtn() {
+    return this.isGranted(
+      PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_ActiveDeactive
+    );
   }
-  isShowUpdateBranchBtn(){
-    return this.isGranted(PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_UpdateBranch);
+  isShowUpdateBranchBtn() {
+    return this.isGranted(
+      PERMISSIONS_CONSTANT.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_UpdateBranch
+    );
   }
 
-  isStatusIsNew(){
+  isStatusIsNew() {
     return this.expenditureRequest?.workflowStatusCode == "START";
   }
-
 }
 export class ResultGetOutcomingEntryDetailDto {
   paging: PagedResultDto;

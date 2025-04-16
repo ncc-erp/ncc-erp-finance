@@ -1,6 +1,6 @@
 <div class="container-fluid" id="normal-detail">
   <div class="mt-2 mb-2 row">
-    <div class="input-group d-flex col-sm-12 col-md-5 col-xl-5">
+    <div class="input-group d-flex col-sm-12 col-md-5 col-xl-4">
       <div class="input-group-prepend">
         <button type="button" class="btn bg-blue" (click)="getDataPage(1)">
           <i class="fas fa-search"></i>
@@ -34,18 +34,24 @@
         </mat-select>
       </mat-form-field>
     </div>
-    <div class="col-3 text-right">
-      <button *ngIf="isShowCreateBtn() && isStatusIsNew()" style="border: none" [disabled]="!isAllowed" (click)="addMore()"
-        class="bg-blue ml-2 btn">
+    <div class="col-4 text-right">
+      <button *ngIf="isShowCreateBtn() && isStatusIsNew()" style="border: none" [disabled]="!isAllowed"
+        (click)="addMore()" class="bg-blue ml-2 btn">
         <i class="fas fa-plus"></i>
         Add
+      </button>
+      <button *ngIf="isShowCreateBtn() && isStatusIsNew()" style="border: none" [disabled]="!isAllowed"
+        (click)="extractData()" class="bg-success ml-2 btn">
+        <i class="fa fa-file-export"></i>
+        Extract
       </button>
       <button *ngIf="isShowCreateBtn()" style="border: none" [disabled]="!isAllowed" (click)="downloadFileTemplate()"
         class="bg-success ml-2 btn">
         <i class="fa fa-download"></i>
         File mẫu
       </button>
-      <button *ngIf="isShowCreateBtn() && isStatusIsNew()" style="border: none" [disabled]="!isAllowed" (click)="importDetail()" class="bg-primary ml-2 btn">
+      <button *ngIf="isShowCreateBtn() && isStatusIsNew()" style="border: none" [disabled]="!isAllowed"
+        (click)="importDetail()" class="bg-primary ml-2 btn">
         <i class="fa fa-upload"></i>
         Import
       </button>
@@ -54,6 +60,7 @@
         <i class="fa fa-download"></i>
         Export
       </button>
+
     </div>
   </div>
 
@@ -115,37 +122,17 @@
                     {{ item.branchName }}
                   </span>
                   <span style="float: right;">
-                    <i *ngIf="isShowUpdateBranchBtn()"
-                    class="fas fa-edit ml-2 pointer"
-                    (click)="onUpdateBranch(item)"></i>
+                    <i *ngIf="isShowUpdateBranchBtn()" class="fas fa-edit ml-2 pointer"
+                      (click)="onUpdateBranch(item)"></i>
                   </span>
                 </div>
-                <mat-form-field
-                  appearance="outline"
-                  style="margin-top: -5px"
-                  *ngIf="mode"
-                  class="readonly-block w-100"
-                >
-                  <mat-select
-                    [(ngModel)]="item.branchId"
-                    name="branch"
-                    #branchId="ngModel"
-                    required
+                <mat-form-field appearance="outline" style="margin-top: -5px" *ngIf="mode" class="readonly-block w-100">
+                  <mat-select [(ngModel)]="item.branchId" name="branch" #branchId="ngModel" required
                     [placeholder]="!branchList || !branchList.length ? 'No data' : 'Branch'"
-                    (openedChange)="branchSelectOpenedChange($event)"
-                  >
-                    <mat-form-field
-                      class="w-100 px-3 selection-input-seach-hanging-above"
-                    >
-                      <input
-                        type="text"
-                        name="searchBranch"
-                        matInput
-                        placeholder="Search"
-                        [(ngModel)]="searchBranch"
-                        (keydown)="$event.stopPropagation()"
-                        (ngModelChange)="onFilterBranch()"
-                      />
+                    (openedChange)="branchSelectOpenedChange($event)">
+                    <mat-form-field class="w-100 px-3 selection-input-seach-hanging-above">
+                      <input type="text" name="searchBranch" matInput placeholder="Search" [(ngModel)]="searchBranch"
+                        (keydown)="$event.stopPropagation()" (ngModelChange)="onFilterBranch()" />
                     </mat-form-field>
                     <mat-option hidden="true" [value]="null">none</mat-option>
                     <ng-container *ngFor="let brach of branchList">
@@ -165,7 +152,7 @@
                 </span>
                 <mat-form-field style="margin-top: -5px" *ngIf="mode" appearance="outline">
                   <mat-select [(ngModel)]="item.accountId" name="accountSelect" placeholder="select account"
-                    #inputAccount  #account>
+                    #inputAccount #account>
                     <ng-container *ngFor="let account of accountList">
                       <mat-option [value]="account.id" (click)="item.accountName = account.name">
                         {{ account.name }}</mat-option>
@@ -238,12 +225,8 @@
                 </button>
               </td>
               <td *ngIf="mode" class="text-center w-150" style="border: none">
-                <button
-                  (click)="saveRequestDetail(item)"
-                  type="submit"
-                  class="btn btn-primary mr-1 ml-3"
-                  [disabled]="!item.name || !item.unitPrice || !item.quantity || isSaving || !item.branchId"
-                >
+                <button (click)="saveRequestDetail(item)" type="submit" class="btn btn-primary mr-1 ml-3"
+                  [disabled]="!item.name || !item.unitPrice || !item.quantity || isSaving || !item.branchId">
                   Save
                 </button>
                 <button (click)="clickBtnCancel()" class="btn btn-default">
