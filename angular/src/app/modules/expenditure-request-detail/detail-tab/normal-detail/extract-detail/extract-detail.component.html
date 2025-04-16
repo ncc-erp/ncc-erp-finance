@@ -87,26 +87,28 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th class="sticky-header">#</th>
-                            <th class="sticky-header">Nội dung*</th>
-                            <th class="sticky-header">Số lượng*</th>
-                            <th class="sticky-header">Đơn giá*</th>
-                            <th class="sticky-header">Thành tiền</th>
-                            <th class="sticky-header">Chi nhánh*</th>
-                            <th class="sticky-header">Đã trả*</th>
-                            <th class="sticky-header">Chỉnh sửa</th>
+                            <th class="sticky-header col-num">#</th>
+                            <th class="sticky-header col-content">Nội dung*</th>
+                            <th class="sticky-header col-small">Số lượng*</th>
+                            <th class="sticky-header col-small">Đơn giá*</th>
+                            <th class="sticky-header col-small">Thành tiền</th>
+                            <th class="sticky-header col-branch">Chi nhánh*</th>
+                            <th class="sticky-header col-paid">Đã trả*</th>
+                            <th class="sticky-header col-action">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let item of data.products; let i = index">
                             <td class="text-center">{{ i + 1 }}</td>
-                            <td><input [(ngModel)]="item.product_name" name="product_name_{{ i }}"
-                                    class="form-control" /></td>
+                            <td>
+                                <textarea [(ngModel)]="item.product_name" name="product_name_{{ i }}"
+                                    class="form-control content-textarea" rows="2"></textarea>
+                            </td>
                             <td><input type="number" [(ngModel)]="item.unit_quantity" name="quantity_{{ i }}"
-                                    class="form-control" /></td>
+                                    class="form-control col-small" /></td>
                             <td><input type="number" [(ngModel)]="item.unit_price" name="price_{{ i }}"
-                                    class="form-control" /></td>
-                            <td>{{ item.unit_quantity * item.unit_price | number }}</td>
+                                    class="form-control col-small" /></td>
+                            <td class="text-right">{{ item.unit_quantity * item.unit_price | number }}</td>
                             <td>
                                 <mat-select [(ngModel)]="item.branchId" name="branch_{{ i }}">
                                     <mat-option *ngFor="let branch of branchList" [value]="branch.id">
@@ -114,8 +116,9 @@
                                     </mat-option>
                                 </mat-select>
                             </td>
-                            <td><input type="checkbox" [(ngModel)]="item.paid" name="paid_{{ i }}" /></td>
-                            <td>
+                            <td class="text-center"><input type="checkbox" [(ngModel)]="item.paid"
+                                    name="paid_{{ i }}" /></td>
+                            <td class="text-center">
                                 <button mat-icon-button color="warn" (click)="removeRow(i)">
                                     <mat-icon>delete</mat-icon>
                                 </button>

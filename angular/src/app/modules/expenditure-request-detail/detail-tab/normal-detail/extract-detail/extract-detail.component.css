@@ -247,3 +247,96 @@ input[type="checkbox"] {
     max-height: calc(100vh - 120px);
     overflow-y: auto;
 }
+
+/* Table column sizing */
+.table-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #dee2e6;
+    position: relative;
+  }
+  
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Column width adjustments */
+  .col-num {
+    width: 40px;
+    min-width: 40px;
+  }
+  
+  .col-content {
+    width: auto;
+    min-width: 250px;
+  }
+  
+  .col-small {
+    width: 80px;
+    min-width: 80px;
+    max-width: 100px;
+  }
+  
+  .col-branch {
+    width: 120px;
+    min-width: 120px;
+  }
+  
+  .col-paid {
+    width: 60px;
+    min-width: 60px;
+  }
+  
+  .col-action {
+    width: 60px;
+    min-width: 60px;
+  }
+  
+  /* Content textarea */
+  .content-textarea {
+    resize: vertical;
+    min-height: 50px;
+    transition: height 0.2s ease;
+  }
+  
+  .content-textarea:focus {
+    min-height: 80px;
+  }
+  
+  /* Small input for number fields */
+  .input-small {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  /* Text alignment */
+  .text-center {
+    text-align: center;
+  }
+  
+  .text-right {
+    text-align: right;
+  }
+  
+  /* Make sure the whole dialog can scroll if it gets too tall */
+  .all_dialog {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+  
+  /* Action buttons container */
+  .action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .col-small {
+    width: 130px; /* hoặc tăng tùy ý, ví dụ 150px */
+    min-width: 130px;
+  }
