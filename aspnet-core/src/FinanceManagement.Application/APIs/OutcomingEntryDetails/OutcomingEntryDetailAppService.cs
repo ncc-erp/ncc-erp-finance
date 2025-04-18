@@ -65,7 +65,7 @@ namespace FinanceManagement.APIs.OutcomingEntryDetails
         
         [HttpPost]
         [AbpAuthorize(PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Create)]
-        public async Task<object> CreateMany([FromBody] List<GetOutcomingEntryDetailDto> inputList)
+        public async Task CreateMany([FromBody] List<GetOutcomingEntryDetailDto> inputList)
         {
             if (inputList == null || !inputList.Any())
             {
@@ -82,39 +82,28 @@ namespace FinanceManagement.APIs.OutcomingEntryDetails
 
             if (outcomingEntry == null)
             {
-                throw new UserFriendlyException("Không tìm thấy Request chi.");
+                throw new UserFriendlyException($"Không tìm thấy Request chi Id {outcomingEntryId}");
             }
 
             if (outcomingEntry.WorkflowStatus?.Code?.Trim() != FinanceManagementConsts.WORKFLOW_STATUS_START)
             {
-                throw new UserFriendlyException("Chỉ có thể tạo mới khi Request chi có trạng thái [START]");
+                throw new UserFriendlyException($"Chỉ có thể tạo mới thông tin chi tiết khi Request chi có mã trạng thái {FinanceManagementConsts.WORKFLOW_STATUS_START}");
             }
 
-            var success = 0;
-            var fail = 0;
-
             foreach (var input in inputList)
-            {
-                try
-                {
-                    var entity = ObjectMapper.Map<OutcomingEntryDetail>(input);
-                    await WorkScope.InsertAsync(entity);
-                    success++;
-                }
-                catch
-                {
-                    fail++;
-                }
+            {               
+                var entity = ObjectMapper.Map<OutcomingEntryDetail>(input);
+                entity.OutcomingEntryId = outcomingEntryId;
+                await WorkScope.InsertAsync(entity);
             }
 
             await CurrentUnitOfWork.SaveChangesAsync();
 
             outcomingEntry.Value = outcomingEntry.OutcomingEntryDetails.Sum(x => x.Total);
             await WorkScope.UpdateAsync(outcomingEntry);
-
-            return new { Success = success, Fail = fail };
+                        
         }
-
+        
         [HttpPut]
         [AbpAuthorize(PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabDetailInfo_Edit)]
         public async Task<GetOutcomingEntryDetailDto> Update(GetOutcomingEntryDetailDto input)

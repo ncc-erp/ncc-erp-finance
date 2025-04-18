@@ -260,15 +260,18 @@ export class ExtractDetailComponent implements OnInit {
       .pipe(catchError(this.requestDetailService.handleError))
       .subscribe(
         (res) => {
-          if (!!res?.body?.success || res?.body?.Success >= 0) {
-            let message = `success <strong class='text-success'>${res?.body.result?.success}</strong>, fail <strong class='text-danger'>${res?.body.result?.fail}</strong>`;
-            abp.message.info(message, "Import result", { isHTML: true });
-
+          const body = res?.body;
+          if (body?.success) {
+            abp.message.success("Import thành công!", "Thành công");
             this.dialogRef.close(true);
+          } else {
+            abp.message.error("Import thất bại!", "Lỗi");
+            this.isLoading = false;
           }
         },
         () => {
           this.isLoading = false;
+          abp.message.error("Lỗi khi gửi yêu cầu import!", "Lỗi kết nối");
         }
       );
   }

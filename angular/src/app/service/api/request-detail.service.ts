@@ -80,39 +80,31 @@ export class RequestDetailService extends BaseApiService {
   delete(payload: DeleteOutcomingEntryDetailDto): Observable<any> {
     return this.http.post<any>(this.rootUrl + `/Delete`, payload);
   }
-  downloadFileTemplate(): Observable<ApiResponse<any>> {
-    return this.http.get<any>(
-      this.rootUrl + "/GetTemplateInputOutcomingEntryDetail"
-    );
+  downloadFileTemplate(): Observable<ApiResponse<any>>{
+    return this.http.get<any>(this.rootUrl + "/GetTemplateInputOutcomingEntryDetail");
   }
 
   importFileOutcomingEntryDetail(file, id): Observable<any> {
     const formData = new FormData();
-    formData.append("FileInput", file);
-    formData.append("OutcomingEntryId", id);
+    formData.append('FileInput', file);
+    formData.append('OutcomingEntryId', id);
     const uploadReq = new HttpRequest(
-      "POST",
-      this.rootUrl + "/ImportFileOutcomingEntryDetail",
-      formData,
+      'POST', this.rootUrl + "/ImportFileOutcomingEntryDetail", formData,
       {
-        reportProgress: true,
+        reportProgress: true
       }
     );
     return this.http.request(uploadReq);
   }
 
-  exportExcelOutcomingEntryDetail(
-    request: DetailRequestDto
-  ): Observable<ApiResponse<any>> {
-    return this.http.post<any>(
-      this.rootUrl + "/exportExcelOutcomingEntryDetail",
-      request
-    );
+  exportExcelOutcomingEntryDetail(request: DetailRequestDto): Observable<ApiResponse<any>> {
+    return this.http.post<any>(this.rootUrl + "/exportExcelOutcomingEntryDetail", request);
   }
-
+  
   public updateBranch(item: any): Observable<any> {
-    return this.http.put<any>(this.rootUrl + "/UpdateBranch", item);
-  }
+    return this.http.put<any>(this.rootUrl + '/UpdateBranch', item);
+}
+
   createMany(details: any[]): Observable<any> {
     const url = this.rootUrl + "/CreateMany";
     return this.http.post(url, details, { observe: "response" });
