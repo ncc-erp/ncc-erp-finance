@@ -1,4 +1,3 @@
-/* extract-detail.component.css */
 .loading-container {
     display: flex;
     flex-direction: column;
@@ -16,7 +15,6 @@
     text-align: center;
 }
 
-/* Improved File/URL Selection Styles */
 .upload-container {
     padding: 20px 0;
     border-top: 1px solid #eee;
@@ -128,7 +126,6 @@
     color: #f44336;
 }
 
-/* Empty state styles */
 .empty-state {
     display: flex;
     flex-direction: column;
@@ -165,7 +162,6 @@
     gap: 12px;
 }
 
-/* Scrollable table styles */
 .table-container {
     max-height: 600px;
     overflow-y: auto;
@@ -181,162 +177,163 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* Make sure the header row stays in place */
 .table-container thead tr {
     position: sticky;
     top: 0;
     z-index: 11;
 }
 
-/* Add additional styling for better appearance */
 .table {
     margin-bottom: 0;
 }
 
-/* Add responsive width for columns */
 .table th,
 .table td {
     vertical-align: middle;
 }
 
-.table th:first-child,
-.table td:first-child {
-    width: 50px;
+.cdk-drag {
+    cursor: move;
 }
 
-.table th:nth-child(2),
-.table td:nth-child(2) {
-    min-width: 200px;
+.h_drag_and_drop {
+    cursor: move;
+    user-select: none;
 }
 
-.table th:nth-child(3),
-.table td:nth-child(3),
-.table th:nth-child(4),
-.table td:nth-child(4),
-.table th:nth-child(5),
-.table td:nth-child(5) {
+.h_drag_and_drop:hover {
+    cursor: move;
+}
+
+.col-num {
+    width: 40px;
+    min-width: 40px;
+}
+
+.col-content {
+    width: auto;
+    min-width: 250px;
+}
+
+.col-quantity {
+    width: 80px;
+    min-width: 80px;
+}
+
+.col-small {
+    width: 100px;
     min-width: 100px;
 }
 
-.table th:nth-child(6),
-.table td:nth-child(6) {
+.col-total {
+    width: 150px;
     min-width: 150px;
 }
 
-.table th:nth-child(7),
-.table td:nth-child(7) {
-    width: 70px;
+.col-branch {
+    width: 120px;
+    min-width: 120px;
+}
+
+.col-paid {
+    width: 60px;
+    min-width: 60px;
+}
+
+.col-action {
+    width: 60px;
+    min-width: 60px;
+}
+
+.text-center {
     text-align: center;
 }
 
-.table th:last-child,
-.table td:last-child {
-    width: 70px;
-    text-align: center;
+.text-right {
+    text-align: right;
 }
 
-/* Improve checkbox styling */
-input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-}
-
-/* Make sure the whole dialog can scroll if it gets too tall */
 .all_dialog {
     max-height: calc(100vh - 120px);
     overflow-y: auto;
 }
 
-/* Table column sizing */
-.table-container {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #dee2e6;
-    position: relative;
-  }
-  
-  .sticky-header {
-    position: sticky;
-    top: 0;
-    background-color: #f8f9fa;
-    z-index: 10;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Column width adjustments */
-  .col-num {
-    width: 40px;
-    min-width: 40px;
-  }
-  
-  .col-content {
-    width: auto;
-    min-width: 250px;
-  }
-  
-  .col-small {
-    width: 80px;
-    min-width: 80px;
-    max-width: 100px;
-  }
-  
-  .col-branch {
-    width: 120px;
-    min-width: 120px;
-  }
-  
-  .col-paid {
-    width: 60px;
-    min-width: 60px;
-  }
-  
-  .col-action {
-    width: 60px;
-    min-width: 60px;
-  }
-  
-  /* Content textarea */
-  .content-textarea {
-    resize: vertical;
-    min-height: 50px;
-    transition: height 0.2s ease;
-  }
-  
-  .content-textarea:focus {
-    min-height: 80px;
-  }
-  
-  /* Small input for number fields */
-  .input-small {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-  }
-  
-  /* Text alignment */
-  .text-center {
-    text-align: center;
-  }
-  
-  .text-right {
-    text-align: right;
-  }
-  
-  /* Make sure the whole dialog can scroll if it gets too tall */
-  .all_dialog {
-    max-height: calc(100vh - 120px);
-    overflow-y: auto;
-  }
-  
-  /* Action buttons container */
-  .action-buttons {
+.action-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
     margin-top: 12px;
-  }
+}
 
-  .col-small {
-    width: 130px; /* hoặc tăng tùy ý, ví dụ 150px */
-    min-width: 130px;
-  }
+.content-textarea {
+    resize: vertical;
+    min-height: 50px;
+    transition: height 0.2s ease;
+}
+
+.content-textarea:focus {
+    min-height: 80px;
+}
+
+.input-small {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.total-row {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.total-row td {
+    border-top: 2px solid #dee2e6;
+}
+
+.total-value {
+    color: #d32f2f;
+    font-size: 1.1em;
+}
+
+.font-weight-bold {
+    font-weight: bold;
+}
+
+@media (max-width: 992px) {
+    .table-container {
+        max-height: 400px;
+        overflow-x: auto;
+    }
+
+    .col-content {
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .all_dialog {
+        max-height: calc(100vh - 80px);
+    }
+
+    .table-container {
+        max-height: 350px;
+    }
+
+    .action-buttons {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 576px) {
+    .selection-tabs {
+        flex-direction: column;
+    }
+
+    .tab-item {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .table {
+        font-size: 0.85rem;
+    }
+}

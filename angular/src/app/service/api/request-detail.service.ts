@@ -11,6 +11,7 @@ import {
 } from "@app/modules/expenditure-request-detail/detail-tab/detail-tab.component";
 import { ApiPagingResponse, ApiResponse } from "../model/api-response.model";
 import { ResultGetOutcomingEntryDetailDto } from "@app/modules/expenditure-request-detail/detail-tab/normal-detail/normal-detail-table/normal-detail-table.component";
+import { ExtractFileUrl } from './../../../shared/AppConsts';
 
 @Injectable({
   providedIn: "root",
@@ -130,7 +131,7 @@ export class RequestDetailService extends BaseApiService {
     );
 
     return this.http.post(
-      "http://172.16.100.195:8001/api/v1/extract",
+      ExtractFileUrl.EXTRACT_FILE_URL,
       formData
     );
   }

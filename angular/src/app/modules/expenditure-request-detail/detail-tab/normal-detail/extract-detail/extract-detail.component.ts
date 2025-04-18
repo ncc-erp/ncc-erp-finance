@@ -25,11 +25,11 @@ export class ExtractDetailComponent implements OnInit {
   data: any;
   isLoading = false;
   isExtracted = false;
-  inputMethod: "file" | "url" = "file"; // Default to file upload
+  inputMethod: "file" | "url" = "file";
   isDragOver = false;
   invalidFileType = false;
+  totalAmount: number = 0;
 
-  // Allowed file types
   allowedFileTypes = [
     "application/pdf",
     "image/jpeg",
@@ -61,7 +61,6 @@ export class ExtractDetailComponent implements OnInit {
 
   setInputMethod(method: "file" | "url") {
     this.inputMethod = method;
-    // Clear the other input method data
     if (method === "file") {
       this.fileUrl = "";
     } else {
@@ -71,7 +70,6 @@ export class ExtractDetailComponent implements OnInit {
   }
 
   isValidFileType(file: File): boolean {
-    // Check if file type is in allowed list
     return this.allowedFileTypes.includes(file.type);
   }
 
@@ -93,13 +91,12 @@ export class ExtractDetailComponent implements OnInit {
         this.selectedFile = file;
         this.invalidFileType = true;
         setTimeout(() => {
-          // Reset the file input
           if (this.fileInput) {
             this.fileInput.nativeElement.value = "";
           }
         }, 100);
       }
-      this.fileUrl = ""; // Clear URL when file is selected
+      this.fileUrl = "";
     }
   }
 
@@ -130,13 +127,12 @@ export class ExtractDetailComponent implements OnInit {
         this.selectedFile = file;
         this.invalidFileType = true;
         setTimeout(() => {
-          // Reset the file input
           if (this.fileInput) {
             this.fileInput.nativeElement.value = "";
           }
         }, 100);
       }
-      this.fileUrl = ""; // Clear URL when file is dropped
+      this.fileUrl = "";
     }
   }
 
@@ -187,6 +183,7 @@ export class ExtractDetailComponent implements OnInit {
               item.paid = false;
             });
             this.isExtracted = true;
+            this.calculateTotals();
           } else {
             abp.message.error("Extract thất bại.");
           }
@@ -198,8 +195,29 @@ export class ExtractDetailComponent implements OnInit {
       );
   }
 
+  calculateTotals() {
+    if (!this.data?.products) {
+      this.totalAmount = 0;
+      return;
+    }
+
+    this.totalAmount = this.data.products.reduce((sum: number, item: any) => {
+      const quantity = parseFloat(item.unit_quantity) || 0;
+      const price = parseFloat(item.unit_price) || 0;
+      return sum + quantity * price;
+    }, 0);
+  }
+
+  parseMoney(value: any): number {
+    if (typeof value === "string") {
+      return Number(value.replace(/,/g, "")) || 0;
+    }
+    return value || 0;
+  }
+
   removeRow(index: number) {
     this.data.products.splice(index, 1);
+    this.calculateTotals();
   }
 
   save() {
@@ -261,6 +279,7 @@ export class ExtractDetailComponent implements OnInit {
     this.fileUrl = "";
     this.data = null;
     this.invalidFileType = false;
+    this.totalAmount = 0;
 
     if (this.fileInput) {
       this.fileInput.nativeElement.value = "";
