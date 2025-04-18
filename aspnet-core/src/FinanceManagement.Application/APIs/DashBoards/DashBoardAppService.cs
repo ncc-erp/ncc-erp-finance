@@ -1011,69 +1011,63 @@ namespace FinanceManagement.APIs.DashBoards
 
         private void FillSheetWithChartData(ref ExcelWorksheet sheet, ResultChartDto chartData, DateTime startDate, DateTime endDate)
         {
-            sheet.Cells["B3"].Value = startDate.ToString("dd/MM/yyyy");
-            sheet.Cells["E3"].Value = endDate.ToString("dd/MM/yyyy");
+            
+            sheet.Cells["B3"].Value = startDate;
+            sheet.Cells["E3"].Value = endDate;
 
             var labels = chartData.Labels.ToList();
             var charts = chartData.Charts;
 
-            int startCol = 2;
+            int totalCol = 2;
+            int startDataCol = 3;
             int headerRow = 5;
             int dataStartRow = 6;
 
+            
             for (int i = 0; i < labels.Count; i++)
             {
-                var col = startCol + i;
+                var col = startDataCol + i;
                 var cell = sheet.Cells[headerRow, col];
 
                 cell.Value = labels[i];
-                cell.Style.Numberformat.Format = "@";
-                cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                cell.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#FFFF00"));
             }
 
-            int totalCol = startCol + labels.Count;
-            var totalHeaderCell = sheet.Cells[headerRow, totalCol];
-            totalHeaderCell.Value = "TỔNG";
-            totalHeaderCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
-            totalHeaderCell.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#FFFF00"));
-
+            
             for (int i = 0; i < charts.Count; i++)
             {
                 var chart = charts[i];
                 int row = dataStartRow + i;
                 bool isLastTwo = (i >= charts.Count - 2 && charts.Count > 2);
 
-                var nameCell = sheet.Cells[row, 1];
-                nameCell.Value = chart.Name;
-                if (isLastTwo) nameCell.Style.Font.Bold = true;
+                sheet.Cells[row, 1].Value = chart.Name;
+                if (isLastTwo) sheet.Cells[row, 1].Style.Font.Bold = true;
 
+                double sum = 0;
                 for (int j = 0; j < labels.Count; j++)
                 {
-                    var cell = sheet.Cells[row, startCol + j];
-                    cell.Value = chart.Data[j];
-                    cell.Style.Numberformat.Format = "#,##0";
-                    if (isLastTwo) cell.Style.Font.Bold = true;
+                    var val = chart.Data[j];
+                    sheet.Cells[row, startDataCol + j].Value = val;
+
+                    if (isLastTwo) sheet.Cells[row, startDataCol + j].Style.Font.Bold = true;
+
+                    sum += val;
                 }
 
                 var totalCell = sheet.Cells[row, totalCol];
-                totalCell.Value = chart.Data.Sum();
-                totalCell.Style.Numberformat.Format = "#,##0";
-                totalCell.Style.Font.Bold = true;
+                totalCell.Value = sum;
             }
 
+            
             sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
 
             int lastDataRow = dataStartRow + charts.Count - 1;
-            var dataRange = sheet.Cells[headerRow, 1, lastDataRow, totalCol];
+            int lastDataCol = startDataCol + labels.Count - 1;
+            var dataRange = sheet.Cells[headerRow, 1, lastDataRow, lastDataCol];
             dataRange.Style.Border.Top.Style = ExcelBorderStyle.Thin;
             dataRange.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
             dataRange.Style.Border.Left.Style = ExcelBorderStyle.Thin;
             dataRange.Style.Border.Right.Style = ExcelBorderStyle.Thin;
         }
-
-
-
 
         [AbpAuthorize(PermissionNames.Dashboard)]
         [HttpPost]
