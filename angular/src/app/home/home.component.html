@@ -164,6 +164,11 @@
 
                 <div #lineChart1 id="main" style="height: 380px; width: 100%"></div>
 
+                <div>
+                  <button class="btn btn-success float-left ml-4" *ngIf="isShowExportBtn()" (click)="exportExcel()">
+                    <i class="fas fa-download mr-1"></i>{{ "menu1.export" | translate }}
+                  </button>
+                </div>
                 <div class="detail card-body table-responsive">
                   <table style="border-collapse: collapse" class="table table-hover text-nowrap table-striped">
                     <thead class="bg-light">
@@ -204,7 +209,7 @@
               <div class="card px-4 py-2">
                 <div id="baocao-title" class="d-flex">
                   <h2 class="block-title" style="line-height: 47px;">Báo cáo thu/chi: </h2>
-                  
+
                   <!-- <mat-form-field appearance="outline" class="ml-3 filter-date">
                     <mat-label>từ ngày</mat-label>
                     <input matInput [matDatepicker]="pickerBCFromDate" [(ngModel)]="baoCaoFromDate"
@@ -259,7 +264,7 @@
                         </th>
                         <th class="green-thead">Tổng lợi nhuận thực
                           <div>(C1)=(A1)-(B1)</div>
-                        </th>                        
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -294,18 +299,18 @@
                             class="text-right yellow-td">
                             <span (click)="viewBaoCaoChiDetail(data.branchName,data.branchId, 0)"
                               class="link pointer ">{{data.tongChiThucFormat}}</span></td>
-                          <td [ngClass]="{'text-bold chenhlech-cells' : isTotal(i),'red-td': chiKhongThucColor(i, data.chiKhongThucFormat)}" 
-                            class="text-right yellow-td">                            
+                          <td [ngClass]="{'text-bold chenhlech-cells' : isTotal(i),'red-td': chiKhongThucColor(i, data.chiKhongThucFormat)}"
+                            class="text-right yellow-td">
                             <span (click)="viewBaoCaoChiDetail(data.branchName,data.branchId, 1)"
                             class="link pointer">{{data.chiKhongThucFormat}}</span>
-                          </td>   
+                          </td>
                         <td [ngClass]="isTotal(i) ? 'text-bold chenhlech-cells' : ''" class="text-right green-td">
                           <span *ngIf="data.branchName === 'Tổng cộng'">{{data.duFormat}}</span>
                         </td>
                         <td [ngClass]="isTotal(i) ? 'text-bold chenhlech-cells' : ''" class="text-right green-td">
                           <span *ngIf="data.branchName === 'Tổng cộng'">{{data.duThucFormat}}</span>
                         </td>
-                        
+
                       </tr>
                     </tbody>
                   </table>
