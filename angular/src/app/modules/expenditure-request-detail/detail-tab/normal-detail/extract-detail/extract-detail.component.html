@@ -1,0 +1,149 @@
+<form>
+    <div class="all_dialog" cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle=".h_drag_and_drop">
+
+        <div class="header_h">
+            <div class="h_drag_and_drop">
+                <h3>Extract data</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Đang xử lý...</p>
+    </div>
+
+    <div *ngIf="!isExtracted && !isLoading" class="upload-container">
+        <div class="selection-tabs">
+            <div class="tab-item" [class.active]="inputMethod === 'file'" (click)="setInputMethod('file')">
+                <mat-icon>upload_file</mat-icon>
+                <span>Upload File</span>
+            </div>
+            <div class="tab-item" [class.active]="inputMethod === 'url'" (click)="setInputMethod('url')">
+                <mat-icon>link</mat-icon>
+                <span>Enter URL</span>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div *ngIf="inputMethod === 'file'" class="file-upload-section">
+                <div class="file-drop-area" (click)="fileInput.click()" [class.has-file]="selectedFile !== null"
+                    [class.invalid-file]="invalidFileType" (dragover)="onDragOver($event)"
+                    (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+                    <mat-icon *ngIf="!selectedFile || invalidFileType">cloud_upload</mat-icon>
+                    <mat-icon *ngIf="selectedFile && !invalidFileType && isPdf()">picture_as_pdf</mat-icon>
+                    <mat-icon *ngIf="selectedFile && !invalidFileType && isImage()">image</mat-icon>
+
+                    <span *ngIf="!selectedFile && !invalidFileType">Click or drag PDF/image file here</span>
+                    <span *ngIf="selectedFile && !invalidFileType">{{ selectedFile.name }}</span>
+                    <span *ngIf="invalidFileType" class="error-message">
+                        Invalid file type. Please select a PDF or image file.
+                    </span>
+
+                    <small class="file-type-hint">Accepted formats: PDF, JPG, PNG, GIF, BMP</small>
+
+                    <input #fileInput type="file" hidden (change)="selectFile($event)"
+                        accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,image/*,application/pdf" />
+                </div>
+            </div>
+
+            <div *ngIf="inputMethod === 'url'" class="url-input-section">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Enter file URL</mat-label>
+                    <input matInput type="url" [(ngModel)]="fileUrl" placeholder="https://..." name="url" />
+                    <mat-icon matSuffix>insert_link</mat-icon>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button mat-flat-button color="primary" [disabled]="!canExtract()" (click)="extract()">
+                Extract
+            </button>
+            <button mat-stroked-button mat-dialog-close>Cancel</button>
+        </div>
+    </div>
+
+    <div *ngIf="isExtracted && (!data?.products || data.products.length === 0)" class="empty-state">
+        <div class="empty-state-icon">
+            <mat-icon>search_off</mat-icon>
+        </div>
+        <h3>Không tìm thấy dữ liệu</h3>
+        <p>Không thể trích xuất thông tin sản phẩm từ file này.</p>
+        <div class="empty-state-actions">
+            <button mat-stroked-button color="primary" (click)="resetExtraction()">
+                <mat-icon>refresh</mat-icon>
+                Thử lại
+            </button>
+            <button mat-flat-button color="primary" mat-dialog-close>
+                <mat-icon>close</mat-icon>
+                Đóng
+            </button>
+        </div>
+    </div>
+
+    <div *ngIf="isExtracted && data?.products?.length" class="mt-3">
+        <div class="table-container">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="sticky-header col-num">#</th>
+                        <th class="sticky-header col-content">Nội dung*</th>
+                        <th class="sticky-header col-quantity">Số lượng*</th>
+                        <th class="sticky-header col-small">Đơn giá*</th>
+                        <th class="sticky-header col-total">Thành tiền ({{ totalAmount | number:'1.0-0' }})</th>
+                        <th class="sticky-header col-branch">Chi nhánh*</th>
+                        <th class="sticky-header col-paid">Đã trả*</th>
+                        <th class="sticky-header col-action">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of data.products; let i = index">
+                        <td class="text-center">{{ i + 1 }}</td>
+                        <td>
+                            <textarea [(ngModel)]="item.product_name" name="product_name_{{ i }}"
+                                class="form-control content-textarea" rows="2"
+                                (ngModelChange)="calculateTotals()"></textarea>
+                        </td>
+                        <td>
+                            <input type="number" [(ngModel)]="item.unit_quantity" name="quantity_{{ i }}"
+                                class="form-control input-small" (ngModelChange)="calculateTotals()" />
+                        </td>
+                        <td>
+                            <input type="text" class="form-control input-small text-end" [(ngModel)]="item.unit_price"
+                                name="price_{{ i }}" mask="separator.0" thousandSeparator="," allowNegativeNumbers="false" (ngModelChange)="
+                                item.unit_price = parseMoney(item.unit_price);
+                                calculateTotals();
+                              " />
+                        </td>
+                        <td class="text-right">
+                            {{ item.unit_quantity * item.unit_price | number:'1.0-0' }}
+                        </td>
+                        <td>
+                            <mat-select [(ngModel)]="item.branchId" name="branch_{{ i }}">
+                                <mat-option *ngFor="let branch of branchList" [value]="branch.id">
+                                    {{ branch.name }}
+                                </mat-option>
+                            </mat-select>
+                        </td>
+                        <td class="text-center">
+                            <input type="checkbox" [(ngModel)]="item.paid" name="paid_{{ i }}" />
+                        </td>
+                        <td class="text-center">
+                            <button mat-icon-button color="warn" (click)="removeRow(i)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-right mt-3 action-buttons">
+            <button mat-stroked-button mat-dialog-close>Cancel</button>
+            <button mat-flat-button color="primary" (click)="save()">Save</button>
+        </div>
+    </div>
+
+</form>

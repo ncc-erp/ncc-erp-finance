@@ -1,4 +1,5 @@
 import { ImportDetailComponent } from './../import-detail/import-detail.component';
+import { ExtractDetailComponent } from "./../extract-detail/extract-detail.component";
 import { MatDialog } from '@angular/material/dialog';
 import {
   Component,
@@ -268,6 +269,21 @@ export class NormalDetailTableComponent
           this.refresh()
         }
       })
+  }
+
+  extractData() {
+    const ref = this.dialog.open(ExtractDetailComponent, {
+      width: "80%",
+      data: {
+        outcomingEntryId: this.expenditureRequest.id,
+      },
+    });
+
+    ref.afterClosed().subscribe((rs) => {
+      if (rs) {
+        this.refresh();
+      }
+    });
   }
 
   onUpdateBranch(request){
