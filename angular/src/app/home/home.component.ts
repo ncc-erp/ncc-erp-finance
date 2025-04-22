@@ -24,6 +24,7 @@ import { CircleChartService } from '@app/service/api/circle-chart.service';
 import { IOption } from '@shared/components/custome-select/custome-select.component';
 import { DateSelectorHomeEnum } from '@shared/AppEnums';
 import { DateTimeSelectorHome } from './date-selector-dashboard/date-selector-dashboard.component';
+import * as FileSaver from 'file-saver';
 
 @Component({
   templateUrl: './home.component.html',
@@ -55,14 +56,14 @@ export class HomeComponent extends AppComponentBase {
   public baoCaoToDate: any
   public baoCaoFilter = baoCaoFilterOption
   public debtStatistic = {} as HrmDebtDto
-  
+
   distanceFromAndToDate = '';
   viewChange = new FormControl(this.APP_CONSTANT.TypeViewHomePage.Month);
   activeView: number = 0;
   endDate = new FormControl(moment())
   startDate = new FormControl(moment());
   listCircleChart: IOption[] = []
-  
+
   routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.dashboard;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.dashboard;
 
@@ -104,7 +105,7 @@ export class HomeComponent extends AppComponentBase {
     const ctrlValue = moment();
     ctrlValue?.month(Number(time[0]) - 1);
     ctrlValue?.year(Number(time[1]));
-    
+
     return isFirstDate? this.getFirstDateOfMonth(ctrlValue) : this.getLastDateOfMonth(ctrlValue);
   }
 
@@ -118,7 +119,7 @@ export class HomeComponent extends AppComponentBase {
           let period: PeriodDto = rs.result
 
           this.startDate.setValue(period.startDate)
-         
+
           if (period.endDate) {
             this.endDate.setValue(period.endDate)
           }
@@ -173,13 +174,13 @@ export class HomeComponent extends AppComponentBase {
     }
   }
 
-  private getFirstDateOfMonth(date: moment.Moment): moment.Moment {    
+  private getFirstDateOfMonth(date: moment.Moment): moment.Moment {
     return date.set('date', 1);
   }
 
-  private getLastDateOfMonth(date: moment.Moment): moment.Moment {    
+  private getLastDateOfMonth(date: moment.Moment): moment.Moment {
     return this.getFirstDateOfMonth(date).add(1,'months').subtract(1,'days');
-    
+
   }
 
   onChangePeriod(event) {
@@ -351,6 +352,29 @@ export class HomeComponent extends AppComponentBase {
       this.isLoadingChart = false
     },
       () => this.isLoadingChart = false)
+  }
+
+  public exportExcel() {
+    let start = moment(this.startDate.value).format("YYYY-MM-DD");
+    let end = moment(this.endDate.value).format("YYYY-MM-DD");
+    this.dashBoardService
+      .ExportDataNewChartToExcel(start, end, this.isByPeriod)
+      .subscribe((data) => {
+        const file = new Blob([this.convertFile(atob(data.result))], {
+          type: "application/vnd.ms-excel;charset=utf-8",
+        });
+        FileSaver.saveAs(file, `Bao_Cao_DoanhThu_ChiPhi.xlsx`);
+        abp.notify.success("export successful");
+
+      });
+  }
+
+  convertFile(fileData) {
+    var buf = new ArrayBuffer(fileData.length);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i != fileData.length; ++i)
+      view[i] = fileData.charCodeAt(i) & 0xff;
+    return buf;
   }
 
 
@@ -542,7 +566,7 @@ export class HomeComponent extends AppComponentBase {
       const currentDate = moment();
       const currentMonth = currentDate.month();
       const isFirstHalf = currentMonth < 6;
-    
+
       if (isFirstHalf) {
         fromDate = moment().startOf('year').add(this.activeView * 6, 'months');
         toDate = moment(fromDate).add(5, 'months').endOf('month');
@@ -550,7 +574,7 @@ export class HomeComponent extends AppComponentBase {
         fromDate = moment().startOf('year').add((this.activeView * 6) + 6, 'months');
         toDate = moment(fromDate).add(5, 'months').endOf('month');
       }
-    
+
       this.typeDate = 'Half-Year';
     }
     if (this.viewChange.value === this.APP_CONSTANT.TypeViewHomePage.Year) {
@@ -633,7 +657,7 @@ export class HomeComponent extends AppComponentBase {
     this.dashBoardService.OverviewOutcomingEntryStatistics().subscribe((rs) => {
       if (rs) {
         this.outcomingEntryStatistics = rs.result.map((item) => {
-          if(item.statusCode === 'PENDINGCEO' ){ 
+          if(item.statusCode === 'PENDINGCEO' ){
             return {...item, statusCode: 'PENDINGCEO_OR_YCTDPENDINGCEO'}
           }
           return item
@@ -758,7 +782,7 @@ export class HomeComponent extends AppComponentBase {
       maxWidth: "90vw",
       data: {
         startDate: moment(this.baoCaoFromDate).format("YYYY-MM-DD"),
-        endDate: moment(this.baoCaoToDate).format("YYYY-MM-DD"),        
+        endDate: moment(this.baoCaoToDate).format("YYYY-MM-DD"),
         branchName: branchName,
         branchId: branchId,
         expenseType: expenseType
@@ -910,7 +934,7 @@ export interface EmployeeDebtDto{
   note: string
 }
 
-export const baoCaoFilterOption = {  
+export const baoCaoFilterOption = {
   REAL_EXPENSE: 0,
   NON_EXPENSE: 1
 }

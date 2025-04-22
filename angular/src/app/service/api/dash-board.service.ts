@@ -31,6 +31,13 @@ constructor( http: HttpClient) {
     return this.http.get(this.rootUrl + `/GetNewChart?startDate=${startDate}&endDate=${endDate}&isByPeriod=${isByPeriod}`)
   }
 
+  ExportDataNewChartToExcel(startDate:string, endDate:string, isByPeriod:boolean):Observable<any>{
+    return this.http.get(
+      this.rootUrl +
+        `/ExportDataNewChartToExcel?startDate=${startDate}&endDate=${endDate}&isByPeriod=${isByPeriod}`
+    );
+  }
+
   GetCircleChart(input: InputListCircleChartDto):Observable<any>{
     return this.http.post<any>(this.rootUrl + `/GetCircleChart`, input)
   }
