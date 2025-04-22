@@ -6,6 +6,7 @@ using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Office2016.Excel;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using FinanceManagement.APIs.ComparativeStatistics;
 using FinanceManagement.APIs.DashBoards.Dto;
@@ -35,6 +36,7 @@ using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.IO;
 using System.IO.Packaging;
 using System.Linq;
@@ -978,6 +980,95 @@ namespace FinanceManagement.APIs.DashBoards
                 }
             }
         }
+
+        [AbpAuthorize(PermissionNames.Dashboard)]
+        [HttpGet]
+        public async Task<byte[]> ExportDataNewChartToExcel([Required] DateTime startDate, [Required] DateTime endDate, bool isByPeriod)
+        {
+            ResultChartDto chartData = await GetNewChart(startDate, endDate, isByPeriod);
+            return GetByteDataExcelResultChartDto(chartData, startDate, endDate);
+        }
+
+        private byte[] GetByteDataExcelResultChartDto(ResultChartDto chartData, DateTime startDate, DateTime endDate)
+        {
+            var file = Helpers.GetInfoFileTemplate(new string[] { _env.WebRootPath, "Template_BaoCaoDoanhThuVaChiPhi.xlsx" });
+
+            using (var epck = new ExcelPackage(file.OpenRead()))
+            {
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                var sheet = epck.Workbook.Worksheets[0];
+
+                FillSheetWithChartData(ref sheet, chartData, startDate, endDate);
+
+                using (var stream = new MemoryStream())
+                {
+                    epck.SaveAs(stream);
+                    return stream.ToArray();
+                }
+            }
+        }
+
+
+        private void FillSheetWithChartData(ref ExcelWorksheet sheet, ResultChartDto chartData, DateTime startDate, DateTime endDate)
+        {
+            
+            sheet.Cells["B3"].Value = startDate;
+            sheet.Cells["E3"].Value = endDate;
+
+            var labels = chartData.Labels.ToList();
+            var charts = chartData.Charts;
+
+            int totalCol = 2;
+            int startDataCol = 3;
+            int headerRow = 5;
+            int dataStartRow = 6;
+
+            
+            for (int i = 0; i < labels.Count; i++)
+            {
+                var col = startDataCol + i;
+                var cell = sheet.Cells[headerRow, col];
+
+                cell.Value = labels[i];
+            }
+
+            
+            for (int i = 0; i < charts.Count; i++)
+            {
+                var chart = charts[i];
+                int row = dataStartRow + i;
+                bool isLastTwo = (i >= charts.Count - 2 && charts.Count > 2);
+
+                sheet.Cells[row, 1].Value = chart.Name;
+                if (isLastTwo) sheet.Cells[row, 1].Style.Font.Bold = true;
+
+                double sum = 0;
+                for (int j = 0; j < labels.Count; j++)
+                {
+                    var val = chart.Data[j];
+                    sheet.Cells[row, startDataCol + j].Value = val;
+
+                    if (isLastTwo) sheet.Cells[row, startDataCol + j].Style.Font.Bold = true;
+
+                    sum += val;
+                }
+
+                var totalCell = sheet.Cells[row, totalCol];
+                totalCell.Value = sum;
+            }
+
+            
+            sheet.Cells[sheet.Dimension.Address].AutoFitColumns();
+
+            int lastDataRow = dataStartRow + charts.Count - 1;
+            int lastDataCol = startDataCol + labels.Count - 1;
+            var dataRange = sheet.Cells[headerRow, 1, lastDataRow, lastDataCol];
+            dataRange.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            dataRange.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            dataRange.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            dataRange.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+        }
+
         [AbpAuthorize(PermissionNames.Dashboard)]
         [HttpPost]
         public async Task<List<ResultCircleChartDto>> GetCircleChart(InputListCircleChartDto input)
