@@ -40,6 +40,11 @@
         <i class="fas fa-plus"></i>
         Add
       </button>
+      <button *ngIf="isShowCreateBtn() && isStatusIsNew()" style="border: none" [disabled]="!isAllowed"
+      (click)="extractData()" class="bg-success ml-2 btn">
+      <i class="fa fa-file-export"></i>
+      Extract
+       </button>
       <button *ngIf="isShowCreateBtn()" style="border: none" [disabled]="!isAllowed" (click)="downloadFileTemplate()"
         class="bg-success ml-2 btn">
         <i class="fa fa-download"></i>

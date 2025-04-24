@@ -11,6 +11,7 @@ import {
 } from "@app/modules/expenditure-request-detail/detail-tab/detail-tab.component";
 import { ApiPagingResponse, ApiResponse } from "../model/api-response.model";
 import { ResultGetOutcomingEntryDetailDto } from "@app/modules/expenditure-request-detail/detail-tab/normal-detail/normal-detail-table/normal-detail-table.component";
+import { ExtractFileUrl } from './../../../shared/AppConsts';
 
 @Injectable({
   providedIn: "root",
@@ -103,4 +104,27 @@ export class RequestDetailService extends BaseApiService {
   public updateBranch(item: any): Observable<any> {
     return this.http.put<any>(this.rootUrl + '/UpdateBranch', item);
 }
+
+  createMany(details: any[]): Observable<any> {
+    const url = this.rootUrl + "/CreateMany";
+    return this.http.post(url, details, { observe: "response" });
+  }
+
+  extractFile(file: File | null, url: string): Observable<any> {
+    const formData = new FormData();
+
+    formData.append("file", file ?? "");
+    formData.append("url", file ? "" : url);
+    formData.append("google_api_key", "");
+    formData.append("model_name", "gemini-2.0-flash");
+    formData.append(
+      "authentication_key",
+      "01961f05-4823-703c-a28b-9c8ff10fe9c2"
+    );
+
+    return this.http.post(
+      ExtractFileUrl.EXTRACT_FILE_URL,
+      formData
+    );
+  }
 }

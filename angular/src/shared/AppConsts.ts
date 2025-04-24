@@ -97,3 +97,7 @@ export const Oauth2Mezon =
     OAUTH2_AUTHORIZE_URL:"https://oauth2.mezon.ai/oauth2/auth",
     REDIRECT_URI:AppConsts.appBaseUrl+"/account/login",
   }
+
+export const ExtractFileUrl = {
+  EXTRACT_FILE_URL :'http://172.16.100.195:8001/api/v1/extract'
+}

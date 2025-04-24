@@ -154,6 +154,7 @@ import { AuditlogComponent } from './modules/auditlog/auditlog.component';
 import { ActiveCompanyBankAccountComponent } from './modules/bank-account/active-company-bank-account/active-company-bank-account.component';
 import {UpdateBaseBalanaceComponent} from './modules/bank-account/bank-account-detail/update-base-balanace/update-base-balanace.component';
 import { ImportDetailComponent } from './modules/expenditure-request-detail/detail-tab/normal-detail/import-detail/import-detail.component';
+import { ExtractDetailComponent } from "./modules/expenditure-request-detail/detail-tab/normal-detail/extract-detail/extract-detail.component";
 import { UpdateBranchComponent } from './modules/expenditure-request-detail/main-tab/update-branch/update-branch.component';
 import { DetailBaocaoThuComponent } from './home/detail-baocao-thu/detail-baocao-thu.component';
 import { DetailBaocaoChiComponent } from './home/detail-baocao-chi/detail-baocao-chi.component';
@@ -312,6 +313,8 @@ import { DateSelectorDashboardComponent } from './home/date-selector-dashboard/d
     UpdateBaseBalanaceComponent,
 
     ImportDetailComponent,
+
+    ExtractDetailComponent,
 
     UpdateBranchComponent,
 

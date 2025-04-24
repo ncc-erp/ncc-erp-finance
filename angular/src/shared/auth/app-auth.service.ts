@@ -66,7 +66,8 @@ export class AppAuthService {
                 authenticateResult.accessToken,
                 authenticateResult.encryptedAccessToken,
                 authenticateResult.expireInSeconds,
-                this.rememberMe
+                // this.rememberMe
+                true
             );
         } else {
             // Unexpected result!
