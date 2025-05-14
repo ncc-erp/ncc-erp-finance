@@ -99,5 +99,5 @@ export const Oauth2Mezon =
   }
 
 export const ExtractFileUrl = {
-  EXTRACT_FILE_URL :'http://172.16.100.195:8001/api/v1/extract'
+  EXTRACT_FILE_URL :'https://smart-invoice.nccsoft.vn/api/v1/extract'
 }

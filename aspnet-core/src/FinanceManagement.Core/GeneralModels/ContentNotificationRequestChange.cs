@@ -1,4 +1,6 @@
-﻿using FinanceManagement.Helper;
+﻿
+using FinanceManagement.Helper;
+using FinanceManagement.Notifications.Mezon.Dto;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -40,6 +42,39 @@ namespace FinanceManagement.GeneralModels
                 default:
                     throw new NotImplementedException($"Not implement message type: {typeMessage}");
             }
+        }
+
+        public MezonMessage GenerateMezonMessage(string typeMessage)
+        {
+            var mesageType = GetMessage(typeMessage);
+            var message = new StringBuilder()
+             .AppendLine(mesageType)
+             .Append($"{GetURLMessage} ");
+             
+
+            if (!String.IsNullOrEmpty(Reason))
+            {
+                message.Append(" ");
+                message.AppendLine($"Lý do thay đổi :");
+                message.AppendLine($"{Reason}");
+            }
+            else
+            {
+                message.Append(".");
+            }
+
+            return new MezonMessage
+            {
+                t = message.ToString(),
+                mentions = new List<Mentions>
+        {
+            new Mentions
+            {
+                username = Verifier,
+                s = message.ToString().IndexOf(Verifier)
+            }
+        }
+            };
         }
     }
 }
