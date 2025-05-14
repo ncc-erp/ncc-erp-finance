@@ -301,7 +301,7 @@ namespace FinanceManagement.Helper
         /// <param name="currencyCode"></param>
         /// <returns></returns>
         public static string GetContentRequestChangePendingCEO(
-            string verifier,
+           string verifier,
             long outcomingEntryId,
             string outcomingEntryName,
             double money,
@@ -311,12 +311,9 @@ namespace FinanceManagement.Helper
             string reason,
             string currencyCode = FinanceManagementConsts.VND_CURRENCY_NAME,
             string oldCurrencyCode = FinanceManagementConsts.VND_CURRENCY_NAME
-        )
+            )
         {
-            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode} "
-                + (string.IsNullOrEmpty(reason) ? "" : $"``` Lý do thay đổi:\n {reason} ```")
-                + (string.IsNullOrEmpty(reason) ? "\n" : "") + 
-                $"{url}";
+            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}";
         }
         /// <summary>
         /// Lấy nội dung thông báo yêu cầu thay đổi khi đồng ý
@@ -342,7 +339,7 @@ namespace FinanceManagement.Helper
             string oldCurrencyCode = FinanceManagementConsts.VND_CURRENCY_NAME
         )
         {
-            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}\n {url}";
+            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}";
         }
         /// <summary>
         /// Lấy nội dung thông báo yêu cầu thay đổi khi từ chối
@@ -368,7 +365,7 @@ namespace FinanceManagement.Helper
             string oldCurrencyCode = FinanceManagementConsts.VND_CURRENCY_NAME
         )
         {
-            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}\n {url}";
+            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}";
         }
         public static string NumberToText(double inputNumber)
         {
