@@ -25,15 +25,9 @@ namespace FinanceManagement.Uitls
                 });
                 tmp = match.Index + match.Length ;
             }
-            var pos = message.IndexOf(".") +1;
-            if (pos == -1)
+            var pos = message.LastIndexOf(".") +1;
+            if (pos == message.Length)
             {
-                links.Add(new MK
-                {
-                    type = "pre",
-                    s = pos ,
-                    e = message.Length,
-                });
                 return links;
             }
             tmp = tmp == 0 ? pos : tmp;

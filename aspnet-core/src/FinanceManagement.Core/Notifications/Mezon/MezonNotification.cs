@@ -128,7 +128,7 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            _mezonWebService.NotifyToChannel(channelUrl, requestChange.MessagePending);
+            _mezonWebService.NotifyToChannelMezon(requestChange.GenerateMezonMessage(FinanceManagementConsts.WORKFLOW_STATUS_PENDINGCEO),channelUrl);
         }
 
         public async Task NotifyRequestChangePendingAsync(long tempOutcomingEntryId, string transitionName)
@@ -139,7 +139,7 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            await _mezonWebService.NotifyToChannelAsync(channelUrl, requestChange.MessagePending);
+            await _mezonWebService.NotifyToChannelMezonAsync(requestChange.GenerateMezonMessage(FinanceManagementConsts.WORKFLOW_STATUS_PENDINGCEO), channelUrl);
         }
 
         public void NotifyRequestChangeReject(long tempOutcomingEntryId, string transitionName)
@@ -150,7 +150,7 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            _mezonWebService.NotifyToChannel(channelUrl, requestChange.MessageReject);
+            _mezonWebService.NotifyToChannelMezon(requestChange.GenerateMezonMessage(FinanceManagementConsts.WORKFLOW_STATUS_REJECTED), channelUrl);
         }
 
         public async Task NotifyRequestChangeRejectAsync(long tempOutcomingEntryId, string transitionName)
@@ -161,7 +161,7 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            await _mezonWebService.NotifyToChannelAsync(channelUrl, requestChange.MessageReject);
+            await _mezonWebService.NotifyToChannelMezonAsync(requestChange.GenerateMezonMessage(FinanceManagementConsts.WORKFLOW_STATUS_REJECTED), channelUrl);
         }
 
         public void NotifyRequestChangeApprove(long tempOutcomingEntryId, string transitionName)
@@ -172,7 +172,7 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            _mezonWebService.NotifyToChannel(channelUrl, requestChange.MessageApprove);
+            _mezonWebService.NotifyToChannelMezon(requestChange.GenerateMezonMessage(FinanceManagementConsts.WORKFLOW_STATUS_APPROVED), channelUrl);
         }
 
         public async Task NotifyRequestChangeApproveAsync(long tempOutcomingEntryId, string transitionName)
@@ -183,7 +183,7 @@ namespace FinanceManagement.Notifications.Mezon
             requestChange.Verifier = GetUsernameLoginBySessionUserId();
             requestChange.TransitionName = transitionName;
             string channelUrl = GetNotifyToChannelUrl();
-            await _mezonWebService.NotifyToChannelAsync(channelUrl, requestChange.MessageApprove);
+            await _mezonWebService.NotifyToChannelMezonAsync(requestChange.GenerateMezonMessage(FinanceManagementConsts.WORKFLOW_STATUS_APPROVED), channelUrl);
         }
         private IQueryable<ContentNotificationRequestChange> IQGetRequestChange(long tempOutcomingEntryId)
         {
