@@ -29,10 +29,9 @@ namespace FinanceManagement.Notifications.Komu.Dtos
         public MezonMessage GenerateMezonMessage(string address)
         {
             var message = new StringBuilder()
-             .AppendLine(MessageSubContentChangeStatus)
-             .Append($"{address}app/requestDetail/main?id={Id}")
-             .Append(" ")
-             .Append($"{MessageMainContentChangeStatus}");
+             .Append(MessageSubContentChangeStatus)
+             .Append($"\n{address}app/requestDetail/main?id={Id}")
+             .Append($"\r\n{MessageMainContentChangeStatus}");
             return new MezonMessage
             {
                 t = message.ToString(),
