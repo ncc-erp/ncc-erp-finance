@@ -250,10 +250,10 @@ namespace FinanceManagement.Helper
         {
             var message = new StringBuilder();
          //   message.AppendLine("```");
-            message.AppendLine($"Nội dung: {outcomingEntryName}");
-            message.AppendLine($"Loại: {outcomingEntryTypeCode}");
-            message.AppendLine($"Chi nhánh: {branchName}");
-            message.AppendLine($"Tạo bởi: {createdByName} lúc {DateTimeUtils.FormatDateTime(creationTime)}");
+            message.Append($"Nội dung: {outcomingEntryName}");
+            message.Append($"\nLoại: {outcomingEntryTypeCode}");
+            message.Append($"\nChi nhánh: {branchName}");
+            message.Append($"\nTạo bởi: {createdByName} lúc {DateTimeUtils.FormatDateTime(creationTime)}");
          //   message.AppendLine("```");
             return message.ToString();
         }
@@ -265,7 +265,7 @@ namespace FinanceManagement.Helper
             string currencyCode
         )
         {
-            return $"{verifier}  [{statusCode}] request chi #{outcomingEntryId} số tiền {money} {currencyCode}";
+            return $"{verifier}  [{statusCode}] \nrequest chi #{outcomingEntryId} số tiền {money} {currencyCode}";
         }
         public static string GetContentSalarySendNotifyKomu(
             long outcomingEntryId,
@@ -313,7 +313,7 @@ namespace FinanceManagement.Helper
             string oldCurrencyCode = FinanceManagementConsts.VND_CURRENCY_NAME
             )
         {
-            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}";
+            return $"{verifier}  [{statusCode}] \nYÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}";
         }
         /// <summary>
         /// Lấy nội dung thông báo yêu cầu thay đổi khi đồng ý
@@ -339,7 +339,7 @@ namespace FinanceManagement.Helper
             string oldCurrencyCode = FinanceManagementConsts.VND_CURRENCY_NAME
         )
         {
-            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}";
+            return $"{verifier}  [{statusCode}] \nYÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}";
         }
         /// <summary>
         /// Lấy nội dung thông báo yêu cầu thay đổi khi từ chối
@@ -365,7 +365,7 @@ namespace FinanceManagement.Helper
             string oldCurrencyCode = FinanceManagementConsts.VND_CURRENCY_NAME
         )
         {
-            return $"{verifier}  [{statusCode}] YÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}";
+            return $"{verifier}  [{statusCode}] \nYÊU CẦU THAY ĐỔI request chi #{outcomingEntryId} {outcomingEntryName} số tiền từ {FormatMoneyVND(oldMoney)} {oldCurrencyCode} => {FormatMoneyVND(money)} {currencyCode}";
         }
         public static string NumberToText(double inputNumber)
         {

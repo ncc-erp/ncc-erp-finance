@@ -48,19 +48,19 @@ namespace FinanceManagement.GeneralModels
         {
             var mesageType = GetMessage(typeMessage);
             var message = new StringBuilder()
-             .AppendLine(mesageType)
-             .Append($"{GetURLMessage} ");
+             .Append(mesageType)
+             .Append($"\n{GetURLMessage} ");
              
 
             if (!String.IsNullOrEmpty(Reason))
             {
-                message.Append(" ");
-                message.AppendLine($"Lý do thay đổi :");
-                message.AppendLine($"{Reason}");
+               
+                message.Append($"\r\nLý do thay đổi :");
+                message.Append($"\n{Reason}");
             }
             else
             {
-                message.Append(".");
+                message.Append("\r\n");
             }
 
             return new MezonMessage
