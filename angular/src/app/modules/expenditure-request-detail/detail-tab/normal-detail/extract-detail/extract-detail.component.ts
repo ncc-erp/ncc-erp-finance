@@ -180,7 +180,7 @@ export class ExtractDetailComponent implements OnInit {
             this.data = res.data;
             this.data.products.forEach((item: any) => {
               item.branchId = this.branchList[0]?.id ?? null;
-              item.paid = false;
+              item.paid = true;
             });
             this.isExtracted = true;
             this.calculateTotals();
@@ -194,7 +194,12 @@ export class ExtractDetailComponent implements OnInit {
         }
       );
   }
-
+  
+onBranchChange(selectedBranchId: string) {
+  this.data.products.forEach(item => {
+    item.branchId = selectedBranchId;
+  });
+}
   calculateTotals() {
     if (!this.data?.products) {
       this.totalAmount = 0;

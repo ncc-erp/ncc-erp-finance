@@ -112,7 +112,7 @@
                         </td>
                         <td>
                             <input type="text" class="form-control input-small text-end" [(ngModel)]="item.unit_price"
-                                name="price_{{ i }}" mask="separator.0" thousandSeparator="," allowNegativeNumbers="false" (ngModelChange)="
+                                name="price_{{ i }}" mask="separator.2" thousandSeparator="," allowNegativeNumbers="false" (ngModelChange)="
                                 item.unit_price = parseMoney(item.unit_price);
                                 calculateTotals();
                               " />
@@ -121,8 +121,8 @@
                             {{ item.unit_quantity * item.unit_price | number:'1.0-0' }}
                         </td>
                         <td>
-                            <mat-select [(ngModel)]="item.branchId" name="branch_{{ i }}">
-                                <mat-option *ngFor="let branch of branchList" [value]="branch.id">
+                            <mat-select [(ngModel)]="item.branchId" name="branch_{{ i }}" (selectionChange)="onBranchChange($event.value)">
+                                <mat-option *ngFor="let branch of branchList" [value]="branch.id" >
                                     {{ branch.name }}
                                 </mat-option>
                             </mat-select>
