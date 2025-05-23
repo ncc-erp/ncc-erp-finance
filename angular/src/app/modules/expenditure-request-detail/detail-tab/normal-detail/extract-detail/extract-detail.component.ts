@@ -195,10 +195,13 @@ export class ExtractDetailComponent implements OnInit {
       );
   }
   
-onBranchChange(selectedBranchId: string) {
-  this.data.products.forEach(item => {
+onBranchChange(selectedBranchId: string,row : number) {
+  if( row == 0){
+      this.data.products.forEach(item => {
     item.branchId = selectedBranchId;
   });
+  }
+
 }
   calculateTotals() {
     if (!this.data?.products) {
