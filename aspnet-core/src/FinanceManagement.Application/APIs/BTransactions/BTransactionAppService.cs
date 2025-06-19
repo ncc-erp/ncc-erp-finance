@@ -559,7 +559,7 @@ namespace FinanceManagement.APIs.BTransactions
                 })
                 .ToListAsync();
 
-            var diffValueAndValueOfDetails = outcomgingEntryInfos.Find(s => s.Details.Any() && s.Value != s.Details.Sum());
+            var diffValueAndValueOfDetails = outcomgingEntryInfos.Find(s => s.Details.Any() && Math.Abs(s.Value - s.Details.Sum()) >= 1);
             if (diffValueAndValueOfDetails != null)
                 return new
                 {
