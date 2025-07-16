@@ -2,8 +2,8 @@
 using FinanceManagement.GeneralModels;
 using FinanceManagement.IoC;
 using FinanceManagement.Managers.Dashboards;
+using FinanceManagement.Managers.Dashboards.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using NccCore.Anotations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,6 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+
 
 namespace FinanceManagement.APIs.N8nBotResource
 {
