@@ -33,7 +33,7 @@ namespace FinanceManagement.APIs.N8nBotResource
 
         [HttpGet]
         [NccAuth]
-        public async Task<BaoCaoChungDto> GetBaoCaoChungThangNay()
+        public async Task<List<BaoCaoChungDto>> GetBaoCaoChungThangNay()
         {
             var now = DateTime.Now;
             var startDate = new DateTime(now.Year, now.Month, 1);
@@ -51,7 +51,7 @@ namespace FinanceManagement.APIs.N8nBotResource
             );
 
 
-            return result ?? new BaoCaoChungDto();
+            return result;
         }
 
         private Dictionary<CurrencyYearMonthDto, double> GetAndCheckDictionaryCurrencyConvertByYearMonth(DateTime startDate, DateTime endDate)
