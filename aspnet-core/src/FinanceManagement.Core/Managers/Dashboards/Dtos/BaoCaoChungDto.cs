@@ -29,6 +29,7 @@ namespace FinanceManagement.Managers.Dashboards.Dtos
         public string ThuKhongThucFormat => Helpers.FormatMoney(ThuKhongThuc);
         public double ChenhLech => Du - DuThuc;
         public string ChenhLechFormat => Helpers.FormatMoney(ChenhLech);
+        public double TongGiaoDichNganHangApproved { get; set; }
     }
     public class GetThongTinRequestChi
     {
