@@ -1109,14 +1109,13 @@ namespace FinanceManagement.Managers.Dashboards
             var result = (from obt in _ws.GetAll<OutcomingEntryBankTransaction>()
                   join oe in _ws.GetAll<OutcomingEntry>() on obt.OutcomingEntryId equals oe.Id
                   join bt in _ws.GetAll<BankTransaction>() on obt.BankTransactionId equals bt.Id
-                  join fba in _ws.GetAll<BankAccount>() on bt.FromBankAccountId equals fba.Id
                   where oe.WorkflowStatusId == statusApprovedId
-                      && oe.ReportDate >= startDate && oe.ReportDate <= endDate
+                    && oe.ReportDate >= startDate && oe.ReportDate <= endDate
                   select new
                   {
                       oe.BranchId,
-                      CurrencyId = fba.CurrencyId,
-                      TransactionDate = bt.TransactionDate,
+                      CurrencyId = oe.CurrencyId,                 // ✅ Dùng từ request chi
+                      TransactionDate = oe.ReportDate,            // ✅ Dùng từ request chi
                       Amount = bt.FromValue
                   })
                   .AsEnumerable()
@@ -1133,8 +1132,6 @@ namespace FinanceManagement.Managers.Dashboards
 
             return result;
         }
-
-
         private IQueryable<GetThongTinRequestChi> IQOutcomingEntryForDashboard(long? statusEndId = null)
         {
             return _ws.GetAll<OutcomingEntry>()
