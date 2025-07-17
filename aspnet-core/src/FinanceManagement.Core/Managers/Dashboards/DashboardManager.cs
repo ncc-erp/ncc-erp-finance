@@ -987,14 +987,14 @@ namespace FinanceManagement.Managers.Dashboards
                     TotalVND = x.Sum(s => s.TotalVND)
                 })
                 .ToDictionary(x => x.BranchId, x => x.TotalVND);
-            var tongGiaoDichTheoBranchRequestApproved = await GetTongGiaoDichTheoChiNhanhRequestApproved(dicCurrencyConvert, startDate, endDate);
+            var tongGiaoDichTheoChiNhanhRequestApproved = await GetTongGiaoDichTheoChiNhanhRequestApproved(dicCurrencyConvert, startDate, endDate);
             //lay theo thu
             var qtongThu = await GetDataBaoCaoThu(startDate, endDate, dicCurrencyConvert, null);
 
             foreach (var dto in tongChiTheoChiNhanh)
             {
                 dto.TongChiThuc = tongChiThucTheoChiNhanh.ContainsKey(dto.BranchId) ? tongChiThucTheoChiNhanh[dto.BranchId] : 0;
-                dto.TongGiaoDichNganHangApproved = tongGiaoDichTheoBranchRequestApproved.ContainsKey(dto.BranchId) ? tongGiaoDichTheoBranch[dto.BranchId] : 0;
+                dto.TongGiaoDichNganHangApproved = tongGiaoDichTheoChiNhanhRequestApproved.ContainsKey(dto.BranchId) ? tongGiaoDichTheoChiNhanhRequestApproved[dto.BranchId] : 0;
             }
 
             var tong = new BaoCaoChungDto
