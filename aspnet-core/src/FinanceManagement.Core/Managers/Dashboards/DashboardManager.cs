@@ -1099,13 +1099,15 @@ namespace FinanceManagement.Managers.Dashboards
         }
         private async Task<Dictionary<long, double>> GetTongGiaoDichTheoChiNhanhRequestApproved(
             Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert,
-            DateTime startDate, DateTime endDate)
+            DateTime startDate,
+            DateTime endDate
+        )
         {
             var statusApprovedId = await _commonManager.GetStatusIdByCode(FinanceManagementConsts.WORKFLOW_STATUS_APPROVED.Trim());
 
-            var result = await (from obt in WorkScope.GetAll<OutcomingEntryBankTransaction>()
-                    join oe in WorkScope.GetAll<OutcomingEntry>() on obt.OutcomingEntryId equals oe.Id
-                    join bt in WorkScope.GetAll<BankTransaction>() on obt.BankTransactionId equals bt.Id
+            var result = await (from obt in _ws.GetAll<OutcomingEntryBankTransaction>()
+                    join oe in _ws.GetAll<OutcomingEntry>() on obt.OutcomingEntryId equals oe.Id
+                    join bt in _ws.GetAll<BankTransaction>() on obt.BankTransactionId equals bt.Id
                     where oe.WorkflowStatusId == statusApprovedId
                         && oe.ReportDate >= startDate && oe.ReportDate <= endDate
                     select new
