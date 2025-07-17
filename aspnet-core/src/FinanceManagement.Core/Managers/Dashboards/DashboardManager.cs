@@ -1113,11 +1113,11 @@ namespace FinanceManagement.Managers.Dashboards
                     select new
                     {
                         oe.BranchId,
-                        bt.CurrencyId,
+                        CurrencyId = bt.FromBankAccount.CurrencyId,
                         bt.TransactionDate,
-                        bt.Amount
+                        Amount = bt.FromValue
                     })
-                    .AsEnumerable() // để sử dụng convert bằng C#
+                    .AsEnumerable()
                     .Select(x => new
                     {
                         x.BranchId,
