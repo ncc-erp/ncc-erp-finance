@@ -987,12 +987,14 @@ namespace FinanceManagement.Managers.Dashboards
                     TotalVND = x.Sum(s => s.TotalVND)
                 })
                 .ToDictionary(x => x.BranchId, x => x.TotalVND);
+            var tongGiaoDichTheoBranchRequestApproved = await GetTongGiaoDichTheoChiNhanhRequestApproved(dicCurrencyConvert, startDate, endDate);
             //lay theo thu
             var qtongThu = await GetDataBaoCaoThu(startDate, endDate, dicCurrencyConvert, null);
 
             foreach (var dto in tongChiTheoChiNhanh)
             {
                 dto.TongChiThuc = tongChiThucTheoChiNhanh.ContainsKey(dto.BranchId) ? tongChiThucTheoChiNhanh[dto.BranchId] : 0;
+                dto.TongGiaoDichNganHangApproved = tongGiaoDichTheoBranchRequestApproved.ContainsKey(dto.BranchId) ? tongGiaoDichTheoBranch[dto.BranchId] : 0;
             }
 
             var tong = new BaoCaoChungDto
@@ -1001,7 +1003,8 @@ namespace FinanceManagement.Managers.Dashboards
                 TongThu = qtongThu.Sum(x => x.TotalVND),
                 TongThuThuc = qtongThu.Where(x => x.IsDoanhThu).Sum(x => x.TotalVND),
                 TongChi = tongChiTheoChiNhanh.Sum(x => x.TongChi),
-                TongChiThuc = tongChiTheoChiNhanh.Sum(x => x.TongChiThuc)
+                TongChiThuc = tongChiTheoChiNhanh.Sum(x => x.TongChiThuc),
+                TongGiaoDichNganHangApproved = tongChiTheoChiNhanh.Sum(x => x.TongGiaoDichNganHangApproved)
             };
             tongChiTheoChiNhanh.Add(tong);
 
@@ -1093,6 +1096,35 @@ namespace FinanceManagement.Managers.Dashboards
                 OutcomingEntryType = x.OutcomingEntryType,
                 Details = x.Details
             }).OrderBy(x => x.ReportDate);
+        }
+        private async Task<Dictionary<long, double>> GetTongGiaoDichTheoChiNhanhRequestApproved(
+            Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert,
+            DateTime startDate, DateTime endDate)
+        {
+            var statusApprovedId = await _commonManager.GetStatusIdByCode(FinanceManagementConsts.WORKFLOW_STATUS_APPROVED.Trim());
+
+            var result = await (from obt in WorkScope.GetAll<OutcomingEntryBankTransaction>()
+                    join oe in WorkScope.GetAll<OutcomingEntry>() on obt.OutcomingEntryId equals oe.Id
+                    join bt in WorkScope.GetAll<BankTransaction>() on obt.BankTransactionId equals bt.Id
+                    where oe.WorkflowStatusId == statusApprovedId
+                        && oe.ReportDate >= startDate && oe.ReportDate <= endDate
+                    select new
+                    {
+                        oe.BranchId,
+                        bt.CurrencyId,
+                        bt.TransactionDate,
+                        bt.Amount
+                    })
+                    .AsEnumerable() // để sử dụng convert bằng C#
+                    .Select(x => new
+                    {
+                        x.BranchId,
+                        AmountVND = x.Amount * GetExchangeRateByDicCurrencyConvert(dicCurrencyConvert, x.CurrencyId, x.TransactionDate)
+                    })
+                    .GroupBy(x => x.BranchId)
+                    .ToDictionaryAsync(g => g.Key, g => g.Sum(x => x.AmountVND));
+
+            return result;
         }
         private IQueryable<GetThongTinRequestChi> IQOutcomingEntryForDashboard(long? statusEndId = null)
         {
