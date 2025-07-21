@@ -1121,7 +1121,7 @@ namespace FinanceManagement.Managers.Dashboards
                   .Select(x => new
                   {
                       x.BranchId,
-                      AmountVND = x.Amount * GetExchangeRateByDicCurrencyConvert(dicCurrencyConvert, x.CurrencyId ?? 0, x.ReportDate)
+                      AmountVND = x.Amount * GetExchangeRateByDicCurrencyConvert(dicCurrencyConvert, x.CurrencyId ?? 1, x.ReportDate)
                   })
                   .GroupBy(x => x.BranchId)
                   .ToDictionary(
