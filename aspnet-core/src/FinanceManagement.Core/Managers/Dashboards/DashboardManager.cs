@@ -1098,36 +1098,33 @@ namespace FinanceManagement.Managers.Dashboards
             }).OrderBy(x => x.ReportDate);
         }
         private async Task<Dictionary<long, double>> GetTongGiaoDichTheoChiNhanhRequestApproved(
-        Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert,
-        DateTime startDate,
-        DateTime endDate
+            Dictionary<CurrencyYearMonthDto, double> dicCurrencyConvert,
+            DateTime startDate,
+            DateTime endDate
         )
         {
-    var statusApprovedId = await _commonManager.GetStatusIdByCode(FinanceManagementConsts.WORKFLOW_STATUS_APPROVED.Trim());
+            var statusApprovedId = await _commonManager.GetStatusIdByCode(FinanceManagementConsts.WORKFLOW_STATUS_APPROVED.Trim());
 
-    var result = (from obt in _ws.GetAll<OutcomingEntryBankTransaction>()
+            var result = (from obt in _ws.GetAll<OutcomingEntryBankTransaction>()
                   join oe in _ws.GetAll<OutcomingEntry>() on obt.OutcomingEntryId equals oe.Id
                   join bt in _ws.GetAll<BankTransaction>() on obt.BankTransactionId equals bt.Id
                   where oe.WorkflowStatusId == statusApprovedId
-                        && oe.ReportDate >= startDate && oe.ReportDate <= endDate
+                    && oe.ReportDate >= startDate && oe.ReportDate <= endDate
                   select new
                   {
                       oe.BranchId,
-                      oe.CurrencyId,          // ✅ lấy theo request chi
+                      CurrencyId = oe.CurrencyId ?? 1, // dùng currency của OutcomingEntry
                       oe.ReportDate,
-                      Amount = bt.FromValue   // ✅ tổng theo bank transaction
+                      bt.FromValue
                   })
                   .AsEnumerable()
                   .Select(x => new
                   {
                       x.BranchId,
-                      AmountVND = x.Amount * GetExchangeRateByDicCurrencyConvert(dicCurrencyConvert, x.CurrencyId ?? 1, x.ReportDate)
+                      AmountVND = x.FromValue * GetExchangeRateByDicCurrencyConvert(dicCurrencyConvert, x.CurrencyId, x.ReportDate)
                   })
                   .GroupBy(x => x.BranchId)
-                  .ToDictionary(
-                      g => g.Key,
-                      g => g.Sum(x => x.AmountVND)
-                  );
+                  .ToDictionary(g => g.Key, g => g.Sum(x => x.AmountVND));
 
     return result;
         }
