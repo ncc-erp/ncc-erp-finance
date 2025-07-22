@@ -1103,23 +1103,21 @@ namespace FinanceManagement.Managers.Dashboards
             DateTime endDate
         )
         {
-            // Lấy status đã duyệt
             var statusApprovedId = await _commonManager.GetStatusIdByCode(
             FinanceManagementConsts.WORKFLOW_STATUS_APPROVED.Trim()
             );
 
-            // Truy vấn dữ liệu
             var result = (from obt in _ws.GetAll<OutcomingEntryBankTransaction>()
                   join oe in _ws.GetAll<OutcomingEntry>() on obt.OutcomingEntryId equals oe.Id
                   join bt in _ws.GetAll<BankTransaction>() on obt.BankTransactionId equals bt.Id
                   where oe.WorkflowStatusId == statusApprovedId
-                    && oe.ApprovedTime >= startDate
-                    && oe.ApprovedTime <= endDate
+                    && bt.TransactionDate >= startDate
+                    && bt.TransactionDate <= endDate
                   select new
                   {
                       oe.BranchId,
                       oe.CurrencyId,
-                      oe.ApprovedTime,
+                      bt.TransactionDate,
                       Amount = bt.FromValue
                   })
                   .AsEnumerable()
@@ -1129,7 +1127,7 @@ namespace FinanceManagement.Managers.Dashboards
                       AmountVND = x.Amount * GetExchangeRateByDicCurrencyConvert(
                       dicCurrencyConvert,
                       x.CurrencyId ?? 1,
-                      x.ApprovedTime
+                      x.TransactionDate
                       )
                   })
                   .GroupBy(x => x.BranchId)
@@ -1140,6 +1138,7 @@ namespace FinanceManagement.Managers.Dashboards
 
             return result;
         }
+
         private IQueryable<GetThongTinRequestChi> IQOutcomingEntryForDashboard(long? statusEndId = null)
         {
             return _ws.GetAll<OutcomingEntry>()
