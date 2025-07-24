@@ -995,6 +995,8 @@ namespace FinanceManagement.Managers.Dashboards
             {
                 dto.TongChiThuc = tongChiThucTheoChiNhanh.ContainsKey(dto.BranchId) ? tongChiThucTheoChiNhanh[dto.BranchId] : 0;
                 dto.TongGiaoDichNganHangApproved = tongGiaoDichTheoChiNhanhRequestApproved.ContainsKey(dto.BranchId) ? tongGiaoDichTheoChiNhanhRequestApproved[dto.BranchId] : 0;
+                dto.TongChiCoApprove = dto.TongChi + dto.TongGiaoDichNganHangApproved;
+                dto.TongChiThucCoApprove = dto.TongChiThuc + dto.TongGiaoDichNganHangApproved;
             }
 
             var tong = new BaoCaoChungDto
@@ -1006,6 +1008,8 @@ namespace FinanceManagement.Managers.Dashboards
                 TongChiThuc = tongChiTheoChiNhanh.Sum(x => x.TongChiThuc),
                 TongGiaoDichNganHangApproved = tongChiTheoChiNhanh.Sum(x => x.TongGiaoDichNganHangApproved)
             };
+            tong.TongChiCoApprove = tong.TongChi + tong.TongGiaoDichNganHangApproved;
+            tong.TongChiThucCoApprove = tong.TongChiThuc + tong.TongGiaoDichNganHangApproved;
             tongChiTheoChiNhanh.Add(tong);
 
             return tongChiTheoChiNhanh;
