@@ -980,24 +980,6 @@ namespace FinanceManagement.APIs.DashBoards
                 }
             }
         }
-        [HttpGet]
-        [NccAuth]
-        public async Task<ResultChartDto> GetNewChartXSecret([Required] DateTime startDate, [Required] DateTime endDate, bool isByPeriod)
-        {
-            if (isByPeriod)
-            {
-                return await GetDataNewChart(startDate, endDate);
-            }
-            else
-            {
-                using (CurrentUnitOfWork.DisableFilter(nameof(IMustHavePeriod)))
-                {
-                    return await GetDataNewChart(startDate, endDate);
-                }
-            }
-        }
-
-
         [AbpAuthorize(PermissionNames.Dashboard)]
         [HttpGet]
         public async Task<byte[]> ExportDataNewChartToExcel([Required] DateTime startDate, [Required] DateTime endDate, bool isByPeriod)
