@@ -980,8 +980,8 @@ namespace FinanceManagement.APIs.DashBoards
                 }
             }
         }
-        [NccAuth]
         [HttpGet]
+        [NccAuth]
         public async Task<ResultChartDto> GetNewChartXSecret([Required] DateTime startDate, [Required] DateTime endDate, bool isByPeriod)
         {
             if (isByPeriod)
