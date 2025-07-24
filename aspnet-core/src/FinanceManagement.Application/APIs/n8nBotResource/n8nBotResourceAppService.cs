@@ -32,7 +32,7 @@ namespace FinanceManagement.APIs.N8nBotResource
         }
         [HttpGet]
         [NccAuth]
-        public async Task<ResultChartDto> GetNewChartXSecret([Required] DateTime startDate, [Required] DateTime endDate, bool isByPeriod)
+        public async Task<ResultChartDto> GetNewChartXSecret(DateTime startDate, DateTime endDate, bool isByPeriod)
         {
             if (isByPeriod)
             {
@@ -46,6 +46,7 @@ namespace FinanceManagement.APIs.N8nBotResource
             }
             }
         }
+
         [HttpGet]
         [NccAuth]
         public async Task<List<BaoCaoChungDto>> GetBaoCaoChungThangNay()
