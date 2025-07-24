@@ -875,7 +875,11 @@ export interface BaoCaoChungDto {
   du: number,
   duFormat: string,
   duThuc: number,
-  duThucFormat: string
+  duThucFormat: string,
+  tongChiCoApprove: number,
+  tongChiThucCoApprove: number,
+  tongChiCoApproveFormat: string,
+  tongChiThucCoApproveFormat: string
 }
 
 export interface BaoCaoThuDto {
