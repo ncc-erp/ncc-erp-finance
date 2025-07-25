@@ -30,8 +30,7 @@ namespace FinanceManagement.APIs.N8nBotResource
         {
             _dashboardManager = dashboardManager;
         }
-
-        [HttpGet]
+         [HttpGet]
         [NccAuth]
         public async Task<List<BaoCaoChungDto>> GetBaoCaoChungThangNay()
         {
