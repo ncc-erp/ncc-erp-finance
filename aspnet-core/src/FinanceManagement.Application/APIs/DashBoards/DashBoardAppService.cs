@@ -74,7 +74,7 @@ namespace FinanceManagement.APIs.DashBoards
         }
         #region Old Dashboard
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<DashBoardStatusDto> GetStatusDashBoard()
         {
             await Task.CompletedTask;
@@ -96,7 +96,7 @@ namespace FinanceManagement.APIs.DashBoards
         }
 
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<List<CashFlowDto>> GetCashFlowDashBoard(int year)
         {
             using (CurrentUnitOfWork.DisableFilter(nameof(IMustHavePeriod)))
@@ -131,7 +131,7 @@ namespace FinanceManagement.APIs.DashBoards
                 return list;
             }
         }
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<object> GetChart(int year)
         {
             using (CurrentUnitOfWork.DisableFilter(nameof(IMustHavePeriod)))
@@ -491,7 +491,7 @@ namespace FinanceManagement.APIs.DashBoards
         }
 
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<PercentEntryTypeDto> PercentEntryType(DateTime? startDate, DateTime? endDate)
         {
             using (CurrentUnitOfWork.DisableFilter(nameof(IMustHavePeriod)))
@@ -948,7 +948,7 @@ namespace FinanceManagement.APIs.DashBoards
             return await _dashboardManager.GetComparativeStatisticByCurrency();
         }
         [HttpGet]
-        [AbpAuthorize] 
+        [AbpAuthorize(PermissionNames.Dashboard)] 
         public async Task<List<OverviewOutcomingEntryStatisticDto>> OverviewOutcomingEntryStatistics()
         {
             return await _dashboardManager.OverviewOutcomingEntryStatistics();
@@ -1270,7 +1270,7 @@ namespace FinanceManagement.APIs.DashBoards
             }
         }
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<byte[]> ExportStatisticDashboard(int periodId, DateTime startDate, DateTime endDate)
         {
             var periodInfo = await _periodManager
@@ -1311,7 +1311,7 @@ namespace FinanceManagement.APIs.DashBoards
         }
 
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<byte[]> ExportBCC(DateTime startDate, DateTime endDate, long branchId, ExpenseType? isExpense)
         {
             var file = Helpers.GetInfoFileTemplate(new string[] { _env.WebRootPath, "Template_BaoCaoChi.xlsx" });
@@ -1509,7 +1509,7 @@ namespace FinanceManagement.APIs.DashBoards
         }
 
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<List<BaoCaoChungDto>> GetDataBaoCaoChung(DateTime startDate, DateTime endDate, long branchId, ExpenseType? isExpense)
         {
             var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
@@ -1517,7 +1517,7 @@ namespace FinanceManagement.APIs.DashBoards
         }
 
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<List<BaoCaoThuDto>> GetDataBaoCaoThu(DateTime startDate, DateTime endDate, bool? isDoanhThu)
         {
             var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
@@ -1526,7 +1526,7 @@ namespace FinanceManagement.APIs.DashBoards
 
 
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<List<GetThongTinRequestChi>> GetDataBaoCaoChi(DateTime startDate, DateTime endDate, long branchId, ExpenseType? isExpense)
         {
             var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
@@ -1534,7 +1534,7 @@ namespace FinanceManagement.APIs.DashBoards
         }
 
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<List<BaoCaoThuDto>> GetDataBaoCaoThuForCircleChart(DateTime startDate, DateTime endDate, long circleChartDetailId)
         {
             var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
@@ -1550,7 +1550,7 @@ namespace FinanceManagement.APIs.DashBoards
         }
 
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<List<GetThongTinRequestChi>> GetDataBaoCaoChiForCircleChart(DateTime startDate, DateTime endDate, long circleChartDetailId)
         {
             var dicCurrencyConvert = GetAndCheckDictionaryCurrencyConvertByYearMonth(startDate, endDate);
@@ -1568,7 +1568,7 @@ namespace FinanceManagement.APIs.DashBoards
 
 
         [HttpGet]
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         public async Task<DebtStatisticFromHRMDto> GetHRMDebtStatistic()
         {
             return await _dashboardManager.GetHRMDebtStatistic(AbpSession.TenantId);
