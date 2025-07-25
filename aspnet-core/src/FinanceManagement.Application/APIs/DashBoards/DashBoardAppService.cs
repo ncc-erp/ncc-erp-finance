@@ -968,9 +968,25 @@ namespace FinanceManagement.APIs.DashBoards
         {
             return await _dashboardManager.OverviewBTransactionStatistics();
         }
-        [NccAuth]
+        [AbpAuthorize(PermissionNames.Dashboard)]
         [HttpGet]
         public async Task<ResultChartDto> GetNewChart([Required] DateTime startDate, [Required] DateTime endDate, bool isByPeriod)
+        {
+            if (isByPeriod)
+            {
+                return await GetDataNewChart(startDate, endDate);
+            }
+            else
+            {
+                using (CurrentUnitOfWork.DisableFilter(nameof(IMustHavePeriod)))
+                {
+                    return await GetDataNewChart(startDate, endDate);
+                }
+            }
+        }
+        [NccAuth]
+        [HttpGet]
+        public async Task<ResultChartDto> GetNewChartXSecret([Required] DateTime startDate, [Required] DateTime endDate, bool isByPeriod)
         {
             if (isByPeriod)
             {
