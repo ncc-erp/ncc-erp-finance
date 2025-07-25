@@ -30,24 +30,7 @@ namespace FinanceManagement.APIs.N8nBotResource
         {
             _dashboardManager = dashboardManager;
         }
-        [HttpGet]
-        [NccAuth]
-        public async Task<ResultChartDto> GetNewChartXSecret(DateTime startDate, DateTime endDate, bool isByPeriod)
-        {
-            if (isByPeriod)
-            {
-            return await _dashboardManager.GetDataNewChart(startDate, endDate);
-            }
-            else
-            {
-            using (CurrentUnitOfWork.DisableFilter(nameof(IMustHavePeriod)))
-            {
-                return await _dashboardManager.GetDataNewChart(startDate, endDate);
-            }
-            }
-        }
-
-        [HttpGet]
+         [HttpGet]
         [NccAuth]
         public async Task<List<BaoCaoChungDto>> GetBaoCaoChungThangNay()
         {
