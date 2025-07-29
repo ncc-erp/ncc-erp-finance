@@ -138,24 +138,10 @@ namespace FinanceManagement.Managers.BTransactions
             });
 
             var moneyOfTransaction = btransaction.Money;
-            if (input.IsCreateBonus)
+            if (input.IsCreateBonus && input.IncomingEntryValue.HasValue)
             {
-                var bonusIncomingEntryType = await _mySettingManager.GetSomeSpecificBonusTypeAsync(); // You'd need the appropriate bonus type
-
-                await _ws.InsertAsync<IncomingEntry>(new IncomingEntry
-                {
-                    Name = $"{btransaction.FromAccount.Name} - Bonus/Thưởng",
-                    BTransactionId = btransaction.Id,
-                    Value = input.IncomingEntryValue.Value,
-                    ExchangeRate = FinanceManagementConsts.DEFAULT_EXCHANGE_RATE,
-                    IncomingEntryTypeId = bonusIncomingEntryType.Id,
-                    BankTransactionId = bankTransactionId,
-                    AccountId = btransaction.FromAccountId,
-                    CurrencyId = btransaction.BankAccount.CurrencyId,
-                    PeriodId = btransaction.PeriodId
-                });
+            moneyOfTransaction -= input.IncomingEntryValue.Value;
             }
-
             var totalMapped = input.InvoiceMappings.Sum(x => x.Value) + input.CustomerAdvanceValue;
             if (Math.Abs(totalMapped - moneyOfTransaction) > 1)
             {

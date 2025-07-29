@@ -14,4 +14,20 @@ namespace FinanceManagement.Managers.BTransactions.Dtos
         public bool IsCreateBonus { get; set; }
         public List<CurrencyNeedConvertDto> CurrencyNeedConverts { get; set; } = new List<CurrencyNeedConvertDto>();
     }
+    public class InvoicePaymentMappingDto
+    {
+    public long InvoiceId { get; set; }
+    public double Value { get; set; }
+    }
+
+    public class PaymentInvoiceMappingDto
+    {
+    public long BTransactionId { get; set; }
+    public long AccountId { get; set; }
+    public bool IsCreateBonus { get; set; }
+    public double? IncomingEntryValue { get; set; } // optional nếu là bonus
+    public double CustomerAdvanceValue { get; set; } // khách trả trước
+    public List<CurrencyNeedConvertDto> CurrencyNeedConverts { get; set; }
+    public List<InvoicePaymentMappingDto> InvoiceMappings { get; set; }
+    }
 }
