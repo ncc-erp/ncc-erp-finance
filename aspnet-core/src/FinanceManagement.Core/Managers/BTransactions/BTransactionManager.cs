@@ -213,7 +213,7 @@ namespace FinanceManagement.Managers.BTransactions
             {
                 Name = btransaction.FromAccount.Name + " - Khách hàng trả trước",
                 BTransactionId = btransaction.Id,
-                Value = (decimal)(input.CustomerAdvanceValue ?? 0),
+                Value = (decimal)(input.CustomerAdvanceValue ?? 0.0),
                 ExchangeRate = FinanceManagementConsts.DEFAULT_EXCHANGE_RATE,
                 IncomingEntryTypeId = balanceIncomingEntryType.Id,
                 BankTransactionId = bankTransactionId,
