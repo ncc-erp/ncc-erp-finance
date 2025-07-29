@@ -170,7 +170,7 @@ namespace FinanceManagement.Managers.BTransactions
                 .Select(s => s.Value * s.ExchangeRate)
                 .Sum();
 
-            var moneyRemaining = invoice.CollectionDebt - totalPaid;
+            var moneyRemaining = (double)(invoice.CollectionDebt - totalPaid);
             if (mapping.Value > moneyRemaining + 1)
             {
                 throw new UserFriendlyException($"Invoice {invoice.Id} được trả vượt quá số tiền còn nợ.");
@@ -213,7 +213,7 @@ namespace FinanceManagement.Managers.BTransactions
             {
                 Name = btransaction.FromAccount.Name + " - Khách hàng trả trước",
                 BTransactionId = btransaction.Id,
-                Value = (decimal)input.CustomerAdvanceValue,
+                Value = (decimal)(input.CustomerAdvanceValue ?? 0),
                 ExchangeRate = FinanceManagementConsts.DEFAULT_EXCHANGE_RATE,
                 IncomingEntryTypeId = balanceIncomingEntryType.Id,
                 BankTransactionId = bankTransactionId,
