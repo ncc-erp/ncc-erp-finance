@@ -17,7 +17,7 @@ namespace FinanceManagement.Managers.BTransactions.Dtos
     public class InvoicePaymentMappingDto
     {
     public long InvoiceId { get; set; }
-    public double Value { get; set; }
+    public decimal Value { get; set; }
     }
 
     public class PaymentInvoiceMappingDto
@@ -25,8 +25,8 @@ namespace FinanceManagement.Managers.BTransactions.Dtos
     public long BTransactionId { get; set; }
     public long AccountId { get; set; }
     public bool IsCreateBonus { get; set; }
-    public double? IncomingEntryValue { get; set; } // optional nếu là bonus
-    public double CustomerAdvanceValue { get; set; } // khách trả trước
+    public decimal? IncomingEntryValue { get; set; } // optional nếu là bonus
+    public decimal CustomerAdvanceValue { get; set; } // khách trả trước
     public List<CurrencyNeedConvertDto> CurrencyNeedConverts { get; set; }
     public List<InvoicePaymentMappingDto> InvoiceMappings { get; set; }
     }
