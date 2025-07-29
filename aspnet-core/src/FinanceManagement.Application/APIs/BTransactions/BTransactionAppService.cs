@@ -168,6 +168,72 @@ namespace FinanceManagement.APIs.BTransactions
         }
         [HttpPost]
         [AbpAuthorize(PermissionNames.Finance_BĐSD_KhachHangThanhToan)]
+        public async Task PaymentInvoiceByAccountMapping(PaymentInvoiceMappingDto input)
+        {
+            var bTransactionInfo = await _btransactionManager.GetBTransactionInformation(input.BTransactionId);
+            if (bTransactionInfo.Money < 0)
+            throw new UserFriendlyException("Không link Yêu cầu chi với số tiền < 0");
+
+            if (input.IsCreateBonus)
+            await CheckCreateBonus(input, bTransactionInfo);
+
+            var debtIncomingEntryType = await _mySettingManager.GetDebtClientAsync();
+            if (debtIncomingEntryType.Id == default)
+            throw new UserFriendlyException("Bạn cần setting khách hàng thanh toán");
+
+            var resultAddClientPaid = await _btransactionManager.AddClientPaid(input.AccountId, input.BTransactionId);
+
+            var clientBankAccount = await WorkScope.GetAll<Account>()
+            .Where(s => s.Id == input.AccountId)
+            .Select(s => new
+            {
+                AccountName = s.Name,
+                BankAccountId = s.BankAccounts.Where(x => x.CurrencyId == resultAddClientPaid.CurrencyId)
+                             .Select(x => x.Id)
+                             .FirstOrDefault()
+            })
+            .FirstOrDefaultAsync();
+
+            long clientBankAccountId = clientBankAccount.BankAccountId;
+            if (clientBankAccountId == 0)
+            {
+            clientBankAccountId = await _bankAccountManager.CreateBankAccount(new CreateBankAccountDto
+            {
+                AccountId = input.AccountId,
+                BankNumber = "1",
+                CurrencyId = resultAddClientPaid.CurrencyId,
+                HolderName = clientBankAccount.AccountName + " - " + resultAddClientPaid.CurrencyName
+            });
+            }
+
+            var bankTransactionId = await _bankTransactionManager.CreateBankTransaction(new CreateBankTransactionDto
+            {
+            Name = resultAddClientPaid.BankTransactionName,
+            BTransactionId = resultAddClientPaid.BTransactionId,
+            FromBankAccountId = clientBankAccountId,
+            FromValue = resultAddClientPaid.Money,
+            ToBankAccountId = resultAddClientPaid.BankAccountId,
+            ToValue = resultAddClientPaid.Money,
+            TransactionDate = resultAddClientPaid.TimeAt
+            });
+
+            if (input.IsCreateBonus)
+            {
+            await _incomingEntryManager.CreateIncomingEntry(new CreateIncomingEntryDto
+            {
+                BankTransactionId = bankTransactionId,
+                BTransactionId = input.BTransactionId,
+                IncomingEntryTypeId = input.IncomingEntryTypeId.Value,
+                Name = input.IncomingEntryName,
+                Value = input.IncomingEntryValue.Value,
+                CurrencyId = bTransactionInfo.CurrencyId
+            });
+            }
+
+            await _btransactionManager.PaymentInvoiceByAccountMapping(input, bankTransactionId);
+        }
+        [HttpPost]
+        [AbpAuthorize(PermissionNames.Finance_BĐSD_KhachHangThanhToan)]
         public async Task PaymentInvoiceByAccount(PaymentInvoiceForAccountDto input)
         {
             var bTransactionInfo = await _btransactionManager.GetBTransactionInformation(input.BTransactionId);
