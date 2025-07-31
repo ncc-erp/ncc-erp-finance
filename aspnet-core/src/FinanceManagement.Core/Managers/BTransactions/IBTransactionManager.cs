@@ -17,6 +17,7 @@ namespace FinanceManagement.Managers.BTransactions
         Task<ResultClientPaidDto> AddClientPaid(long clientId, long btransactionId);
         Task<List<CurrencyNeedConvertDto>> CheckCurrencyBetweenAccountAndBTrasaction(long btransactionId, long accountId);
         Task<bool> PaymentInvoiceByAccount(PaymentInvoiceForAccountDto input);
+        Task<bool> PaymentInvoiceByAccountMapping(PaymentInvoiceMappingDto input);
         Task<bool> ProcessPayment(double money, BTransaction bTransaction, long accountId, List<CurrencyNeedConvertDto> currencyNeedConverts);
         Task<CreateBTransactionDto> UpdateTransaction(CreateBTransactionDto input);
         Task <long> Delete(long id);
