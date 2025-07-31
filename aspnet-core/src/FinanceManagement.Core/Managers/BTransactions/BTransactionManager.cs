@@ -138,12 +138,9 @@ namespace FinanceManagement.Managers.BTransactions
             });
 
             var moneyOfTransaction = btransaction.Money;
-            if (input.IsCreateBonus && input.IncomingEntryValue.HasValue)
-            {
-            moneyOfTransaction -= input.IncomingEntryValue.Value;
-            }
-            var totalMapped = input.InvoiceMappings.Sum(x => x.Value) + input.CustomerAdvanceValue;
-            if (Math.Abs(totalMapped - moneyOfTransaction) > 1)
+
+            var totalMapped = (double)input.InvoiceMappings.Sum(x => x.Value) + input.CustomerAdvanceValue + input.IncomingEntryValue;
+            if (Math.Abs((decimal)(totalMapped - moneyOfTransaction)) > 1)
             {
             throw new UserFriendlyException("Tổng giá trị mapping không khớp với giá trị thanh toán.");
             }
@@ -163,14 +160,14 @@ namespace FinanceManagement.Managers.BTransactions
             foreach (var mapping in input.InvoiceMappings)
             {
             var invoice = invoices.FirstOrDefault(x => x.Id == mapping.InvoiceId);
-            if (invoice == null) continue;
+            if (invoice == null) continue; //exception
 
             var totalPaid = invoice.IncomingEntries
                 .Where(s => !s.IsDeleted)
                 .Select(s => s.Value * s.ExchangeRate)
                 .Sum();
 
-            var moneyRemaining = invoice.CollectionDebt - totalPaid;
+            var moneyRemaining = (decimal)(invoice.CollectionDebt - totalPaid);
             if (mapping.Value > moneyRemaining + 1)
             {
                 throw new UserFriendlyException($"Invoice {invoice.Id} được trả vượt quá số tiền còn nợ.");
@@ -181,7 +178,7 @@ namespace FinanceManagement.Managers.BTransactions
                 InvoiceId = invoice.Id,
                 Name = $"{btransaction.FromAccount.Name} thanh toán {invoice.NameInvoice} - {invoice.Month}/{invoice.Year}",
                 BTransactionId = btransaction.Id,
-                Value = mapping.Value,
+                Value = (double)mapping.Value,
                 ExchangeRate = FinanceManagementConsts.DEFAULT_EXCHANGE_RATE,
                 IncomingEntryTypeId = debtIncomingEntryType.Id,
                 BankTransactionId = bankTransactionId,

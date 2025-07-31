@@ -175,7 +175,7 @@ namespace FinanceManagement.APIs.BTransactions
             throw new UserFriendlyException("Không link Yêu cầu chi với số tiền < 0");
 
             if (input.IsCreateBonus)
-            await CheckCreateBonus(input, bTransactionInfo);
+            await CheckCreateBonusMapping(input, bTransactionInfo);
 
             var debtIncomingEntryType = await _mySettingManager.GetDebtClientAsync();
             if (debtIncomingEntryType.Id == default)
@@ -230,7 +230,7 @@ namespace FinanceManagement.APIs.BTransactions
             });
             }
 
-            await _btransactionManager.PaymentInvoiceByAccountMapping(input, bankTransactionId);
+            await _btransactionManager.PaymentInvoiceByAccountMapping(input);
         }
         [HttpPost]
         [AbpAuthorize(PermissionNames.Finance_BĐSD_KhachHangThanhToan)]
@@ -296,6 +296,17 @@ namespace FinanceManagement.APIs.BTransactions
             await _btransactionManager.PaymentInvoiceByAccount(input);
         }
         private async Task CheckCreateBonus(PaymentInvoiceForAccountDto input, LinkBTransactionInfomationDto bTransactionInfo)
+        {
+            if (input.IncomingEntryName.IsEmpty())
+                throw new UserFriendlyException("Vui lòng nhập tên ghi nhận thu");
+            if (!input.IncomingEntryTypeId.HasValue)
+                throw new UserFriendlyException("Vui lòng chọn loại ghi nhận thu");
+            if (!input.IncomingEntryValue.HasValue)
+                throw new UserFriendlyException("Vui lòng nhập giá trị ghi nhận thu");
+            if (input.IsCreateBonus && bTransactionInfo.Money < input.IncomingEntryValue)
+                throw new UserFriendlyException("Số tiền của Bonus không thể > tiền của biến động số dư");
+        }
+        private async Task CheckCreateBonusMapping(PaymentInvoiceMappingDto input, LinkBTransactionInfomationDto bTransactionInfo)
         {
             if (input.IncomingEntryName.IsEmpty())
                 throw new UserFriendlyException("Vui lòng nhập tên ghi nhận thu");
