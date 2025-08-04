@@ -156,49 +156,34 @@ namespace FinanceManagement.Managers.BTransactions
             .Where(s => s.BTransactionId == btransaction.Id)
             .Select(s => s.Id)
             .FirstOrDefaultAsync();
-
             foreach (var mapping in input.InvoiceMappings)
             {
-            var invoice = invoices.FirstOrDefault(x => x.Id == mapping.InvoiceId);
-            if (invoice == null) continue; //exception
+                var invoice = invoices.FirstOrDefault(x => x.Id == mapping.InvoiceId);
+                if (invoice == null) continue; // exception
 
-            var totalPaid = invoice.IncomingEntries
-                .Where(s => !s.IsDeleted)
-                .Select(s => s.Value * s.ExchangeRate)
-                .Sum();
-
-            var moneyRemaining = (decimal)(invoice.CollectionDebt - totalPaid);
-            if (mapping.Value > moneyRemaining + 1)
-            {
-                throw new UserFriendlyException($"Invoice {invoice.Id} được trả vượt quá số tiền còn nợ.");
+                if (invoice.CurrencyId == btransaction.BankAccount.CurrencyId)
+                {
+                    await HandleMappedInvoiceSameCurrency(
+                        invoice,
+                        btransaction,
+                        (double)mapping.Value,
+                        debtIncomingEntryType.Id,
+                        bankTransactionId
+                    );
+                }
+                else
+                {
+                    var convert = input.CurrencyNeedConverts.FirstOrDefault(x => x.ToCurrencyId == invoice.CurrencyId);
+                    await HandleMappedInvoiceDifferentCurrency(
+                        invoice,
+                        convert,
+                        btransaction,
+                        (double)mapping.Value,
+                        debtIncomingEntryType.Id,
+                        bankTransactionId
+                    );
+                }
             }
-
-            await _ws.InsertAsync<IncomingEntry>(new IncomingEntry
-            {
-                InvoiceId = invoice.Id,
-                Name = $"{btransaction.FromAccount.Name} thanh toán {invoice.NameInvoice} - {invoice.Month}/{invoice.Year}",
-                BTransactionId = btransaction.Id,
-                Value = (double)mapping.Value,
-                ExchangeRate = FinanceManagementConsts.DEFAULT_EXCHANGE_RATE,
-                IncomingEntryTypeId = debtIncomingEntryType.Id,
-                BankTransactionId = bankTransactionId,
-                AccountId = btransaction.FromAccountId,
-                CurrencyId = btransaction.BankAccount.CurrencyId,
-                PeriodId = btransaction.PeriodId
-            });
-
-            if (Math.Abs(mapping.Value - moneyRemaining) < 1)
-            {
-                invoice.Status = NInvoiceStatus.HOAN_THANH;
-            }
-            else
-            {
-                invoice.Status = NInvoiceStatus.TRA_1_PHAN;
-            }
-
-            await _ws.UpdateAsync(invoice);
-            }
-
             // Khách hàng trả trước
             if (input.CustomerAdvanceValue > 0)
             {
@@ -225,6 +210,97 @@ namespace FinanceManagement.Managers.BTransactions
             await CurrentUnitOfWork.SaveChangesAsync();
 
             return true;
+        }
+        private async Task HandleMappedInvoiceSameCurrency(
+            Invoice invoice,
+            BTransaction btransaction,
+            double mappingValue,
+            long incomingEntryTypeId,
+            long? bankTransactionId
+        )
+        {
+            var totalPaid = invoice.IncomingEntries
+            .Where(s => !s.IsDeleted)
+            .Select(s => s.Value * s.ExchangeRate)
+            .Sum();
+
+            var moneyRemaining = (decimal)(invoice.CollectionDebt - totalPaid);
+            if (mappingValue > (double)(moneyRemaining + 1))
+                {
+                    throw new UserFriendlyException($"Invoice {invoice.Id} được trả vượt quá số tiền còn nợ.");
+                }
+            await _ws.InsertAsync(new IncomingEntry
+            {
+            InvoiceId = invoice.Id,
+            Name = $"{btransaction.FromAccount.Name} thanh toán {invoice.NameInvoice} - {invoice.Month}/{invoice.Year}",
+            BTransactionId = btransaction.Id,
+            Value = mappingValue,
+            ExchangeRate = FinanceManagementConsts.DEFAULT_EXCHANGE_RATE,
+            IncomingEntryTypeId = incomingEntryTypeId,
+            BankTransactionId = bankTransactionId,
+            AccountId = btransaction.FromAccountId,
+            CurrencyId = btransaction.BankAccount.CurrencyId,
+            PeriodId = btransaction.PeriodId
+            });
+
+            invoice.Status = Math.Abs(mappingValue - (double)moneyRemaining) < 1
+            ? NInvoiceStatus.HOAN_THANH
+            : NInvoiceStatus.TRA_1_PHAN;
+
+            await _ws.UpdateAsync(invoice);
+        }
+        private async Task HandleMappedInvoiceDifferentCurrency(
+            Invoice invoice,
+            CurrencyNeedConvertDto currencyConvert,
+            BTransaction btransaction,
+            double mappingValue,
+            long incomingEntryTypeId,
+            long? bankTransactionId
+        )
+        {
+            if (currencyConvert == null)
+            {
+            throw new UserFriendlyException($"Không tìm thấy tỷ giá quy đổi cho hóa đơn {invoice.Id}");
+            }
+
+            var totalPaid = invoice.IncomingEntries
+            .Where(s => !s.IsDeleted)
+            .Select(s => s.Value * s.ExchangeRate)
+            .Sum();
+
+            var moneyRemaining = (decimal)(invoice.CollectionDebt - totalPaid);
+            var mappingValueAfterConvert = mappingValue * currencyConvert.ExchangeRate;
+
+            if (mappingValueAfterConvert > (double)moneyRemaining + 1)
+            {
+            throw new UserFriendlyException($"Invoice {invoice.Id} được trả vượt quá số tiền còn nợ.");
+            }
+
+            double exchangeRateUsed = currencyConvert.ExchangeRate;
+            if (Math.Abs(mappingValueAfterConvert - (double)moneyRemaining) < 1)
+            {
+            exchangeRateUsed = (double)moneyRemaining / mappingValue;
+            }
+
+            await _ws.InsertAsync(new IncomingEntry
+            {
+            InvoiceId = invoice.Id,
+            Name = $"{btransaction.FromAccount.Name} thanh toán {invoice.NameInvoice} - {invoice.Month}/{invoice.Year}",
+            BTransactionId = btransaction.Id,
+            Value = mappingValue,
+            ExchangeRate = exchangeRateUsed,
+            IncomingEntryTypeId = incomingEntryTypeId,
+            BankTransactionId = bankTransactionId,
+            AccountId = btransaction.FromAccountId,
+            CurrencyId = btransaction.BankAccount.CurrencyId,
+            PeriodId = btransaction.PeriodId
+            });
+
+            invoice.Status = Math.Abs(mappingValueAfterConvert - (double)moneyRemaining) < 1
+            ? NInvoiceStatus.HOAN_THANH
+            : NInvoiceStatus.TRA_1_PHAN;
+
+            await _ws.UpdateAsync(invoice);
         }
         public async Task<bool> PaymentInvoiceByAccount(PaymentInvoiceForAccountDto input)
         {
