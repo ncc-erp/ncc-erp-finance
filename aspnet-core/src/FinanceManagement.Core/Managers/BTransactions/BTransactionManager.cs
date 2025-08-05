@@ -224,7 +224,7 @@ namespace FinanceManagement.Managers.BTransactions
             .Select(s => s.Value * s.ExchangeRate)
             .Sum();
 
-            var moneyRemaining = (decimal)(invoice.CollectionDebt - totalPaid);
+            var moneyRemaining = (decimal)(invoice.CollectionDebt + invoice.NTF - totalPaid);
             if (mappingValue > (double)(moneyRemaining + 1))
                 {
                     throw new UserFriendlyException($"Invoice {invoice.Id} được trả vượt quá số tiền còn nợ.");
@@ -268,19 +268,17 @@ namespace FinanceManagement.Managers.BTransactions
             .Select(s => s.Value * s.ExchangeRate)
             .Sum();
 
-            var moneyRemaining = (decimal)(invoice.CollectionDebt - totalPaid);
+            var moneyRemaining = (decimal)(invoice.CollectionDebt + invoice.NTF - totalPaid);
             var mappingValueAfterConvert = mappingValue * currencyConvert.ExchangeRate;
 
-            if (mappingValueAfterConvert > (double)moneyRemaining + 1)
+            var diffInOriginalCurrency = (mappingValueAfterConvert - (double)moneyRemaining) / currencyConvert.ExchangeRate;
+
+            if (diffInOriginalCurrency > 1)
             {
-            throw new UserFriendlyException($"Invoice {invoice.Id} được trả vượt quá số tiền còn nợ.");
+                throw new UserFriendlyException($"Invoice {invoice.Id} được trả vượt quá số tiền còn nợ.");
             }
 
-            double exchangeRateUsed = currencyConvert.ExchangeRate;
-            if (Math.Abs(mappingValueAfterConvert - (double)moneyRemaining) < 1)
-            {
-            exchangeRateUsed = (double)moneyRemaining / mappingValue;
-            }
+           
 
             await _ws.InsertAsync(new IncomingEntry
             {
@@ -288,7 +286,7 @@ namespace FinanceManagement.Managers.BTransactions
             Name = $"{btransaction.FromAccount.Name} thanh toán {invoice.NameInvoice} - {invoice.Month}/{invoice.Year}",
             BTransactionId = btransaction.Id,
             Value = mappingValue,
-            ExchangeRate = exchangeRateUsed,
+            ExchangeRate = currencyConvert.ExchangeRate,
             IncomingEntryTypeId = incomingEntryTypeId,
             BankTransactionId = bankTransactionId,
             AccountId = btransaction.FromAccountId,
@@ -410,7 +408,7 @@ namespace FinanceManagement.Managers.BTransactions
                        .Where(s => !s.IsDeleted)
                        .Select(s => s.Value * s.ExchangeRate)
                        .Sum();
-            double moneyRemainningOfRevenue = (double)(invoice.CollectionDebt - totalMoneyPaidOfRevenue);
+            double moneyRemainningOfRevenue = (double)(invoice.CollectionDebt + invoice.NTF - totalMoneyPaidOfRevenue);
 
             if (moneyOfTransaction < moneyRemainningOfRevenue)
             {
@@ -475,7 +473,7 @@ namespace FinanceManagement.Managers.BTransactions
                    .Sum();
 
             //money remaining of this invoice = CollectionDebt - Money Paid
-            double moneyRemainningOfRevenue = (double)(invoice.CollectionDebt - totalMoneyPaidOfRevenue);
+            double moneyRemainningOfRevenue = (double)(invoice.CollectionDebt + invoice.NTF - totalMoneyPaidOfRevenue);
 
             if (moneyOfTransactionAfterConvert < moneyRemainningOfRevenue)
             {
