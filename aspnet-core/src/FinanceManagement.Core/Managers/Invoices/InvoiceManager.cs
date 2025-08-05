@@ -180,7 +180,7 @@ namespace FinanceManagement.Managers.Invoices
         {
             var invoices = await _ws.GetAll<Invoice>()
             .Include(x => x.IncomingEntries)
-            .Where(x => x.Status != NInvoiceStatus.HOAN_THANH && x.Status != NInvoiceStatus.KHONG_TRA)
+            .Where(x => x.Status != NInvoiceStatus.HOAN_THANH && x.Status != NInvoiceStatus.KHONG_TRA && x.AccountId == accountId)
             .OrderBy(x => x.Deadline)
             .ToListAsync();
 
