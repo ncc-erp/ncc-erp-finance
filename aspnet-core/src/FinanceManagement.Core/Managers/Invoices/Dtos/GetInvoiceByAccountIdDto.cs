@@ -22,7 +22,7 @@ namespace FinanceManagement.Managers.Invoices.Dtos
         public string Note { get; set; }
         public double NTF { get; set; }
         public double ITF{ get; set; }
-        public double? InvoiceTotal => CollectionDebt + NTF
-        public double MoneyRemaining { get; set; };
+        public double? InvoiceTotal => CollectionDebt + NTF;
+        public double MoneyRemaining { get; set; }
     }
 }
