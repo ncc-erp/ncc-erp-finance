@@ -8,7 +8,7 @@ using System.Text;
 namespace FinanceManagement.Managers.Invoices.Dtos
 {
     [AutoMapFrom(typeof(Invoice))]
-    public class GetInvoiceByIdDto
+    public class GetInvoiceByAccountIdDto
     {
         public long Id { get; set; }
         public string NameInvoice { get; set; }
