@@ -202,6 +202,11 @@ namespace FinanceManagement.APIs.Invoices
         {
             return await _invoiceManager.GetById(id);
         }
+        [HttpGet]
+        public async Task<List<GetInvoiceByAccountIdDto>> GetListInvoiceByAccountId(long accountId)
+        {
+            return await _invoiceManager.GetListInvoiceByAccountId(accountId);
+        }
         [HttpDelete]
         [AbpAuthorize(PermissionNames.Finance_Invoice_Delete)]
         public async Task<string> Delete(long id)
