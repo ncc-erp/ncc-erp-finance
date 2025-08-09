@@ -10,7 +10,7 @@ import { PaymentInvoiceForAccountMapping, InvoicePaymentMapping } from '@app/ser
 import { IncomingEntryTypeOptions } from '../link-revenue-ecognition-dialog/link-revenue-ecognition-dialog.component';
 import { DefaultIncomingEntryType } from '../currency-exchange/currency-exchange.component';
 import { LableDirection } from '@shared/selection-customs/selection-customs.component';
-import { InvoiceService } from '@app/service/api/invoice.service'; 
+import { InvoiceService } from '@app/service/api/invoice.service';
 
 @Component({
   selector: 'app-payment-mapping-invoice-dialog',
@@ -50,7 +50,7 @@ export class PaymentMappingInvoiceDialogComponent extends AppComponentBase imple
     private _btransaction: BtransactionService,
     private _configuration: AppConfigurationService,
     private _common: CommonService,
-    private _invoice: InvoiceService, // 👈 thêm
+    private _invoice: InvoiceService,
   ) {
     super(injector);
   }
@@ -136,6 +136,7 @@ export class PaymentMappingInvoiceDialogComponent extends AppComponentBase imple
       if (!res.success) return;
       this.invoiceMappings = (res.result || []).map((x: any) => ({
         invoiceId: x.invoiceId,
+        nameInvoice: x.nameInvoice,           // 👈 hiển thị tên hóa đơn
         remainValue: x.remainValue,
         currencyName: x.currencyName,
         value: null,
@@ -230,9 +231,11 @@ export interface CurrencyNeedConvert {
   exchangeRate?: number;
 }
 
+// UI row cho bảng invoice (thêm field hiển thị)
 interface UiInvoiceRow {
   invoiceId: number;
+  nameInvoice: string;     // 👈 NEW
   remainValue: number;
   currencyName: string;
-  value: any;
+  value: any;              // keep any for mask="separator"; parse on submit
 }

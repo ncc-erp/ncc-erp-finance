@@ -53,19 +53,22 @@
             <table class="table table-bordered table-sm mb-0">
               <thead class="thead-light">
                 <tr>
-                  <th style="width: 120px;">Invoice ID</th>
-                  <th style="width: 160px;">Còn nợ</th>
+                  <th style="width: 260px;">Invoice</th>
+                  <th style="width: 140px;">Còn nợ</th>
                   <th style="width: 90px;">Tiền tệ</th>
                   <th style="width: 200px;">Giá trị mapping</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let row of invoiceMappings; let i = index">
-                  <td>#{{ row.invoiceId }}</td>
+                  <td>
+                    <strong>#{{ row.invoiceId }}</strong>
+                    <span class="text-muted">— {{ row.nameInvoice }}</span>
+                  </td>
                   <td>{{ _utilities.formatMoneyCustom(row.remainValue) }}</td>
                   <td>
-                    <span [style.color]="_utilities.getColorByCurrency(row.currencyName)">
-                      {{ row.currencyName }}
+                    <span [style.color]="_utilities.getColorByCurrency(row.currencyName || data.currencyName)">
+                      {{ row.currencyName || data.currencyName }}
                     </span>
                   </td>
                   <td>
@@ -172,7 +175,7 @@
         </div>
       </ng-container>
 
-      <!-- Khách hàng trả trước (optional, không checkbox để đơn giản) -->
+      <!-- Khách hàng trả trước -->
       <div class="form-group row mt-3">
         <label class="col-md-3 col-form-label"> Khách hàng trả trước: </label>
         <div class="col-md-9">
