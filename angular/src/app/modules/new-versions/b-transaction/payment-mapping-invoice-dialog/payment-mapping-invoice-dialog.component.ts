@@ -10,6 +10,7 @@ import { PaymentInvoiceForAccountMapping, InvoicePaymentMapping } from '@app/ser
 import { IncomingEntryTypeOptions } from '../link-revenue-ecognition-dialog/link-revenue-ecognition-dialog.component';
 import { DefaultIncomingEntryType } from '../currency-exchange/currency-exchange.component';
 import { LableDirection } from '@shared/selection-customs/selection-customs.component';
+import { InvoiceService } from '@app/service/api/invoice.service'; 
 
 @Component({
   selector: 'app-payment-mapping-invoice-dialog',
@@ -48,7 +49,8 @@ export class PaymentMappingInvoiceDialogComponent extends AppComponentBase imple
     public _utilities: UtilitiesService,
     private _btransaction: BtransactionService,
     private _configuration: AppConfigurationService,
-    private _common: CommonService
+    private _common: CommonService,
+    private _invoice: InvoiceService, // 👈 thêm
   ) {
     super(injector);
   }
@@ -110,30 +112,28 @@ export class PaymentMappingInvoiceDialogComponent extends AppComponentBase imple
   }
 
   defaultIncomingEntryTypeChange(evt: { checked: boolean }) {
-  this.isDefaultIncomingEntryType = !!evt?.checked;
-  if (this.isDefaultIncomingEntryType) {
-    this._configuration
-      .setDefaultMaLoaiThuKhachHangBonus({
-        id: this.payment.incomingEntryTypeId?.toString(),
-      } as DefaultIncomingEntryType)
-      .subscribe(() => {
-        abp.notify.success('Update default incoming entry successfully!');
+    this.isDefaultIncomingEntryType = !!evt?.checked;
+    if (this.isDefaultIncomingEntryType) {
+      this._configuration
+        .setDefaultMaLoaiThuKhachHangBonus({
+          id: this.payment.incomingEntryTypeId?.toString(),
+        } as DefaultIncomingEntryType)
+        .subscribe(() => {
+          abp.notify.success('Update default incoming entry successfully!');
+        });
+    } else {
+      this._configuration.clearDefaultMaLoaiThuKhachHangBonus().subscribe(() => {
+        abp.notify.success('Clear default incoming entry successfully!');
       });
-  } else {
-    this._configuration.clearDefaultMaLoaiThuKhachHangBonus().subscribe(() => {
-      abp.notify.success('Clear default incoming entry successfully!');
-    });
+    }
   }
-}
 
-  
   customerHandler() {
     if (!this.payment.accountId) return;
 
-    // 1) load invoices for mapping
-    this._btransaction.getListInvoiceByAccountId(this.payment.accountId).subscribe((res) => {
+    // 1) load invoices for mapping (đúng service + đúng route)
+    this._invoice.getListInvoiceByAccountId(this.payment.accountId).subscribe((res) => {
       if (!res.success) return;
-      // chuẩn hóa dữ liệu UI: mặc định value = null để người dùng điền
       this.invoiceMappings = (res.result || []).map((x: any) => ({
         invoiceId: x.invoiceId,
         remainValue: x.remainValue,
@@ -165,9 +165,7 @@ export class PaymentMappingInvoiceDialogComponent extends AppComponentBase imple
       .filter((x) => x.value && Number(x.value) > 0)
       .map<InvoicePaymentMapping>((x) => ({
         invoiceId: x.invoiceId,
-        value: Number(
-          ('' + x.value).toString().replace(/,/g, '') // bỏ dấu phẩy nếu có mask
-        ),
+        value: Number(('' + x.value).toString().replace(/,/g, '')),
       }));
 
     const accountName =
@@ -229,13 +227,12 @@ export interface CurrencyNeedConvert {
   toCurrencyId: number;
   toCurrencyName: string;
   isReverseExchangeRate: boolean;
-  exchangeRate?: number; // bật nếu backend cần người dùng nhập tỉ giá
+  exchangeRate?: number;
 }
 
-// UI row cho bảng invoice (thêm field hiển thị)
 interface UiInvoiceRow {
   invoiceId: number;
   remainValue: number;
   currencyName: string;
-  value: any; // giữ any để mask="separator" không quậy format; sẽ parse về number khi submit
+  value: any;
 }
