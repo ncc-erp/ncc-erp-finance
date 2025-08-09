@@ -109,19 +109,24 @@ export class PaymentMappingInvoiceDialogComponent extends AppComponentBase imple
       this.defaultIncomingEntryType === this.payment.incomingEntryTypeId;
   }
 
-  defaultIncomingEntryTypeChange() {
-    this.isDefaultIncomingEntryType = !this.isDefaultIncomingEntryType;
-    if (this.isDefaultIncomingEntryType) {
-      this._configuration
-        .setDefaultMaLoaiThuKhachHangBonus({
-          id: this.payment.incomingEntryTypeId?.toString(),
-        } as DefaultIncomingEntryType)
-        .subscribe();
-    } else {
-      this._configuration.clearDefaultMaLoaiThuKhachHangBonus().subscribe();
-    }
+  defaultIncomingEntryTypeChange(evt: { checked: boolean }) {
+  this.isDefaultIncomingEntryType = !!evt?.checked;
+  if (this.isDefaultIncomingEntryType) {
+    this._configuration
+      .setDefaultMaLoaiThuKhachHangBonus({
+        id: this.payment.incomingEntryTypeId?.toString(),
+      } as DefaultIncomingEntryType)
+      .subscribe(() => {
+        abp.notify.success('Update default incoming entry successfully!');
+      });
+  } else {
+    this._configuration.clearDefaultMaLoaiThuKhachHangBonus().subscribe(() => {
+      abp.notify.success('Clear default incoming entry successfully!');
+    });
   }
+}
 
+  
   customerHandler() {
     if (!this.payment.accountId) return;
 
