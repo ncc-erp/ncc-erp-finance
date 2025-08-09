@@ -42,10 +42,7 @@ export class BtransactionService extends BaseApiService {
     return this.http.post<any>(this.rootUrl + '/PaymentInvoiceByAccountMapping', payload);
   }
 
-  // 🔹 LẤY DANH SÁCH INVOICE THEO ACCOUNT (CHO MAPPING)
-  getListInvoiceByAccountId(accountId: number): Observable<ApiResponse<any[]>> {
-    return this.http.get<any>(this.rootUrl + `/GetListInvoiceByAccountId?accountId=${accountId}`);
-  }
+
 
   createTransaction(payload: CreateEditBTransactionDto): Observable<ApiResponse<CreateEditBTransactionDto>> {
     return this.http.post<any>(this.rootUrl + '/CreateTransaction', payload);

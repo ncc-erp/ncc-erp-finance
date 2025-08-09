@@ -28,6 +28,7 @@ export class InvoiceService extends BaseApiService {
   }
 }
 
+
 /** DTO trả về từ BE cho list invoice mapping */
 export interface InvoiceItemDto {
   invoiceId: number;
@@ -71,4 +72,4 @@ export interface InvoiceItemDto {
   // exportExcel(request: PagedRequestDto): Observable<any> {
   //   return this.http.post<any>(this.rootUrl + '/ExportExcel', request);
   // }
-}
+
