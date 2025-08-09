@@ -203,6 +203,11 @@
                         <mat-icon>menu</mat-icon>
                       </button>
                       <mat-menu #menu="matMenu" class="p-2" class="max-width-300">
+                        <button class="mat-menu-item w-100" (click)="paymentMappingInvoice(item)" matTooltip="Mapping Invoice"
+                          *ngIf="isShowBtnMappingInvoice(item) && isShowMappingInvoiceBtn()">
+                          <i class="fas fa-money-check-alt"></i>
+                          {{ "Mapping Invoice" | localize }}
+                        </button>
                         <button class="mat-menu-item w-100" (click)="payment(item)" matTooltip="Khách hàng thanh toán"
                           *ngIf="isShowBtnKhachHangThanhToan(item) && isShowKhachHangThanhToanBtn()">
                           <i class="fas fa-money-check-alt"></i>
