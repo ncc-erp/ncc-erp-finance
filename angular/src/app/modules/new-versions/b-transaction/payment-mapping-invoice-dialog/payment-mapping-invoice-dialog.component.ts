@@ -137,7 +137,7 @@ export class PaymentMappingInvoiceDialogComponent extends AppComponentBase imple
       this.invoiceMappings = (res.result || []).map((x: any) => ({
         invoiceId: x.invoiceId,
         nameInvoice: x.nameInvoice,           // 👈 hiển thị tên hóa đơn
-        remainValue: x.remainValue,
+        remainValue: x.rmoneyRemaining,
         currencyName: x.currencyName,
         value: null,
       }));
