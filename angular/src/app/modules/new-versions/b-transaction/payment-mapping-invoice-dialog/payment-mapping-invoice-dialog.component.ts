@@ -135,7 +135,7 @@ export class PaymentMappingInvoiceDialogComponent extends AppComponentBase imple
     this._invoice.getListInvoiceByAccountId(this.payment.accountId).subscribe((res) => {
       if (!res.success) return;
       this.invoiceMappings = (res.result || []).map((x: any) => ({
-        invoiceId: x.invoiceId,
+        invoiceId: x.id,
         nameInvoice: x.nameInvoice,           // 👈 hiển thị tên hóa đơn
         moneyRemaining: x.moneyRemaining,
         currencyName: x.currencyName,
