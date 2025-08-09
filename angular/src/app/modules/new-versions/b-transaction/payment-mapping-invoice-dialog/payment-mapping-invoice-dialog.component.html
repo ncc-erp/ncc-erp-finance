@@ -65,7 +65,7 @@
                     <strong>#{{ row.invoiceId }}</strong>
                     <span class="text-muted">— {{ row.nameInvoice }}</span>
                   </td>
-                  <td>{{ _utilities.formatMoneyCustom(row.remainValue) }}</td>
+                  <td>{{ _utilities.formatMoneyCustom(row.moneyRemaining) }}</td>
                   <td>
                     <span [style.color]="_utilities.getColorByCurrency(row.currencyName || data.currencyName)">
                       {{ row.currencyName || data.currencyName }}

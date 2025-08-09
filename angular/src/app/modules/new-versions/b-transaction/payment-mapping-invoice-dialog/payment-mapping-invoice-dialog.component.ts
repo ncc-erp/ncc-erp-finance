@@ -137,7 +137,7 @@ export class PaymentMappingInvoiceDialogComponent extends AppComponentBase imple
       this.invoiceMappings = (res.result || []).map((x: any) => ({
         invoiceId: x.invoiceId,
         nameInvoice: x.nameInvoice,           // 👈 hiển thị tên hóa đơn
-        remainValue: x.rmoneyRemaining,
+        moneyRemaining: x.moneyRemaining,
         currencyName: x.currencyName,
         value: null,
       }));
@@ -235,7 +235,7 @@ export interface CurrencyNeedConvert {
 interface UiInvoiceRow {
   invoiceId: number;
   nameInvoice: string;     // 👈 NEW
-  remainValue: number;
+  moneyRemaining: number;
   currencyName: string;
   value: any;              // keep any for mask="separator"; parse on submit
 }
