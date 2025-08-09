@@ -1,3 +1,4 @@
+// src/app/service/api/new-versions/invoice.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,27 +9,32 @@ import { ApiResponse } from '@app/service/model/api-response.model';
 @Injectable({ providedIn: 'root' })
 export class InvoiceService extends BaseApiService {
   constructor(http: HttpClient) {
-    super(http); // <-- quan trọng: truyền http cho BaseApiService để có this.http
+    super(http);
   }
 
-  // => /api/services/app/Invoice
+  // tên controller trên BE
   changeUrl() {
     return 'Invoice';
   }
 
-  // GET /api/services/app/Invoice/GetListInvoiceByAccountId?accountId=...
+  /**
+   * Lấy danh sách invoice theo accountId để mapping.
+   * GET /api/services/app/Invoice/GetListInvoiceByAccountId?accountId=...
+   */
   getListInvoiceByAccountId(accountId: number): Observable<ApiResponse<InvoiceItemDto[]>> {
-    return this.http.get<any>(
+    return this.http.get<ApiResponse<InvoiceItemDto[]>>(
       this.rootUrl + `/GetListInvoiceByAccountId?accountId=${accountId}`
     );
   }
 }
 
+/** DTO trả về từ BE cho list invoice mapping */
 export interface InvoiceItemDto {
   invoiceId: number;
   remainValue: number;
   currencyName: string;
 }
+
 
   //public 
   // public deleteInvoice(id: any): Observable<any> {
