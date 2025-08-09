@@ -1,23 +1,35 @@
-import { PagedRequestDto } from './../../../shared/paged-listing-component-base';
-import { Observable } from 'rxjs-compat';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
 import { BaseApiService } from './base-api.service';
-import { throwError } from 'rxjs';
+import { ApiResponse } from '@app/service/model/api-response.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class InvoiceService extends BaseApiService {
-
-  constructor(
-    http: HttpClient
-  ) {
-    super(http);
+  constructor(http: HttpClient) {
+    super(http); // <-- quan trọng: truyền http cho BaseApiService để có this.http
   }
+
+  // => /api/services/app/Invoice
   changeUrl() {
     return 'Invoice';
   }
+
+  // GET /api/services/app/Invoice/GetListInvoiceByAccountId?accountId=...
+  getListInvoiceByAccountId(accountId: number): Observable<ApiResponse<InvoiceItemDto[]>> {
+    return this.http.get<any>(
+      this.rootUrl + `/GetListInvoiceByAccountId?accountId=${accountId}`
+    );
+  }
+}
+
+export interface InvoiceItemDto {
+  invoiceId: number;
+  remainValue: number;
+  currencyName: string;
+}
+
   //public 
   // public deleteInvoice(id: any): Observable<any> {
   //   return this.http.delete<any>(this.rootUrl + '/Delete', {
