@@ -28,7 +28,7 @@ namespace FinanceManagement.Managers.BTransactions.Dtos
     public long? IncomingEntryTypeId { get; set; }
     public string IncomingEntryName { get; set; }
     public double? IncomingEntryValue { get; set; } // optional nếu là bonus
-    public double CustomerAdvanceValue { get; set; } // khách trả trước
+    public double? CustomerAdvanceValue { get; set; } // khách trả trước
     public List<CurrencyNeedConvertDto> CurrencyNeedConverts { get; set; } = new List<CurrencyNeedConvertDto>();
     public List<InvoicePaymentMappingDto> InvoiceMappings { get; set; } = new List<InvoicePaymentMappingDto>();
     }

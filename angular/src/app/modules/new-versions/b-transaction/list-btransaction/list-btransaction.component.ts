@@ -4,6 +4,10 @@ import {
   PaymentDialogComponent,
   PaymentDialogData,
 } from "./../payment-dialog/payment-dialog.component";
+import {
+  PaymentMappingInvoiceDialogComponent,
+  PaymentMappingInvoiceDialogData,
+} from "./../payment-mapping-invoice-dialog/payment-mapping-invoice-dialog.component";
 import { MatDialog } from "@angular/material/dialog";
 import { UtilitiesService } from "./../../../../service/api/new-versions/utilities.service";
 import { CommonService } from "./../../../../service/api/new-versions/common.service";
@@ -171,6 +175,21 @@ onRefreshCurrentPage(){
   onChangeFilter() {
     // this.id = "";
     this.getFirstPage();
+  }
+  paymentMappingInvoice(transaction: BTransaction): void {
+      const paymentMappingInvoiceDialog = this.dialog.open(PaymentMappingInvoiceDialogComponent, {
+      width: "700px",
+      data: {
+        bTransactionId: transaction.bTransactionId,
+        money: transaction.moneyNumber,
+        currencyName: transaction.currencyName,
+      } as PaymentMappingInvoiceDialogData,
+    });
+
+    paymentMappingInvoiceDialog.afterClosed().subscribe((result) => {
+      this.refresh();
+      //TODO: handle result
+    });
   }
   payment(transaction: BTransaction): void {
     //TODO: show dialog payment for customer
@@ -545,6 +564,7 @@ onRefreshCurrentPage(){
   }
   isShowBtnMenu(item: BTransaction) {
     return (
+      this.isShowBtnMappingInvoice(item) ||
       this.isShowBtnKhachHangThanhToan(item) ||
       this.isShowBtnRequestChi(item) ||
       this.isShowBtnGhiNhanThu(item) ||
@@ -552,6 +572,12 @@ onRefreshCurrentPage(){
       this.isShowBtnDelete(item) ||
       this.isShowBtnRollBackBTransaction(item) ||
       this.isShowBtnRollbackClientPaid(item)
+    );
+  }
+  isShowBtnMappingInvoice(item: BTransaction) {
+    return (
+      item.bTransactionStatus == BTransactionStatus.PENDING &&
+      item.moneyNumber > 0
     );
   }
   isShowBtnKhachHangThanhToan(item: BTransaction) {
@@ -906,6 +932,9 @@ onRefreshCurrentPage(){
     return this.isGranted(PERMISSIONS_CONSTANT.Finance_BĐSD_Import);
   }
   isShowKhachHangThanhToanBtn() {
+    return this.isGranted(PERMISSIONS_CONSTANT.Finance_BĐSD_KhachHangThanhToan);
+  }
+  isShowMappingInvoiceBtn() {
     return this.isGranted(PERMISSIONS_CONSTANT.Finance_BĐSD_KhachHangThanhToan);
   }
   isShowCreateIncomingEntryBtn() {

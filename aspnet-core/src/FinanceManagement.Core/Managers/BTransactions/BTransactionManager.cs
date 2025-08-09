@@ -136,6 +136,26 @@ namespace FinanceManagement.Managers.BTransactions
                 s.ExchangeRate = 1 / s.ExchangeRate;
             }
             });
+            // Validate bonus (if provided)
+            if (input.IncomingEntryValue.HasValue && input.IncomingEntryValue.Value <= 0)
+            {
+                throw new UserFriendlyException("Giá trị bonus phải lớn hơn 0.");
+            }
+
+            // Validate advance
+            if (input.CustomerAdvanceValue < 0.0001) // tránh số 0 hoặc rất nhỏ
+            {
+                throw new UserFriendlyException("Giá trị khách trả trước phải lớn hơn 0.");
+            }
+
+            // Validate từng invoice mapping
+            foreach (var mapping in input.InvoiceMappings)
+            {
+                if (mapping.Value <= 0)
+                {
+                    throw new UserFriendlyException($"Giá trị thanh toán cho hóa đơn {mapping.InvoiceId} phải lớn hơn 0.");
+                }
+            }
 
             var moneyOfTransaction = btransaction.Money;
 
@@ -195,7 +215,7 @@ namespace FinanceManagement.Managers.BTransactions
             {
                 Name = btransaction.FromAccount.Name + " - Khách hàng trả trước",
                 BTransactionId = btransaction.Id,
-                Value = input.CustomerAdvanceValue,
+                Value = (double)input.CustomerAdvanceValue,
                 ExchangeRate = FinanceManagementConsts.DEFAULT_EXCHANGE_RATE,
                 IncomingEntryTypeId = balanceIncomingEntryType.Id,
                 BankTransactionId = bankTransactionId,
