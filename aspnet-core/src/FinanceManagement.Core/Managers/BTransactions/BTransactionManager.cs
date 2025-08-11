@@ -159,8 +159,11 @@ namespace FinanceManagement.Managers.BTransactions
 
             var moneyOfTransaction = btransaction.Money;
 
-            var totalMapped = (double)input.InvoiceMappings.Sum(x => x.Value) + (decimal)(input.CustomerAdvanceValue ?? 0d) + (decimal)(input.IncomingEntryValue ?? 0d);
-            if (Math.Abs((decimal)(totalMapped - moneyOfTransaction)) > 1m)
+            // Use null-coalescing operator to handle possible null values
+            var totalMapped = (double)input.InvoiceMappings.Sum(x => x.Value)
+                + (input.CustomerAdvanceValue ?? 0)
+                + (input.IncomingEntryValue ?? 0);
+            if (Math.Abs((decimal)(totalMapped - moneyOfTransaction)) > 1)
             {
             throw new UserFriendlyException("Tổng giá trị mapping không khớp với giá trị thanh toán.");
             }
