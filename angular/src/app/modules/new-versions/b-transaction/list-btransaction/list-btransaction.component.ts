@@ -178,7 +178,7 @@ onRefreshCurrentPage(){
   }
   paymentMappingInvoice(transaction: BTransaction): void {
       const paymentMappingInvoiceDialog = this.dialog.open(PaymentMappingInvoiceDialogComponent, {
-      width: "700px",
+      width: "1100px",
       data: {
         bTransactionId: transaction.bTransactionId,
         money: transaction.moneyNumber,
