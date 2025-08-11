@@ -17,6 +17,7 @@ namespace FinanceManagement.Managers.Invoices.Dtos
         public int Year { get; set; }
         public double CollectionDebt { get; set; }
         public long CurrencyId { get; set; }
+        public string CurrencyName { get; set; }
         public DateTime Deadline { get; set; }
         public NInvoiceStatus Status { get; set; }
         public string Note { get; set; }

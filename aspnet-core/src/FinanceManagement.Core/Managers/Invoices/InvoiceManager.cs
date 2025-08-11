@@ -189,7 +189,7 @@ namespace FinanceManagement.Managers.Invoices
             foreach (var invoice in invoices)
             {
             var dto = ObjectMapper.Map<GetInvoiceByAccountIdDto>(invoice);
-
+                dto.CurrencyName = invoice.Currency?.Code;
             var totalPaid = invoice.IncomingEntries
                 .Where(e => !e.IsDeleted && e.AccountId == accountId)
                 .Sum(e => e.Value * e.ExchangeRate);

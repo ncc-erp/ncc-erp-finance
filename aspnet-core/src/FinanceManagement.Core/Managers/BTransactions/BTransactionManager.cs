@@ -143,7 +143,7 @@ namespace FinanceManagement.Managers.BTransactions
             }
 
             // Validate advance
-            if (input.CustomerAdvanceValue < 0.0001) // tránh số 0 hoặc rất nhỏ
+            if (input.CustomerAdvanceValue.HasValue && input.CustomerAdvanceValue < 0.0001) // tránh số 0 hoặc rất nhỏ
             {
                 throw new UserFriendlyException("Giá trị khách trả trước phải lớn hơn 0.");
             }
@@ -159,8 +159,8 @@ namespace FinanceManagement.Managers.BTransactions
 
             var moneyOfTransaction = btransaction.Money;
 
-            var totalMapped = (double)input.InvoiceMappings.Sum(x => x.Value) + input.CustomerAdvanceValue + input.IncomingEntryValue;
-            if (Math.Abs((decimal)(totalMapped - moneyOfTransaction)) > 1)
+            var totalMapped = (double)input.InvoiceMappings.Sum(x => x.Value) + (decimal)(input.CustomerAdvanceValue ?? 0d) + (decimal)(input.IncomingEntryValue ?? 0d);
+            if (Math.Abs((decimal)(totalMapped - moneyOfTransaction)) > 1m)
             {
             throw new UserFriendlyException("Tổng giá trị mapping không khớp với giá trị thanh toán.");
             }
