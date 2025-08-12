@@ -137,16 +137,17 @@ namespace FinanceManagement.Managers.BTransactions
             }
             });
             // Validate bonus (if provided)
-            if (input.IncomingEntryValue < 1)
+            if (input.IsCreateBonus && input.IncomingEntryValue < 1)
             {
                 throw new UserFriendlyException("Giá trị bonus phải >= 1.");
             }
 
             // Validate advance
-            if (input.CustomerAdvanceValue < 1) // tránh số 0 hoặc rất nhỏ
+            if (input.CustomerAdvanceValue != 0 &&input.CustomerAdvanceValue < 1) // tránh số 0 hoặc rất nhỏ
             {
                 throw new UserFriendlyException("Giá trị khách trả trước phải >= 1.");
             }
+
 
             // Validate từng invoice mapping
             foreach (var mapping in input.InvoiceMappings)
