@@ -51,27 +51,27 @@
         </span>
       </div>
     <!-- Danh sách Invoice cần mapping -->
-    <div class="form-group row mt-3">
-      <label class="col-md-3 col-form-label"> Mapping Invoice: </label>
-      <div class="col-md-9">
-      <!-- ✅ scroll container + sticky header -->
-      <div class="table-responsive invoice-table-container">
+      <div class="form-group row mt-3"></div>
+        <label class="col-md-3 col-form-label"> Mapping Invoice: </label>
+        <div class="col-md-9">
+          <!-- scroll khi > 4 dòng -->
+          <div class="table-responsive invoice-table-container">
         <table class="table table-bordered table-sm mb-0 invoice-table">
-        <thead class="thead-light">
-          <tr>
+          <thead class="thead-light">
+            <tr>
           <th style="width: 260px;">Invoice</th>
           <th style="width: 140px;">Còn nợ</th>
-            <th style="width: 90px;">Tiền tệ</th>
-            <th style="width: 200px;">
+          <th style="width: 90px;">Tiền tệ</th>
+          <th style="width: 200px;">
             Khách hàng trả
             <span [style.color]="_utilities.getColorByCurrency(data.currencyName)">
               {{ data.currencyName }}
             </span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let row of invoiceMappings; let i = index">
+          </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of invoiceMappings; let i = index"></tr>
           <td>
             <strong>#{{ row.invoiceId }}</strong>
             <span class="text-muted">— {{ row.nameInvoice }}</span>
@@ -79,37 +79,37 @@
           <td>{{ _utilities.formatMoneyCustom(row.moneyRemaining) }}</td>
           <td>
             <span [style.color]="_utilities.getColorByCurrency(row.currencyName || data.currencyName)">
-            {{ row.currencyName || data.currencyName }}
+              {{ row.currencyName || data.currencyName }}
             </span>
           </td>
           <td>
             <input
-            type="text"
-            class="form-control"
-            [name]="'mapValue' + i"
-            [(ngModel)]="row.value"
-            [ngModelOptions]="{ standalone: true }"
-            mask="separator"
-            thousandSeparator=","
-            [allowNegativeNumbers]="false"
-            placeholder="Nhập giá trị ..."
-            style="margin-bottom: 8px;"
+              type="text"
+              class="form-control"
+              [name]="'mapValue' + i"
+              [(ngModel)]="row.value"
+              [ngModelOptions]="{ standalone: true }"
+              mask="separator"
+              thousandSeparator=","
+              [allowNegativeNumbers]="false"
+              placeholder="Nhập giá trị ..."
             />
           </td>
-          </tr>
-          <tr *ngIf="!invoiceMappings?.length">
+            </tr>
+            <tr *ngIf="!invoiceMappings?.length"></tr>
           <td colspan="4" class="text-center text-muted py-3">
             Chưa có hóa đơn nào cần mapping cho khách hàng này.
           </td>
-          </tr>
-        </tbody>
+            </tr>
+          </tbody>
         </table>
-      </div>
-      <small class="text-muted d-block mt-1">
+          </div>
+          <small class="text-muted d-block mt-1"></small>
         * Chỉ các dòng có giá trị &gt; 0 mới được gửi lên backend.
-      </small>
+          </small>
+        </div>
       </div>
-    </div>
+
 
       <!-- Khách hàng bonus -->
       <div class="form-group row required mt-3">
