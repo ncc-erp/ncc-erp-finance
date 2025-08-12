@@ -50,11 +50,10 @@
           {{ data.currencyName }}
         </span>
       </div>
-    <!-- Danh sách Invoice cần mapping -->
-      <div class="form-group row mt-3"></div>
+      <!-- Danh sách Invoice cần mapping -->
+      <div class="form-group row mt-3">
         <label class="col-md-3 col-form-label"> Mapping Invoice: </label>
         <div class="col-md-9">
-          <!-- scroll khi > 4 dòng -->
           <div class="table-responsive invoice-table-container">
         <table class="table table-bordered table-sm mb-0 invoice-table">
           <thead class="thead-light">
@@ -70,8 +69,9 @@
           </th>
             </tr>
           </thead>
+
           <tbody>
-            <tr *ngFor="let row of invoiceMappings; let i = index"></tr>
+            <tr *ngFor="let row of invoiceMappings; let i = index">
           <td>
             <strong>#{{ row.invoiceId }}</strong>
             <span class="text-muted">— {{ row.nameInvoice }}</span>
@@ -93,10 +93,13 @@
               thousandSeparator=","
               [allowNegativeNumbers]="false"
               placeholder="Nhập giá trị ..."
+              style="margin-bottom: 4px;"
             />
           </td>
             </tr>
-            <tr *ngIf="!invoiceMappings?.length"></tr>
+
+            <!-- Hàng trống khi không có dữ liệu -->
+            <tr *ngIf="!invoiceMappings?.length">
           <td colspan="4" class="text-center text-muted py-3">
             Chưa có hóa đơn nào cần mapping cho khách hàng này.
           </td>
@@ -104,12 +107,12 @@
           </tbody>
         </table>
           </div>
-          <small class="text-muted d-block mt-1"></small>
+
+          <small class="text-muted d-block mt-1">
         * Chỉ các dòng có giá trị &gt; 0 mới được gửi lên backend.
           </small>
         </div>
       </div>
-
 
       <!-- Khách hàng bonus -->
       <div class="form-group row required mt-3">
