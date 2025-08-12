@@ -205,7 +205,7 @@ namespace FinanceManagement.APIs.BTransactions
                 HolderName = clientBankAccount.AccountName + " - " + resultAddClientPaid.CurrencyName
             });
             }
-
+            //TODO: đưa các hàm create vào Manager
             var bankTransactionId = await _bankTransactionManager.CreateBankTransaction(new CreateBankTransactionDto
             {
             Name = resultAddClientPaid.BankTransactionName,
@@ -225,7 +225,7 @@ namespace FinanceManagement.APIs.BTransactions
                 BTransactionId = input.BTransactionId,
                 IncomingEntryTypeId = input.IncomingEntryTypeId.Value,
                 Name = input.IncomingEntryName,
-                Value = input.IncomingEntryValue.Value,
+                Value = input.IncomingEntryValue,
                 CurrencyId = bTransactionInfo.CurrencyId
             });
             }
@@ -312,7 +312,7 @@ namespace FinanceManagement.APIs.BTransactions
                 throw new UserFriendlyException("Vui lòng nhập tên ghi nhận thu");
             if (!input.IncomingEntryTypeId.HasValue)
                 throw new UserFriendlyException("Vui lòng chọn loại ghi nhận thu");
-            if (!input.IncomingEntryValue.HasValue)
+            if (input.IncomingEntryValue == 0)
                 throw new UserFriendlyException("Vui lòng nhập giá trị ghi nhận thu");
             if (input.IsCreateBonus && bTransactionInfo.Money < input.IncomingEntryValue)
                 throw new UserFriendlyException("Số tiền của Bonus không thể > tiền của biến động số dư");

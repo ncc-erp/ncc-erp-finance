@@ -137,35 +137,30 @@ namespace FinanceManagement.Managers.BTransactions
             }
             });
             // Validate bonus (if provided)
-            if (input.IncomingEntryValue.HasValue && input.IncomingEntryValue.Value <= 0)
+            if (input.IncomingEntryValue < 1)
             {
-                throw new UserFriendlyException("Giá trị bonus phải lớn hơn 0.");
+                throw new UserFriendlyException("Giá trị bonus phải >= 1.");
             }
 
             // Validate advance
-            if (input.CustomerAdvanceValue.HasValue && input.CustomerAdvanceValue < 0.0001) // tránh số 0 hoặc rất nhỏ
+            if (input.CustomerAdvanceValue < 1) // tránh số 0 hoặc rất nhỏ
             {
-                throw new UserFriendlyException("Giá trị khách trả trước phải lớn hơn 0.");
+                throw new UserFriendlyException("Giá trị khách trả trước phải >= 1.");
             }
 
             // Validate từng invoice mapping
             foreach (var mapping in input.InvoiceMappings)
             {
-                if (mapping.Value <= 0)
+                if (mapping.Value < 1)
                 {
-                    throw new UserFriendlyException($"Giá trị thanh toán cho hóa đơn {mapping.InvoiceId} phải lớn hơn 0.");
+                    throw new UserFriendlyException($"Giá trị thanh toán cho hóa đơn {mapping.InvoiceId} phải >= 1.");
                 }
             }
 
-            var moneyOfTransaction = btransaction.Money;
 
-            // Use null-coalescing operator to handle possible null values
-            var totalMapped = (double)input.InvoiceMappings.Sum(x => x.Value)
-                + (input.CustomerAdvanceValue ?? 0)
-                + (input.IncomingEntryValue ?? 0);
-            if (Math.Abs((decimal)(totalMapped - moneyOfTransaction)) > 1)
+            if (Math.Abs((input.TotalMappingValue - btransaction.Money)) > 1)
             {
-            throw new UserFriendlyException("Tổng giá trị mapping không khớp với giá trị thanh toán.");
+            throw new UserFriendlyException($"Tổng tiền bạn phân bổ cho invoice, bonus, trả trước {input.TotalMappingValue} đang khác bđsd {btransaction.Money}");
             }
 
             var invoiceIds = input.InvoiceMappings.Select(x => x.InvoiceId).ToList();
@@ -179,11 +174,41 @@ namespace FinanceManagement.Managers.BTransactions
             .Where(s => s.BTransactionId == btransaction.Id)
             .Select(s => s.Id)
             .FirstOrDefaultAsync();
+            ///check xem có hóa đơn nào không tồn tại, hoặc nhập quá số nợ
             foreach (var mapping in input.InvoiceMappings)
             {
                 var invoice = invoices.FirstOrDefault(x => x.Id == mapping.InvoiceId);
-                if (invoice == null) continue; // exception
+                if (invoice == null)
+                {
+                    throw new UserFriendlyException($"Không tìm thấy hóa đơn với ID {mapping.InvoiceId}");
+                }
+                if (invoice.CurrencyId == btransaction.BankAccount.CurrencyId)
+                {
+                    await HandleMappedInvoiceSameCurrencyException(
+                        invoice,
+                        btransaction,
+                        (double)mapping.Value,
+                        debtIncomingEntryType.Id,
+                        bankTransactionId
+                    );
+                }
+                else
+                {
+                    var convert = input.CurrencyNeedConverts.FirstOrDefault(x => x.ToCurrencyId == invoice.CurrencyId);
+                    await HandleMappedInvoiceDifferentCurrencyException(
+                        invoice,
+                        convert,
+                        btransaction,
+                        (double)mapping.Value,
+                        debtIncomingEntryType.Id,
+                        bankTransactionId
+                    );
 
+                }
+            }    
+                foreach (var mapping in input.InvoiceMappings)
+            {
+                var invoice = invoices.FirstOrDefault(x => x.Id == mapping.InvoiceId);
                 if (invoice.CurrencyId == btransaction.BankAccount.CurrencyId)
                 {
                     await HandleMappedInvoiceSameCurrency(
@@ -234,6 +259,29 @@ namespace FinanceManagement.Managers.BTransactions
 
             return true;
         }
+        private Task HandleMappedInvoiceSameCurrencyException(
+            Invoice invoice,
+            BTransaction btransaction,
+            double mappingValue,
+            long incomingEntryTypeId,
+            long? bankTransactionId
+        )
+        {
+            var totalPaid = invoice.IncomingEntries
+            .Where(s => !s.IsDeleted)
+            .Select(s => s.Value * s.ExchangeRate)
+            .Sum();
+
+            var moneyRemaining = (decimal)(invoice.CollectionDebt + invoice.NTF - totalPaid);
+            if (mappingValue > (double)(moneyRemaining + 1))
+            {
+            throw new UserFriendlyException($"Invoice {invoice.Id} được trả vượt quá số tiền còn nợ.");
+            }
+
+            return Task.CompletedTask;
+        }
+
+        ///TODO: Sau này merge private này với handle same currency thành một
         private async Task HandleMappedInvoiceSameCurrency(
             Invoice invoice,
             BTransaction btransaction,
@@ -272,6 +320,34 @@ namespace FinanceManagement.Managers.BTransactions
 
             await _ws.UpdateAsync(invoice);
         }
+        private Task HandleMappedInvoiceDifferentCurrencyException(
+            Invoice invoice,
+            CurrencyNeedConvertDto currencyConvert,
+            BTransaction btransaction,
+            double mappingValue,
+            long incomingEntryTypeId,
+            long? bankTransactionId)
+        {
+            if (currencyConvert == null)
+            throw new UserFriendlyException($"Không tìm thấy tỷ giá quy đổi cho hóa đơn {invoice.Id}");
+
+            var totalPaid = invoice.IncomingEntries
+            .Where(s => !s.IsDeleted)
+            .Select(s => s.Value * s.ExchangeRate)
+            .Sum();
+
+            var moneyRemaining = (decimal)(invoice.CollectionDebt + invoice.NTF - totalPaid);
+
+            var mappingValueAfterConvert = mappingValue * currencyConvert.ExchangeRate;
+            var diffInOriginalCurrency = (mappingValueAfterConvert - (double)moneyRemaining) / currencyConvert.ExchangeRate;
+
+            if (diffInOriginalCurrency > 1)
+            throw new UserFriendlyException($"Invoice {invoice.Id} được trả vượt quá số tiền còn nợ.");
+
+            // Không có thao tác bất đồng bộ -> trả về Task đã hoàn thành
+            return Task.CompletedTask;
+        }
+        ///TODO: Sau này merge private này với handle different currency thành một
         private async Task HandleMappedInvoiceDifferentCurrency(
             Invoice invoice,
             CurrencyNeedConvertDto currencyConvert,

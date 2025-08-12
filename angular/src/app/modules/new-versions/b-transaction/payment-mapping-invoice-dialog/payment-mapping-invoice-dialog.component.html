@@ -43,8 +43,13 @@
           (ngModelChange)="payment.accountId = $event; customerHandler()"
         >
         </app-selection-customs>
+      <div class="d-flex justify-content-end align-items-center mb-2" style="gap: 8px;">
+        <small class="text-muted">Tổng đã nhập:</small>
+        <strong>{{ _utilities.formatMoneyCustom(grandTotal) }}</strong>
+        <span [style.color]="_utilities.getColorByCurrency(data.currencyName)">
+          {{ data.currencyName }}
+        </span>
       </div>
-
     <!-- Danh sách Invoice cần mapping -->
     <div class="form-group row mt-3">
       <label class="col-md-3 col-form-label"> Mapping Invoice: </label>
@@ -56,8 +61,13 @@
           <tr>
           <th style="width: 260px;">Invoice</th>
           <th style="width: 140px;">Còn nợ</th>
-          <th style="width: 90px;">Tiền tệ</th>
-          <th style="width: 200px;">Giá trị mapping</th>
+            <th style="width: 90px;">Tiền tệ</th>
+            <th style="width: 200px;">
+            Khách hàng trả
+            <span [style.color]="_utilities.getColorByCurrency(data.currencyName)">
+              {{ data.currencyName }}
+            </span>
+            </th>
           </tr>
         </thead>
         <tbody>
