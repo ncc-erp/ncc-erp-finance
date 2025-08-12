@@ -1,6 +1,7 @@
 ﻿using Abp.AutoMapper;
 using FinanceManagement.Entities;
 using FinanceManagement.Enums;
+using FinanceManagement.Helper;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -24,6 +25,7 @@ namespace FinanceManagement.Managers.Invoices.Dtos
         public double NTF { get; set; }
         public double ITF{ get; set; }
         public double? InvoiceTotal => CollectionDebt + NTF;
-        public double MoneyRemaining { get; set; }
+        public double MoneyRemainingValue { get; set; }
+        public string MoneyRemaining => Helpers.FormatMoney(MoneyRemainingValue);
     }
 }

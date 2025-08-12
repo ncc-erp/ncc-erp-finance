@@ -194,7 +194,7 @@ namespace FinanceManagement.Managers.Invoices
                 .Where(e => !e.IsDeleted && e.AccountId == accountId)
                 .Sum(e => e.Value * e.ExchangeRate);
 
-            dto.MoneyRemaining = (double)(invoice.CollectionDebt + invoice.NTF - totalPaid);
+            dto.MoneyRemainingValue = (double)(invoice.CollectionDebt + invoice.NTF - totalPaid);
             result.Add(dto);
             }
 

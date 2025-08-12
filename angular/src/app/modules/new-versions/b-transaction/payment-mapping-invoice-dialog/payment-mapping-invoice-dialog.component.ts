@@ -185,6 +185,29 @@ export class PaymentMappingInvoiceDialogComponent extends AppComponentBase imple
       true
     );
   }
+  // --- helpers to sum with inputs using mask="separator"
+
+  private parseMoney(v: any): number {
+    if (v === null || v === undefined || v === '') return 0;
+    return Number(('' + v).toString().replace(/,/g, '')) || 0;
+  }
+
+  get mappingTotal(): number {
+    return (this.invoiceMappings || []).reduce((s, r) => s + this.parseMoney(r.value), 0);
+  }
+
+  get bonusValue(): number {
+    return this.payment?.isCreateBonus ? this.parseMoney(this.payment.incomingEntryValue) : 0;
+  }
+
+  get advanceValue(): number {
+    return this.parseMoney(this.payment.customerAdvanceValue);
+  }
+
+  /** Tổng trên đầu: mapping + bonus + trả trước (đơn vị = tiền của BĐSD) */
+  get grandTotal(): number {
+    return this.mappingTotal + this.bonusValue + this.advanceValue;
+  }
 
   private doSave() {
     this._btransaction.paymentForAccountMapping(this.payment).subscribe(
