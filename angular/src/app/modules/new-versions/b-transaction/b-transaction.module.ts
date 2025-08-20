@@ -7,6 +7,7 @@ import { ListBtransactionComponent } from './list-btransaction/list-btransaction
 import { SharedModule } from '../../../../shared/shared.module';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { PaymentDialogComponent } from './payment-dialog/payment-dialog.component';
+import { PaymentMappingInvoiceDialogComponent } from './payment-mapping-invoice-dialog/payment-mapping-invoice-dialog.component';
 import { SettingPaymentDialogComponent } from './setting-payment-dialog/setting-payment-dialog.component';
 import { NgxMaskModule } from 'ngx-mask';
 import { CreateEditBTransactionComponent } from './create-edit-b-transaction/create-edit-b-transaction.component';
@@ -25,7 +26,7 @@ import { LinkExpenditureResultComponent } from './link-expenditure-dialog/link-e
 import { RollbackClientPaidComponent } from './rollback-client-paid/rollback-client-paid.component';
 
 @NgModule({
-  declarations: [BTransactionComponent, ListBtransactionComponent, PaymentDialogComponent, SettingPaymentDialogComponent, CreateEditBTransactionComponent, LinkBTransactionMultiOutComingDialogComponent, ImportFileComponent, DialogResultImportFileComponent, LinkMultiBtransactionOutcomingEntryDialogComponent, RollbackLinkOutcomingEntryComponent, CurrencyExchangeComponent, BuyForeignCurrencyComponent, CreateMultiIncomingEntryComponent, ChiChuyenDoiComponent, LinkExpenditureResultComponent, RollbackClientPaidComponent],
+  declarations: [BTransactionComponent, ListBtransactionComponent, PaymentDialogComponent, PaymentMappingInvoiceDialogComponent, SettingPaymentDialogComponent, CreateEditBTransactionComponent, LinkBTransactionMultiOutComingDialogComponent, ImportFileComponent, DialogResultImportFileComponent, LinkMultiBtransactionOutcomingEntryDialogComponent, RollbackLinkOutcomingEntryComponent, CurrencyExchangeComponent, BuyForeignCurrencyComponent, CreateMultiIncomingEntryComponent, ChiChuyenDoiComponent, LinkExpenditureResultComponent, RollbackClientPaidComponent],
   imports: [
     CommonModule,
     BTransactionRoutingModule,

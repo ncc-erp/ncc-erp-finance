@@ -1,0 +1,27 @@
+.currency{
+    margin-top: 14px;
+}
+::ng-deep #checkbox-is-create-bonus label{
+    margin-bottom: 0 !important;
+}
+::ng-deep .default-incoming-entry-type label{
+    margin-bottom: 0.25rem !important;
+}
+/* Giới hạn chiều cao ~4 dòng; nếu nhiều hơn thì cuộn */
+.invoice-table-container {
+  max-height: 280px;        /* điều chỉnh nếu row-height khác */
+  overflow-y: auto;
+}
+
+/* Cố định header khi cuộn */
+.invoice-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f8f9fa;      /* khớp .thead-light */
+  z-index: 1;
+}
+
+/* Tránh giật cột khi xuất hiện scrollbar */
+.invoice-table {
+  table-layout: fixed;
+}

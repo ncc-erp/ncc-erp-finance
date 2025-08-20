@@ -1,0 +1,302 @@
+<form
+  class="form-horizontal ui-form-new"
+  autocomplete="off"
+  #revenueManagedForm="ngForm"
+>
+  <div
+    class="modal-header"
+    cdkDrag
+    cdkDragRootElement=".cdk-overlay-pane"
+    cdkDragHandle
+  >
+    <h4 class="modal-title">
+      Khách hàng thanh toán từ BĐSD: #{{ data.bTransactionId }}
+      (
+      <strong>
+        {{ _utilities.formatMoneyCustom(data.money) }}
+        <span [style.color]="_utilities.getColorByCurrency(data.currencyName)">
+          {{ data.currencyName }}
+        </span>
+      </strong>
+      )
+    </h4>
+    <button type="button" class="close" aria-label="Close" mat-dialog-close>
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="fixedBody">
+      <!-- Chọn khách hàng -->
+      <div class="form-group row px-2" style="margin-bottom: 0;">
+        <app-selection-customs
+          class="w-100"
+          label="Khách hàng"
+          [input]="filteredCustomerOptions"
+          [value]="payment.accountId"
+          [required]="true"
+          placeholder="Chọn khách hàng"
+          placeholderSearchText="Search khách hàng .."
+          [lableDirection]="lableDirectionKhachHang"
+          labelClass="col-md-3"
+          selectionClass="col-md-9"
+          (ngModelChange)="payment.accountId = $event; customerHandler()"
+        >
+        </app-selection-customs>
+      </div> <!-- ✅ ĐÃ THÊM DIV ĐÓNG  -->
+
+      <!-- Tổng đã nhập -->
+      <div class="d-flex justify-content-end align-items-center mb-2" style="gap: 8px;">
+        <small class="text-muted">Tổng đã nhập:</small>
+        <strong>{{ _utilities.formatMoneyCustom(grandTotal) }}</strong>
+        <span [style.color]="_utilities.getColorByCurrency(data.currencyName)">
+          {{ data.currencyName }}
+        </span>
+      </div>
+
+      <!-- Danh sách Invoice cần mapping -->
+      <div class="form-group row mt-3">
+        <label class="col-md-3 col-form-label"> Mapping Invoice: </label>
+        <div class="col-md-9">
+          <div class="table-responsive invoice-table-container">
+            <table class="table table-bordered table-sm mb-0 invoice-table">
+              <thead class="thead-light">
+                <tr>
+                  <th style="width: 260px;">Invoice</th>
+                  <th style="width: 140px;">Còn nợ</th>
+                  <th style="width: 90px;">Tiền tệ</th>
+                  <th style="width: 200px;">
+                    Khách hàng trả
+                    <span [style.color]="_utilities.getColorByCurrency(data.currencyName)">
+                      {{ data.currencyName }}
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let row of invoiceMappings; let i = index">
+                  <td>
+                    <strong>#{{ row.invoiceId }}</strong>
+                    <span class="text-muted">— {{ row.nameInvoice }}</span>
+                  </td>
+                  <td>{{ _utilities.formatMoneyCustom(row.moneyRemaining) }}</td>
+                  <td>
+                    <span [style.color]="_utilities.getColorByCurrency(row.currencyName || data.currencyName)">
+                      {{ row.currencyName || data.currencyName }}
+                    </span>
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control"
+                      [name]="'mapValue' + i"
+                      [(ngModel)]="row.value"
+                      [ngModelOptions]="{ standalone: true }"
+                      mask="separator"
+                      thousandSeparator=","
+                      [allowNegativeNumbers]="false"
+                      placeholder="Nhập giá trị ..."
+                      style="margin-bottom: 4px;"
+                    />
+                  </td>
+                </tr>
+
+                <!-- Hàng trống khi không có dữ liệu -->
+                <tr *ngIf="!invoiceMappings?.length">
+                  <td colspan="4" class="text-center text-muted py-3">
+                    Chưa có hóa đơn nào cần mapping cho khách hàng này.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <small class="text-muted d-block mt-1">
+            * Chỉ các dòng có giá trị &gt; 0 mới được gửi lên backend.
+          </small>
+        </div>
+      </div>
+
+      <!-- Khách hàng bonus -->
+      <div class="form-group row required mt-3">
+        <label class="col-md-3 col-form-label"> Khách hàng bonus: </label>
+        <div class="col-md-9 d-flex align-items-center">
+          <mat-checkbox
+            color="primary"
+            name="isCreateBonus"
+            id="checkbox-is-create-bonus"
+            [(ngModel)]="payment.isCreateBonus"
+          ></mat-checkbox>
+        </div>
+      </div>
+
+      <ng-container *ngIf="payment.isCreateBonus">
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label"> Tên ghi nhận thu: </label>
+          <div class="col-md-9">
+            <input
+              type="text"
+              required
+              [ngModelOptions]="{ standalone: true }"
+              (keydown)="$event.stopPropagation()"
+              (keyup.enter)="$event.stopPropagation()"
+              [(ngModel)]="payment.incomingEntryName"
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label"> Giá trị bonus: </label>
+          <div class="col-md-9">
+            <input
+              type="text"
+              required
+              [ngModelOptions]="{ standalone: true }"
+              (keydown)="$event.stopPropagation()"
+              (keyup.enter)="$event.stopPropagation()"
+              [(ngModel)]="payment.incomingEntryValue"
+              [allowNegativeNumbers]="false"
+              mask="separator"
+              thousandSeparator=","
+              class="form-control"
+            />
+          </div>
+        </div>
+
+        <div class="form-group row required">
+          <label class="col-md-3 col-form-label"> Loại nhận thu: </label>
+          <div class="col">
+            <app-selection-tree-incoming-entry-type
+              *ngIf="incomingEntryTypeOptions"
+              id="incoming-entry-type-options"
+              [treeValue]="incomingEntryTypeOptions"
+              placeholder="Loại ghi nhận thu"
+              [selected]="payment.incomingEntryTypeId"
+              (selectChange)="payment.incomingEntryTypeId = $event; incomingEntryTypeIdChange()"
+              space="3"
+            >
+            </app-selection-tree-incoming-entry-type>
+          </div>
+          <div class="d-flex align-items-center default-incoming-entry-type">
+            <mat-checkbox
+              class="float-right"
+              [checked]="isDefaultIncomingEntryType"
+              [disabled]="
+                !payment.incomingEntryTypeId && !isDefaultIncomingEntryType
+              "
+              (change)="defaultIncomingEntryTypeChange($event)"
+              #defaultIncomingEntryId
+              >Default</mat-checkbox
+            >
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Khách hàng trả trước -->
+      <div class="form-group row mt-3">
+        <label class="col-md-3 col-form-label"> Khách hàng trả trước: </label>
+        <div class="col-md-9">
+          <input
+            type="text"
+            class="form-control"
+            [ngModelOptions]="{ standalone: true }"
+            [(ngModel)]="payment.customerAdvanceValue"
+            mask="separator"
+            thousandSeparator=","
+            [allowNegativeNumbers]="false"
+            placeholder="Nhập số tiền trả trước (tuỳ chọn)"
+          />
+          <small class="text-muted d-block mt-1">
+            * Để trống nếu không có trả trước.
+          </small>
+        </div>
+      </div>
+
+      <!-- Tỉ giá (nếu có) -->
+      <ng-template #currencyConvert [ngIf]="currencyNeedConverts.length > 0">
+        <div class="form-group row mt-2">
+          <label class="col-md-3 col-form-label">
+            {{ 'Tỉ giá' | localize }}: <span class="text-danger">*</span>
+          </label>
+          <div class="col-9">
+            <ng-container *ngFor="let item of currencyNeedConverts; let i = index">
+              <div
+                class="row col"
+                [ngClass]="i > 0 ? 'mt-1' : ''"
+                style="white-space: nowrap; flex-wrap: nowrap"
+              >
+                <label class="col-form-label col-2" *ngIf="!item.isReverseExchangeRate">
+                  1 {{ item.fromCurrencyName }} =
+                </label>
+                <label class="col-form-label col-2" *ngIf="item.isReverseExchangeRate">
+                  1 {{ item.toCurrencyName }} =
+                </label>
+
+                <div class="col-5">
+                  <input
+                    type="text"
+                    mask="separator':''"
+                    thousandSeparator=","
+                    allowNegativeNumbers="true"
+                    class="form-control"
+                    [name]="'exchangeRate' + i"
+                    [(ngModel)]="item.exchangeRate"
+                    required
+                    #exchangeRate="ngModel"
+                    #exchangeRateEl
+                    placeholder="Nhập tỉ giá..."
+                  />
+                  <abp-validation-summary
+                    [control]="exchangeRate"
+                    [controlEl]="exchangeRateEl"
+                  >
+                  </abp-validation-summary>
+                </div>
+
+                <label class="col-form-label col-1" *ngIf="!item.isReverseExchangeRate">
+                  {{ item.toCurrencyName }}
+                </label>
+                <label class="col-form-label col-1" *ngIf="item.isReverseExchangeRate">
+                  {{ item.fromCurrencyName }}
+                </label>
+
+                <div class="custom-control custom-checkbox ml-5 col-2">
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    [name]="item.toCurrencyName"
+                    [id]="item.toCurrencyName"
+                    [(ngModel)]="item.isReverseExchangeRate"
+                  />
+                  <label class="custom-control-label mt-2" [for]="item.toCurrencyName">
+                    Đảo ngược
+                  </label>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="row">
+          <label class="col-md-3"></label>
+          <div class="col-9">
+            <strong>Format: 24,000.5</strong>
+          </div>
+        </div>
+      </ng-template>
+    </div> <!-- /.fixedBody -->
+
+    <!-- Buttons -->
+    <div class="row d-flex justify-content-between mt-4 px-1">
+      <button mat-dialog-close class="btn btn-default">Hủy</button>
+      <button
+        (click)="process()"
+        [disabled]="!revenueManagedForm.valid || isBtnDisable()"
+        class="btn btn-primary"
+      >
+        Thực hiện
+      </button>
+    </div>
+  </div> <!-- /.modal-body -->
+</form>

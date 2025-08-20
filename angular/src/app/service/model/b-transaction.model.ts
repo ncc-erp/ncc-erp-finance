@@ -29,6 +29,22 @@ export class PaymentInvoiceForAccount {
     isCreateBonus: boolean;
     currencyNeedConverts: CurrencyNeedConvert[];
 }
+export class PaymentInvoiceForAccountMapping {
+  bTransactionId: number;
+  accountId: number;
+  isCreateBonus: boolean;
+  incomingEntryTypeId?: number;
+  incomingEntryName: string;
+  incomingEntryValue?: number;
+  customerAdvanceValue?: number;
+  currencyNeedConverts: CurrencyNeedConvert[] = [];
+  invoiceMappings: InvoicePaymentMapping[] = [];
+}
+
+export class InvoicePaymentMapping {
+  invoiceId: number;
+  value: number;
+}
 
 export class InComingAndBTransactionDto {
     incomingEntryTypeId: number;

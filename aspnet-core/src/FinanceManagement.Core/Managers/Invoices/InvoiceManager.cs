@@ -176,6 +176,30 @@ namespace FinanceManagement.Managers.Invoices
             var mInvoice = ObjectMapper.Map<GetInvoiceByIdDto>(invoice);
             return mInvoice;
         }
+        public async Task<List<GetInvoiceByAccountIdDto>> GetListInvoiceByAccountId(long accountId)
+        {
+            var invoices = await _ws.GetAll<Invoice>()
+            .Include(x => x.IncomingEntries)
+            .Where(x => x.Status != NInvoiceStatus.HOAN_THANH && x.Status != NInvoiceStatus.KHONG_TRA && x.AccountId == accountId)
+            .OrderBy(x => x.Deadline)
+            .ToListAsync();
+
+            var result = new List<GetInvoiceByAccountIdDto>();
+
+            foreach (var invoice in invoices)
+            {
+            var dto = ObjectMapper.Map<GetInvoiceByAccountIdDto>(invoice);
+                dto.CurrencyName = invoice.Currency?.Code;
+            var totalPaid = invoice.IncomingEntries
+                .Where(e => !e.IsDeleted && e.AccountId == accountId)
+                .Sum(e => e.Value * e.ExchangeRate);
+
+            dto.MoneyRemainingValue = (double)(invoice.CollectionDebt + invoice.NTF - totalPaid);
+            result.Add(dto);
+            }
+
+            return result;
+        }
         public async Task<GetInvoiceByIdDto> CreateInvoice(CreateInvoiceDto input)
         {
             var revenue = ObjectMapper.Map<Invoice>(input);

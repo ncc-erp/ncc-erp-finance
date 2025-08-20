@@ -1,6 +1,5 @@
 ﻿using Abp.Dependency;
 using FinanceManagement.EntityFrameworkCore;
-using System.Threading;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
@@ -8,8 +7,6 @@ using System.Linq;
 using System.Text;
 using FinanceManagement.Entities.NewEntities;
 using FinanceManagement.Helper;
-using System.Text.RegularExpressions;
-using FinanceManagement.Configuration;
 using FinanceManagement.Managers.BTransactions.Dtos;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,11 +15,10 @@ using Abp.Threading.Timers;
 using FinanceManagement.Services.Firebase;
 using FinanceManagement.GeneralModels;
 using FinanceManagement.Enums;
-using FinanceManagement.Notifications.Komu;
-using FinanceManagement.Entities;
 using FinanceManagement.Managers.Settings;
 using FinanceManagement.Notifications.Mezon;
 using FinanceManagement.Notifications.Mezon.Dto;
+using Newtonsoft.Json;
 
 namespace FinanceManagement.Web.Host.Startup
 {
@@ -31,11 +27,9 @@ namespace FinanceManagement.Web.Host.Startup
         private readonly ILogger<CrawlBTransactionBackgroundWorker> _log;
         private FinanceManagementDbContext _context;
         private readonly FirebaseService _firebaseService;
-        private static HashSet<string> _hashSetKey;
+        private static List<string> _dbTransactionKeys;
         private readonly IOptions<FirebaseConfig> _firesbaseOptions;
-        private readonly IOptions<KomuNotificationConfig> _komuNotificationOptions;
         private const int TENANT_NULL_ID = -1;
-        private readonly IKomuNotification _komuNotification;
         private readonly IMezonNotification _mezonNotification;
         public IMySettingManager MySettingManager { get; set; }
 
@@ -45,56 +39,48 @@ namespace FinanceManagement.Web.Host.Startup
             ILogger<CrawlBTransactionBackgroundWorker> log,
             FirebaseService firebaseService,
             IOptions<FirebaseConfig> options,
-            IOptions<KomuNotificationConfig> komuNotificationOptions,
-            IKomuNotification komuNotification,
             IMezonNotification mezonNotification
         ) : base(timer)
         {
             _context = iocResolver.Resolve<FinanceManagementDbContext>();
             _log = log;
             _firebaseService = firebaseService;
-            _hashSetKey = new HashSet<string>();
+            _dbTransactionKeys = new List<string>();
             _firesbaseOptions = options;
             Timer.Period = _firesbaseOptions.Value.IntervalMilisecond;
-            _komuNotificationOptions = komuNotificationOptions;
-            _komuNotification = komuNotification;
             _mezonNotification = mezonNotification;
         }
         protected override void DoWork()
         {
-            _log.LogCritical($"Start Firebase Background Service");
+            _log.LogInformation($"CrawlBTransactionBackgroundWorker.DoWork() start");
             CrawlBTransaction().Wait();
         }
         private async Task CrawlBTransaction()
         {
             //using HashSet to save key exists
-            InitHashSetKey();
+            InitDBTransactionKeys();
 
             var dicBankTransactions = GetDicBankNumberToBankAccountInfo();
             var dicPeriods = GetDicTenantIdToActivePeriodId();
 
             //get data using httpclient call to firebase
-            var dics = await _firebaseService.GetCrawlTransactions<Dictionary<string, string>>();
+            var dicFireBaseTransaction = await _firebaseService.GetCrawlTransactions<Dictionary<string, string>>();
 
             //get key not exists in HashSet to insert to DB
-            var insertKeys = dics.Keys.Except(_hashSetKey);
-
-            var regexMoneyDetection = new Regex(SettingManager.GetSettingValueForApplication(AppSettingNames.RegexMoneyDetection));
-            var regexSTKDetection = new Regex(SettingManager.GetSettingValueForApplication(AppSettingNames.RegexSTKDetection));
-            var regexRemainMoneyDetection = new Regex(SettingManager.GetSettingValueForApplication(AppSettingNames.RegexRemainMoneyDetection));
-
+            var insertKeys = dicFireBaseTransaction.Keys.Except(_dbTransactionKeys);
+           
             using (var uow = _context.Database.BeginTransaction())
             {
                 foreach (var key in insertKeys)
                 {
-                    AddToHashSet(key);
+                    AddToDbTransactionKeys(key);
                     try
                     {
-                        _log.LogCritical($"Key: {key} and Value: {dics[key]}");
+                        _log.LogInformation($"Key: {key} and Value: {dicFireBaseTransaction[key]}");
 
-                        var logger = new BTransactionLog()
+                        var bTransactionLog = new BTransactionLog()
                         {
-                            Message = dics[key],
+                            Message = dicFireBaseTransaction[key],
                             IsValid = false,
                             Key = key
                         };
@@ -103,42 +89,29 @@ namespace FinanceManagement.Web.Host.Startup
                         var convertTimestamp = Helpers.ConvertTimestampToLong(key);
                         if (!convertTimestamp.IsValid)
                         {
-                            logger.ErrorMessage = convertTimestamp.ErrorMessage;
-                            _context.Add(logger);
+                            bTransactionLog.ErrorMessage = convertTimestamp.ErrorMessage;
+                            _context.Add(bTransactionLog);
 
                             continue;
                         }
                         var timeAt = Helpers.ConvertFromUnixTimestamp(convertTimestamp.Result);
-                        logger.TimeAt = timeAt;
-
-                        var messageClean = Helpers.RemoveNewLine(dics[key]);
-
-                        var moneyDetection = Helpers.DetectionMoney(regexMoneyDetection, messageClean);
-                        var bankNumberDetection = Helpers.DetectionBankNumber(regexSTKDetection, messageClean);
-                        var remainMoneyDetection = Helpers.DetectionMoney(regexRemainMoneyDetection, messageClean);
-
-                        //check money of transaction
-                        if (!moneyDetection.IsValid)
+                        bTransactionLog.TimeAt = timeAt;
+                        var crawlResult = CrawlBTransactionHelper.ExtractBTransaction(dicFireBaseTransaction[key]);
+                        if (crawlResult.TransactionAmount == 0 || string.IsNullOrEmpty(crawlResult.AccountNumber))
                         {
-                            logger.ErrorMessage = moneyDetection.ErrorMessage;
-                            _context.Add(logger);
-                            continue;
-                        }
-
-                        //check bank number of transaction
-                        if (!bankNumberDetection.IsValid)
-                        {
-                            logger.ErrorMessage = bankNumberDetection.ErrorMessage;
-                            _context.Add(logger);
+                            bTransactionLog.ErrorMessage = "Can't extract TransactionAmount or AccountNumber";
+                            _context.Add(bTransactionLog);
+                            _log.LogInformation(JsonConvert.SerializeObject(bTransactionLog));
                             continue;
                         }
 
                         //get information bank account -> {Id, CurrencyId, TenantId} and check exists
-                        var bankAccount = GetBankAccountByBankNumber(dicBankTransactions, bankNumberDetection.Result);
+                        var bankAccount = GetBankAccountByBankNumber(dicBankTransactions, crawlResult.AccountNumber);
                         if (!bankAccount.IsValid)
                         {
-                            logger.ErrorMessage = bankAccount.ErrorMessage;
-                            _context.Add(logger);
+                            bTransactionLog.ErrorMessage = bankAccount.ErrorMessage;
+                            _context.Add(bTransactionLog);
+                            _log.LogInformation(JsonConvert.SerializeObject(bTransactionLog));
                             continue;
                         }
 
@@ -146,9 +119,9 @@ namespace FinanceManagement.Web.Host.Startup
                         var bTransaction = new BTransaction
                         {
                             BankAccountId = bankAccount.Result.Id,
-                            Money = moneyDetection.Result,
+                            Money = crawlResult.TransactionAmount,
                             TimeAt = timeAt,
-                            Note = dics[key],
+                            Note = dicFireBaseTransaction[key],
                             IsCrawl = true,
                             TenantId = tenantId
                         };
@@ -166,28 +139,20 @@ namespace FinanceManagement.Web.Host.Startup
 
                         double currentBalanceNumber = -1;
 
-                        //check remain money detection
-                        if (remainMoneyDetection.IsValid)
-                        {
-                            currentBalanceNumber = GetCurrentBalanance(bTransaction.PeriodId, bTransaction.BankAccountId);
-                        }
-                        else
-                        {
-                            logger.ErrorMessage = remainMoneyDetection.ErrorMessage;
-                        }
+                        currentBalanceNumber = GetCurrentBalanance(bTransaction.PeriodId, bTransaction.BankAccountId);                   
 
                         var config = await MySettingManager.GetEnableCrawlBTransactionNoti(tenantId);
 
                         if (bool.Parse(config))
                         {
                             string contentNotify = GetContentNotificationCrawlBTransaction(
-                                message: dics[key],
-                                bankNumber: bankNumberDetection.Result,
+                                message: dicFireBaseTransaction[key],
+                                bankNumber: crawlResult.AccountNumber,
                                 bankAccountName: bankAccount.Result.BankAccountName,
-                                money: moneyDetection.Result,
+                                money: crawlResult.TransactionAmount,
                                 currencyName: bankAccount.Result.CurrencyName,
                                 timeAt.ToString("dd/MM/yyyy HH:mm"),
-                                duTheoMessage: remainMoneyDetection.Result,
+                                duTheoMessage: crawlResult.Balance,
                                 duSo: currentBalanceNumber
                             );
                             var mezonMessage = new MezonMessage
@@ -196,14 +161,15 @@ namespace FinanceManagement.Web.Host.Startup
                                 mentions = new List<Mentions>()
                             };
 
-                            //    _komuNotification.NotifyWithMessage(contentNotify, tenantId);
+                            //_komuNotification.NotifyWithMessage(contentNotify, tenantId);
                             _mezonNotification.NotifyWithMezonMessage(mezonMessage, tenantId);
                         }
 
-                        logger.BTransactionId = bTransaction.Id;
-                        logger.IsValid = true;
-                        logger.TenantId = bankAccount.Result.TenantId;
-                        _context.Add(logger);
+                        bTransactionLog.BTransactionId = bTransaction.Id;
+                        bTransactionLog.IsValid = true;
+                        bTransactionLog.TenantId = bankAccount.Result.TenantId;
+                        _context.Add(bTransactionLog);
+                        
                     }
                     catch (Exception ex)
                     {
@@ -214,10 +180,14 @@ namespace FinanceManagement.Web.Host.Startup
                 uow.Commit();
             }
         }
-        private void InitHashSetKey()
+        private void InitDBTransactionKeys()
         {
-            if (_hashSetKey.Any()) return;
-            _hashSetKey = _context.BTransactionLogs.Select(s => s.Key).ToHashSet();
+            if (_dbTransactionKeys.Any()) return;
+            _dbTransactionKeys = _context.BTransactionLogs
+                .Where(s => !s.IsDeleted)
+                .Select(s => s.Key)
+                .ToList();
+              
         }
         private Dictionary<int, int> GetDicTenantIdToActivePeriodId()
         {
@@ -247,11 +217,11 @@ namespace FinanceManagement.Web.Host.Startup
                     CurrencyName = x.Info.CurrencyName
                 });
         }
-        private void AddToHashSet(string key)
+        private void AddToDbTransactionKeys(string key)
         {
             try
             {
-                _hashSetKey.Add(key);
+                _dbTransactionKeys.Add(key);
             }
             catch (Exception ex)
             {
