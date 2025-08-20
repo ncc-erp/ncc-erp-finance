@@ -168,6 +168,72 @@ namespace FinanceManagement.APIs.BTransactions
         }
         [HttpPost]
         [AbpAuthorize(PermissionNames.Finance_BĐSD_KhachHangThanhToan)]
+        public async Task PaymentInvoiceByAccountMapping(PaymentInvoiceMappingDto input)
+        {
+            var bTransactionInfo = await _btransactionManager.GetBTransactionInformation(input.BTransactionId);
+            if (bTransactionInfo.Money < 0)
+            throw new UserFriendlyException("Không link Yêu cầu chi với số tiền < 0");
+
+            if (input.IsCreateBonus)
+            await CheckCreateBonusMapping(input, bTransactionInfo);
+
+            var debtIncomingEntryType = await _mySettingManager.GetDebtClientAsync();
+            if (debtIncomingEntryType.Id == default)
+            throw new UserFriendlyException("Bạn cần setting khách hàng thanh toán");
+
+            var resultAddClientPaid = await _btransactionManager.AddClientPaid(input.AccountId, input.BTransactionId);
+
+            var clientBankAccount = await WorkScope.GetAll<Account>()
+            .Where(s => s.Id == input.AccountId)
+            .Select(s => new
+            {
+                AccountName = s.Name,
+                BankAccountId = s.BankAccounts.Where(x => x.CurrencyId == resultAddClientPaid.CurrencyId)
+                             .Select(x => x.Id)
+                             .FirstOrDefault()
+            })
+            .FirstOrDefaultAsync();
+
+            long clientBankAccountId = clientBankAccount.BankAccountId;
+            if (clientBankAccountId == 0)
+            {
+            clientBankAccountId = await _bankAccountManager.CreateBankAccount(new CreateBankAccountDto
+            {
+                AccountId = input.AccountId,
+                BankNumber = "1",
+                CurrencyId = resultAddClientPaid.CurrencyId,
+                HolderName = clientBankAccount.AccountName + " - " + resultAddClientPaid.CurrencyName
+            });
+            }
+            //TODO: đưa các hàm create vào Manager
+            var bankTransactionId = await _bankTransactionManager.CreateBankTransaction(new CreateBankTransactionDto
+            {
+            Name = resultAddClientPaid.BankTransactionName,
+            BTransactionId = resultAddClientPaid.BTransactionId,
+            FromBankAccountId = clientBankAccountId,
+            FromValue = resultAddClientPaid.Money,
+            ToBankAccountId = resultAddClientPaid.BankAccountId,
+            ToValue = resultAddClientPaid.Money,
+            TransactionDate = resultAddClientPaid.TimeAt
+            });
+
+            if (input.IsCreateBonus)
+            {
+            await _incomingEntryManager.CreateIncomingEntry(new CreateIncomingEntryDto
+            {
+                BankTransactionId = bankTransactionId,
+                BTransactionId = input.BTransactionId,
+                IncomingEntryTypeId = input.IncomingEntryTypeId.Value,
+                Name = input.IncomingEntryName,
+                Value = input.IncomingEntryValue,
+                CurrencyId = bTransactionInfo.CurrencyId
+            });
+            }
+
+            await _btransactionManager.PaymentInvoiceByAccountMapping(input);
+        }
+        [HttpPost]
+        [AbpAuthorize(PermissionNames.Finance_BĐSD_KhachHangThanhToan)]
         public async Task PaymentInvoiceByAccount(PaymentInvoiceForAccountDto input)
         {
             var bTransactionInfo = await _btransactionManager.GetBTransactionInformation(input.BTransactionId);
@@ -236,6 +302,17 @@ namespace FinanceManagement.APIs.BTransactions
             if (!input.IncomingEntryTypeId.HasValue)
                 throw new UserFriendlyException("Vui lòng chọn loại ghi nhận thu");
             if (!input.IncomingEntryValue.HasValue)
+                throw new UserFriendlyException("Vui lòng nhập giá trị ghi nhận thu");
+            if (input.IsCreateBonus && bTransactionInfo.Money < input.IncomingEntryValue)
+                throw new UserFriendlyException("Số tiền của Bonus không thể > tiền của biến động số dư");
+        }
+        private async Task CheckCreateBonusMapping(PaymentInvoiceMappingDto input, LinkBTransactionInfomationDto bTransactionInfo)
+        {
+            if (input.IncomingEntryName.IsEmpty())
+                throw new UserFriendlyException("Vui lòng nhập tên ghi nhận thu");
+            if (!input.IncomingEntryTypeId.HasValue)
+                throw new UserFriendlyException("Vui lòng chọn loại ghi nhận thu");
+            if (input.IncomingEntryValue == 0)
                 throw new UserFriendlyException("Vui lòng nhập giá trị ghi nhận thu");
             if (input.IsCreateBonus && bTransactionInfo.Money < input.IncomingEntryValue)
                 throw new UserFriendlyException("Số tiền của Bonus không thể > tiền của biến động số dư");

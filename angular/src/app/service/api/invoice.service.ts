@@ -1,23 +1,42 @@
-import { PagedRequestDto } from './../../../shared/paged-listing-component-base';
-import { Observable } from 'rxjs-compat';
-import { HttpClient, HttpParams } from '@angular/common/http';
+// src/app/service/api/new-versions/invoice.service.ts
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
 import { BaseApiService } from './base-api.service';
-import { throwError } from 'rxjs';
+import { ApiResponse } from '@app/service/model/api-response.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class InvoiceService extends BaseApiService {
-
-  constructor(
-    http: HttpClient
-  ) {
+  constructor(http: HttpClient) {
     super(http);
   }
+
+  // tên controller trên BE
   changeUrl() {
     return 'Invoice';
   }
+
+  /**
+   * Lấy danh sách invoice theo accountId để mapping.
+   * GET /api/services/app/Invoice/GetListInvoiceByAccountId?accountId=...
+   */
+  getListInvoiceByAccountId(accountId: number): Observable<ApiResponse<InvoiceItemDto[]>> {
+    return this.http.get<ApiResponse<InvoiceItemDto[]>>(
+      this.rootUrl + `/GetListInvoiceByAccountId?accountId=${accountId}`
+    );
+  }
+}
+
+
+/** DTO trả về từ BE cho list invoice mapping */
+export interface InvoiceItemDto {
+  invoiceId: number;
+  remainValue: number;
+  currencyName: string;
+}
+
+
   //public 
   // public deleteInvoice(id: any): Observable<any> {
   //   return this.http.delete<any>(this.rootUrl + '/Delete', {
@@ -53,4 +72,4 @@ export class InvoiceService extends BaseApiService {
   // exportExcel(request: PagedRequestDto): Observable<any> {
   //   return this.http.post<any>(this.rootUrl + '/ExportExcel', request);
   // }
-}
+

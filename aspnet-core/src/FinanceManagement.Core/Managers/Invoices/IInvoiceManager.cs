@@ -12,6 +12,7 @@ namespace FinanceManagement.Managers.Invoices
     {
         IQueryable<AllPropInvoiceAndIncomByAccountDto> IQGetAllInvoice();
         Task<GetInvoiceByIdDto> GetById(long id);
+        Task<List<GetInvoiceByAccountIdDto>> GetListInvoiceByAccountId(long accountId);
         Task UpdateNote(UpdateNoteInvoiceDto input);
         Task UpdateStatus(UpdateStatusInvoiceDto input);
         Task<CheckAutoPaidDto> CheckAutoPaid(long accountId);
