@@ -20,7 +20,7 @@ namespace FinanceManagement.Helper
                 info.AccountNumber = accountMatch.Groups[1].Value;
 
             // 2. Tìm biến động số dư
-            var transactionMatch = Regex.Match(input, @"(?:^|\n)([+-])\s*VND\s*([\d,]+)|So tien GD:([+-][\d,]+)");
+            var transactionMatch = Regex.Match(input, @"(?:^|\n)([+-])\s*VND\s*([\d,]+(?:\.\d+)?)|So tien GD:([+-][\d,]+(?:\.\d+)?)");
             if (transactionMatch.Success)
             {
                 string rawAmount = "";
@@ -44,7 +44,7 @@ namespace FinanceManagement.Helper
             }
 
             // 3. Tìm số dư
-            var balanceMatch = Regex.Match(input, @"So du:\s*(?:VND\s*)?([\d,]+)");
+            var balanceMatch = Regex.Match(input, @"So du:\s*(?:VND\s*)?([\d,]+(?:\.\d+)?)");
             if (balanceMatch.Success)
             {
                 string balanceRaw = balanceMatch.Groups[1].Value.Replace(",", "");
