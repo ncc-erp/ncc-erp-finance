@@ -1,6 +1,7 @@
 ﻿using Abp.Runtime.Session;
 using FinanceManagement.GeneralModels;
 using FinanceManagement.MultiTenancy;
+using FinanceManagement.Uitls;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -18,9 +19,10 @@ namespace FinanceManagement.Services.Firebase
             _options = options;
         }
 
-        public async Task<T> GetCrawlTransactions<T>()
+        public async Task<T> GetBTransactions<T>()
         {
-            string url = $"/messages/.json?auth={_options.Value.SecretKey}";
+
+            string url = $"/messages/.json?auth={_options.Value.SecretKey}&orderBy=%22$key%22&startAt=%22{DateTimeUtils.GetLast30DaysUnixTimeSeconds()}%22";
             return await this.GetAsync<T>(url);
         }
     }

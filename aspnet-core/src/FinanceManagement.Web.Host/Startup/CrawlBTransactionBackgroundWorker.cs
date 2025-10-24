@@ -64,7 +64,7 @@ namespace FinanceManagement.Web.Host.Startup
             var dicPeriods = GetDicTenantIdToActivePeriodId();
 
             //get data using httpclient call to firebase
-            var dicFireBaseTransaction = await _firebaseService.GetCrawlTransactions<Dictionary<string, string>>();
+            var dicFireBaseTransaction = await _firebaseService.GetBTransactions<Dictionary<string, string>>();
 
             //get key not exists in HashSet to insert to DB
             var insertKeys = dicFireBaseTransaction.Keys.Except(_dbTransactionKeys);
