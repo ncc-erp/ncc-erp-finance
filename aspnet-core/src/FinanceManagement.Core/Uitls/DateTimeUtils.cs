@@ -64,5 +64,13 @@ namespace FinanceManagement.Uitls
         {
             return new DateTime(date.Year, date.Month, 1).AddMonths(1).AddDays(-1);
         }
+
+        public static long GetLast30DaysUnixTimeSeconds()
+        {
+            DateTime date = DateTime.UtcNow.AddDays(-30);
+            DateTimeOffset dto = new DateTimeOffset(date, TimeSpan.Zero);
+
+            return dto.ToUnixTimeSeconds();
+        }
     }
 }
