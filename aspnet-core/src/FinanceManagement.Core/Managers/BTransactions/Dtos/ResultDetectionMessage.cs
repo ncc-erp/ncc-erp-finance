@@ -43,4 +43,17 @@ namespace FinanceManagement.Managers.BTransactions.Dtos
         public bool IsValid { get; set; }
         public double? Result { get; set; }
     }
+    public class ResultCheckMezonBankAccount : NotiResult
+    {
+        public MezonBankAccountCrawl Result { get; set; }
+    }
+    public class MezonBankAccountCrawl
+    {
+        public string WalletAddress { get; set; }
+        public long? CurrencyId { get; set; }
+        public long Id { get; set; }
+        public int? TenantId { get; set; }
+        public string BankAccountName { get; set; }
+        public string CurrencyName { get; set; }
+    }
 }
