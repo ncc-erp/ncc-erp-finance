@@ -18,11 +18,11 @@ namespace FinanceManagement.Web.Host.Controllers
     [ApiController]
     public class TestCrawlController : FinanceManagementControllerBase
     {
-        private readonly CrawlBTransactionBackgroundWorker _worker;
+        private readonly CrawlBTransactionMezonDongBackgroundWorker _worker;
         private readonly ILogger<TestCrawlController> _logger;
 
         public TestCrawlController(
-            CrawlBTransactionBackgroundWorker worker,
+            CrawlBTransactionMezonDongBackgroundWorker worker,
             ILogger<TestCrawlController> logger)
         {
             _worker = worker;
@@ -39,7 +39,7 @@ namespace FinanceManagement.Web.Host.Controllers
             try
             {
                 // Gọi function private CrawlBTransactionMezonD()
-                var method = typeof(CrawlBTransactionBackgroundWorker)
+                var method = typeof(CrawlBTransactionMezonDongBackgroundWorker)
                     .GetMethod("CrawlBTransactionMezonD", BindingFlags.NonPublic | BindingFlags.Instance);
 
                 if (method == null)
@@ -52,7 +52,10 @@ namespace FinanceManagement.Web.Host.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"❌ Lỗi khi gọi CrawlBTransactionMezonD(): {ex.Message}");
+                // Lấy inner exception để xem lỗi thực sự
+                var innerException = ex.InnerException ?? ex;
+                _logger.LogError($"Error during crawl: {innerException.Message}", innerException);
+                return BadRequest($"❌ Lỗi khi gọi CrawlBTransactionMezonD(): {innerException.Message}\nStack: {innerException.StackTrace}");
             }
         }
 
@@ -66,7 +69,7 @@ namespace FinanceManagement.Web.Host.Controllers
             try
             {
                 // Get accounts using reflection
-                var method = typeof(CrawlBTransactionBackgroundWorker)
+                var method = typeof(CrawlBTransactionMezonDongBackgroundWorker)
                     .GetMethod("GetDicMezonIdToBankAccountInfo",
                         System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 

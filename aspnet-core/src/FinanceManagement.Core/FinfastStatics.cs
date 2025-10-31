@@ -7,5 +7,6 @@ namespace FinanceManagement
     public class FinfastStatics
     {
         public static bool EnableFirebaseService { get; set; } = true;
+        public static bool EnableMezonDongService { get; set; } = true;
     }
 }
