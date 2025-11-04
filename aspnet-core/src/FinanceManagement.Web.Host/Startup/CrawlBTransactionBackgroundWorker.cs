@@ -57,7 +57,7 @@ namespace FinanceManagement.Web.Host.Startup
         protected override void DoWork()
         {
             _log.LogInformation($"CrawlBTransactionBackgroundWorker.DoWork() start");
-            //CrawlBTransaction().Wait();
+            CrawlBTransaction().Wait();
 
         }
         private async Task CrawlBTransaction()
