@@ -13,12 +13,12 @@ namespace FinanceManagement.Helper
 
             try
             {
-                // Tách phần message và metadata
+                
                 var parts = input.Split(new[] { "|#Meta:" }, StringSplitOptions.None);
 
                 if (parts.Length > 1)
                 {
-                    // Phần metadata
+                    
                     var metaParts = parts[1].Split(';');
 
                     foreach (var metaPart in metaParts)
@@ -59,12 +59,12 @@ namespace FinanceManagement.Helper
                     }
                 }
 
-                // Lưu message gốc (phần dễ đọc)
+                
                 info.ReadableMessage = parts[0];
             }
             catch (Exception)
             {
-                // Return empty info if parsing fails
+                
             }
 
             return info;
@@ -80,6 +80,6 @@ namespace FinanceManagement.Helper
         public long Timestamp { get; set; }
         public long BlockNumber { get; set; }
         public string WalletAddress { get; set; }
-        public string ReadableMessage { get; set; }  // Message dễ đọc
+        public string ReadableMessage { get; set; }  
     }
 }

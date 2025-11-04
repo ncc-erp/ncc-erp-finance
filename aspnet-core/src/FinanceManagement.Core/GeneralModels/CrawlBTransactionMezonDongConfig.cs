@@ -9,5 +9,6 @@ namespace FinanceManagement.GeneralModels
         public int IntervalMilisecond { get; set; } = 600000;
         public string BaseAddress { get; set; }
         public bool EnableCrawlBTransactionMezonDong { get; set; }
+        public int DaysToLookBack { get; set; } = 30;
     }
 }

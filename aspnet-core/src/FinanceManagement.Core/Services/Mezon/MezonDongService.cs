@@ -47,9 +47,23 @@ namespace FinanceManagement.Services.Mezon
 
         public async Task<Dictionary<string, string>> GetMezonTransactions(
             Dictionary<string, MezonBankAccountCrawl> dicWalletAccounts,
-            List<string> existingHashes = null)
+            List<string> existingHashes = null,
+            long cutoffTimestamp = 0)
         {
             var result = new Dictionary<string, string>();
+
+            if (dicWalletAccounts == null || !dicWalletAccounts.Any())
+            {
+                _log.LogWarning("dicWalletAccounts is null or empty");
+                return result;
+            }
+
+            if (cutoffTimestamp == 0)
+            {
+                cutoffTimestamp = DateTimeOffset.UtcNow.AddDays(-30).ToUnixTimeSeconds();
+            }
+
+            _log.LogInformation($"Crawling transactions with cutoff timestamp: {cutoffTimestamp}");
 
             foreach (var kvp in dicWalletAccounts)
             {
@@ -58,47 +72,61 @@ namespace FinanceManagement.Services.Mezon
 
                 try
                 {
-                    int page = 0;
-                    int limit = 50;
-                    bool shouldContinue = true;
+                    _log.LogInformation($"Processing wallet: {bankAccount.BankAccountName} ({walletAddress})");
 
-                    var apiResponse = await GetTransactionsByWallet(walletAddress);
+                    int limit = 1000;
+
+                    var apiResponse = await GetTransactionsByWallet(walletAddress, 0, limit);
 
                     if (apiResponse?.Data != null && apiResponse.Data.Any())
                     {
+                        int newTxCount = 0;
+                        int oldTxCount = 0;
+                        int existingTxCount = 0;
+
                         foreach (var tx in apiResponse.Data)
                         {
-                            // Nếu hash đã tồn tại, dừng lại
-                            if (existingHashes != null && existingHashes.Contains(tx.Hash))
+                            
+                            if (tx.Timestamp < cutoffTimestamp)
                             {
-                                _log.LogInformation($"Found existing hash {tx.Hash}, stopping crawl");
-                                shouldContinue = false;
-                                break;
+                                oldTxCount++;
+                                continue;
                             }
 
-                            if (!result.ContainsKey(tx.Hash))
+                            
+                            if (existingHashes != null && existingHashes.Contains(tx.Hash))
                             {
-                                // Calculate actual amount
-                                double actualAmount = tx.Amount / 1_000_000.0;
-                                double money = 0;
+                                existingTxCount++;
+                                continue; // BỎ QUA, đã có rồi
+                            }
+
+                            
+                            if (result.ContainsKey(tx.Hash))
+                            {
+                                continue;
+                            }
+
+                            
+                            double actualAmount = tx.Amount / 1_000_000.0;
+                            double money = 0;
 
                                 // Determine money direction
                                 if (tx.Sender.Equals(walletAddress, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    money = -Math.Abs(actualAmount); // Tiền ra
+                                    money = -Math.Abs(actualAmount); 
                                 }
                                 else if (tx.Receiver.Equals(walletAddress, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    money = Math.Abs(actualAmount); // Tiền vào
+                                    money = Math.Abs(actualAmount); 
                                 }
-                                // Lấy tên tài khoản
+                                
                                 string senderName = GetBankAccountNameByWallet(dicWalletAccounts, tx.Sender);
                                 string receiverName = GetBankAccountNameByWallet(dicWalletAccounts, tx.Receiver);
 
-                                // Lấy note từ text_data
+                                
                                 string noteText = !string.IsNullOrEmpty(tx.TextData) ? tx.TextData : "";
 
-                                // Format message giống Firebase
+                                
                                 string message = $"Tài khoản {senderName} đã chuyển đến tài khoản {receiverName} số tiền {actualAmount}";
 
                                 if (!string.IsNullOrEmpty(noteText))
@@ -106,13 +134,17 @@ namespace FinanceManagement.Services.Mezon
                                     message += $" với ND: {noteText}";
                                 }
 
-                                // Thêm metadata ẩn để parse lại sau này (optional)
-                                message += $"|#Meta:Money={money};Timestamp={tx.Timestamp};Wallet={walletAddress}";
+                                
+                                    message += $"|#Meta:Money={money};Timestamp={tx.Timestamp};Wallet={walletAddress}";
 
-                                result[tx.Hash] = message;
-                            }
+                            result[tx.Hash] = message;
+                            newTxCount++;
                         }
-
+                        _log.LogInformation($"Wallet {bankAccount.BankAccountName}: New={newTxCount}, Existing={existingTxCount}, Old={oldTxCount}");
+                    }
+                    else
+                    {
+                        _log.LogInformation($"No transactions found for wallet {walletAddress}");
                     }
                 }
                 catch (Exception ex)
@@ -124,7 +156,7 @@ namespace FinanceManagement.Services.Mezon
             _log.LogInformation($"Retrieved {result.Count} total Mezon transactions");
             return result;
         }
-        // Helper method trong service
+        
         private string GetBankAccountNameByWallet(
             Dictionary<string, MezonBankAccountCrawl> dicMezonBankAccounts,
             string walletAddress)
@@ -134,7 +166,7 @@ namespace FinanceManagement.Services.Mezon
                 return dicMezonBankAccounts[walletAddress].BankAccountName;
             }
 
-            // Nếu không tìm thấy, trả về wallet address đã format
+            
             return FormatWalletAddress(walletAddress);
         }
 
@@ -163,7 +195,7 @@ namespace FinanceManagement.Services.Mezon
             public string Receiver { get; set; }
 
             [JsonProperty("value")]
-            public string AmountStr { get; set; }  // API trả về string
+            public string AmountStr { get; set; }  
             [JsonIgnore]
             public double Amount => double.Parse(AmountStr);
 
@@ -173,7 +205,7 @@ namespace FinanceManagement.Services.Mezon
             [JsonProperty("block_number")]
             public long BlockNumber { get; set; }
             [JsonProperty("text_data")]
-            public string TextData { get; set; }  // ← Note field
+            public string TextData { get; set; }  
         }
     }
 }
