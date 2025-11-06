@@ -203,17 +203,17 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
         //   "Finance.Invoice"
         // ),
         new MenuItem(
-          'menu5.m5_child6',
+          'menu5.m5_child7',
           '/app/finance-review',
-          'fas fa-search',
+          'fa fa-table',
           "Finance.ComparativeStatisticNew"
         ),
-        new MenuItem(
-          'menu5.m5_child7',
-          '/app/finance-statistic-old',
-          'fas fa-search',
-          "Finance.ComparativeStatistic"
-        ),
+        // new MenuItem(
+        //   'menu5.m5_child7',
+        //   '/app/finance-statistic-old',
+        //   'fas fa-search',
+        //   "Finance.ComparativeStatistic"
+        // ),
 
         new MenuItem(
           'menu5.m5_child8',
