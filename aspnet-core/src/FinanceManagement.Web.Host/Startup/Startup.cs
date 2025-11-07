@@ -126,9 +126,9 @@ namespace FinanceManagement.Web.Host.Startup
             services.AddHttpClient();
 
             // Register config
-            services.Configure<CrawlBTransactionMezonDongConfig>(
-                _appConfiguration.GetSection("CrawlBTransactionMezonDong"));
-            FinfastStatics.EnableMezonDongService = _appConfiguration.GetValue<bool?>("CrawlBTransactionMezonDong:EnableCrawlBTransactionMezonDong") ?? true;
+            //services.Configure<CrawlBTransactionMezonDongConfig>(_appConfiguration.GetSection("CrawlBTransactionMezonDong"));
+            //FinfastStatics.EnableMezonDongService = _appConfiguration.GetValue<bool?>("CrawlBTransactionMezonDong:EnableCrawlBTransactionMezonDong") ?? true;
+            MMNConfigManager.Load(_appConfiguration);
 
             FinfastStatics.EnableFirebaseService = _appConfiguration.GetValue<bool?>("Firebase:EnableFirebaseService") ?? true;
             // Configure Abp and Dependency Injection
