@@ -41,6 +41,10 @@ namespace FinanceManagement.Services
             {
                 //options.BaseAddress = new Uri(_appConfiguration.GetValue<string>("Mezon:BaseAddress", "https://webhook.mezon.ai"));
             });
+            services.AddHttpClient<MMNService>(options =>
+            {
+                options.BaseAddress = new Uri(_appConfiguration.GetValue<string>("CrawlBTransactionMezonDong:BaseAddress"));
+            });
             return services;
         }
     }
