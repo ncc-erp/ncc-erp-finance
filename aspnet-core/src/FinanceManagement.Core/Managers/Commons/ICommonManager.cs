@@ -14,6 +14,7 @@ namespace FinanceManagement.Managers.Commons
         Task<long> GetOutcomingEntryTypeSalaryId();
         Task<long> GetDefaultAccountCompanyId();
         Task<long> GetCurrencyVNDId();
+        Task<long> GetCurrencyMezonDId();
         HashSet<long> GetAllNodeAndLeafEntryTypeIdByParentId<T>(IEnumerable<long> nodeIds, bool isInActive = false) where T : class, IEntity<long>;
         IEnumerable<TreeItem<OutputCategoryEntryType>> GetTreeOutcomingEntries(bool isActiveOnly = false);
         IEnumerable<TreeItem<OutputCategoryEntryType>> GetTreeIncomingEntries(bool isActiveOnly = false);

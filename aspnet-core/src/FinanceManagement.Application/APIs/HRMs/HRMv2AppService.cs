@@ -90,6 +90,7 @@ namespace FinanceManagement.APIs.HRMs
                     Value = input.Details.Sum(x => x.UnitPrice),
                     BranchId = branchCTYId,
                 };
+
                 var newOutcomeEntryId = await WorkScope.InsertAndGetIdAsync(newOutcomingEntry);
 
                 await _outcomingEntryManager.CreateOutcomingStatusHistory(new CreateOutcomingEntryStatusHistoryDto
@@ -114,10 +115,59 @@ namespace FinanceManagement.APIs.HRMs
                     await WorkScope.InsertAsync(detail);
                 }
 
+                // OutcomeEntryMezonD
+
+                var currencyMezonDId = await _commonManager.GetCurrencyMezonDId();
+                if (currencyMezonDId == default)
+                {
+                    throw new UserFriendlyException("Can't find currency MezonĐ");
+                }
+
+                var newOutcomingMezonDEntry = new OutcomingEntry
+                {
+                    Name = input.MezonTokenName,
+                    AccountId = accountCompanyId,
+                    CurrencyId = currencyMezonDId,
+                    OutcomingEntryTypeId = outcomingEntryTypeSalaryId,
+                    WorkflowStatusId = workflowStatusApprovedId,
+                    Value = input.MezonTokenDetails.Sum(x => x.UnitPrice),
+                    BranchId = branchCTYId,
+                };
+
+                var newOutcomeEntryMezonDId = await WorkScope.InsertAndGetIdAsync(newOutcomingMezonDEntry);
+
+                await _outcomingEntryManager.CreateOutcomingStatusHistory(new CreateOutcomingEntryStatusHistoryDto
+                {
+                    OutcomingEntryId = newOutcomeEntryMezonDId,
+                    Value = newOutcomingMezonDEntry.Value,
+                    WorkflowStatusId = workflowStatusApprovedId,
+                });
+
+                foreach (var item in input.MezonTokenDetails)
+                {
+                    var detail = new OutcomingEntryDetail
+                    {
+                        OutcomingEntryId = newOutcomeEntryMezonDId,
+                        Name = item.Name,
+                        AccountId = accountCompanyId,
+                        Quantity = 1,
+                        UnitPrice = item.UnitPrice,
+                        Total = item.UnitPrice,
+                        BranchId = dicBranches.ContainsKey(item.BranchCode) ? dicBranches[item.BranchCode] : default,
+                    };
+
+                    await WorkScope.InsertAsync(detail);
+                }
+
+
                 await CurrentUnitOfWork.SaveChangesAsync();
 
                 _komuNotification.NotifySalary(newOutcomeEntryId);
                 _mezonNotification.NotifySalary(newOutcomeEntryId);
+
+                _komuNotification.NotifySalary(newOutcomeEntryMezonDId);
+                _mezonNotification.NotifySalary(newOutcomeEntryMezonDId);
+
             }
         }
 
