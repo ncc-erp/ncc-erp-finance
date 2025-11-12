@@ -126,7 +126,7 @@ namespace FinanceManagement.Web.Host.Startup
             // Add HttpClientFactory
             services.AddHttpClient();
             // Register config
-            MMNConfigManager.Load(_appConfiguration);
+            CrawlMezonDongConfig.Load(_appConfiguration);
 
             FinfastStatics.EnableFirebaseService = _appConfiguration.GetValue<bool?>("Firebase:EnableFirebaseService") ?? true;
             // Configure Abp and Dependency Injection

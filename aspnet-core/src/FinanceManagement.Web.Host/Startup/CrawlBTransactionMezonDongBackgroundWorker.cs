@@ -29,6 +29,7 @@ namespace FinanceManagement.Web.Host.Startup
         private static List<string> _dbMezonTransactionHashes;
         private const int TENANT_NULL_ID = -1;
         private readonly IMezonNotification _mezonNotification;
+        private const string MEZON_D_CURRENCY_CODE = "MEZOND";
         public IMySettingManager MySettingManager { get; set; }
 
         public CrawlBTransactionMezonDongBackgroundWorker(
@@ -44,7 +45,7 @@ namespace FinanceManagement.Web.Host.Startup
             _log = log;
             _mmnService = mmnService;
             _dbMezonTransactionHashes = new List<string>();
-            Timer.Period = MMNConfigManager.IntervalMilisecond;
+            Timer.Period = CrawlMezonDongConfig.IntervalMilisecond;
             _mezonNotification = mezonNotification;
         }
         protected override void DoWork()
@@ -58,8 +59,6 @@ namespace FinanceManagement.Web.Host.Startup
         {
             try
             {
-                InitDBMezonTransactionHashes();
-
                 var dicMezonBankAccounts = GetDicWalletToBankAccountInfo();
                 var dicPeriods = GetDicTenantIdToActivePeriodId();
 
@@ -68,181 +67,170 @@ namespace FinanceManagement.Web.Host.Startup
                     _log.LogInformation("No MezonĐ bank accounts found");
                     return;
                 }
+                InitDBMezonTransactionHashes();
 
                 //get data using httpclient call to mezon api for multiple wallet addresses
                 var dicMezonTransactions = await _mmnService.GetMezonTransactions(dicMezonBankAccounts);
 
-                //get hash not exists in List to insert to DB
-                var insertHashes = dicMezonTransactions.Keys.Except(_dbMezonTransactionHashes);
-
-                if (!insertHashes.Any())
-                {
-                    _log.LogInformation("No new transactions to process");
-                    return;
-                }
 
                 int successCount = 0;
                 int errorCount = 0;
 
                 using (var uow = _context.Database.BeginTransaction())
                 {
-                    foreach (var hash in insertHashes)
+                    foreach (var kvp in dicMezonTransactions)
                     {
-                        AddToDbMezonTransactionHashes(hash);
-                        try
+                        var hash = kvp.Key;
+                        var mezonTx = kvp.Value;
+
+                        // Xác định các wallet address liên quan đến transaction này
+                        var relatedWallets = new List<string>();
+
+                        // Check sender có phải bank account không
+                        if (dicMezonBankAccounts.ContainsKey(mezonTx.Sender))
                         {
-                            var mezonTx = dicMezonTransactions[hash];
-                            _log.LogInformation($"Hash: {hash} and Transaction: {JsonConvert.SerializeObject(mezonTx)}");
-
-                            var bTransactionLog = new BTransactionLog()
-                            {
-                                Message = JsonConvert.SerializeObject(mezonTx),
-                                IsValid = false,
-                                Key = hash
-                            };
-
-                            double actualAmount = mezonTx.Amount / 1_000_000.0;
-
-                            if (actualAmount == 0)
-                            {
-                                bTransactionLog.ErrorMessage = "Transaction amount is zero";
-                                _context.Add(bTransactionLog);
-                                errorCount++;
-                                continue;
-                            }
-
-                            // Determine the wallet address belonging to this transaction
-                            string walletAddress = null;
-                            foreach (var acc in dicMezonBankAccounts)
-                            {
-                                if (mezonTx.Sender.Equals(acc.Key, StringComparison.OrdinalIgnoreCase) ||
-                                    mezonTx.Receiver.Equals(acc.Key, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    walletAddress = acc.Key;
-                                    break;
-                                }
-                            }
-
-                            if (string.IsNullOrEmpty(walletAddress))
-                            {
-                                bTransactionLog.ErrorMessage = "Can't determine wallet address for this transaction";
-                                _context.Add(bTransactionLog);
-                                errorCount++;
-                                continue;
-                            }
-
-
-                            double money = 0;
-                            if (mezonTx.Sender.Equals(walletAddress, StringComparison.OrdinalIgnoreCase))
-                            {
-                                money = -Math.Abs(actualAmount); // sent money
-                            }
-                            else if (mezonTx.Receiver.Equals(walletAddress, StringComparison.OrdinalIgnoreCase))
-                            {
-                                money = Math.Abs(actualAmount); // received money
-                            }
-
-                            if (money == 0)
-                            {
-                                bTransactionLog.ErrorMessage = "Can't determine money direction";
-                                _context.Add(bTransactionLog);
-                                errorCount++;
-                                continue;
-                            }
-
-                            //get datetime of transaction
-                            var timeAt = Helpers.ConvertFromUnixTimestamp(mezonTx.Timestamp);
-                            bTransactionLog.TimeAt = timeAt;
-
-                            //get information bank account -> {Id, CurrencyId, TenantId} and check exists
-                            var bankAccount = GetBankAccountByWalletAddress(dicMezonBankAccounts, walletAddress);
-                            if (!bankAccount.IsValid)
-                            {
-                                bTransactionLog.ErrorMessage = bankAccount.ErrorMessage;
-                                _context.Add(bTransactionLog);
-                                errorCount++; ;
-                                continue;
-                            }
-
-                            var tenantId = bankAccount.Result.TenantId;
-
-                            // Build readable note
-                            string senderName = GetBankAccountNameByWallet(dicMezonBankAccounts, mezonTx.Sender);
-                            string receiverName = GetBankAccountNameByWallet(dicMezonBankAccounts, mezonTx.Receiver);
-
-                            string note = $"Tài khoản {senderName} đã chuyển đến tài khoản {receiverName} số tiền {actualAmount} MezonĐ";
-                            if (!string.IsNullOrEmpty(mezonTx.TextData))
-                            {
-                                note += $" với ND: {mezonTx.TextData}";
-                            }
-
-                            var bTransaction = new BTransaction
-                            {
-                                BankAccountId = bankAccount.Result.Id,
-                                Money = money,
-                                TimeAt = timeAt,
-                                Note = note,
-                                IsCrawl = true,
-                                TenantId = tenantId,
-                                Status = BTransactionStatus.DONE
-                            };
-
-                            if (!tenantId.HasValue && dicPeriods.ContainsKey(TENANT_NULL_ID))
-                            {
-                                bTransaction.PeriodId = dicPeriods[TENANT_NULL_ID];
-                            }
-                            else if (tenantId.HasValue && dicPeriods.ContainsKey(tenantId.Value))
-                            {
-                                bTransaction.PeriodId = dicPeriods[tenantId.Value];
-                            }
-                            else
-                            {
-                                bTransactionLog.ErrorMessage = $"No active period found for tenant {tenantId}";
-                                _context.Add(bTransactionLog);
-                                errorCount++;
-                                continue;
-                            }
-
-                            _context.Add(bTransaction);
-                            _context.SaveChanges();
-
-                            double currentBalanceNumber = GetCurrentBalanance(bTransaction.PeriodId, bTransaction.BankAccountId);
-
-                            var config = await MySettingManager.GetEnableCrawlBTransactionNoti(tenantId);
-                            if (bool.Parse(config))
-                            {
-                                string contentNotify = GetContentNotificationMezonDong(
-                                    hash: hash,
-                                    walletAddress: walletAddress,
-                                    bankAccountName: bankAccount.Result.BankAccountName,
-                                    money: money,
-                                    currencyName: bankAccount.Result.CurrencyName,
-                                    timeAt: timeAt.ToString("dd/MM/yyyy HH:mm"),
-                                    currentBalance: currentBalanceNumber,
-                                    sender: mezonTx.Sender,
-                                    receiver: mezonTx.Receiver
-                                );
-                                var mezonMessage = new MezonMessage
-                                {
-                                    t = contentNotify,
-                                    mentions = new List<Mentions>()
-                                };
-                                _mezonNotification.NotifyWithMezonMessage(mezonMessage, tenantId);
-                            }
-
-                            bTransactionLog.BTransactionId = bTransaction.Id;
-                            bTransactionLog.IsValid = true;
-                            bTransactionLog.TenantId = bankAccount.Result.TenantId;
-                            _context.Add(bTransactionLog);
-
-                            successCount++;
+                            relatedWallets.Add(mezonTx.Sender);
                         }
-                        catch (Exception ex)
+
+                        // Check receiver có phải bank account không
+                        if (dicMezonBankAccounts.ContainsKey(mezonTx.Receiver))
                         {
-                            errorCount++;
-                            _log.LogError($"Hash: {hash}, Exception: {ex.Message}", ex);
+                            relatedWallets.Add(mezonTx.Receiver);
+                        }
+
+                        if (!relatedWallets.Any())
+                        {
+                            _log.LogWarning($"Transaction {hash} không liên quan đến bank account nào trong hệ thống");
+                            continue;
+                        }
+
+                        foreach (var walletAddress in relatedWallets)
+                        {
+                            var transactionKey = BuildTransactionKey(hash, walletAddress);
+
+                            if (_dbMezonTransactionHashes.Contains(transactionKey))
+                            {
+                                _log.LogDebug($"Key {transactionKey} already processed, skipping");
+                                continue;
+                            }
+
+                            AddToDbMezonTransactionHashes(transactionKey);
+                            try
+                            {
+                                var bTransactionLog = new BTransactionLog()
+                                {
+                                    Message = JsonConvert.SerializeObject(mezonTx),
+                                    IsValid = false,
+                                    Key = transactionKey
+                                };
+
+                                if (mezonTx.Amount == 0)
+                                {
+                                    bTransactionLog.ErrorMessage = "Transaction amount is zero";
+                                    _context.Add(bTransactionLog);
+                                    errorCount++;
+                                    continue;
+                                }
+
+                                double money = mezonTx.Sender.Equals(walletAddress, StringComparison.OrdinalIgnoreCase) ? -mezonTx.Amount
+                                             : mezonTx.Receiver.Equals(walletAddress, StringComparison.OrdinalIgnoreCase) ? mezonTx.Amount
+                                             : 0;
+
+                                //get datetime of transaction
+                                var timeAt = Helpers.ConvertFromUnixTimestamp(mezonTx.Timestamp);
+                                bTransactionLog.TimeAt = timeAt;
+
+                                //get information bank account -> {Id, CurrencyId, TenantId} and check exists
+                                var bankAccount = GetBankAccountByWalletAddress(dicMezonBankAccounts, walletAddress);
+                                if (!bankAccount.IsValid)
+                                {
+                                    bTransactionLog.ErrorMessage = bankAccount.ErrorMessage;
+                                    _context.Add(bTransactionLog);
+                                    errorCount++; ;
+                                    continue;
+                                }
+
+                                var tenantId = bankAccount.Result.TenantId;
+
+                                // Build readable note
+                                string senderName = GetBankAccountNameByWallet(dicMezonBankAccounts, mezonTx.Sender);
+                                string receiverName = GetBankAccountNameByWallet(dicMezonBankAccounts, mezonTx.Receiver);
+
+                                string note = $"Tài khoản {senderName} đã chuyển đến tài khoản {receiverName} số tiền {mezonTx.Amount} MezonĐ";
+                                if (!string.IsNullOrEmpty(mezonTx.TextData))
+                                {
+                                    note += $" với ND: {mezonTx.TextData}";
+                                }
+
+                                var bTransaction = new BTransaction
+                                {
+                                    BankAccountId = bankAccount.Result.Id,
+                                    Money = money,
+                                    TimeAt = timeAt,
+                                    Note = JsonConvert.SerializeObject(mezonTx),
+                                    IsCrawl = true,
+                                    TenantId = tenantId,
+                                    Status = BTransactionStatus.DONE
+                                };
+
+                                if (!tenantId.HasValue && dicPeriods.ContainsKey(TENANT_NULL_ID))
+                                {
+                                    bTransaction.PeriodId = dicPeriods[TENANT_NULL_ID];
+                                }
+                                else if (tenantId.HasValue && dicPeriods.ContainsKey(tenantId.Value))
+                                {
+                                    bTransaction.PeriodId = dicPeriods[tenantId.Value];
+                                }
+                                else
+                                {
+                                    bTransactionLog.ErrorMessage = $"No active period found for tenant {tenantId}";
+                                    _context.Add(bTransactionLog);
+                                    errorCount++;
+                                    continue;
+                                }
+
+                                _context.Add(bTransaction);
+                                _context.SaveChanges();
+
+                                double currentBalanceNumber = GetCurrentBalanance(bTransaction.PeriodId, bTransaction.BankAccountId);
+
+                                var config = await MySettingManager.GetEnableCrawlBTransactionNoti(tenantId);
+                                if (bool.Parse(config))
+                                {
+                                    string contentNotify = GetContentNotificationMezonDong(
+                                        hash: hash,
+                                        walletAddress: walletAddress,
+                                        bankAccountName: bankAccount.Result.BankAccountName,
+                                        money: money,
+                                        currencyName: bankAccount.Result.CurrencyName,
+                                        timeAt: timeAt.ToString("dd/MM/yyyy HH:mm"),
+                                        currentBalance: currentBalanceNumber,
+                                        sender: mezonTx.Sender,
+                                        receiver: mezonTx.Receiver
+                                    );
+                                    var mezonMessage = new MezonMessage
+                                    {
+                                        t = contentNotify,
+                                        mentions = new List<Mentions>()
+                                    };
+                                    _mezonNotification.NotifyWithMezonMessage(mezonMessage, tenantId);
+                                }
+
+                                bTransactionLog.BTransactionId = bTransaction.Id;
+                                bTransactionLog.IsValid = true;
+                                bTransactionLog.TenantId = bankAccount.Result.TenantId;
+                                _context.Add(bTransactionLog);
+
+                                successCount++;
+                            }
+                            catch (Exception ex)
+                            {
+                                errorCount++;
+                                _log.LogError($"Hash: {hash}, Exception: {ex.Message}", ex);
+                            }
                         }
                     }
+
                     _context.SaveChanges();
                     uow.Commit();
 
@@ -263,21 +251,25 @@ namespace FinanceManagement.Web.Host.Startup
             _dbMezonTransactionHashes = _context.BTransactionLogs
                 .Where(x => !x.IsDeleted)
                 .Where(x => x.Key != null)
-                .Where(x => x.Key.Length == 66)
+                .Where(x => x.Key.Contains("_"))
                 .Select(x => x.Key)
                 .ToList();
 
             _log.LogInformation($"Initialized {_dbMezonTransactionHashes.Count} Mezon transaction hashes from BTransactionLog");
         }
-
+        private string BuildTransactionKey(string hash, string walletAddress)
+        {
+            return $"{hash}_{walletAddress}";
+        }
         private Dictionary<string, MezonBankAccountCrawl> GetDicWalletToBankAccountInfo()
         {
             return _context.BankAccounts
                 .Where(x => !x.IsDeleted)
                 .Where(x => x.Account.Type == AccountTypeEnum.COMPANY)
-                .Where(x => x.Currency.Name == "MezonD")
+                .Where(x => x.Currency.Code == MEZON_D_CURRENCY_CODE)
                 .Where(x => !string.IsNullOrEmpty(x.BankNumber))
                 .AsEnumerable()
+                .Where(x => x.BankNumber.Length == 44)
                 .GroupBy(x => x.BankNumber)
                 .Select(g => g.FirstOrDefault())
                 .ToDictionary(

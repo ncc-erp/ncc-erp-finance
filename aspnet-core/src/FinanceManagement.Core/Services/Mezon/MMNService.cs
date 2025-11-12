@@ -39,7 +39,7 @@ namespace FinanceManagement.Services.Mezon
         }
 
         public async Task<Dictionary<string, MezonDongTransaction>> GetMezonTransactions(
-            Dictionary<string, MezonBankAccountCrawl> dicWalletAccounts)
+            Dictionary<string, MezonBankAccountCrawl> dicWalletAccounts, int limit = 0)
         {
             var result = new Dictionary<string, MezonDongTransaction>();
 
@@ -54,20 +54,35 @@ namespace FinanceManagement.Services.Mezon
             foreach (var kvp in dicWalletAccounts)
             {
                 var walletAddress = kvp.Key;
-                var bankAccount = kvp.Value;
 
-                var apiResponse = await GetTransactionsByWallet(walletAddress, page: 0, limit: 1000);
-
-                foreach (var tx in apiResponse.Data)
+                int currentPage = 0;
+                bool hasMore = true;
+                while (hasMore)
                 {
-                    if (!result.ContainsKey(tx.Hash))
+                    var apiResponse = await GetTransactionsByWallet(walletAddress, currentPage, limit == 0 ? 100 : limit);
+
+                    foreach (var tx in apiResponse.Data)
                     {
-                        result[tx.Hash] = tx;
+                        if (!result.ContainsKey(tx.Hash))
+                        {
+                            result[tx.Hash] = tx;
+                        }
+                    }
+
+                    // Nếu limit = 0 thì tự crawl sang trang tiếp theo
+                    if (limit == 0)
+                    {
+                        currentPage++;
+                        hasMore = apiResponse.Data.Count > 0;
+                    }
+                    else
+                    {
+                        // Nếu limit > 0 thì chỉ crawl đúng 1 lần (theo limit)
+                        hasMore = false;
                     }
                 }
 
             }
-            _log.LogInformation($"Retrieved {result.Count} total Mezon transactions");
             return result;
         }
 
@@ -91,7 +106,17 @@ namespace FinanceManagement.Services.Mezon
             [JsonProperty("value")]
             public string AmountStr { get; set; }  // API trả về string
             [JsonIgnore]
-            public double Amount => double.Parse(AmountStr);
+            public double Amount
+            {
+                get
+                {
+                    if (double.TryParse(AmountStr, out double value))
+                    {
+                        return value / 1_000_000.0; // xử lý chia 1_000_000 ngay trong model
+                    }
+                    return 0;
+                }
+            }
 
             [JsonProperty("transaction_timestamp")]
             public long Timestamp { get; set; }

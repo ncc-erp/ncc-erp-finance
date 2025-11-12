@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FinanceManagement
 {
-    public class MMNConfigManager
+    public class CrawlMezonDongConfig
     {
         public static bool EnableCrawlBTransactionMezonDong { get; set; } = true;
         public static int IntervalMilisecond { get; set; } = 600000;

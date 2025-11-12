@@ -36,7 +36,7 @@ namespace FinanceManagement.Web.Host.Startup
             {
                 workManager.Add(IocManager.Resolve<CrawlBTransactionBackgroundWorker>());
             }
-            if (MMNConfigManager.EnableCrawlBTransactionMezonDong)
+            if (CrawlMezonDongConfig.EnableCrawlBTransactionMezonDong)
             {
                 workManager.Add(IocManager.Resolve<CrawlBTransactionMezonDongBackgroundWorker>());
             }
