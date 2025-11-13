@@ -1,29 +1,22 @@
-﻿using Abp.Dependency;
-using Abp.Runtime.Session;
-using FinanceManagement.Managers.BTransactions.Dtos;
+﻿using Abp.Runtime.Session;
 using FinanceManagement.MultiTenancy;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FinanceManagement.Services.Mezon
 {
     public class MMNService : BaseWebService
     {
-        private readonly ILogger<MMNService> _log;
 
         public MMNService(
             HttpClient httpClient,
             TenantManager tenantManage,
-            IAbpSession session,
-            ILogger<MMNService> log) : base(httpClient, tenantManage, session)
+            IAbpSession session
+            ) : base(httpClient, tenantManage, session)
         {
-            _log = log;
         }
 
         public async Task<List<MMNTransaction>> GetMMNTransactionByWalletAddress(string walletAddress)
@@ -34,7 +27,10 @@ namespace FinanceManagement.Services.Mezon
                          $"&wallet_address={walletAddress}";
 
             var response = await GetAsync<MMNTransactionResponse>(url);
-
+            if (response == null)
+            {
+                return new List<MMNTransaction> { };
+            }
             return response.Data;
         }
 
@@ -98,6 +94,9 @@ namespace FinanceManagement.Services.Mezon
             public long BlockNumber { get; set; }
             [JsonProperty("text_data")]
             public string TextData { get; set; }  // ← Note field
+
+            public string ToString() => JsonConvert.SerializeObject(this);
+            public string BuilKey(bool isSender) => $"{Hash}_{(isSender?this.Sender:this.Receiver)}";
         }
     }
 }
