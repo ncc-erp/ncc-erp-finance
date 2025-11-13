@@ -11,6 +11,7 @@
         public const string BalanceClientCode = "BCC";
         public const double DEFAULT_EXCHANGE_RATE = 1;
         public const string VND_CURRENCY_NAME = "VND";
+        public const string MEZOND_CURRENCY_CODE = "MezonD";
 
         //Workflow Status
         public const string WORKFLOW_STATUS_START = "START";
