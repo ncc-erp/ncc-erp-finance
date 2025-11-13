@@ -39,7 +39,7 @@ namespace FinanceManagement.Services
              });
             services.AddHttpClient<IMezonWebService, MezonWebService>(options =>
             {
-                //options.BaseAddress = new Uri(_appConfiguration.GetValue<string>("Mezon:BaseAddress", "https://webhook.mezon.ai"));
+                options.BaseAddress = new Uri(_appConfiguration.GetValue<string>("Mezon:BaseAddress", "https://webhook.mezon.ai"));
             });
             services.AddHttpClient<MMNService>(options =>
             {
