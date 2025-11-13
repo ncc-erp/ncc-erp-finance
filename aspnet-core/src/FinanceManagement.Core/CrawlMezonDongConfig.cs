@@ -8,16 +8,18 @@ namespace FinanceManagement
     public class CrawlMezonDongConfig
     {
         public static bool EnableCrawlBTransactionMezonDong { get; set; } = true;
-        public static int IntervalMilisecond { get; set; } = 600000;
+        public static int IntervalSecond { get; set; } = 60;
         public static string BaseAddress { get; set; }
+        public static int Limit { get; set; } = 100;
 
         public static void Load(IConfiguration config)
         {
             var section = config.GetSection("CrawlBTransactionMezonDong");
 
-            EnableCrawlBTransactionMezonDong = section.GetValue<bool?>("EnableCrawlBTransactionMezonDong") ?? true;
-            IntervalMilisecond = section.GetValue<int?>("IntervalMilisecond") ?? 600000;
+            EnableCrawlBTransactionMezonDong = section.GetValue<bool?>("EnableCrawlB") ?? true;
+            IntervalSecond = section.GetValue<int?>("IntervalSecond") ?? 60;
             BaseAddress = section.GetValue<string>("BaseAddress");
+            Limit = section.GetValue<int?>("Limit") ?? 100;
         }
     }
 }

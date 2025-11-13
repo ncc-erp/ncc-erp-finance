@@ -43,7 +43,7 @@ namespace FinanceManagement.Services
             });
             services.AddHttpClient<MMNService>(options =>
             {
-                options.BaseAddress = new Uri(_appConfiguration.GetValue<string>("CrawlBTransactionMezonDong:BaseAddress"));
+                options.BaseAddress = new Uri(CrawlMezonDongConfig.BaseAddress);
             });
             return services;
         }
