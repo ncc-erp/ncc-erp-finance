@@ -1,5 +1,6 @@
 ﻿using Abp.Runtime.Session;
 using FinanceManagement.MultiTenancy;
+using FinanceManagement.Uitls;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,9 +22,12 @@ namespace FinanceManagement.Services.Mezon
 
         public async Task<List<MMNTransaction>> GetMMNTransactionByWalletAddress(string walletAddress)
         {
-            int limit = CrawlMezonDongConfig.Limit;
+            var startTime = DateTimeUtils.GetNow().AddDays(-CrawlMezonDongConfig.DaysAgo)
+                                        .ToString("yyyy-MM-dd");
+
             string url = $"/indexer-api/1337/transactions" +
-                         $"?page=0&limit={limit}&sort_by=transaction_timestamp&sort_order=desc" +
+                         $"?page=0&limit={int.MaxValue}&sort_by=transaction_timestamp&sort_order=desc" +
+                         $"&start_time={startTime}" +
                          $"&wallet_address={walletAddress}";
 
             var response = await GetAsync<MMNTransactionResponse>(url);
