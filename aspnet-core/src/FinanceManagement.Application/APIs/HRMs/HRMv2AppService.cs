@@ -120,7 +120,7 @@ namespace FinanceManagement.APIs.HRMs
                 var currencyMezonDId = await _commonManager.GetCurrencyMezonDId();
                 if (currencyMezonDId == default)
                 {
-                    throw new UserFriendlyException("Can't find currency MezonĐ");
+                    throw new UserFriendlyException("Can't find Currency Code MezonD");
                 }
 
                 var newOutcomingMezonDEntry = new OutcomingEntry
@@ -162,10 +162,10 @@ namespace FinanceManagement.APIs.HRMs
 
                 await CurrentUnitOfWork.SaveChangesAsync();
 
-                _komuNotification.NotifySalary(newOutcomeEntryId);
+               // _komuNotification.NotifySalary(newOutcomeEntryId);
                 _mezonNotification.NotifySalary(newOutcomeEntryId);
 
-                _komuNotification.NotifySalary(newOutcomeEntryMezonDId);
+               // _komuNotification.NotifySalary(newOutcomeEntryMezonDId);
                 _mezonNotification.NotifySalary(newOutcomeEntryMezonDId);
 
             }
@@ -204,6 +204,17 @@ namespace FinanceManagement.APIs.HRMs
                 {
                     failList.Add($"branch code <strong>{code}</strong> không tồn tại bên finfast");
                 }
+            }
+
+            // Valid for MezonD
+
+            var existMezonDOutcomeEntry = WorkScope.GetAll<OutcomingEntry>()
+                .Where(x => x.Name == input.MezonDPayrollName)
+                .FirstOrDefault();
+
+            if (existMezonDOutcomeEntry != default)
+            {
+                failList.Add($"request chi: <strong>{input.MezonDPayrollName}</strong> đã tồn tại bên finfast");
             }
 
             return failList;

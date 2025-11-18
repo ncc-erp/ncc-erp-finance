@@ -80,7 +80,7 @@ namespace FinanceManagement.Managers.Commons
         public async Task<long> GetCurrencyMezonDId()
         {
             return await _ws.GetAll<Currency>()
-                .Where(x => x.Name == FinanceManagementConsts.MEZOND_CURRENCY_NAME)
+                .Where(x => x.Code.ToLower() == FinanceManagementConsts.MEZOND_CURRENCY_CODE.ToLower())
                 .Select(x => x.Id)
                 .FirstOrDefaultAsync();
         }

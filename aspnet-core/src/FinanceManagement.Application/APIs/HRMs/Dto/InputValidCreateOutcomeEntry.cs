@@ -8,5 +8,6 @@ namespace FinanceManagement.APIs.HRMs.Dto
     {
         public List<string> BranchCodes { get; set; }
         public string PayrollName { get; set; }
+        public string MezonDPayrollName { get; set; }
     }
 }
