@@ -307,7 +307,7 @@ export class LinkBTransactionMultiOutComingDialogComponent
         return sum += item.money
     }, 0)
 
-    this.isValidLinkOutcome = Math.abs(Number(this.data.moneyValue)) === Math.abs(this.totalSelectedOutcome)
+    this.isValidLinkOutcome = Math.abs(this.data.moneyValue + this.totalSelectedOutcome) < 1
 
     this.setoutcommingEntryOptions();
     this.resetErrorMess();
