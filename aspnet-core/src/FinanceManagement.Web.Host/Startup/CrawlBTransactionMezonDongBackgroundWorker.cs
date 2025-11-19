@@ -167,7 +167,7 @@ namespace FinanceManagement.Web.Host.Startup
                 Note = JsonConvert.SerializeObject(tx),
                 IsCrawl = true,
                 TenantId = tenantId,
-                Status = BTransactionStatus.DONE
+                Status = BTransactionStatus.PENDING
             };
 
             if (!tenantId.HasValue && dicPeriods.ContainsKey(TENANT_NULL_ID))
