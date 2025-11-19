@@ -21,7 +21,7 @@ namespace FinanceManagement.Notifications.Komu.Dtos
         public string CreatedBy { get; set; }
         public string StatusCode { get; set; }
         public string Verifier { get; set; }
-        public string MessageSalaryFromHRM => Helpers.GetContentSalarySendNotifyKomu(Id,OutcomingEntryName,Helpers.FormatMoneyVND(OutcomingEntryValue),FinanceManagementConsts.WORKFLOW_STATUS_APPROVED);
+        public string MessageSalaryFromHRM => Helpers.GetContentSalarySendNotifyKomu(Id,OutcomingEntryName,Helpers.FormatMoneyVND(OutcomingEntryValue),FinanceManagementConsts.WORKFLOW_STATUS_APPROVED, CurrencyCode);
         public string MessageTeamBuildingFromTimesheet => Helpers.GetContentTeamBuildingSendNotifyKomu(Id, OutcomingEntryName, Helpers.FormatMoneyVND(OutcomingEntryValue), FinanceManagementConsts.WORKFLOW_STATUS_START);
         public string MessageMainContentChangeStatus => Helpers.GetContentSendNotifyKomu(OutcomingEntryName,OutcomingEntryTypeCode,BranchName, CreatedBy, CreationTime);
         public string MessageSubContentChangeStatus => Helpers.GetSubContentSendNotifyKomu(Verifier, StatusCode, Id, Helpers.FormatMoneyVND(OutcomingEntryValue), CurrencyCode);

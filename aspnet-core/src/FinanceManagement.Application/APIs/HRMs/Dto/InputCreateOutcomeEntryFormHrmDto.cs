@@ -8,6 +8,8 @@ namespace FinanceManagement.APIs.HRMs.Dto
     {
         public string Name { get; set; }
         public List<InputDetailDto> Details { get; set; }
+        public string MezonTokenName { get; set; }
+        public List<InputDetailDto> MezonTokenDetails { get; set; }
     }
     public class InputDetailDto
     {

@@ -271,10 +271,11 @@ namespace FinanceManagement.Helper
             long outcomingEntryId,
             string outcomingEntryName,
             string money,
-            string statusCode
+            string statusCode,
+            string currency
         )
         {
-            return $"[HRM Tool] created request chi #{outcomingEntryId} {outcomingEntryName} số tiền {money} VND ({statusCode})";
+            return $"[HRM Tool] created request chi #{outcomingEntryId} {outcomingEntryName} số tiền {money} {currency} ({statusCode})";
         }
 
         public static string GetContentTeamBuildingSendNotifyKomu(
