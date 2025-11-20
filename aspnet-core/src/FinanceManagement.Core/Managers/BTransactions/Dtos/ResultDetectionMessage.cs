@@ -27,6 +27,7 @@ namespace FinanceManagement.Managers.BTransactions.Dtos
     }
     public class BankAccountCrawl
     {
+        public string WalletAddress { get; set; }
         public int? TenantId { get; set; }
         public long Id { get; set; }
         public long? CurrencyId { get; set; }

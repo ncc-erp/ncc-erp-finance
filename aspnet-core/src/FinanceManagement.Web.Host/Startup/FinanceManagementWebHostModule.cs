@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+﻿using Abp.Dependency;
 using Abp.Modules;
 using Abp.Reflection.Extensions;
-using FinanceManagement.Configuration;
 using Abp.Threading.BackgroundWorkers;
+using FinanceManagement.Configuration;
 using FinanceManagement.GeneralModels;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 
 namespace FinanceManagement.Web.Host.Startup
 {
@@ -34,6 +35,10 @@ namespace FinanceManagement.Web.Host.Startup
             if (FinfastStatics.EnableFirebaseService)
             {
                 workManager.Add(IocManager.Resolve<CrawlBTransactionBackgroundWorker>());
+            }
+            if (CrawlMezonDongConfig.EnableCrawlBTransactionMezonDong)
+            {
+                workManager.Add(IocManager.Resolve<CrawlBTransactionMezonDongBackgroundWorker>());
             }
         }
     }
