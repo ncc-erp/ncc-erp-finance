@@ -6,3 +6,19 @@
     padding: 0 !important;
     margin: 0 !important;
 }
+
+
+.fixed-table {
+  table-layout: auto;
+  width: 100%;
+}
+
+.col-key {
+    max-width: 200px;
+    white-space: break-spaces
+}
+
+.col-content {
+    max-width: 400px;
+    white-space: break-spaces
+}
