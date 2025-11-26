@@ -198,12 +198,11 @@
                 </abp-validation-summary>
             </div>
         </div> -->
-    <div class="form-group row required" *ngIf="!isEdit">
-      <label class="col-md-3 col-form-label" for="amount "> BaseBalance </label>
+    <div class="form-group row required">
+      <label class="col-md-3 col-form-label" for="amount "> Dư đầu kỳ </label>
       <div class="col-md-9">
         <input
           type="text"
-          [readOnly]="this.isEdit"
           thousandSeparator=","
           allowNegativeNumbers="true"
           class="form-control"
