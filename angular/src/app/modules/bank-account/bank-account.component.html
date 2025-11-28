@@ -102,11 +102,11 @@
                 <th style="text-align: center;width: 80px !important;padding: 12px;">{{ 'm4_child1.no' |
                   translate }}</th>
                 <th style="text-align: center;">Tên tài khoản / số tài khoản</th>
+                <th style="text-align: center;" class="text-center"> Số dư đầu kì</th>
                 <th style="text-align: center; max-width: 200px;">{{ 'm4_child1.bank' | translate }}</th>
                 <th style="text-align: center;">{{ 'm4_child1.currency' | translate }}</th>
                 <th style="text-align: center;">{{ 'm4_child1.account' | translate }}</th>
-                <!-- <th style="text-align: center;" class="text-center"> Số dư đầu kì</th>
-                <th style="text-align: center;">Số dư hiện tại</th> -->
+                <!-- <th style="text-align: center;">Số dư hiện tại</th> -->
                 <th style="text-align: center;">IsActive</th>
                 <th
                   *ngIf="permission.isGranted(Account_Directory_BankAccount_Delete) || permission.isGranted(Account_Directory_BankAccount_Edit)"
@@ -132,6 +132,7 @@
 
 
                 </td>
+                <td>{{data.baseBalance | number:'1.0-2'}}</td>
                 <td style="max-width: 200px; white-space: normal;">{{data.bankName}}</td>
                 <td>{{data.currencyName}}</td>
                 <td>{{data.accountName}}</td>

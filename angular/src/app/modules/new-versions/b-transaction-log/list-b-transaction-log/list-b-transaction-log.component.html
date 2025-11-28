@@ -61,7 +61,7 @@
         <div class="card-body table-responsive p-4">
           <table
             style="border-collapse: collapse"
-            class="table table-hover text-nowrap"
+            class="table table-hover text-nowrap fixed-table"
             [busy]="isTableLoading"
           >
             <thead class="bg-light">
@@ -75,7 +75,9 @@
                 >
                   {{ "STT" | localize }}
                 </th>
-                <th class="text-center">{{"Key" | localize}}</th>
+                <th class="text-center" style="width: 300px;">
+                  {{"Key" | localize}}
+                </th>
                 <th class="text-center" style="width: 550px">
                   {{ "Nội dung giao dịch" | localize }}
                 </th>
@@ -89,7 +91,7 @@
                 <th style="width: 200px; text-align: center">
                   {{ "Ngày tạo" | localize }}
                 </th>
-                <th style="text-align: center">
+                <th style="width: 230px; text-align: center">
                   {{ "Nội dung lỗi" | localize }}
                 </th>
               </tr>
@@ -111,11 +113,11 @@
                 <td style="padding: 12px" class="text-center">
                   {{ index + 1 + (pageNumber - 1) * pageSize }}
                 </td>
-                <td class="text-center">
-                  {{ item.key }}
+                <td>
+                  <div class="col-key">{{ item.key }}</div>
                 </td>
                 <td>
-                  <p style="white-space: break-spaces;">{{ item.content }}</p>
+                  <div class="col-content">{{ item.content }}</div>
                 </td>
                 <td class="">
                   {{ item.timeAt | date: "dd/MM/yyyy HH:mm" }}
@@ -130,7 +132,9 @@
                     {{ item.creationTime | date: "dd/MM/yyyy HH:mm" }}
                   </p>
                 </td>
-                <td>{{ item.errorMessage }}</td>
+                <td>
+                  <p style="white-space: break-spaces;">{{ item.errorMessage }}</p>
+                </td>
               </tr>
             </tbody>
           </table>
