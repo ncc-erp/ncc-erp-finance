@@ -72,8 +72,6 @@ namespace FinanceManagement.APIs.BankAccounts
         public async Task<BankAccountDto> Update(BankAccountDto input)
         {
             var bankAccount = await WorkScope.GetAsync<BankAccount>(input.Id);
-            input.IsActive = bankAccount.IsActive;
-            input.BaseBalance = bankAccount.BaseBalance;
             if (bankAccount.LockedStatus)
             {
                 throw new UserFriendlyException("BankAccount is Locked !");
@@ -105,6 +103,8 @@ namespace FinanceManagement.APIs.BankAccounts
             {
                 await _periodManager.UpdateBaseBalancePeriodBankAccount(input.Id, input.BaseBalance);
             }*/
+
+            await _periodManager.UpdateBaseBalancePeriodBankAccount(input.Id, input.BaseBalance);
 
             await WorkScope.UpdateAsync(ObjectMapper.Map<BankAccountDto, BankAccount>(input, bankAccount));
 
