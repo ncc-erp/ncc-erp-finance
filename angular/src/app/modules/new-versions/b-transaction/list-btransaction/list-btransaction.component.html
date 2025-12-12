@@ -140,7 +140,7 @@
                   <th class="text-center" style="width: 120px">
                     {{ "From/To" | localize }}
                   </th>
-                  <th class="text-center" style="min-width: 270px">
+                  <th class="text-center" style="min-width: 230px">
                     {{ "Giao dịch ngân hàng" | localize }}
                   </th>
                   <th style="text-align: center; width: 155px" (click)="sort(SORTABLE_FIELD.Money)">
@@ -267,8 +267,10 @@
                     </div>
                   </td>
                   <td>
+                    <div class="col-name">
                     <p>{{ item.bankAccountName }}</p>
                     <p>{{ item.bankAccountNumber }}</p>
+                    </div>
                   </td>
                   <td [ngStyle]="{'color': item.isShowFromAccountName ? 'black' : 'red'}">
                     <p>
@@ -285,15 +287,15 @@
                       {{ item.bankTransactionName }}
                     </a>
                   </td>
-                  <td class="">
+                  <td class="text-right">
                     <ng-containter [style.color]="item.moneyNumber > 0 ? 'black' : 'red'">
-                      <strong>{{ item.money }}</strong>
+                      <div><strong>{{ item.money }}</strong></div>
                       <!-- <strong> {{_utilities.formatMoneyCustom(item.money) }}</strong>  -->
                     </ng-containter>
                     <ng-containter [style.color]="
                         _utilities.getColorByCurrency(item.currencyName)
                       ">
-                      <strong> {{ item.currencyName }}</strong>
+                      <div><strong> {{ item.currencyName }}</strong></div>
                     </ng-containter>
                   </td>
                   <td class="text-center">
