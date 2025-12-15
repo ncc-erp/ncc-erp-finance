@@ -26,3 +26,20 @@
     padding: 0 !important;
     margin: 0 !important;
 }
+
+.fixed-table {
+  table-layout: auto;
+  width: 100%;
+}
+
+.col-note {
+  max-width: 400px;
+  min-width: 150px;
+  white-space: break-spaces;
+}
+
+.col-name {
+    max-width: 280px;
+    min-width: 150px;
+    white-space: normal;
+}

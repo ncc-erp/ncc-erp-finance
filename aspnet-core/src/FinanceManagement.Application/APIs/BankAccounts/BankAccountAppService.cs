@@ -72,8 +72,6 @@ namespace FinanceManagement.APIs.BankAccounts
         public async Task<BankAccountDto> Update(BankAccountDto input)
         {
             var bankAccount = await WorkScope.GetAsync<BankAccount>(input.Id);
-            input.IsActive = bankAccount.IsActive;
-            input.BaseBalance = bankAccount.BaseBalance;
             if (bankAccount.LockedStatus)
             {
                 throw new UserFriendlyException("BankAccount is Locked !");
@@ -106,6 +104,8 @@ namespace FinanceManagement.APIs.BankAccounts
                 await _periodManager.UpdateBaseBalancePeriodBankAccount(input.Id, input.BaseBalance);
             }*/
 
+            await _periodManager.UpdateBaseBalancePeriodBankAccount(input.Id, input.BaseBalance);
+
             await WorkScope.UpdateAsync(ObjectMapper.Map<BankAccountDto, BankAccount>(input, bankAccount));
 
             return input;
@@ -126,6 +126,8 @@ namespace FinanceManagement.APIs.BankAccounts
         {
             var bankTransactions = WorkScope.GetAll<BankTransaction>();
 
+            var periodBankAccounts = WorkScope.GetAll<PeriodBankAccount>();
+
             var query = from b in WorkScope.GetAll<BankAccount>()
                         select new DetailBankAccountDto
                         {
@@ -144,7 +146,11 @@ namespace FinanceManagement.APIs.BankAccounts
                             AccountTypeEnum = b.Account.Type,
                             Increase =  bankTransactions.Where(x => x.ToBankAccountId == b.Id).Sum(x => x.ToValue),
                             Reduce = bankTransactions.Where(x => x.FromBankAccountId == b.Id).Sum(x => x.FromValue),
-                            BaseBalance = b.BaseBalance,
+                            BaseBalance = periodBankAccounts
+                                .Where(p => p.BankAccountId == b.Id && p.Period.IsActive)
+                                .OrderByDescending(p => p.Period.StartDate)
+                                .Select(p => p.BaseBalance)
+                                .FirstOrDefault(),
                             LockedStatus = b.LockedStatus
                         };
             return query;
