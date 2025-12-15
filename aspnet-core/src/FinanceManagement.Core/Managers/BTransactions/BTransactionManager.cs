@@ -789,9 +789,10 @@ namespace FinanceManagement.Managers.BTransactions
                     .AsNoTracking()
                     .CountAsync(x => x.Status != Enums.BTransactionStatus.DONE);
         }
-        public async Task<bool> HasBTransaction()
+        public async Task<bool> HasBTransaction(long bankAccountId)
         {
             return await _ws.GetAll<BTransaction>()
+                .Where(x => x.BankAccountId == bankAccountId)
                 .AsNoTracking()
                 .AnyAsync();
         }

@@ -28,7 +28,7 @@ namespace FinanceManagement.Managers.BTransactions
         Task<DifferentBetweenBankTransAndBTransDto> CheckDifferentBetweenBankTransAndBTrans(LinkBankTransactionToBTransactionDto input);
         Task<object> ImportBTransaction(ImportBTransactionDto input);
         Task<int> CountBTransactionPendingStatus();
-        Task<bool> HasBTransaction();
+        Task<bool> HasBTransaction(long bankAccountId);
         Task<GetInfoRollbackOutcomingEntryWithBTransactionDto> GetInfoRollbankOutcomingEntryWithBTransaction(long bTransactionId);
         Task RollBackOutcomingEntryWithBTransaction(long bTransactionId, int currentPeriodId);
         Task<bool> CheckConversionTransaction(ConversionTransactionDto conversionTransactionDto);

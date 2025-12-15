@@ -149,9 +149,9 @@ namespace FinanceManagement.Managers.Periods
         {
             using (CurrentUnitOfWork.EnableFilter(nameof(IMustHavePeriod)))
             {
-                var hasBTransaction = await _bTransactionManager.HasBTransaction();
+                var hasBTransaction = await _bTransactionManager.HasBTransaction(bankAccountId);
                 if (hasBTransaction)
-                    return;
+                    throw new UserFriendlyException("Can't edit base balance because bank account has b-transaction");
 
                 var periodBankAccount = await _periodBankAccountRepo.GetAll()
                     .Where(x => x.BankAccountId == bankAccountId)
