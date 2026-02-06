@@ -67,7 +67,8 @@ export const APP_CONSTANT = {
     admin: "Admin",
     directory: "Quản trị danh mục",
     account: "Quản lý tài khoản",
-    financeManagement: "Quản lý tài chính"
+    financeManagement: "Quản lý tài chính",
+    report: "Báo cáo"
   },
 
   TitleBreadcrumbSecondLevel: {
@@ -98,7 +99,8 @@ export const APP_CONSTANT = {
     financeStatisticOld: "Đối soát cũ",
     btransaction: "Biến động số dư",
     nrevenue: "Khoản phải thu",
-    period: "Kì kế toán"
+    period: "Kì kế toán",
+    expenditureReport: "Báo cáo chi"
   },
 
   UrlBreadcrumbFirstLevel: {
@@ -106,7 +108,8 @@ export const APP_CONSTANT = {
     admin: "/app/b-transaction-log",
     directory: "/app/supplierList",
     account: "/app/accountant-account",
-    financeManagement: "/app/expenditure-request"
+    financeManagement: "/app/expenditure-request",
+    report: "/app/report"
   },
   UrlBreadcrumbSecondLevel: {
     tenants: "/app/tenants",
@@ -136,7 +139,8 @@ export const APP_CONSTANT = {
     financeStatisticOld: "/app/finance-statistic-old",
     btransaction: "/app/btransaction",
     nrevenue: "/app/nrevenue",
-    period: "/app/period"
+    period: "/app/period",
+    expenditureReport: "/app/report"
   },
   UrlBreadcrumbThirdLevel: {
     workFlowDetail: "/app/workFlowDetail",

@@ -1,0 +1,193 @@
+<div style="margin-bottom: 10px">
+  <mat-accordion>
+    <mat-expansion-panel
+      hideToggle
+      [ngClass]="node.children.length == 0 ? 'final' : 'parent'"
+      (opened)="onTogglePanel()"
+      (closed)="onTogglePanel()">
+
+      <mat-expansion-panel-header>
+        <div class="row w-100">
+          <div class="col-12 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center flex-wrap">
+              <mat-icon *ngIf="node.children.length" style="margin-right: 25px; color: #fed55f">
+                {{ isExpanded ? "drive_file_move" : "folder" }}
+              </mat-icon>
+
+              <mat-icon *ngIf="!node.children.length" style="margin-right: 25px">
+                {{ isExpanded ? "description" : "insert_drive_file" }}
+              </mat-icon>
+
+              <span class="text-uppercase font-weight-bold">
+                {{ node.item.name }}
+              </span>
+              <span style="margin-right: 12px"> ({{ node.item.code }}) </span>
+            </div>
+
+            <div class="d-flex align-items-center flex-wrap">
+              <div
+                style="border: none"
+                class="mr-3"
+                *ngFor="let item of node.item.totalCurrencies || []"
+              >
+                <strong [style.color]="_utilities.getColorByCurrency(item.currencyName)">
+                  {{ item.currencyName }}
+                </strong>
+                : {{ item.valueFormat }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel-header>
+
+      <!-- CHILDREN -->
+      <ng-container *ngIf="node.children.length > 0">
+        <app-report-list
+          *ngFor="let child of node.children"
+          [node]="child"
+          [filterRequest]="filterRequest"
+          [resetVersion]="resetVersion">
+        </app-report-list>
+      </ng-container>
+
+      <!-- LEAF TABLE -->
+      <ng-container *ngIf="node.children.length === 0">
+        <div class="card-body table-responsive px-4 pt-0" *ngIf="isExpanded">
+          <div class="fixTableHead">
+            <table
+              style="border-collapse: collapse"
+              class="table table-hover text-nowrap"
+              [busy]="isTableLoading"
+            >
+              <thead class="bg-light">
+                <tr style="border: none">
+                  <th style="width: 50px">STT</th>
+                  <th class="name-colum">{{ "m5_child2.name" | translate }}</th>
+                  <th class="author-column white-space-line">{{ "Ngày báo cáo" }}</th>
+                  <th class="branch-column white-space-line">{{ "m5_child2.branch" | translate }}</th>
+                  <th>{{ "m5_child2.value" | translate }}</th>
+                  <th class="text-center request-type-colum white-space-line" style="min-width: 200px;">
+                    {{ "m5_child2.requestType" | translate }}
+                  </th>
+                  <th class="width-history-default">{{ "m5_child2.history" | translate }}</th>
+                  <th style="width: 50px">GDNH</th>
+                  <th style="width: 100px">{{ "m5_child2.status" | translate }}</th>
+                  <th style="width: 105px">{{ "m5_child2.CreateAt" | translate }}</th>
+                  <th style="width: 105px">{{ "m5_child2.UpdatedAt" | translate }}</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr
+                  *ngFor="
+                    let r of requestList
+                      | paginate
+                        : {
+                            id: paginationId,
+                            itemsPerPage: pageSize,
+                            currentPage: pageIndex,
+                            totalItems: totalItems
+                          };
+                    let i = index
+                  "
+                >
+                  <td><span>{{ i + 1 + pageSize * (pageIndex - 1) }}</span></td>
+                  <td style="min-width: 230px; white-space: normal">
+                    <a
+                      class="hyperlink name-colum"
+                      [routerLink]="['/app/requestDetail/main']"
+                      [queryParams]="{ id: r.id }"
+                    >
+                      <b> #{{ r.id }}</b> {{ r.name }}
+                    </a>
+                  </td>
+                  <td class="text-center reportDate-col">
+                    <span>{{ r.reportDate | date : "dd/MM/yyyy" }}</span>
+                  </td>
+                  <td class="text-center branch-column white-space-line">
+                    <span>{{ r.branchName }}</span>
+                  </td>
+                  <td class="text-right">
+                    {{ r.value | number : "1.0" : "en-US" }}
+                    <strong [style.color]="_utilities.getColorByCurrency(r.currencyName)">{{ r.currencyName }}</strong>
+                  </td>
+                  <td
+                    class="text-center request-type-colum white-space-line"
+                    style="min-width: 200px;"
+                  >
+                    <div class="row">
+                      <div class="col-10">
+                        <span>{{ r.outcomingEntryTypeName || r.outcomingEntryTypeCode }}</span>
+                        <div *ngIf="r?.expenseType !== null && r?.expenseType !== undefined">
+                          <i
+                            class="far fa-check-circle fa-lg"
+                            [ngClass]="r?.expenseType === 0 ? 'text-primary ml-1' : 'text-secondary ml-1'"
+                            [matTooltip]="r.expenseType === 0 ? 'Tính vào chi phí thực tế' : 'Không tính vào chi phí­'"
+                          ></i>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td
+                    class="text-center"
+                    [class]="!historyExtend ? 'width-history-default' : 'width-history-extend'"
+                    (click)="historyExtend = !historyExtend"
+                  >
+                    <div [ngClass]="historyExtend ? 'history' : 'preHistory'">
+                      <ng-container *ngFor="let statusHistory of r.statusHistories">
+                        <div class="row-history-status-text-overflow-ellipsis">
+                          <label
+                            [ngClass]="APP_CONSTANT.StatusStyle[statusHistory.workflowStatusCode?.trim()]"
+                            class="lable-history-status m-0"
+                          >
+                            {{ statusHistory.workflowStatusName }}
+                          </label>
+                          &nbsp;
+                          <label class="m-0">
+                            {{ statusHistory.value + (statusHistory.currencyName ? statusHistory.currencyName : r.currencyName) }}
+                          </label>
+                          &nbsp;
+                          <span>{{ statusHistory.creationTime | date : "dd/MM/yyyy HH:mm:ss" }}</span>
+                          by <b>{{ statusHistory.creationUser }}</b>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <strong>{{ r.requestInBankTransaction }}</strong>
+                  </td>
+                  <td class="text-center">
+                    <span
+                      [ngClass]="APP_CONSTANT.StatusStyle[r.workflowStatusCode?.trim()]"
+                    >
+                      {{ r.workflowStatusName }}
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    {{ r.creationTime | date : "dd/MM/yyyy" }} <br />
+                    {{ r.creationTime | date : "HH:mm:ss" }}
+                    <span *ngIf="r.creationUser"><br />by {{ r.creationUser }}</span>
+                  </td>
+                  <td class="text-center">
+                    {{ r.updatedTime | date : "dd/MM/yyyy" }} <br />
+                    {{ r.updatedTime | date : "HH:mm:ss" }}
+                    <span *ngIf="r.updatedBy"><br />by {{ r.updatedBy }}</span>
+                  </td>
+                </tr>
+
+                <tr *ngIf="!requestList.length && !isTableLoading">
+                  <td colspan="11" class="text-center text-muted">Không có dữ liệu</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <abp-pagination-controls
+              [id]="paginationId"
+              (pageChange)="onPageChange($event)">
+            </abp-pagination-controls>
+          </div>
+        </div>
+      </ng-container>
+    </mat-expansion-panel>
+  </mat-accordion>
+</div>
