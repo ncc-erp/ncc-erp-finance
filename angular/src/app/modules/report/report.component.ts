@@ -91,6 +91,7 @@ export class ReportComponent extends AppComponentBase  implements OnInit {
 
   onRefreshCurrentPage(){
     this.onResetFilter();
+    this.OnResetSearch();
     this.loadTreeByFilter();
   }
 
@@ -131,7 +132,10 @@ export class ReportComponent extends AppComponentBase  implements OnInit {
     this.onTreeFilter('branchs', this.selectedBranch.length ? this.selectedBranch : OPTION_ALL);
   }
 
-  onFilterMoney() {
+  async onFilterMoney() {
+    await this.onResetFilter()
+    this.searchId = null
+    this.searchText = ""
     this.onTreeFilter('money', this.searchMoney);
   }
 
@@ -146,6 +150,7 @@ export class ReportComponent extends AppComponentBase  implements OnInit {
   async onFilterId() {
     await this.onResetFilter()
     this.searchMoney = null
+    this.searchText = ""
     this.onTreeFilter('searchId', this.searchId)
   }
 
@@ -272,6 +277,12 @@ export class ReportComponent extends AppComponentBase  implements OnInit {
 
     req.filterItems = filterItems;
     return req;
+  }
+
+  async OnResetSearch() {
+    this.searchId = null;
+    this.searchMoney = null
+    this.searchText = ""
   }
 
   async onResetFilter() {
