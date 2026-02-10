@@ -1,0 +1,294 @@
+<section class="content-header">
+  <div class="container-fluid">
+    <div class="header d-flex justify-content-between align-items-center">
+      <div class="breadcrumb">
+        <app-bread-crumb
+          [listBreadCrumb]="listBreadCrumb"
+          (refreshCurrentPage)="onRefreshCurrentPage()"
+        ></app-bread-crumb>
+      </div>
+      <div class="col-6 text-right"></div>
+    </div>
+  </div>
+</section>
+
+<section class="content px-2" id="report">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header align-items-center">
+        <div class="row align-items-center h-fit-content">
+          <div class="input-group col-2">
+            <div class="input-group col-12 d-flex">
+              <div class="input-group-prepend">
+                <button
+                  type="button"
+                  class="btn bg-blue"
+                  (click)="onSearch()"
+                >
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                name="keyword"
+                placeholder="Tìm kiếm theo nội dung..."
+                [(ngModel)]="searchText"
+                (keyup.enter)="onSearch()"
+              />
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-2 col-xl-2">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>Tiền tệ</mat-label>
+              <mat-select
+                (selectionChange)="onFilterCurrency()"
+                [(ngModel)]="selectedCurrencyId"
+              >
+                <ng-container *ngFor="let item of listCurrency">
+                  <mat-option [value]="item.value">
+                    {{ item.name }}
+                  </mat-option>
+                </ng-container>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-2 d-flex align-items-center">
+            <app-tree-in-out-type
+              #treeInOutType
+              [filter]="treeInOutTypeOption"
+              [ngClass]="outcomingEntryTypeIds.length > 0 ? 'col-11' : 'col-12'"
+              [selected]="outcomingEntryTypeIds"
+              (selectChange)="outcomingEntryTypeIds = $event;onFilterListOutcomeType()"
+              placeholderSearch="Search loại chi"
+              [isRequired]="false"
+              placeholder="Loại chi"
+              [undefinedValue]="[]"
+              label="Loại chi"
+            >
+            </app-tree-in-out-type>
+            <i
+              class="fas fa-times fa-lg pointer"
+              *ngIf="outcomingEntryTypeIds.length > 0"
+              (click)="onCancelFilterListOutcomeType()"
+            ></i>
+          </div>
+          <div class="col-2">
+            <mat-form-field appearance="outline" class="col-12">
+              <mat-label>Tính vào chi phí</mat-label>
+              <mat-select
+                [(ngModel)]="expenseType"
+                (selectionChange)="onFilterExpenseType()"
+              >
+                <mat-option [value]="-1"> All </mat-option>
+                <mat-option [value]="0"> Tính vào chi phí </mat-option>
+                <mat-option [value]="1"> Không tính vào chi phí </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-4">
+            <app-date-selector
+              (onDateSelectorChange)="onDateChange($event)"
+              [type]="defaultDateFilterType"
+              [defaultDateFilter]="searchWithDateTime"
+              [label]="'Ngày báo cáo'"
+            ></app-date-selector>
+          </div>
+        </div>
+        <div class="row align-items-center h-fit-content mt-2">
+          <!-- Id -->
+          <div class="col-2 align-items-center">
+            <mat-form-field appearance="outline" class="col-12">
+              <mat-label>Id</mat-label>
+              <input
+                type="text"
+                matInput
+                class="form-control height-maxcontent"
+                name="id"
+                mask="separator"
+                placeholder="Tìm kiếm theo Id"
+                thousandSeparator=""
+                [(ngModel)]="searchId"
+                (keyup.enter)="onFilterId()"
+              />
+            </mat-form-field>
+          </div>
+          <!-- Requester -->
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>{{ "Requester" }}</mat-label>
+              <mat-select
+                name="selectedRequester"
+                placeholder="Requester"
+                [(ngModel)]="selectedRequester"
+                (selectionChange)="onFilterRequester()"
+                (openedChange)="selectionRequesterOpenChange($event)"
+                multiple
+              >
+                <mat-form-field
+                  class="w-100 px-3 selection-input-seach-hanging-above"
+                >
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="Requester"
+                    [(ngModel)]="searchRequester"
+                    name="searchRequester"
+                    (keydown)="$event.stopPropagation()"
+                    (ngModelChange)="searchRequesterChange()"
+                    #inputSearchRequester
+                  />
+                </mat-form-field>
+                <mat-option
+                  *ngIf="!requesterOptions || !requesterOptions.length"
+                  disabled
+                  class="disable-checkbox text-center"
+                  >No Data
+                  {{
+                    searchRequester ? "by '" + searchRequester + "'" : ""
+                  }}</mat-option
+                >
+                <mat-option
+                  [value]="requester.value"
+                  *ngFor="let requester of requesterOptions"
+                >
+                  {{ requester.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- Branch -->
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>{{ "Branch" }}</mat-label>
+              <mat-select
+                name="branchOptions"
+                placeholder="Branch"
+                [(ngModel)]="selectedBranch"
+                (selectionChange)="onFilterBranch()"
+                (openedChange)="selectionBranchOpenChange($event)"
+                multiple
+              >
+                <mat-form-field
+                  class="w-100 px-3 selection-input-seach-hanging-above"
+                >
+                  <input
+                    type="text"
+                    matInput
+                    placeholder="Branch"
+                    [(ngModel)]="searchBranch"
+                    name="searchRequester"
+                    (keydown)="$event.stopPropagation()"
+                    (ngModelChange)="searchBranchChange()"
+                    #inputSearchBranch
+                  />
+                </mat-form-field>
+                <mat-option
+                  *ngIf="!branchOptions || !branchOptions.length"
+                  disabled
+                  class="disable-checkbox text-center"
+                  >No Data
+                  {{
+                    searchBranch ? "by '" + searchBranch + "'" : ""
+                  }}</mat-option
+                >
+                <mat-option
+                  [value]="branch.id"
+                  *ngFor="let branch of branchOptions"
+                >
+                  {{ branch.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <!-- Money -->
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field class="col-12" appearance="outline">
+              <mat-label>Money</mat-label>
+              <input
+                type="text"
+                matInput
+                class="form-control height-maxcontent"
+                name="money"
+                placeholder="Nhập số tiền"
+                [(ngModel)]="searchMoney"
+                mask="separator"
+                thousandSeparator=","
+                (keyup.enter)="onFilterMoney()"
+              />
+            </mat-form-field>
+          </div>
+          <!-- Status -->
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field
+              [class]="selectedStatus ? 'col-10' : 'col-12'"
+              appearance="outline"
+            >
+              <mat-label>Status</mat-label>
+              <mat-select
+                name="status"
+                placeholder="Status"
+                [(ngModel)]="selectedStatus"
+                (selectionChange)="onFilterStatus()"
+              >
+                <mat-option
+                  [value]="status.code.trim()"
+                  *ngFor="let status of statusList"
+                >
+                  {{ status.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="col-md-2" *ngIf="selectedStatus">
+              <mat-icon
+                style="margin-top: 14px; cursor: pointer"
+                (click)="selectedStatus = undefined; onFilterStatus()"
+                >clear</mat-icon
+              >
+            </div>
+          </div>
+          <!-- Request change status -->
+          <div class="col-2 d-flex align-items-center">
+            <mat-form-field
+              [class]="selectedStatusYCTD ? 'col-10' : 'col-12'"
+              appearance="outline"
+            >
+              <mat-label>YCTĐ Status</mat-label>
+              <mat-select
+                name="statusYCTD"
+                [(ngModel)]="selectedStatusYCTD"
+                (selectionChange)="onFilterYCTDStatus()"
+              >
+                <mat-option
+                  [value]="status.code.trim()"
+                  *ngFor="let status of YCTDStatusOptions"
+                >
+                  {{ status.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="col-md-2" *ngIf="selectedStatusYCTD">
+              <mat-icon
+                style="margin-top: 14px; cursor: pointer"
+                (click)="selectedStatusYCTD = undefined; onFilterYCTDStatus()"
+                >clear</mat-icon
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body pt-0">
+        <mat-accordion>
+          <app-report-list
+            *ngFor="let node of treeData"
+            [node]="node"
+            [filterRequest]="buildTreeRequestFromFilters()"
+            [resetVersion]="resetVersion">
+          </app-report-list>
+        </mat-accordion>
+      </div>
+    </div>
+  </div>
+</section>
+  
