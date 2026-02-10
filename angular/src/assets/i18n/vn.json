@@ -163,6 +163,9 @@
     "m5_child9": "Kì kế toán"
 
   },
+  "menu6": {
+  "m6_child1": "Báo cáo chi"
+ },
   "m2_child4": {
     "name": "Tên",
     "outType": "Loại chi",

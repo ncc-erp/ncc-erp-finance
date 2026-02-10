@@ -51,6 +51,7 @@ import { FinanceReviewOldComponent } from './modules/finance-review-old/finance-
 import { CurrencyConvertComponent } from './modules/currency-convert/currency-convert.component';
 import { CircleChartComponent } from './modules/circle-chart/circle-chart.component';
 import { CircleChartDetailComponent } from './modules/circle-chart/circle-chart-detail/circle-chart-detail.component';
+import { ReportComponent } from './modules/report/report.component';
 
 
 @NgModule({
@@ -152,7 +153,11 @@ import { CircleChartDetailComponent } from './modules/circle-chart/circle-chart-
                     { path: "btransaction", loadChildren: () => import('app/modules/new-versions/b-transaction/b-transaction.module').then(m => m.BTransactionModule) },
                     { path: "nrevenue", loadChildren: () => import('app/modules/new-versions/n-revenue/n-revenue.module').then(m => m.NRevenueModule) },
                     { path: "b-transaction-log", loadChildren: () => import('app/modules/new-versions/b-transaction-log/b-transaction-log.module').then(m => m.BTransactionLogModule) },
-                    { path: 'period', component: PeriodComponent, canActivate: [AppRouteGuard]}
+                    { path: 'period', component: PeriodComponent, canActivate: [AppRouteGuard]},
+                    { 
+                        path: 'report', 
+                        component: ReportComponent,
+                    }
                 ]
             }
         ])
