@@ -98,3 +98,15 @@
 .hyperlink {
   color: #007bff;
 }
+
+.currency-name-pill {
+  display: inline-block;
+  margin-right: 2px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #d8dee4;
+  font-weight: 700;
+  line-height: 1.25;
+  text-shadow: 0 0 0.01px currentColor;
+}

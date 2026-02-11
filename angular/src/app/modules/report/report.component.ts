@@ -453,6 +453,7 @@ export class GetAllPagingOutComingEntryDto extends PagedRequestDto {
     value: number;
     valueFormat: string;
   }[];
+  vndConvert?: number;
 }
 export class expenditureListDto {
   name: string;
