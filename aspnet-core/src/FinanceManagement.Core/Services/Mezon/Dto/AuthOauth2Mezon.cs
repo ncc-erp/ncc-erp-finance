@@ -12,5 +12,6 @@ namespace FinanceManagement.Services.Mezon.Dto
 		public string iss { get; set; }
 		public long rat { get; set; }
 		public string sub {  get; set; }
-	}
+        public long user_id { get; set; }
+    }
 }

@@ -26,6 +26,7 @@ using System.Net.Mail;
 using FinanceManagement.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using FinanceManagement.IoC;
 
 namespace FinanceManagement.Authorization
 {
@@ -33,7 +34,8 @@ namespace FinanceManagement.Authorization
     {
 		private ILogger<BaseWebService> Logger;
         private readonly IConfiguration _configuration;
-		public LogInManager(
+        private readonly IWorkScope _workScope;
+        public LogInManager(
             UserManager userManager,
             IMultiTenancyConfig multiTenancyConfig,
             IRepository<Tenant> tenantRepository,
@@ -45,7 +47,8 @@ namespace FinanceManagement.Authorization
             IPasswordHasher<User> passwordHasher,
             RoleManager roleManager,
 			IConfiguration configuration,
-			UserClaimsPrincipalFactory claimsPrincipalFactory)
+            IWorkScope workScope,
+        UserClaimsPrincipalFactory claimsPrincipalFactory)
             : base(
                   userManager,
                   multiTenancyConfig,
@@ -61,7 +64,8 @@ namespace FinanceManagement.Authorization
         {
 			Logger = IocManager.Instance.Resolve<ILogger<BaseWebService>>();
             _configuration = configuration;
-		}
+            _workScope = workScope;
+        }
         [UnitOfWork]
         public async Task<AbpLoginResult<Tenant, User>> LoginAsyncNoPass(string token, string tenancyName = null, bool shouldLockout = true)
         {
@@ -81,7 +85,7 @@ namespace FinanceManagement.Authorization
 			SaveLoginAttempt(result, tenancyName, user == null ? null : user.EmailAddress);
 			return result;
 		}
-        public async Task<AbpLoginResult<Tenant, User>> LoginAsyncInternalNoPass(TypeLoginOauth2 type, string token, string tenancyName, bool shouldLockout, AuthOauth2Mezon input)
+        public async Task<AbpLoginResult<Tenant, User>> LoginAsyncInternalNoPass(TypeLoginOauth2 type, string token, string tenancyName, bool shouldLockout, AuthOauth2Mezon mezonOauthResult)
         {
 			Logger.LogInformation("LoginAsyncInternalNoPass");
            
@@ -92,7 +96,8 @@ namespace FinanceManagement.Authorization
 				var correctAudience = false;
 				var correctIssuer = false;
 				var correctExpriryTime = false;
-				if (type == TypeLoginOauth2.Google)
+                long userMezonId = -1;
+                if (type == TypeLoginOauth2.Google)
                 {
 					if (token.IsNullOrEmpty())
 					{
@@ -109,12 +114,14 @@ namespace FinanceManagement.Authorization
 					correctExpriryTime = payload.ExpirationTimeSeconds != null || payload.ExpirationTimeSeconds > 0;
 				}else if(type == TypeLoginOauth2.Mezon)
                 {
-					emailAddress = input.sub;
-					clientAppId = _configuration.GetValue<string>("Oauth2Mezon:Client_Id");
-					correctAudience = input.aud.Any(s => s == clientAppId);
-					correctIssuer = input.iss == "https://oauth2.mezon.ai";
-					correctExpriryTime = input.auth_time != null || input.auth_time > 0;
-				}
+					emailAddress = mezonOauthResult.sub;
+                    userMezonId = mezonOauthResult.user_id;
+
+                    clientAppId = _configuration.GetValue<string>("Oauth2Mezon:Client_Id");
+					correctAudience = mezonOauthResult.aud.Any(s => s == clientAppId);
+					correctIssuer = mezonOauthResult.iss == "https://oauth2.mezon.ai";
+                    correctExpriryTime = mezonOauthResult.auth_time > 0;
+                }
                
 
                 Tenant tenant = null;
@@ -148,11 +155,17 @@ namespace FinanceManagement.Authorization
                     {
                         await UserManager.InitializeOptionsAsync(tenantId);
 
-                        var user = await UserManager.FindByNameOrEmailAsync(tenantId, emailAddress);
+                        var user = type == TypeLoginOauth2.Mezon ? GetUserByMezonUserId(userMezonId) : await UserManager.FindByEmailAsync(emailAddress);
+
                         if (user == null)
                         {
-                            throw new UserFriendlyException(string.Format("Login Fail - Account does not exist"));
+                            var errorMessage = type == TypeLoginOauth2.Mezon ?
+                                $"Login fail. Not found MezonUserId {userMezonId} in Finfast. Please contact IT" :
+                                $"Login fail. Not found email {emailAddress} in Finfast. Please contact IT";
+
+                            throw new UserFriendlyException(errorMessage);
                         }
+                     
 
                         if (await UserManager.IsLockedOutAsync(user))
                         {
@@ -179,6 +192,17 @@ namespace FinanceManagement.Authorization
             {
                 return new AbpLoginResult<Tenant, User>(AbpLoginResultType.InvalidUserNameOrEmailAddress, null);
             }
+        }
+
+        private User GetUserByMezonUserId(long mezonUserId)
+        {            
+            if (mezonUserId <= 0)
+            {
+                throw new UserFriendlyException("MezonUserId null or empty");
+            }
+            return _workScope.GetAll<User>()
+                .Where(x => x.KomuUserId == mezonUserId)
+                .FirstOrDefault();
         }
     }
 }
