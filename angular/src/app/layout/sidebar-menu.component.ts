@@ -235,6 +235,14 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
           'Finance.Period'
         )
       ]),
+      new MenuItem('menu.menu6', '', 'fas fa-chart-pie', null, [
+        new MenuItem(
+          'menu6.m6_child1',
+          '/app/report',
+          'fas fa-file-alt',
+          null
+        )
+      ]),
     ];
   }
 

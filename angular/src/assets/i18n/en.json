@@ -161,6 +161,9 @@
     "m5_child8": "Biến động số dư",
     "m5_child9": "Kì kế toán"
   },
+  "menu6": {
+  "m6_child1": "Báo cáo chi"
+ },
   "m2_child4": {
     "name": "Name",
     "outType": "Out Type",
