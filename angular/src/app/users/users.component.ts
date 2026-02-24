@@ -37,6 +37,9 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
   keyword = '';
   isActive: boolean | number = OPTION_ALL;
   advancedFiltersVisible = false;
+  iconCondition: string = '';
+  sortDrirect: number = -1;
+  iconSort: string = '';
   routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.user;
@@ -94,9 +97,65 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
       )
       .subscribe((result: UserDtoPagedResultDto) => {
         this.users = result.items;
+        this.applySortUsers();
         this.showPaging(result, pageNumber);
       });
     this.updateBreadCrumb()
+  }
+
+  sortUser(column: 'emailAddress' | 'komuUserId') {
+    if (this.iconCondition !== column) {
+      this.sortDrirect = -1;
+    }
+
+    this.iconCondition = column;
+    this.sortDrirect++;
+
+    if (this.sortDrirect > 1) {
+      this.iconCondition = '';
+      this.iconSort = '';
+      this.sortDrirect = -1;
+    }
+
+    if (this.sortDrirect === 1) {
+      this.iconSort = 'fas fa-sort-amount-down';
+    } else if (this.sortDrirect === 0) {
+      this.iconSort = 'fas fa-sort-amount-up';
+    } else {
+      this.iconSort = 'fas fa-sort';
+    }
+
+    this.applySortUsers();
+  }
+
+  private applySortUsers() {
+    if (!this.iconCondition || this.sortDrirect < 0) {
+      this.refresh();
+      return;
+    }
+
+    const factor = this.sortDrirect === 1 ? -1 : 1;
+    this.users = [...this.users].sort((a, b) => {
+      if (this.iconCondition === 'emailAddress') {
+        const av = (a.emailAddress || '').toLowerCase().trim();
+        const bv = (b.emailAddress || '').toLowerCase().trim();
+        const lengthDiff = av.length - bv.length;
+        if (lengthDiff !== 0) {
+          return lengthDiff * factor;
+        }
+        if (av > bv) {
+          return 1 * factor;
+        }
+        if (av < bv) {
+          return -1 * factor;
+        }
+        return 0;
+      }
+
+      const av = a.komuUserId ?? Number.MIN_SAFE_INTEGER;
+      const bv = b.komuUserId ?? Number.MIN_SAFE_INTEGER;
+      return (av - bv) * factor;
+    });
   }
 
   onRefreshCurrentPage(){

@@ -34,23 +34,22 @@
           </div>
         </div>
         <div class="form-group row">
-          <label class="col-md-3 col-form-label" for="komuName">
-            {{ "KomuUserName" | localize }}
+          <label class="col-md-3 col-form-label" for="komuUserId">
+            {{ "MezonUserId" | localize }}
           </label>
           <div class="col-md-9">
             <input
-              type="text"
+              type="number"
               class="form-control"
-              name="komuName"
-              id="komuName"
-              maxlength="32"
-              [(ngModel)]="user.komuUserName"
-              #komuNameModel="ngModel"
-              #komuNameEl
+              name="komuUserId"
+              id="komuUserId"
+              [(ngModel)]="user.komuUserId"
+              #komuUserIdModel="ngModel"
+              #komuUserIdEl
             />
             <abp-validation-summary
-              [control]="komuNameModel"
-              [controlEl]="komuNameEl"
+              [control]="komuUserIdModel"
+              [controlEl]="komuUserIdEl"
             ></abp-validation-summary>
           </div>
         </div>

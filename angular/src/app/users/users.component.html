@@ -64,7 +64,16 @@
                 <th class="col-stt">STT</th>
                 <th class="col-username">{{ "UserName" | localize }}</th>
                 <th class="col-fullname">{{ "FullName" | localize }}</th>
-                <th class="col-email">{{ "EmailAddress" | localize }}</th>
+                <th class="col-email" (click)="sortUser('emailAddress')" style="cursor: pointer">
+                  <span class="mr-2">{{ "EmailAddress" | localize }}</span>
+                  <i [ngClass]="iconSort" *ngIf="iconCondition === 'emailAddress'"></i>
+                  <i *ngIf="iconCondition !== 'emailAddress'" class="fas fa-sort"></i>
+                </th>
+                <th (click)="sortUser('komuUserId')" style="cursor: pointer">
+                  <span class="mr-2">MezonUserId</span>
+                  <i [ngClass]="iconSort" *ngIf="iconCondition === 'komuUserId'"></i>
+                  <i *ngIf="iconCondition !== 'komuUserId'" class="fas fa-sort"></i>
+                </th>
                 <th>Role</th>
                 <th>{{ "IsActive" | localize }}</th>
                 <th style="width: 80px">{{ "Actions" | localize }}</th>
@@ -87,7 +96,8 @@
                 <td>{{ user.userName }}</td>
                 <td>{{ user.fullName }}</td>
                 <td>{{ user.emailAddress }}</td>
-                <td>{{ user.roleNames.join(', ')}}</td>
+                <td>{{ user.komuUserId }}</td>
+                <td class="col-role">{{ user.roleNames.join(', ')}}</td>
                 <td class="text-center">
                   <div class="custom-control custom-checkbox">
                     <input

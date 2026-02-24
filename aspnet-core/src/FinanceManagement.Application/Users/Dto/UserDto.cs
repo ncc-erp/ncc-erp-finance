@@ -37,5 +37,6 @@ namespace FinanceManagement.Users.Dto
 
         public string[] RoleNames { get; set; }
         public string KomuUserName { get; set; }
+        public long? KomuUserId { get; set; }
     }
 }
