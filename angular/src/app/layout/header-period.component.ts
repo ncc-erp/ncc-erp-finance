@@ -16,7 +16,7 @@ export class HeaderPeriodComponent implements OnInit {
   public selectedPeriodId: number
   public isShowFilter: boolean = false
   public isDisableFilter: boolean = false
-  private listAllowFilter: string[] = ["btransaction", "finance-review", "bank-transaction", "expenditure-request", "revenue-record", "home", "requestDetail", "bankAccountDetail"]
+  private listAllowFilter: string[] = ["btransaction", "finance-review", "bank-transaction", "expenditure-request", "revenue-record", "home", "requestDetail", "bankAccountDetail", "report"]
   private notAllowChanges: string[] = ["requestDetail"]
   public tooltip: string = ""
   constructor(private periodService: PeriodService, private router: Router, private datePipe: DatePipe) {
