@@ -33,21 +33,32 @@ export class UtilitiesService {
     }
   }
   getColorByCurrency(code: string) {
-    switch (code) {
+    const normalizedCode = (code || '').trim().toUpperCase();
+    switch (normalizedCode) {
       case 'VND':
-        return 'black';
+        return '#0F172A';
       case 'USD':
-        return 'blue';
-      case 'GBP':
-        return 'rgb(246, 117, 168)';
+        return '#0057D9';
+      case 'EUR':
       case 'EURO':
-        return 'orange';
-      case 'BATH':
-        return 'rgb(23, 162, 184)';
+        return '#B45309';
+      case 'GBP':
+        return '#7C3AED';
+      case 'JPY':
       case 'YEN':
-        return 'rgb(66, 3, 44)';
+        return '#BE123C';
+      case 'THB':
+      case 'BATH':
+        return '#0F766E';
+      case 'AUD':
+        return '#0369A1';
+      case 'SGD':
+        return '#4338CA';
+      case 'CNY':
+      case 'RMB':
+        return '#C2410C';
       default:
-        return '#8758FF';
+        return '#b908f9';
     }
   }
   formatMoneyCustom(money: number) {

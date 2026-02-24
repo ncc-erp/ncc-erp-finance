@@ -21,5 +21,6 @@ namespace FinanceManagement.APIs.Report.Dto
         [Required(ErrorMessage = "Trường dữ liệu không được bỏ trống.")]
         public ExpenseType? ExpenseType { get; set; }
         public IEnumerable<GetTotalCurrencyDto> TotalCurrencies { get; set; }
+        public double VNDConvert { get; set; }
     }
 }

@@ -3244,7 +3244,7 @@ export class CreateUserDto implements ICreateUserDto {
     isActive: boolean;
     roleNames: string[] | undefined;
     password: string | undefined;
-    komuUserName: string | undefined;
+    komuUserId: number | undefined;
     constructor(data?: ICreateUserDto) {
         if (data) {
             for (var property in data) {
@@ -3258,7 +3258,7 @@ export class CreateUserDto implements ICreateUserDto {
         if (data) {
             this.userName = data["userName"];
             this.name = data["name"];
-            this.komuUserName = data["komuUserName"];
+            this.komuUserId = data["komuUserId"];
             this.surname = data["surname"];
             this.emailAddress = data["emailAddress"];
             this.isActive = data["isActive"];
@@ -3281,7 +3281,7 @@ export class CreateUserDto implements ICreateUserDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["userName"] = this.userName;
-        data["komuUserName"] = this.komuUserName;
+        data["komuUserId"] = this.komuUserId;
         data["name"] = this.name;
         data["surname"] = this.surname;
         data["emailAddress"] = this.emailAddress;
@@ -3311,7 +3311,7 @@ export interface ICreateUserDto {
     isActive: boolean;
     roleNames: string[] | undefined;
     password: string | undefined;
-    komuUserName: string | undefined;
+    komuUserId: number | undefined;
 }
 
 export class UserDto implements IUserDto {
@@ -3326,6 +3326,7 @@ export class UserDto implements IUserDto {
     roleNames: string[] | undefined;
     komuUserName: string | undefined;
     id: number;
+    komuUserId: number | undefined;
 
     constructor(data?: IUserDto) {
         if (data) {
@@ -3340,6 +3341,7 @@ export class UserDto implements IUserDto {
         if (data) {
             this.userName = data["userName"];
             this.komuUserName = data["komuUserName"];
+            this.komuUserId = data["komuUserId"];
             this.name = data["name"];
             this.surname = data["surname"];
             this.emailAddress = data["emailAddress"];
@@ -3366,6 +3368,7 @@ export class UserDto implements IUserDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["userName"] = this.userName;
+        data["komuUserId"] = this.komuUserId;
         data["name"] = this.name;
         data["komuUserName"] = this.komuUserName;
         data["surname"] = this.surname;
@@ -3403,6 +3406,7 @@ export interface IUserDto {
     roleNames: string[] | undefined;
     id: number;
     komuUserName: string | undefined;
+    komuUserId: number | undefined;
 }
 
 export class RoleDtoListResultDto implements IRoleDtoListResultDto {
