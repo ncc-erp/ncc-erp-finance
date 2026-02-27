@@ -15,9 +15,6 @@ import { CreateUserDialogComponent } from './create-user/create-user-dialog.comp
 import { EditUserDialogComponent } from './edit-user/edit-user-dialog.component';
 import { ResetPasswordDialogComponent } from './reset-password/reset-password.component';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
-import { TranslateService } from '@ngx-translate/core';
-import { HttpParams } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
 
 
 const OPTION_ALL = -1
@@ -25,6 +22,13 @@ const OPTION_ALL = -1
 class PagedUsersRequestDto extends PagedRequestDto {
   keyword: string;
   isActive: boolean | null;
+  sort: string;
+  sortDirection: number;
+}
+
+enum SortDirectionEnum {
+  Ascending = 0,
+  Descending = 1
 }
 
 @Component({
@@ -37,9 +41,8 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
   keyword = '';
   isActive: boolean | number = OPTION_ALL;
   advancedFiltersVisible = false;
-  iconCondition: string = '';
-  sortDrirect: number = -1;
-  iconSort: string = '';
+  sortProperty = '';
+  sortDirection: SortDirectionEnum = null;
   routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.user;
@@ -83,10 +86,16 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
     if (this.isActive !== OPTION_ALL) {
       request.isActive = this.isActive as boolean;
     }
+    if (this.sortProperty) {
+      request.sort = this.sortProperty;
+      request.sortDirection = this.sortDirection;
+    }
     this._userService
       .getAll(
         request.keyword,
         request.isActive,
+        request.sort,
+        request.sortDirection,
         request.skipCount,
         request.maxResultCount
       )
@@ -97,65 +106,30 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
       )
       .subscribe((result: UserDtoPagedResultDto) => {
         this.users = result.items;
-        this.applySortUsers();
         this.showPaging(result, pageNumber);
       });
     this.updateBreadCrumb()
   }
 
-  sortUser(column: 'emailAddress' | 'komuUserId') {
-    if (this.iconCondition !== column) {
-      this.sortDrirect = -1;
+  onSortChange(property: 'emailAddress' | 'komuUserId') {
+    if (this.sortProperty !== property) {
+      this.sortDirection = null;
     }
-
-    this.iconCondition = column;
-    this.sortDrirect++;
-
-    if (this.sortDrirect > 1) {
-      this.iconCondition = '';
-      this.iconSort = '';
-      this.sortDrirect = -1;
+    switch (this.sortDirection) {
+      case null:
+        this.sortDirection = SortDirectionEnum.Ascending;
+        this.sortProperty = property;
+        break;
+      case SortDirectionEnum.Ascending:
+        this.sortDirection = SortDirectionEnum.Descending;
+        this.sortProperty = property;
+        break;
+      case SortDirectionEnum.Descending:
+        this.sortDirection = null;
+        this.sortProperty = '';
+        break;
     }
-
-    if (this.sortDrirect === 1) {
-      this.iconSort = 'fas fa-sort-amount-down';
-    } else if (this.sortDrirect === 0) {
-      this.iconSort = 'fas fa-sort-amount-up';
-    } else {
-      this.iconSort = 'fas fa-sort';
-    }
-
-    this.applySortUsers();
-  }
-
-  private applySortUsers() {
-    if (!this.iconCondition || this.sortDrirect < 0) {
-      this.refresh();
-      return;
-    }
-
-    const factor = this.sortDrirect === 1 ? -1 : 1;
-    this.users = [...this.users].sort((a, b) => {
-      if (this.iconCondition === 'emailAddress') {
-        const av = (a.emailAddress || '').toLowerCase().trim();
-        const bv = (b.emailAddress || '').toLowerCase().trim();
-        const lengthDiff = av.length - bv.length;
-        if (lengthDiff !== 0) {
-          return lengthDiff * factor;
-        }
-        if (av > bv) {
-          return 1 * factor;
-        }
-        if (av < bv) {
-          return -1 * factor;
-        }
-        return 0;
-      }
-
-      const av = a.komuUserId ?? Number.MIN_SAFE_INTEGER;
-      const bv = b.komuUserId ?? Number.MIN_SAFE_INTEGER;
-      return (av - bv) * factor;
-    });
+    this.refresh();
   }
 
   onRefreshCurrentPage(){
