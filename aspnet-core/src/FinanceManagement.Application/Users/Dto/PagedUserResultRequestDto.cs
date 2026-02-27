@@ -1,10 +1,8 @@
-﻿using Abp.Application.Services.Dto;
-using System;
+using FinanceManagement.Paging;
 
 namespace FinanceManagement.Users.Dto
 {
-    //custom PagedResultRequestDto
-    public class PagedUserResultRequestDto : PagedResultRequestDto
+    public class PagedUserResultRequestDto : GridParam
     {
         public string Keyword { get; set; }
         public bool? IsActive { get; set; }
