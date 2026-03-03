@@ -17,6 +17,7 @@ using FinanceManagement.Authorization;
 using FinanceManagement.Authorization.Accounts;
 using FinanceManagement.Authorization.Roles;
 using FinanceManagement.Authorization.Users;
+using FinanceManagement.Paging;
 using FinanceManagement.Roles.Dto;
 using FinanceManagement.Users.Dto;
 using Microsoft.AspNetCore.Identity;
@@ -160,7 +161,20 @@ namespace FinanceManagement.Users
 
         protected override IQueryable<User> ApplySorting(IQueryable<User> query, PagedUserResultRequestDto input)
         {
-            return query.OrderBy(r => r.UserName);
+            if (string.IsNullOrWhiteSpace(input.Sort))
+            {
+                return query.OrderBy(x => x.UserName);
+            }
+
+            var sort = input.Sort.Trim().ToLowerInvariant();
+            var isDesc = input.SortDirection == SortDirection.DESC;
+
+            return sort switch
+            {
+                "emailaddress" => isDesc ? query.OrderByDescending(x => x.EmailAddress) : query.OrderBy(x => x.EmailAddress),
+                "komuuserid" => isDesc ? query.OrderByDescending(x => x.KomuUserId) : query.OrderBy(x => x.KomuUserId),
+                _ => query.OrderBy(x => x.UserName)
+            };
         }
 
         protected virtual void CheckErrors(IdentityResult identityResult)

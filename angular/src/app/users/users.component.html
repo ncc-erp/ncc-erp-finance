@@ -64,15 +64,13 @@
                 <th class="col-stt">STT</th>
                 <th class="col-username">{{ "UserName" | localize }}</th>
                 <th class="col-fullname">{{ "FullName" | localize }}</th>
-                <th class="col-email" (click)="sortUser('emailAddress')" style="cursor: pointer">
-                  <span class="mr-2">{{ "EmailAddress" | localize }}</span>
-                  <i [ngClass]="iconSort" *ngIf="iconCondition === 'emailAddress'"></i>
-                  <i *ngIf="iconCondition !== 'emailAddress'" class="fas fa-sort"></i>
+                <th class="col-email" (click)="onSortChange('emailAddress')" style="cursor: pointer">
+                  {{ "EmailAddress" | localize }}
+                  <sortable [name]="'emailAddress'" [sortProperty]="sortProperty" [sortDirection]="sortDirection"></sortable>
                 </th>
-                <th (click)="sortUser('komuUserId')" style="cursor: pointer">
-                  <span class="mr-2">MezonUserId</span>
-                  <i [ngClass]="iconSort" *ngIf="iconCondition === 'komuUserId'"></i>
-                  <i *ngIf="iconCondition !== 'komuUserId'" class="fas fa-sort"></i>
+                <th (click)="onSortChange('komuUserId')" style="cursor: pointer">
+                  MezonUserId
+                  <sortable [name]="'komuUserId'" [sortProperty]="sortProperty" [sortDirection]="sortDirection"></sortable>
                 </th>
                 <th>Role</th>
                 <th>{{ "IsActive" | localize }}</th>
