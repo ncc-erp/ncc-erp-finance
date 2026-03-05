@@ -147,6 +147,42 @@ export class ReportComponent extends AppComponentBase  implements OnInit {
   this.loadTreeByFilter();
   }
 
+  async applyFiltersAndLoadTree() {
+    const queryParams: any = {
+      searchText: this.searchText?.trim() ? this.searchText.trim() : null,
+      currencyId: this.selectedCurrencyId !== OPTION_ALL ? this.selectedCurrencyId : null,
+      outcomingEntryTypeIds: this.outcomingEntryTypeIds?.length ? JSON.stringify(this.outcomingEntryTypeIds) : null,
+      expenseType: this.expenseType !== OPTION_ALL ? this.expenseType : null,
+      searchId: (this.searchId as any) === '' || this.searchId == null ? null : this.searchId,
+      money: (this.searchMoney as any) === '' || this.searchMoney == null ? null : this.searchMoney,
+      status: this.selectedStatus ? this.selectedStatus : null,
+      statusRequestChange: this.selectedStatusYCTD ? this.selectedStatusYCTD : null,
+      accreditation: this.accreditation ? this.accreditation : null,
+      branchs: this.selectedBranch?.length ? JSON.stringify(this.selectedBranch) : null,
+      requesters: this.selectedRequester?.length ? JSON.stringify(this.selectedRequester) : null,
+      dateFilter: null
+    };
+
+    if (
+      this.searchWithDateTime?.dateType !== undefined &&
+      this.searchWithDateTime.dateType !== DateSelectorEnum.ALL
+    ) {
+      queryParams.dateFilter = JSON.stringify({
+        ...this.searchWithDateTime,
+        fromDate: moment(this.searchWithDateTime.fromDate).format('YYYY-MM-DD'),
+        toDate: moment(this.searchWithDateTime.toDate).format('YYYY-MM-DD')
+      });
+    }
+
+    await this.router.navigate([], {
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+      queryParams
+    });
+
+    this.loadTreeByFilter();
+  }
+
   async onFilterId() {
     await this.onResetFilter()
     this.searchMoney = null

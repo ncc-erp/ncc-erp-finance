@@ -1,0 +1,112 @@
+.mat-expansion-panel {
+    color: inherit;
+    box-shadow: none;
+  }
+  .mat-expansion-panel-header {
+    max-height: 48px;
+
+    background-color: #5f656b;
+  }
+
+  .mat-expansion-panel-header:visited,
+  .mat-expansion-panel-header {
+    background-color: #5f656b !important;
+    margin-bottom: 10px;
+    max-height: 48px;
+  }
+  .mat-expansion-panel-header,
+  .mat-expansion-panel-header .mat-content,
+  .mat-expansion-panel-header .mat-expansion-panel-header-title,
+  .mat-expansion-panel-header .mat-expansion-panel-header-description,
+  .mat-expansion-panel-header .mat-icon {
+    color: #fff;
+  }
+  .mat-expanded .mat-expansion-panel-header {
+    max-height: 48px;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  .mat-expansion-panel-spacing,
+  .mat-expanded {
+    border: 1px solid #5f656b;
+    border-collapse: collapse;
+    border-radius: 0 !important;
+  }
+
+  .final {
+    border: none !important;
+  }
+  .reveCount::before {
+    content: " - ";
+  }
+
+  button{
+    border:none;
+    background: none;
+    outline: none;
+  }
+  .table,
+  .table th,
+  .table td {
+    color: #212529;
+  }
+
+.request-type-colum{
+  width: 165px;
+}
+.branch-column{
+  width: 130px;
+}
+.width-history-default{
+  max-width: 240px;
+  min-width: 240px;
+  width: 240px;
+}
+.width-history-extend{
+  max-width: max-content;
+  min-width: max-content;
+  width: max-content;
+}
+.history::-webkit-scrollbar {
+  display: none;
+}
+.history{
+  width: 100%;
+  text-align: left;
+}
+.preHistory{
+  text-align: left;
+  width: 100%;
+  overflow: hidden;
+  height: 72px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  display: -webkit-box;
+}
+.row-history-status-text-overflow-ellipsis{
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.reportDate-col{
+  white-space: nowrap;
+}
+.hyperlink:hover {
+  cursor: pointer;
+  text-decoration: underline !important;
+}
+.hyperlink {
+  color: #007bff;
+}
+
+.currency-name-pill {
+  display: inline-block;
+  margin-right: 2px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid #d8dee4;
+  font-weight: 700;
+  line-height: 1.25;
+  text-shadow: 0 0 0.01px currentColor;
+}

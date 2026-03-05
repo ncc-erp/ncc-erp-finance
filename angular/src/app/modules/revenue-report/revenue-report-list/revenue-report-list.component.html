@@ -1,0 +1,125 @@
+<div style="margin-bottom: 10px;">
+    <mat-accordion>
+        <mat-expansion-panel
+            hideToggle
+            [ngClass]="node.children.length == 0 ? 'final' : 'parent'"
+            (opened)="onTogglePanel()"
+            (closed)="onTogglePanel()"
+        >
+            <mat-expansion-panel-header>
+                <div class="row w-100">
+                    <div class="col-12 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center flex-wrap">
+                            <mat-icon 
+                                *ngIf="node.children.length"
+                                style="margin-right: 25px; color: #fed55f;"
+                                >
+                                {{ isExpanded ? "drive_file_move" : "folder" }}
+                            </mat-icon>
+
+                            <mat-icon
+                                *ngIf="!node.children.length"
+                                style="margin-right: 25px;"
+                                >
+                                {{ isExpanded ? "description" : "insert_drive_file" }}
+                            </mat-icon>
+
+                            <span class="text-uppercase font-weight-bold">
+                                {{ node.item.name }}
+                            </span>
+                            <span style="margin-left: 8px; margin-right: 3px;">({{ node.item.code }})</span>
+                        </div>
+
+                        <div class="d-flex align-items-center flex-wrap">
+                            <div 
+                                style="border: none"
+                                class="mr-3"
+                                *ngFor="let item of node.item.totalCurrencies || []"
+                            >
+                                <strong 
+                                    class="currency-name-pill"
+                                    [style.color]="_utilities.getColorByCurrency(item.currencyName)"
+                                >
+                                    {{ item.currencyName }}
+                                </strong>
+                                : {{ item.valueFormat }}
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel-header>
+
+            <ng-container *ngIf="node.children.length > 0">
+                <app-revenue-report-list
+                    *ngFor="let child of node.children"
+                    [node]="child"
+                    [filterRequest]="filterRequest"
+                    [resetVersion]="resetVersion">
+                </app-revenue-report-list>
+            </ng-container>
+
+            <ng-container *ngIf="node.children.length === 0">
+                <div class="card-body table-responsive px-4 pt-0" *ngIf="isExpanded">
+                    <div class="fixTableHead">
+                        <table 
+                            style="border-collapse: collapse"
+                            class="table table-hover text-nowrap"
+                            [busy]="isTableLoading"
+                        >
+                            <thead class="bg-light">
+                                <tr style="border: none">
+                                    <th style="width: 50px">STT</th>
+                                    <th class="name-colum">{{ "m5_child1.name" | translate }}</th>
+                                    <th>{{ "m5_child1.value" | translate }}</th>
+                                    <th>{{ "filterRevenueRecord.clientName" | translate }}</th>
+                                    <th style="width: 105px">{{ "filterRevenueRecord.createDate" | translate }}</th>
+                                    <th style="width: 105px">{{ "filterRevenueRecord.UpdatedTime" | translate }}</th>  
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr
+                                    *ngFor="let r of requestList; let i = index"
+                                >
+                                    <td style="text-align: center">
+                                        <span>
+                                            {{ i + 1 }}
+                                        </span>
+                                    </td>
+                                    <td style="max-width: 250px; white-space: normal">
+                                        <a 
+                                            class="hyperlink name-colum"
+                                            [routerLink]="['/app/detail']"
+                                            [queryParams]="{ id: r.bankTransactionId, index: 1 }"
+                                        >
+                                            <b>#{{ r.id }}</b> {{ r.name }}
+                                        </a>
+                                    </td>
+                                    <td class="text-right">
+                                        <span>
+                                            {{ r.value | number : "1.0" : "en-US" }}
+                                            <strong [style.color]="_utilities.getColorByCurrency(r.currencyName)">
+                                                {{ r.currencyName }}
+                                            </strong>
+                                        </span>
+                                    </td>
+                                    <td>{{ r.clientName }}</td>
+                                    <td class="text-center">{{ r.date | date : "dd/MM/yyyy" }}</td>
+                                    <td class="text-center">
+                                        {{ r.updatedTime | date : "dd/MM/yyyy hh:mm" }}
+                                        <span *ngIf="r.updatedBy">by {{ r.updatedBy }}</span>
+                                    </td>
+                                </tr>
+                                
+                                <tr *ngIf="!requestList.length && !isTableLoading">
+                                    <td colspan="7" class="text-center text-muted">Không có dữ liệu</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                    </div>
+                </div>
+            </ng-container>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>

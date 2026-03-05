@@ -241,6 +241,12 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
           '/app/report',
           'fas fa-file-alt',
           null
+        ),
+        new MenuItem(
+          'menu6.m6_child2',
+          '/app/revenue-report',
+          'fas fa-file-alt',
+          null
         )
       ]),
     ];

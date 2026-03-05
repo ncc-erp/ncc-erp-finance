@@ -169,6 +169,8 @@ import { PieChartComponent } from './home/pie-chart/pie-chart.component';
 import { DateSelectorDashboardComponent } from './home/date-selector-dashboard/date-selector-dashboard.component';
 import { ReportComponent } from './modules/report/report.component';
 import { ReportListComponent } from './modules/report/report-list/report-list.component';
+import { RevenueReportComponent } from './modules/revenue-report/revenue-report.component';
+import { RevenueReportListComponent } from './modules/revenue-report/revenue-report-list/revenue-report-list.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -343,6 +345,10 @@ import { ReportListComponent } from './modules/report/report-list/report-list.co
     ReportComponent,
 
     ReportListComponent,
+
+    RevenueReportComponent,
+
+    RevenueReportListComponent,
 
   ],
   imports: [
