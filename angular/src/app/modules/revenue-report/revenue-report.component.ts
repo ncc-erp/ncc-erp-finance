@@ -428,6 +428,7 @@ export class RevenuesDto {
     totalValue: number;
     valueFormat: string;
   }
+  currencyConvert: number;
 }
 export class RevenueListDto {
   name: string;

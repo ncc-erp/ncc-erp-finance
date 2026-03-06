@@ -17,5 +17,6 @@ namespace FinanceManagement.APIs.IncomingEntryReport.Dto
         public bool RevenueCounted { get; set; }
         public bool IsActive { get; set; }
         public IEnumerable<GetTotalIncomingCurrencyDto> TotalCurrencies { get; set; }
+        public double CurrencyConvert { get; set; }
     }
 }

@@ -43,7 +43,15 @@
                                     {{ item.currencyName }}
                                 </strong>
                                 : {{ item.totalValue | number : "1.0-0" : "en-US" }}
-                            </div>                            
+                            </div>
+                            <div
+                                style="border: none"
+                                class="mr-3"
+                                *ngIf="node.item.currencyConvert !== null && node.item.currencyConvert !== undefined"
+                            >
+                                <strong>Quy về {{defaultCurrencyCode}} :</strong>
+                                {{ node.item.currencyConvert | number : "1.0-0" : "en-US" }}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -140,25 +140,6 @@ namespace FinanceManagement.APIs.IncomingEntryReport
                          }).OrderByDescending(x => x.Date);
             return query;
         }
-
-        public async Task<IEnumerable<GetTotalIncomingCurrencyDto>> GetTotalCurrencies(IQueryable<IncomingEntryDto> query, IncomingEntryGridParam input)
-        {
-            return await query
-                .Select(x => new
-                {
-                    x.CurrencyId,
-                    x.CurrencyName,
-                    x.Value
-                })
-                .GroupBy(x => new { x.CurrencyId, x.CurrencyName })
-                .Select(x => new GetTotalIncomingCurrencyDto
-                {
-                    CurrencyId = x.Key.CurrencyId,
-                    CurrencyName = x.Key.CurrencyName,
-                    TotalValue = x.Sum(x => x.Value)
-                })
-                .ToListAsync();
-        }
         private async Task<Dictionary<long, double>> GetLatestCurrencyConvertDictionary()
         {
             var listCurrencyConvert = await WorkScope.GetAll<CurrencyConvert>()
@@ -169,27 +150,9 @@ namespace FinanceManagement.APIs.IncomingEntryReport
                 .GroupBy(x => x.CurrencyId)
                 .ToDictionary(
                     x => x.Key,
-                    x => x.OrderByDescending(y => y.DateAt).ThenByDescending(y => y.Id).First().Value
-                );
-        }
-        private double CalculateVNDConvert(
-            IEnumerable<GetTotalIncomingCurrencyDto> totalCurrencies,
-            IReadOnlyDictionary<long, double> lastestCurrencyConvertDict)
-        {
-            return totalCurrencies.Sum(x =>
-            {
-                if (!x.CurrencyId.HasValue)
-                {
-                    return 0;
-                }
-
-                if (!lastestCurrencyConvertDict.TryGetValue(x.CurrencyId.Value, out var exchangeRate) || exchangeRate == 0)
-                {
-                    return 0;
-                }
-
-                return x.TotalValue * exchangeRate;
-            });
+                    x => x.OrderByDescending(y => y.DateAt)
+                          .ThenByDescending(y => y.Id)
+                          .First().Value);
         }
 
         private async Task FillTotalCurrencyForIncomingTypes(
@@ -198,19 +161,84 @@ namespace FinanceManagement.APIs.IncomingEntryReport
             IQueryable<IncomingEntryDto> incomingQuery,
             IncomingEntryGridParam input)
         {
+            var defaultCurrency = await GetCurrencyDefaultAsync();
+
+            var rateDict = defaultCurrency == null
+                ? new Dictionary<long, double>()
+                : await GetLatestCurrencyConvertDictionary();
+
+            var totals = await GetAllTotals(incomingQuery);
+
             foreach (var entryType in entryTypes)
             {
                 var childIds = _commonManager.GetAllEntryLowerNodeIds(entryType.Id, treeHasRoot);
+
                 if (childIds == null || childIds.Count == 0)
-                {
                     childIds = new List<long> { entryType.Id };
-                }
 
-                var query = incomingQuery.Where(x => childIds.Contains(x.IncomingEntryTypeId));
-                var totalCurrencies = (await GetTotalCurrencies(query, input)).ToList();
+                var childSet = childIds.ToHashSet();
 
-                entryType.TotalCurrencies = totalCurrencies;
+                var totalsOfType = totals
+                    .Where(x => childSet.Contains(x.EntryTypeId))
+                    .ToList();
+
+                var currencies = totalsOfType
+                    .GroupBy(x => new { x.CurrencyId, x.CurrencyName, x.CurrencyCode })
+                    .Select(x => new GetTotalIncomingCurrencyDto
+                    {
+                        CurrencyId = x.Key.CurrencyId,
+                        CurrencyName = x.Key.CurrencyName,
+                        CurrencyCode = x.Key.CurrencyCode,
+                        TotalValue = x.Sum(v => v.TotalValue)
+                    })
+                    .ToList();
+
+                entryType.TotalCurrencies = currencies;
+
+                entryType.CurrencyConvert = defaultCurrency == null
+                    ? 0
+                    : currencies.Sum(x =>
+                        ConvertCurrency(
+                            x.TotalValue,
+                            x.CurrencyId ?? 0,
+                            rateDict,
+                            defaultCurrency.Id));
             }
+        }
+
+        private async Task<List<IncomingTotalDto>> GetAllTotals(IQueryable<IncomingEntryDto> incomingQuery)
+        {
+            return await incomingQuery
+                .GroupBy(x => new { x.IncomingEntryTypeId, x.CurrencyId, x.CurrencyName, x.CurrencyCode })
+                .Select(x => new IncomingTotalDto
+                {
+                    EntryTypeId = x.Key.IncomingEntryTypeId,
+                    CurrencyId = x.Key.CurrencyId,
+                    CurrencyName = x.Key.CurrencyName,
+                    CurrencyCode = x.Key.CurrencyCode,
+                    TotalValue = x.Sum(v => v.Value)
+                })
+                .ToListAsync();
+        }
+
+        private double ConvertCurrency(
+            double value,
+            long currencyId,
+            IReadOnlyDictionary<long, double> rateDict,
+            long defaultCurrencyId)
+        {
+            if (currencyId == defaultCurrencyId)
+                return value;
+
+            if (!rateDict.TryGetValue(currencyId, out var rate) || rate <= 0)
+                return 0;
+
+            rateDict.TryGetValue(defaultCurrencyId, out var defaultRate);
+
+            if (defaultRate <= 0)
+                defaultRate = 1;
+
+            return (value * rate) / defaultRate;
         }
     }
 }
