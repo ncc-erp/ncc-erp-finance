@@ -42,7 +42,7 @@
                                 >
                                     {{ item.currencyName }}
                                 </strong>
-                                : {{ item.valueFormat }}
+                                : {{ item.totalValue | number : "1.0-0" : "en-US" }}
                             </div>                            
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                                     </td>
                                     <td class="text-right">
                                         <span>
-                                            {{ r.value | number : "1.0" : "en-US" }}
+                                            {{ r.value }}
                                             <strong [style.color]="_utilities.getColorByCurrency(r.currencyName)">
                                                 {{ r.currencyName }}
                                             </strong>
