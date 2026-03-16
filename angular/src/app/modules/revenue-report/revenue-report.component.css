@@ -39,3 +39,16 @@
 ::ng-deep #revenue-report .height-maxcontent {
     height: max-content;
 }
+
+::ng-deep #revenue-report .mat-expansion-panel-header {
+    padding-right: 8px !important;
+}
+
+::ng-deep #revenue-report .mat-expansion-panel-header .mat-content {
+    padding-right: 0 !important;
+    margin-right: 0 !important;
+}
+
+::ng-deep #revenue-report .mat-expansion-panel-header-description {
+    margin-right: 0 !important;
+}

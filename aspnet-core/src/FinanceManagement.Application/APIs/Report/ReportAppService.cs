@@ -81,6 +81,7 @@ namespace FinanceManagement.APIs.Report
         }
 
         [HttpPost]
+        [AbpAuthorize(PermissionNames.Finance_Report_View)]
         public async Task<List<ReportOutcomingEntryTypeDto>> GetTreeByOutcomingFilter(GetAllPagingOutComingEntryDto input)
         {
             var outcomingQuery = BuildOutcomingQuery(input)
@@ -190,6 +191,7 @@ namespace FinanceManagement.APIs.Report
         }
 
         [HttpPost]
+        [AbpAuthorize(PermissionNames.Finance_Report_View)]
         public async Task<ReportOutcomingEntryDto> GetAllPaging(GetAllPagingOutComingEntryDto input)
         {
             var response = new ReportOutcomingEntryDto();

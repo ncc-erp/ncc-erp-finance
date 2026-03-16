@@ -1,6 +1,8 @@
-﻿using FinanceManagement.APIs.IncomingEntries;
+﻿using Abp.Authorization;
+using FinanceManagement.APIs.IncomingEntries;
 using FinanceManagement.APIs.IncomingEntries.Dto;
 using FinanceManagement.APIs.IncomingEntryReport.Dto;
+using FinanceManagement.Authorization;
 using FinanceManagement.Entities;
 using FinanceManagement.Extension;
 using FinanceManagement.GeneralModels;
@@ -30,6 +32,7 @@ namespace FinanceManagement.APIs.IncomingEntryReport
         }
 
         [HttpPost]
+        [AbpAuthorize(PermissionNames.Finance_Report_View)]
         public async Task<List<IncomingEntryTypeReportDto>> GetTreeByIncomingFilter(IncomingEntryGridParam input)
         {
             var incomingQuery = BuildIncomingQuery()
@@ -82,6 +85,7 @@ namespace FinanceManagement.APIs.IncomingEntryReport
         }
 
         [HttpPost]
+        [AbpAuthorize(PermissionNames.Finance_Report_View)]
         public async Task<IncomingEntryReportDto> GetAllPaging(IncomingEntryGridParam input)
         {
             var respone = new IncomingEntryReportDto();

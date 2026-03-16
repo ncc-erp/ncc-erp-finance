@@ -3,10 +3,12 @@
         <mat-expansion-panel
             hideToggle
             [ngClass]="node.children.length == 0 ? 'final' : 'parent'"
+            class="revenue-node"
             (opened)="onTogglePanel()"
             (closed)="onTogglePanel()"
         >
-            <mat-expansion-panel-header>
+            <mat-expansion-panel-header
+                class="revenue-node__header">
                 <div class="row w-100">
                     <div class="col-12 d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center flex-wrap">

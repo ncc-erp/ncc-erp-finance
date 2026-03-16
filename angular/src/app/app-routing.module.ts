@@ -158,10 +158,12 @@ import { RevenueReportComponent } from './modules/revenue-report/revenue-report.
                     { 
                         path: 'report', 
                         component: ReportComponent,
+                        canActivate: [AppRouteGuard]
                     },
                     {
                         path: 'revenue-report',
-                        component: RevenueReportComponent
+                        component: RevenueReportComponent,
+                        canActivate: [AppRouteGuard]
                     }
                 ]
             }

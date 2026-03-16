@@ -199,7 +199,7 @@ export class RevenueReportComponent extends AppComponentBase implements OnInit {
     const roots: ReportTreeIncomingEntries[] = [];
 
     arr.forEach((x) => {
-      map.set(x.id, { item: x, children: [], paddingLevel: "" });
+      map.set(x.id, { item: x, children: [], paddingLevel: "", level: 0 });
     });
 
     arr.forEach((x) => {
@@ -211,6 +211,12 @@ export class RevenueReportComponent extends AppComponentBase implements OnInit {
       }
     });
 
+    const setLevel = (node: ReportTreeIncomingEntries, level: number) => {
+      node.level = level;
+      node.children.forEach((c) => setLevel(c, level + 1));
+    };
+
+    roots.forEach((r) => setLevel(r, 0));
     return roots;
   }
 
@@ -527,4 +533,5 @@ export interface ReportTreeIncomingEntries {
   item: RevenuesDto;
   children: ReportTreeIncomingEntries[];
   paddingLevel: string;
+  level: number;
 }
