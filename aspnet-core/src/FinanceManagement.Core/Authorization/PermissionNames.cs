@@ -348,8 +348,10 @@ namespace FinanceManagement.Authorization
         public const string Finance_Period_Create = "Finance.Period.Create";
         public const string Finance_Period_Edit = "Finance.Period.Edit";
         public const string Finance_Period_CloseAndCreate = "Finance.Period.CloseAndCreate";
-        
-        
+
+        //Report
+        public const string Finance_Report = "Finance.Report";
+        public const string Finance_Report_View = "Finance.Report.View";
 
        
     }
@@ -680,7 +682,9 @@ namespace FinanceManagement.Authorization
                     PermissionNames.Finance_Period_CloseAndCreate,
                     PermissionNames.Finance_Period_Edit,
                     
-    
+                    //Report
+                    PermissionNames.Finance_Report,
+                    PermissionNames.Finance_Report_View,
                 }
             },
             {
@@ -999,6 +1003,10 @@ namespace FinanceManagement.Authorization
                     PermissionNames.Finance_Period_CloseAndCreate,
                     PermissionNames.Finance_Period_Edit,
 
+                    //Report
+                    PermissionNames.Finance_Report,
+                    PermissionNames.Finance_Report_View
+
 
                 }
             },
@@ -1288,7 +1296,9 @@ namespace FinanceManagement.Authorization
                     PermissionNames.Finance_Period_CloseAndCreate,
                     PermissionNames.Finance_Period_Edit,
 
-
+                    //Report
+                    PermissionNames.Finance_Report,
+                    PermissionNames.Finance_Report_View
                 }
             },
             {
@@ -1335,6 +1345,9 @@ namespace FinanceManagement.Authorization
                     PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabSupplier_LinkToSupplier,
                     PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabSupplier_CreateSupplier,
                     PermissionNames.Finance_OutcomingEntry_OutcomingEntryDetail_TabSupplier_DeleteLinkToSupplier,
+
+                    PermissionNames.Finance_Report,
+                    PermissionNames.Finance_Report_View
                 }
             }
         };
@@ -1656,7 +1669,9 @@ namespace FinanceManagement.Authorization
                 new SystemPermission{Name = PermissionNames.Finance_Period_Edit, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Chỉnh sửa"},
                 new SystemPermission{Name = PermissionNames.Finance_Period_CloseAndCreate, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Đóng kì hiện tại và tạo mới"},
                
-
+                // Report
+                new SystemPermission{Name = PermissionNames.Finance_Report, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Báo cáo"},
+                new SystemPermission{Name = PermissionNames.Finance_Report_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xem tất cả"}
 
             };
 
@@ -2115,6 +2130,13 @@ namespace FinanceManagement.Authorization
                                     new SystemPermission{Name = PermissionNames.Finance_Period_CloseAndCreate, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Đóng kì hiện tại và tạo mới"},
 
                                 }
+                           },
+
+                           new SystemPermission{Name = PermissionNames.Finance_Report, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Báo cáo",
+                               Childrens = new List<SystemPermission>()
+                               {
+                                   new SystemPermission{Name = PermissionNames.Finance_Report_View, MultiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant, DisplayName = "Xem tất cả"},
+                               }
                            },
                     }
                 },
