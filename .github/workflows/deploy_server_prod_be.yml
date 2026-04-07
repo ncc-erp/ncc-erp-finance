@@ -75,7 +75,6 @@ jobs:
           cd /var/www/migrator_git/finfast/stg-dotnet-migrator-finfast/
           dotnet3 FinanceManagement.Migrator.dll -q
 
-
       - name: Restart Server
         run: |
           cd aspnet-core/
