@@ -99,7 +99,7 @@ export const APP_CONSTANT = {
     financeStatisticOld: "Đối soát cũ",
     btransaction: "Biến động số dư",
     nrevenue: "Khoản phải thu",
-    period: "Kì kế toán",
+    period: "Kì kế toán",    
     expenditureReport: "Báo cáo chi",
     revenueReport: "Báo cáo thu"
   },
@@ -140,7 +140,7 @@ export const APP_CONSTANT = {
     financeStatisticOld: "/app/finance-statistic-old",
     btransaction: "/app/btransaction",
     nrevenue: "/app/nrevenue",
-    period: "/app/period",
+    period: "/app/period",    
     expenditureReport: "/app/report",
     revenueReport: "/app/revenue-report"
   },

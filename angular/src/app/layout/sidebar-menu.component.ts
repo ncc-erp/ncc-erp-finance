@@ -41,6 +41,7 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
       });
   }
 
+  
   getMenuItems(): MenuItem[] {
     return [
       new MenuItem('menu.menu1', '/app/home', 'fas fa-home', 'Dashboard'),
@@ -234,12 +235,12 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
           'fas fa-business-time',
           'Finance.Period'
         )
-      ]),
+      ]),      
       new MenuItem('menu.menu6', '', 'fas fa-chart-pie', 'Finance', [
         new MenuItem(
           'menu6.m6_child1',
           '/app/report',
-          'fas fa-file-alt',
+          'fas fa-file-alt',          
           'Finance.Report'
         ),
         new MenuItem(
@@ -248,9 +249,10 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
           'fas fa-file-alt',
           'Finance.Report'
         )
-      ]),
-    ];
+      ])    
+    ]
   }
+
 
   patchMenuItems(items: MenuItem[], parentId?: number): void {
     items.forEach((item: MenuItem, index: number) => {
