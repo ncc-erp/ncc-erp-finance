@@ -52,6 +52,7 @@ import { CurrencyConvertComponent } from './modules/currency-convert/currency-co
 import { CircleChartComponent } from './modules/circle-chart/circle-chart.component';
 import { CircleChartDetailComponent } from './modules/circle-chart/circle-chart-detail/circle-chart-detail.component';
 import { ReportComponent } from './modules/report/report.component';
+import { RevenueReportComponent } from './modules/revenue-report/revenue-report.component';
 
 
 @NgModule({
@@ -157,6 +158,12 @@ import { ReportComponent } from './modules/report/report.component';
                     { 
                         path: 'report', 
                         component: ReportComponent,
+                        canActivate: [AppRouteGuard]
+                    },
+                    {
+                        path: 'revenue-report',
+                        component: RevenueReportComponent,
+                        canActivate: [AppRouteGuard]
                     }
                 ]
             }

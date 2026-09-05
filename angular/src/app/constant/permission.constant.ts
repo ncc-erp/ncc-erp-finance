@@ -353,4 +353,8 @@ export const PERMISSIONS_CONSTANT = {
     Finance_Period_Create : "Finance.Period.Create",
     Finance_Period_Edit : "Finance.Period.Edit",
     Finance_Period_CloseAndCreate : "Finance.Period.CloseAndCreate",
+
+    //Report
+    Finance_Report : "Finance.Report",
+    Finance_Report_View : "Finance.Report.View",
 }
