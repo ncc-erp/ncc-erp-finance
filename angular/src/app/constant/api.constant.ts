@@ -101,6 +101,8 @@ export const APP_CONSTANT = {
     nrevenue: "Khoản phải thu",
     period: "Kì kế toán",
     expenditureReport: "Báo cáo chi"
+    expenditureReport: "Báo cáo chi",
+    revenueReport: "Báo cáo thu"
   },
 
   UrlBreadcrumbFirstLevel: {
@@ -141,6 +143,8 @@ export const APP_CONSTANT = {
     nrevenue: "/app/nrevenue",
     period: "/app/period",
     expenditureReport: "/app/report"
+    expenditureReport: "/app/report",
+    revenueReport: "/app/revenue-report"
   },
   UrlBreadcrumbThirdLevel: {
     workFlowDetail: "/app/workFlowDetail",

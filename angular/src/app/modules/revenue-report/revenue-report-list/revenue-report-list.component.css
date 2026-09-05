@@ -8,27 +8,35 @@
     background-color: #5f656b;
   }
 
-  :host ::ng-deep .report-node .mat-expansion-panel-header .mat-content {
+.mat-expansion-panel-header:visited,
+.mat-expansion-panel-header {
+    background-color: #5f656b !important;
+    margin-bottom: 10px;
+    max-height: 48px;
+  }
+  :host ::ng-deep .revenue-node .mat-expansion-panel-header .mat-content {
     width: 100%;
+    padding-right: 0 !important;
+    margin-right: 0 !important;
   }
 
-  :host ::ng-deep .report-node .mat-expansion-panel-content .mat-expansion-panel-body {
+  :host ::ng-deep .revenue-node .mat-expansion-panel-content .mat-expansion-panel-body {
     padding: 0 0 0 24px;
   }
 
-  :host ::ng-deep .report-node .mat-expansion-panel-header {
+  :host ::ng-deep .revenue-node .mat-expansion-panel-header {
     box-sizing: border-box;
     padding-left: 24px;
     padding-right: 0 !important;
   }
-  :host ::ng-deep .report-node .mat-expansion-panel-header .col-12 > .d-flex.align-items-center.flex-wrap:last-child > .mr-3:last-child {
+  :host ::ng-deep .revenue-node .mat-expansion-panel-header .row {
     margin-right: 0 !important;
   }
-  .mat-expansion-panel-header:visited,
-  .mat-expansion-panel-header {
-    background-color: #5f656b !important;
-    margin-bottom: 10px;
-    max-height: 48px;
+  :host ::ng-deep .revenue-node .mat-expansion-panel-header .col-12 {
+    padding-right: 0 !important;
+  }
+  :host ::ng-deep .revenue-node .mat-expansion-panel-header .col-12 > .d-flex.align-items-center.flex-wrap:last-child > .mr-3:last-child {
+    margin-right: 0 !important;
   }
   .mat-expansion-panel-header,
   .mat-expansion-panel-header .mat-content,

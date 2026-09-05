@@ -15,9 +15,6 @@ import { CreateUserDialogComponent } from './create-user/create-user-dialog.comp
 import { EditUserDialogComponent } from './edit-user/edit-user-dialog.component';
 import { ResetPasswordDialogComponent } from './reset-password/reset-password.component';
 import { PERMISSIONS_CONSTANT } from '@app/constant/permission.constant';
-import { TranslateService } from '@ngx-translate/core';
-import { HttpParams } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
 
 
 const OPTION_ALL = -1
@@ -25,6 +22,13 @@ const OPTION_ALL = -1
 class PagedUsersRequestDto extends PagedRequestDto {
   keyword: string;
   isActive: boolean | null;
+  sort: string;
+  sortDirection: number;
+}
+
+enum SortDirectionEnum {
+  Ascending = 0,
+  Descending = 1
 }
 
 @Component({
@@ -37,6 +41,8 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
   keyword = '';
   isActive: boolean | number = OPTION_ALL;
   advancedFiltersVisible = false;
+  sortProperty = '';
+  sortDirection: SortDirectionEnum = null;
   routeTitleFirstLevel = this.APP_CONSTANT.TitleBreadcrumbFirstLevel.admin;
   routeUrlFirstLevel = this.APP_CONSTANT.UrlBreadcrumbFirstLevel.admin;
   routeTitleSecondLevel = this.APP_CONSTANT.TitleBreadcrumbSecondLevel.user;
@@ -80,10 +86,16 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
     if (this.isActive !== OPTION_ALL) {
       request.isActive = this.isActive as boolean;
     }
+    if (this.sortProperty) {
+      request.sort = this.sortProperty;
+      request.sortDirection = this.sortDirection;
+    }
     this._userService
       .getAll(
         request.keyword,
         request.isActive,
+        request.sort,
+        request.sortDirection,
         request.skipCount,
         request.maxResultCount
       )
@@ -97,6 +109,27 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
         this.showPaging(result, pageNumber);
       });
     this.updateBreadCrumb()
+  }
+
+  onSortChange(property: 'emailAddress' | 'komuUserId') {
+    if (this.sortProperty !== property) {
+      this.sortDirection = null;
+    }
+    switch (this.sortDirection) {
+      case null:
+        this.sortDirection = SortDirectionEnum.Ascending;
+        this.sortProperty = property;
+        break;
+      case SortDirectionEnum.Ascending:
+        this.sortDirection = SortDirectionEnum.Descending;
+        this.sortProperty = property;
+        break;
+      case SortDirectionEnum.Descending:
+        this.sortDirection = null;
+        this.sortProperty = '';
+        break;
+    }
+    this.refresh();
   }
 
   onRefreshCurrentPage(){

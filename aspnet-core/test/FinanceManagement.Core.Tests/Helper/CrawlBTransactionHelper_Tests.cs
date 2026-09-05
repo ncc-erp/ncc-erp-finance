@@ -9,6 +9,24 @@ namespace FinanceManagement.Core.Tests.Helper
     public class CrawlBTransactionHelper_Tests
     {
 
+         [Fact]
+        public void ExtractBTransaction_USD()
+        {
+
+            // Arrange
+            string input = @"TK 18123456789026 So tien GD:+USD 1,123.00 So du:USD 1,107,321.16 FT56543456788888 LT45454545544 1/xxxOGB2LXXX. NGAN HANG NUOC NGOAI THU PHI USD0 ..";
+
+            // Act
+            var result = CrawlBTransactionHelper.ExtractBTransaction(input);
+
+          
+            // Assert
+            Assert.Equal("18123456789026", result.AccountNumber);
+            Assert.Equal(1123, result.TransactionAmount);
+            Assert.Equal(1107321.16, result.Balance);
+
+        }
+        
         [Fact]
         public void ExtractBTransaction_Should_Parse_Transaction_Amount_With_Decimal()
         {

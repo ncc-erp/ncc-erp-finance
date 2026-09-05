@@ -1667,11 +1667,13 @@ export class UserServiceProxy {
     /**
      * @param keyword (optional)
      * @param isActive (optional)
+     * @param sort (optional)
+     * @param sortDirection (optional)
      * @param skipCount (optional)
      * @param maxResultCount (optional)
      * @return Success
      */
-    getAll(keyword: string | undefined, isActive: boolean | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<UserDtoPagedResultDto> {
+    getAll(keyword: string | undefined, isActive: boolean | undefined, sort: string | undefined, sortDirection: number | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<UserDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/User/GetAll?";
         if (keyword === null)
             throw new Error("The parameter 'keyword' cannot be null.");
@@ -1681,6 +1683,14 @@ export class UserServiceProxy {
             throw new Error("The parameter 'isActive' cannot be null.");
         else if (isActive !== undefined)
             url_ += "IsActive=" + encodeURIComponent("" + isActive) + "&";
+        if (sort === null)
+            throw new Error("The parameter 'sort' cannot be null.");
+        else if (sort !== undefined)
+            url_ += "Sort=" + encodeURIComponent("" + sort) + "&";
+        if (sortDirection === null)
+            throw new Error("The parameter 'sortDirection' cannot be null.");
+        else if (sortDirection !== undefined)
+            url_ += "SortDirection=" + encodeURIComponent("" + sortDirection) + "&";
         if (skipCount === null)
             throw new Error("The parameter 'skipCount' cannot be null.");
         else if (skipCount !== undefined)
@@ -3244,7 +3254,7 @@ export class CreateUserDto implements ICreateUserDto {
     isActive: boolean;
     roleNames: string[] | undefined;
     password: string | undefined;
-    komuUserName: string | undefined;
+    komuUserId: number | undefined;
     constructor(data?: ICreateUserDto) {
         if (data) {
             for (var property in data) {
@@ -3258,7 +3268,7 @@ export class CreateUserDto implements ICreateUserDto {
         if (data) {
             this.userName = data["userName"];
             this.name = data["name"];
-            this.komuUserName = data["komuUserName"];
+            this.komuUserId = data["komuUserId"];
             this.surname = data["surname"];
             this.emailAddress = data["emailAddress"];
             this.isActive = data["isActive"];
@@ -3281,7 +3291,7 @@ export class CreateUserDto implements ICreateUserDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["userName"] = this.userName;
-        data["komuUserName"] = this.komuUserName;
+        data["komuUserId"] = this.komuUserId;
         data["name"] = this.name;
         data["surname"] = this.surname;
         data["emailAddress"] = this.emailAddress;
@@ -3311,7 +3321,7 @@ export interface ICreateUserDto {
     isActive: boolean;
     roleNames: string[] | undefined;
     password: string | undefined;
-    komuUserName: string | undefined;
+    komuUserId: number | undefined;
 }
 
 export class UserDto implements IUserDto {
@@ -3326,6 +3336,7 @@ export class UserDto implements IUserDto {
     roleNames: string[] | undefined;
     komuUserName: string | undefined;
     id: number;
+    komuUserId: number | undefined;
 
     constructor(data?: IUserDto) {
         if (data) {
@@ -3340,6 +3351,7 @@ export class UserDto implements IUserDto {
         if (data) {
             this.userName = data["userName"];
             this.komuUserName = data["komuUserName"];
+            this.komuUserId = data["komuUserId"];
             this.name = data["name"];
             this.surname = data["surname"];
             this.emailAddress = data["emailAddress"];
@@ -3366,6 +3378,7 @@ export class UserDto implements IUserDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["userName"] = this.userName;
+        data["komuUserId"] = this.komuUserId;
         data["name"] = this.name;
         data["komuUserName"] = this.komuUserName;
         data["surname"] = this.surname;
@@ -3403,6 +3416,7 @@ export interface IUserDto {
     roleNames: string[] | undefined;
     id: number;
     komuUserName: string | undefined;
+    komuUserId: number | undefined;
 }
 
 export class RoleDtoListResultDto implements IRoleDtoListResultDto {

@@ -81,6 +81,7 @@ namespace FinanceManagement.APIs.Report
         }
 
         [HttpPost]
+        [AbpAuthorize(PermissionNames.Finance_Report_View)]
         public async Task<List<ReportOutcomingEntryTypeDto>> GetTreeByOutcomingFilter(GetAllPagingOutComingEntryDto input)
         {
             var outcomingQuery = BuildOutcomingQuery(input)
@@ -138,6 +139,8 @@ namespace FinanceManagement.APIs.Report
             IQueryable<GetOutcomingEntryDto> outcomingQuery,
             GetAllPagingOutComingEntryDto input)
         {
+            var latestCurrencyConvertDic = await GetLatestCurrencyConvertDictionary();
+
             foreach (var entryType in entryTypes)
             {
                 var childIds = _commonManager.GetAllEntryLowerNodeIds(entryType.Id, treeHasRoot);
@@ -147,11 +150,48 @@ namespace FinanceManagement.APIs.Report
                 }
 
                 var query = outcomingQuery.Where(x => childIds.Contains(x.OutcomingEntryTypeId));
-                entryType.TotalCurrencies = await GetTotalCurrencies(query, input);
+                var totalCurrencies = (await GetTotalCurrencies(query, input)).ToList();
+                entryType.TotalCurrencies = totalCurrencies;
+                entryType.VNDConvert = CalculateVNDConvert(totalCurrencies, latestCurrencyConvertDic);
             }
         }
 
+        private async Task<Dictionary<long, double>> GetLatestCurrencyConvertDictionary()
+        {
+            var listCurrencyConvert = await WorkScope.GetAll<CurrencyConvert>()
+                .AsNoTracking()
+                .ToListAsync();
+
+            return listCurrencyConvert
+                .GroupBy(x => x.CurrencyId)
+                .ToDictionary(
+                    x => x.Key,
+                    x => x.OrderByDescending(y => y.DateAt).ThenByDescending(y => y.Id).First().Value
+                );
+        }
+
+        private double CalculateVNDConvert(
+            IEnumerable<GetTotalCurrencyDto> totalCurrencies,
+            IReadOnlyDictionary<long, double> latestCurrencyConvertDic)
+        {
+            return totalCurrencies.Sum(x =>
+            {
+                if (!x.CurrencyId.HasValue)
+                {
+                    return 0;
+                }
+
+                if (!latestCurrencyConvertDic.TryGetValue(x.CurrencyId.Value, out var exchangeRate) || exchangeRate == 0)
+                {
+                    return 0;
+                }
+
+                return x.Value * exchangeRate;
+            });
+        }
+
         [HttpPost]
+        [AbpAuthorize(PermissionNames.Finance_Report_View)]
         public async Task<ReportOutcomingEntryDto> GetAllPaging(GetAllPagingOutComingEntryDto input)
         {
             var response = new ReportOutcomingEntryDto();

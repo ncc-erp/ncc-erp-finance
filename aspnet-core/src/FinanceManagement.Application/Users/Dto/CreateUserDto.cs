@@ -36,7 +36,7 @@ namespace FinanceManagement.Users.Dto
         [DisableAuditing]
         public string Password { get; set; }
 
-        public string KomuUserName { get; set; }
+        public long KomuUserId { get; set; }
 
         public void Normalize()
         {
